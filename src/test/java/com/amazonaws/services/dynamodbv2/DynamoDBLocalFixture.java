@@ -44,7 +44,7 @@ public class DynamoDBLocalFixture {
         final String[] localArgs = { "-inMemory" };
         DynamoDBProxyServer server = null;
         try {
-        	server = ServerRunner.createServerFromCommandLineArgs(localArgs);
+            server = ServerRunner.createServerFromCommandLineArgs(localArgs);
             server.start();
             dynamodb = new AmazonDynamoDBClient();
             dynamodb.setEndpoint("http://localhost:8000");
@@ -52,10 +52,10 @@ public class DynamoDBLocalFixture {
             // use the DynamoDB API over HTTP
             listTables(dynamodb.listTables(), "DynamoDB Local over HTTP");
         } finally {
-        	// Stop the DynamoDB Local endpoint
-        	if(server != null) {
-        		server.stop();
-        	}
+            // Stop the DynamoDB Local endpoint
+            if(server != null) {
+                server.stop();
+            }
         }
     }
 
