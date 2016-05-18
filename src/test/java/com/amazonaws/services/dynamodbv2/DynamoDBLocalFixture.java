@@ -30,7 +30,7 @@ public class DynamoDBLocalFixture {
         AmazonDynamoDB dynamodb = null;
         try {
             // Create an in-memory and in-process instance of DynamoDB Local that skips HTTP
-            dynamodb = DynamoDBEmbedded.create();
+            dynamodb = DynamoDBEmbedded.create().amazonDynamoDB();
             // use the DynamoDB API with DynamoDBEmbedded
             listTables(dynamodb.listTables(), "DynamoDB Embedded");
         } finally {

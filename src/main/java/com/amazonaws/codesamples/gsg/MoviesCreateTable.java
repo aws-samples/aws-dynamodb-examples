@@ -25,7 +25,7 @@ import com.amazonaws.services.dynamodbv2.model.KeySchemaElement;
 import com.amazonaws.services.dynamodbv2.model.KeyType;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
 import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType;
-import com.amazonaws.services.dynamodbv2.util.Tables;
+import com.amazonaws.services.dynamodbv2.util.TableUtils;
 
 public class MoviesCreateTable {
 
@@ -47,7 +47,7 @@ public class MoviesCreateTable {
                 new ProvisionedThroughput(10L, 10L));
 
         try {
-            Tables.awaitTableToBecomeActive(client, tableName);
+            TableUtils.waitUntilActive(client, tableName);
             System.out.println("Table status: " + table.getDescription().getTableStatus());
         } catch (AmazonClientException e) {
             e.printStackTrace();

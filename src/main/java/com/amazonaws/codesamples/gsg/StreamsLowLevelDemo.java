@@ -42,7 +42,7 @@ import com.amazonaws.services.dynamodbv2.model.Shard;
 import com.amazonaws.services.dynamodbv2.model.ShardIteratorType;
 import com.amazonaws.services.dynamodbv2.model.StreamSpecification;
 import com.amazonaws.services.dynamodbv2.model.StreamViewType;
-import com.amazonaws.services.dynamodbv2.util.Tables;
+import com.amazonaws.services.dynamodbv2.util.TableUtils;
 
 public class StreamsLowLevelDemo {
 
@@ -91,7 +91,7 @@ public class StreamsLowLevelDemo {
 
         System.out.println("Waiting for " + tableName + " to be created...");
         try {
-            Tables.awaitTableToBecomeActive(dynamoDBClient, tableName);
+            TableUtils.waitUntilActive(dynamoDBClient, tableName);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
