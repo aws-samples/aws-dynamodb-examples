@@ -201,7 +201,7 @@
         <repository>
             <id>dynamodblocal</id>
             <name>AWS DynamoDB Local Release Repository</name>
-            <url>http://dynamodb-local.s3-website-us-west-2.amazonaws.com/release</url>
+            <url>https://s3-us-west-2.amazonaws.com/dynamodb-local/release</url>
         </repository>
     </repositories>
     <dependencyManagement>
