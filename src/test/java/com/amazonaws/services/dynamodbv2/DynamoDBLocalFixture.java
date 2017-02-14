@@ -25,6 +25,20 @@ import com.amazonaws.services.dynamodbv2.model.ListTablesResult;
  * @author Alexander Patrikalakis
  */
 public class DynamoDBLocalFixture {
+    /**
+     * You can use mvn to run DynamoDBLocalFixture, e.g.
+     * <p>
+     * $ mvn clean package
+     * <p>
+     * $ mvn exec:java -Dexec.mainClass="com.amazonaws.services.dynamodbv2.DynamoDBLocalFixture" \
+     * -Dexec.classpathScope="test" \
+     * -Dsqlite4java.library.path=target/dependencies
+     * <p>
+     * It's recommended to run "aws configure" one time before you run DynamoDBLocalFixture
+     *
+     * @param args - no args
+     * @throws Exception
+     */
     public static void main(String[] args) throws Exception {
         AmazonDynamoDB dynamodb = null;
         try {
