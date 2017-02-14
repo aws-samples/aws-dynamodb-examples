@@ -14,8 +14,7 @@
 */
 package com.amazonaws.services.dynamodbv2;
 
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
+import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.dynamodbv2.local.embedded.DynamoDBEmbedded;
 import com.amazonaws.services.dynamodbv2.local.main.ServerRunner;
 import com.amazonaws.services.dynamodbv2.local.server.DynamoDBProxyServer;
@@ -46,9 +45,12 @@ public class DynamoDBLocalFixture {
         try {
             server = ServerRunner.createServerFromCommandLineArgs(localArgs);
             server.start();
-            dynamodb = new AmazonDynamoDBClient();
-            dynamodb.setEndpoint("http://localhost:8000");
-            
+
+            dynamodb = AmazonDynamoDBClientBuilder.standard().withEndpointConfiguration(
+                // we can use any region here
+                new AwsClientBuilder.EndpointConfiguration("http://localhost:8000", "us-west-2"))
+                .build();
+
             // use the DynamoDB API over HTTP
             listTables(dynamodb.listTables(), "DynamoDB Local over HTTP");
         } finally {
