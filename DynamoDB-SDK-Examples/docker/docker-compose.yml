@@ -1,0 +1,20 @@
+version: '3.7'
+
+services:
+  dynamodb-local:
+    image: amazon/dynamodb-local
+    container_name: dynamodb-local
+    ports:
+      - "8000:8000"
+  app-node:
+    depends_on:
+      - dynamodb-local
+    image: banst/awscli
+    container_name: app-node
+    ports:
+     - "8080:8080"
+    environment:
+      AWS_ACCESS_KEY_ID: 'DUMMYIDEXAMPLE'
+      AWS_SECRET_ACCESS_KEY: 'DUMMYEXAMPLEKEY'
+    command:
+      dynamodb describe-limits --endpoint-url http://dynamodb-local:8000 --region us-west-2
