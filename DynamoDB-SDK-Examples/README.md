@@ -1,5 +1,5 @@
 # DynamoDB SDK Examples
-
+This directory contains examples in various AWS SDKs for use with Amazon DynamoDB. We are always looking for new contributions if you want to submit a pull request.
 ## Working with Items
 
 | All Examples 👉       | C++ | Go  | Java | JavaScript | .NET                                         | Node.js                                                          | PHP | Python                                                         | Ruby |
