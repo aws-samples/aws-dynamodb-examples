@@ -20,9 +20,9 @@ This section contains Node.js code for examples and common tasks with Amazon Dyn
 
 ## Working with PartiQL
 Directory contains example code using Node.js and PartiQL with Amazon DynamoDB
-| All Examples 👉       | Node.js                                                  |
-| --------------------- | ---------------------------------------------------------|
-| Select Statement      | [Node.js](.WorkingWithPartiQL/simple-select-statement.js)|
+| All Examples 👉       | Node.js                                                   |
+| --------------------- | --------------------------------------------------------- |
+| Select Statement      | [Node.js](./WorkingWithPartiQL/simple-select-statement.js)|
 
 ## Working with Indexes
 
