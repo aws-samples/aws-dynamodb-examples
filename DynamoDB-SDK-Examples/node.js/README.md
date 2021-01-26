@@ -18,6 +18,12 @@ This section contains Node.js code for examples and common tasks with Amazon Dyn
 | UpdateItem            | [Node.js](./WorkingWithItems/update-item.js)             |
 | UpdateItemConditional | [Node.js](./WorkingWithItems/update-item-conditional.js) |
 
+## Working with PartiQL
+Directory contains example code using Node.js and PartiQL with Amazon DynamoDB
+| All Examples 👉       | Node.js                                                  |
+| --------------------- | ---------------------------------------------------------|
+| Select Statement      | [Node.js](.WorkingWithPartiQL/simple-select-statement.js)|
+
 ## Working with Indexes
 
 | All Examples 👉 | Node.js |
