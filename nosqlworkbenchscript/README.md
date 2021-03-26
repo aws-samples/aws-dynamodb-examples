@@ -5,3 +5,7 @@ This directory contains a node.js script that when run, will export a table's me
 You will need to modify the script to add the Amazon Web Services Region you want to export. This script relies on the credentials in ~/.aws to authenticate. The command directs the json output to stdout.
 
 `node create-workbench-import.js YourTableNameHere > YourTableNameHere.json`
+
+Once you have the JSON file from your table, you can perform a "import data model" in NoSQL Workbench to bring it into the tool.
+
+Initial script by [Rob McCauley](https://github.com/robm26).
