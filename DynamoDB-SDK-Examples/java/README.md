@@ -6,17 +6,16 @@ This section contains JAVA code for examples and common tasks with Amazon Dynamo
 
 | All Examples 👉       | Java |
 | --------------------- | ---- |
-| BatchGet              | Java |
-| BatchWrite            | Java |
-| DeleteItem            | Java |
-| DeleteItemConditional | Java |
-| GetItem               | Java |
-| PutItem               | Java |
-| PutItemConditional    | Java |
-| TransactGet           | Java |
-| TransactWrite         | Java |
-| UpdateItem            | Java |
-| UpdateItemConditional | Java |
+| BatchGet              | [Java](./WorkingWithItems/BatchGetItem.java) |
+| BatchWrite            | [Java](./WorkingWithItems/BatchWriteItem.java)  |
+| DeleteItemConditional | [Java](./WorkingWithItems/DeleteItem.java)  |
+| GetItem               | [Java](./WorkingWithItems/GetItem.java)  |
+| PutItem               | [Java](./WorkingWithItems/PutItem.java)  |
+| PutItemConditional    | [Java](./WorkingWithItems/PutItemConditional.java)  |
+| TransactGet           | [Java](./WorkingWithItems/TransactGetItem.java)  |
+| TransactWrite         | [Java](./WorkingWithItems/TransactWriteItem.java)  |
+| UpdateItem            | [Java](./WorkingWithItems/UpdateItem.java)  |
+| UpdateItemConditional | [Java](./WorkingWithItems/UpdateItemConditional.java)  |
 
 ## Working with Indexes
 
