@@ -38,7 +38,12 @@ This section contains Python code for examples and common tasks with Amazon Dyna
 
 | All Examples 👉 | Python |
 | --------------- | ------ |
-|                 | Python |
+| Simple Scan            | [Python](./WorkingWithScans/scan_simple.py)                |
+| Paginate Scan          | [Python](./WorkingWithScans/scan_paginate.py)              |
+| Parallel Scan          | [Python](./WorkingWithScans/scan_parallel.py)              |
+| Boto3 Paginator Scan   | [Python](./WorkingWithScans/scan_with_paginator.py)        |
+| FilterExpression       | [Python](./WorkingWithScans/scan_filter_expression.py)     |
+| ProjectionExpression   | [Python](./WorkingWithScans/scan_projection_expression.py) |
 
 ## Working with Streams
 
