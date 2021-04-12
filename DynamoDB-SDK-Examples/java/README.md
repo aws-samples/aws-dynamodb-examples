@@ -17,17 +17,17 @@ This section contains JAVA code for examples and common tasks with Amazon Dynamo
 | UpdateItem            | [Java](./WorkingWithItems/UpdateItem.java)  |
 | UpdateItemConditional | [Java](./WorkingWithItems/UpdateItemConditional.java)  |
 
-## Working with Indexes
+## Working with Queries
 
 | All Examples 👉        | Java |
 | ---------------------- | ---- |
-| ConsistentRead         | Java |
-| Count                  | Java |
-| FilterExpression       | Java |
-| ProjectionExpression   | Java |
-| ReturnConsumedCapacity | Java |
+| SortKeyBetween         | [Java](./WorkingWithQueries/QueryWithSortKey.java)  |
+| FilterExpression       | [Java](./WorkingWithQueries/QueryWithFilterExpression.java)  |
+| ProjectionExpression   | [Java](./WorkingWithQueries/QueryWithProjectionExpression.java)  |
+| ConsistentRead         | [Java](./WorkingWithQueries/QueryConsistentRead.java)  |
 
-## Working with Queries
+
+## Working with Indexes
 
 | All Examples 👉 | Java |
 | --------------- | ---- |
