@@ -10,7 +10,7 @@ tmpCredentials.json
 get-temp-credentials.sh
 package-lock.json
 package.json
-
+.idea/*
 **/.vs/
 **/bin/
 **/obj/
