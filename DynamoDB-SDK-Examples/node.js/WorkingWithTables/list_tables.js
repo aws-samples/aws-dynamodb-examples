@@ -1,11 +1,12 @@
-const AWS = require("aws-sdk");
+const { DynamoDBClient, ListTablesCommand } = require("@aws-sdk/client-dynamodb");
 
-const dynamodb = new AWS.DynamoDB({ region: "us-west-2" });
-
-const listTables = async () => {
-  const response = await dynamodb.listTables().promise();
-
-  console.log(JSON.stringify(response, null, 2));
-};
-
-listTables().catch((error) => console.error(JSON.stringify(error, null, 2)));
+(async () => {
+  const client = new DynamoDBClient({ region: "us-west-2" });
+  const command = new ListTablesCommand({});
+  try {
+    const results = await client.send(command);
+    console.log(results.TableNames.join("\n"));
+  } catch (err) {
+    console.error(err);
+  }
+})();
