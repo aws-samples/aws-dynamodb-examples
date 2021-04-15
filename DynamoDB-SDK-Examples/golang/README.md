@@ -6,17 +6,17 @@ This section contains Golang code for examples and common tasks with Amazon Dyna
 
 | All Examples 👉       | Go  |
 | --------------------- | --- |
-| BatchGet              | Go  |
-| BatchWrite            | Go  |
-| DeleteItem            | Go  |
-| DeleteItemConditional | Go  |
-| GetItem               | Go  |
-| PutItem               | Go  |
-| PutItemConditional    | Go  |
+| BatchGet              | [Go](./WorkingWithItems/batchGetItem.go)  |
+| BatchWrite            | [Go](./WorkingWithItems/batchWriteItem.go)   |
+| DeleteItem            | [Go](./WorkingWithItems/deleteItem.go)   |
+| DeleteItemConditional | [Go](./WorkingWithItems/deleteItemConditional.go)   |
+| GetItem               | [Go](./WorkingWithItems/getItem.go)   |
+| PutItem               | [Go](./WorkingWithItems/putItem.go)   |
+| PutItemConditional    | [Go](./WorkingWithItems/putItemConditional.go)   |
 | TransactGet           | Go  |
 | TransactWrite         | Go  |
-| UpdateItem            | Go  |
-| UpdateItemConditional | Go  |
+| UpdateItem            | [Go](./WorkingWithItems/updateItem.go)   |
+| UpdateItemConditional | [Go](./WorkingWithItems/updateItemConditional.go)   |
 
 ## Working with Indexes
 
