@@ -20,6 +20,7 @@ This section contains Node.js code for examples and common tasks with Amazon Dyn
 
 ## Working with PartiQL
 Directory contains example code using Node.js and PartiQL with Amazon DynamoDB
+
 | All Examples 👉       | Node.js                                                   |
 | --------------------- | --------------------------------------------------------- |
 | Select Statement      | [Node.js](./WorkingWithPartiQL/simple-select-statement.js)|
@@ -44,7 +45,8 @@ Directory contains example code using Node.js and PartiQL with Amazon DynamoDB
 
 | All Examples 👉 | Node.js |
 | --------------- | ------- |
-|                 | Node.js |
+| Scan with Pagination | [Node.js](./WorkingWithScans/scan-fetch-all-pagination.js) |
+| Scan Parallel Segments|[Node.js](./WorkingWithScans/scan-parallel-segments.js) |
 
 ## Working with Streams
 
