@@ -1,4 +1,4 @@
-// This is an example of a simple GetItem with the higher level DocumentClient for Amazon DynamoDB
+// This is an example of a simple PutItem using the higher level DocumentClient for Amazon DynamoDB
 
 const { DynamoDBClient } = require("@aws-sdk/client-dynamodb");
 const { DynamoDBDocumentClient, PutCommand } = require("@aws-sdk/lib-dynamodb");
