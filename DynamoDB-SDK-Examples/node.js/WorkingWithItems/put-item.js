@@ -3,7 +3,7 @@
 const { DynamoDBClient } = require("@aws-sdk/client-dynamodb");
 const { DynamoDBDocumentClient, PutCommand } = require("@aws-sdk/lib-dynamodb");
 
-async function getItems() {
+async function putItems() {
   const client = new DynamoDBClient({ region: "us-west-2" });
   const ddbDocClient = DynamoDBDocumentClient.from(client);
   try {
@@ -32,7 +32,7 @@ async function getItems() {
   }
 }
 
-getItems()
+putItems()
     .then((data) =>
         console.log("PutItem succeeded:", JSON.stringify(data.Item, null, 2))
     )
