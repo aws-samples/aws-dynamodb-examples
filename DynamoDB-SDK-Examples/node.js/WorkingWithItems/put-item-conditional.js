@@ -1,4 +1,4 @@
-/* This is an example of a simple PutItem with a ConditionExpression using
+/* This is an example of a simple PutCommand with a ConditionExpression using
 the higher level DocumentClient for Amazon DynamoDB. The conditional
 expression must be true for this Put call to succeed. */
 
@@ -36,5 +36,5 @@ async function putItems() {
 
 putItems()
     .then((data) =>
-        console.log("PutItem succeeded:", JSON.stringify(data, null, 2)))
+        console.log("PutCommand succeeded:", JSON.stringify(data, null, 2)))
     .catch((error) => console.error(JSON.stringify(error, null, 2)));
