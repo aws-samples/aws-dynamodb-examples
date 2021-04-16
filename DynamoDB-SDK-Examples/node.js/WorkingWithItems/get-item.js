@@ -26,5 +26,5 @@ async function getItems() {
 
 getItems()
     .then((data) =>
-        console.log("GetCommand succeeded:", JSON.stringify(data.Item, null, 2)))
+        console.log("GetCommand succeeded:", JSON.stringify(data, null, 2)))
     .catch((error) => console.error(JSON.stringify(error, null, 2)));

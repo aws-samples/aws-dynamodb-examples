@@ -1,36 +1,45 @@
-const AWS = require("aws-sdk");
+// This is an example of a simple BatchGetCommand with the higher level DocumentClient for Amazon DynamoDB
 
-AWS.config.update({ region: "us-west-2" });
+const { DynamoDBClient } = require("@aws-sdk/client-dynamodb");
+const { DynamoDBDocumentClient, BatchGetCommand } = require("@aws-sdk/lib-dynamodb");
 
-const documentClient = new AWS.DynamoDB.DocumentClient();
-
-// Define the partition keys and sort keys for the two items we want to get.
-async function batchGetItem() {
-  const params = {
-    RequestItems: {
-      RetailDatabase: {
-        Keys: [
-          {
-            pk: "vikram.johnson@somewhere.com",
-            sk: "metadata",
+async function batchGetItems() {
+  const client = new DynamoDBClient({ region: "us-west-2" });
+  const ddbDocClient = DynamoDBDocumentClient.from(client);
+  try {
+    return await ddbDocClient.send(
+        new BatchGetCommand({
+          RequestItems: {
+            RetailDatabase: {
+              Keys: [
+                {
+                  pk: "vikram.johnson@somewhere.com",
+                  sk: "metadata",
+                },
+                {
+                  pk: "jose.schneller@somewhere.com",
+                  sk: "metadata",
+                },
+                {
+                  pk: "jose.schneller@somewhere.com2",
+                  sk: "metadata"
+                },
+              ],
+              // For this use case, the data does not changed often so why not get the
+              // reads at half the cost? Your use case might be different and need true.
+              ConsistentRead: false,
+            },
           },
-          {
-            pk: "jose.schneller@somewhere.com",
-            sk: "metadata",
-          },
-        ],
-        ConsistentRead: false, // For my user case, this data it is not changed often so why not get the reads at half price? Your use case might be different and need true.
-      },
-    },
-    ReturnConsumedCapacity: "TOTAL",
-  };
-
-  const response = await documentClient.batchGet(params).promise();
-  return response;
+          //This line returns in the response how much capacity the batch get uses
+          ReturnConsumedCapacity: "TOTAL",
+        })
+    );
+  } catch (err) {
+    console.error(err);
+  }
 }
 
-batchGetItem()
-  .then((data) =>
-    console.log("BatchGetItem succeeded:", JSON.stringify(data, null, 2))
-  )
-  .catch((error) => console.error(JSON.stringify(error, null, 2)));
+batchGetItems()
+    .then((data) =>
+        console.log("BatchGetCommand succeeded:", JSON.stringify(data, null, 2)))
+    .catch((error) => console.error(JSON.stringify(error, null, 2)));
