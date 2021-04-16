@@ -14,6 +14,9 @@ async function getItems() {
             pk: "jim.bob@somewhere.com", // Partition Key
             sk: "metadata"          // Sort Key
           },
+          // For this use case, the data does not changed often so why not get the
+          // reads at half the cost? Your use case might be different and need true.
+          ConsistentRead: false,
         })
     );
   } catch (err) {
