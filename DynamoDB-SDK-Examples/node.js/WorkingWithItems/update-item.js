@@ -1,33 +1,34 @@
-const AWS = require("aws-sdk");
+/* This is an example of an UpdateCommand using the higher level DocumentClient
+for Amazon DynamoDB. It updates one attribute on the item, but it could easily
+do more if needed. */
 
-AWS.config.update({ region: "us-west-2" });
+const { DynamoDBClient } = require("@aws-sdk/client-dynamodb");
+const { DynamoDBDocumentClient, UpdateCommand } = require("@aws-sdk/lib-dynamodb");
 
-const documentClient = new AWS.DynamoDB.DocumentClient();
-
-// Define the name of a user account to update. Note that in this example, we have to alias "name" using ExpressionAttributeNames as name is a reserved word in DynamoDB.
 async function updateItem() {
-  const params = {
-    TableName: "RetailDatabase",
-    Key: {
-      pk: "jim.bob@somewhere.com",
-      sk: "metadata",
-    },
-    ExpressionAttributeNames: {
-      "#n": "name",
-    },
-    UpdateExpression: "set #n = :nm",
-    ExpressionAttributeValues: {
-      ":nm": "Big Jim Bob",
-    },
-    ReturnValues: "ALL_NEW",
-  };
+  const client = new DynamoDBClient({ region: "us-west-2" });
+  const ddbDocClient = DynamoDBDocumentClient.from(client);
 
-  const response = await documentClient.update(params).promise();
-  return response;
+  return await ddbDocClient.send(
+      new UpdateCommand({
+        TableName: "RetailDatabase",
+        Key: {
+          pk: "jim.bob@somewhere.com",    // Partition key
+          sk: "metadata",                 // Sort key
+        },
+        ExpressionAttributeNames: {
+          "#n": "name",
+        },
+        UpdateExpression: "set #n = :nm",
+        ExpressionAttributeValues: {
+          ":nm": "Big Jim Bob",
+        },
+        ReturnValues: "ALL_NEW",
+      })
+  );
 }
 
 updateItem()
-  .then((data) =>
-    console.log("UpdateItem succeeded:", JSON.stringify(data, null, 2))
-  )
-  .catch((error) => console.error(JSON.stringify(error, null, 2)));
+    .then((data) =>
+        console.log("UpdateCommand succeeded:", JSON.stringify(data, null, 2)))
+    .catch((error) => console.error(JSON.stringify(error, null, 2)));

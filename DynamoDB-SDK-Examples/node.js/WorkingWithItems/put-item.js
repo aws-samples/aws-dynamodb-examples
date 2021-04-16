@@ -1,4 +1,4 @@
-// This is an example of a simple PutItem using the higher level DocumentClient for Amazon DynamoDB
+// This is an example of a simple PutCommand using the higher level DocumentClient for Amazon DynamoDB
 
 const { DynamoDBClient } = require("@aws-sdk/client-dynamodb");
 const { DynamoDBDocumentClient, PutCommand } = require("@aws-sdk/lib-dynamodb");
@@ -11,9 +11,9 @@ async function putItems() {
       new PutCommand({
         TableName: "RetailDatabase",
         Item: {
-          pk: "jim.Robert@somewhere.com", // Partition Key
+          pk: "jim.bob@somewhere.com", // Partition Key
           sk: "metadata",                 // Sort Key
-          name: "Jim Roberts",
+          name: "Jim Bob",
           first_name: "Jim",
           last_name: "Roberts",
           address: {
@@ -31,5 +31,5 @@ async function putItems() {
 
 putItems()
     .then((data) =>
-        console.log("PutItem succeeded with HTTP code:", JSON.stringify(data.$metadata.httpStatusCode, null, 2)))
+        console.log("PutCommand succeeded with HTTP code:", JSON.stringify(data.$metadata.httpStatusCode, null, 2)))
     .catch((error) => console.error(JSON.stringify(error, null, 2)));
