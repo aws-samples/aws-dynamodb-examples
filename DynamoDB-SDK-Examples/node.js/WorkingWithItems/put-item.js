@@ -11,8 +11,8 @@ async function putItems() {
       new PutCommand({
         TableName: "RetailDatabase",
         Item: {
-          pk: "jim.Robert@somewhere.com",
-          sk: "metadata",
+          pk: "jim.Robert@somewhere.com", // Partition Key
+          sk: "metadata",                 // Sort Key
           name: "Jim Roberts",
           first_name: "Jim",
           last_name: "Roberts",
@@ -31,6 +31,5 @@ async function putItems() {
 
 putItems()
     .then((data) =>
-        console.log("PutItem succeeded with HTTP code:", JSON.stringify(data.$metadata.httpStatusCode, null, 2))
-    )
+        console.log("PutItem succeeded with HTTP code:", JSON.stringify(data.$metadata.httpStatusCode, null, 2)))
     .catch((error) => console.error(JSON.stringify(error, null, 2)));
