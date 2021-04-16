@@ -20,10 +20,6 @@ async function batchGetItems() {
                   pk: "jose.schneller@somewhere.com",
                   sk: "metadata",
                 },
-                {
-                  pk: "jose.schneller@somewhere.com2",
-                  sk: "metadata"
-                },
               ],
               // For this use case, the data does not changed often so why not get the
               // reads at half the cost? Your use case might be different and need true.
