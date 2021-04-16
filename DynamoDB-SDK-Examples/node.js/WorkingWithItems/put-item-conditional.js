@@ -36,6 +36,5 @@ async function putItems() {
 
 putItems()
     .then((data) =>
-        console.log("PutItem succeeded:", JSON.stringify(data, null, 2))
-    )
+        console.log("PutItem succeeded:", JSON.stringify(data, null, 2)))
     .catch((error) => console.error(JSON.stringify(error, null, 2)));
