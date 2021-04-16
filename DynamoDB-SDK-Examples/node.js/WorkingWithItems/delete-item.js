@@ -1,4 +1,4 @@
-/* This is an example of a Delete with a ConditionExpression using
+/* This is an example of a DeleteCommand with a ConditionExpression using
 the higher level DocumentClient for Amazon DynamoDB. The conditional
 expression must be true for this DeleteCommand to succeed. */
 
@@ -28,5 +28,5 @@ async function deleteItem() {
 
 deleteItem()
     .then((data) =>
-        console.log("PutItem succeeded:", JSON.stringify(data, null, 2)))
+        console.log("DeleteCommand succeeded:", JSON.stringify(data, null, 2)))
     .catch((error) => console.error(JSON.stringify(error, null, 2)));

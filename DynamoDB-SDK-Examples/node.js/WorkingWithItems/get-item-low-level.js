@@ -1,6 +1,10 @@
+/*
+This example uses the low level DynamoDB client with the getItem call to get one item from DynamoDB.
+ */
 
 const { DynamoDB } = require('@aws-sdk/client-dynamodb');
-async function getItems() {
+
+async function getItem() {
     const params = {
         TableName: "RetailDatabase",
         Key: {
@@ -13,7 +17,7 @@ async function getItems() {
     return await client.getItem(params);
 }
 
-getItems()
+getItem()
     .then((data) =>
         console.log("GetItem succeeded:", JSON.stringify(data.Item, null, 2))
     )
