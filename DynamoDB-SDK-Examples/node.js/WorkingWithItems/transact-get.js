@@ -1,39 +1,44 @@
-const AWS = require("aws-sdk");
+// This is an example of a simple TransactGetCommand with the higher level DocumentClient for Amazon DynamoDB
 
-AWS.config.update({ region: "us-west-2" });
+const { DynamoDBClient } = require("@aws-sdk/client-dynamodb");
+const { DynamoDBDocumentClient, TransactGetCommand } = require("@aws-sdk/lib-dynamodb");
 
-const documentClient = new AWS.DynamoDB.DocumentClient();
-
-// Define the partition keys for the two items we want to get.
-async function transactGetItem() {
-  const params = {
-    TransactItems: [
-      {
-        Get: {
-          TableName: "Products",
-          Key: {
-            ProductId: "B07J1337PJ42",
-          },
-        },
-      },
-      {
-        Get: {
-          TableName: "Orders",
-          Key: {
-            OrderId: "171-3549115-4111337",
-          },
-        },
-      },
-    ],
-    ReturnConsumedCapacity: "TOTAL",
-  };
-
-  const response = await documentClient.transactGet(params).promise();
-  return response;
+async function batchGetItems() {
+  const client = new DynamoDBClient({ region: "us-west-2" });
+  const ddbDocClient = DynamoDBDocumentClient.from(client);
+  try {
+    return await ddbDocClient.send(
+        new TransactGetCommand({
+          TransactItems: [
+            {
+              Get: {
+                TableName: "RetailDatabase",
+                Key: {
+                  pk: "vikram.johnson@somewhere.com",
+                  sk: "metadata",
+                },
+              },
+            },
+            {
+              Get: {
+                TableName: "RetailDatabase",
+                Key: {
+                  pk: "jose.schneller@somewhere.com",
+                  sk: "metadata",
+                },
+              },
+            },
+          ],
+          //This returns an object with info on how much capacity the operation used and is optional.
+          ReturnConsumedCapacity: "TOTAL",
+        })
+    );
+  } catch (err) {
+    console.error(err);
+  }
 }
 
-transactGetItem()
-  .then((data) =>
-    console.log("TransactGetItem succeeded:", JSON.stringify(data, null, 2))
-  )
-  .catch((error) => console.error(JSON.stringify(error, null, 2)));
+batchGetItems()
+    .then((data) =>
+        console.log("TransactGetCommand succeeded:", JSON.stringify(data, null, 2)))
+    .catch((error) => console.error(JSON.stringify(error, null, 2)));
