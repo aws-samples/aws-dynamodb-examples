@@ -3,7 +3,7 @@
 const { DynamoDBClient } = require("@aws-sdk/client-dynamodb");
 const { DynamoDBDocumentClient, TransactGetCommand } = require("@aws-sdk/lib-dynamodb");
 
-async function batchGetItems() {
+async function transactGetItems() {
   const client = new DynamoDBClient({ region: "us-west-2" });
   const ddbDocClient = DynamoDBDocumentClient.from(client);
   try {
@@ -38,7 +38,7 @@ async function batchGetItems() {
   }
 }
 
-batchGetItems()
+transactGetItems()
     .then((data) =>
         console.log("TransactGetCommand succeeded:", JSON.stringify(data, null, 2)))
     .catch((error) => console.error(JSON.stringify(error, null, 2)));
