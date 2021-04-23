@@ -37,4 +37,4 @@ async function createTable() {
 
 createTable()
     .then((data) => console.log(data))
-    .catch((error) => console.log("An error occured while deleting the table:" + ' ' + error.message ));
+    .catch((error) => console.log("An error occured while creating the table:" + ' ' + error.message ));

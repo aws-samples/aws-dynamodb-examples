@@ -1,4 +1,4 @@
-// A simple script to delete a DynamoDB table. 
+// A simple script to delete a DynamoDB table.
 
 const { DynamoDBClient, DeleteTableCommand } = require('@aws-sdk/client-dynamodb');
 

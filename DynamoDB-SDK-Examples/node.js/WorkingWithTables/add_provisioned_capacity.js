@@ -22,4 +22,4 @@ async function addCapacity() {
 
 addCapacity()
     .then((data) => console.log(data))
-    .catch((error) => console.log("An error occured while deleting the table:" + ' ' + error.message ));
+    .catch((error) => console.log("An error occured while updating the table:" + ' ' + error.message ));

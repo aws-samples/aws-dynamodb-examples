@@ -1,11 +1,19 @@
-const AWS = require("aws-sdk");
+// A simple script to describe the quotas on an existing table.
 
-const dynamodb = new AWS.DynamoDB({ region: "us-west-2" });
+const {DynamoDBClient, DescribeLimitsCommand } = require('@aws-sdk/client-dynamodb');
 
-const describeLimits = async () => {
-  const response = await dynamodb.describeLimits().promise();
+const REGION = "us-west-2";
+const TableName = "Music"; //Change this to your table name
 
-  console.log(JSON.stringify(response, null, 2));
-};
+const dbclient = new DynamoDBClient({ region: REGION });
 
-describeLimits().catch((error) => console.error(JSON.stringify(error, null, 2)));
+async function describeLimits() {
+  const params = {
+    TableName: TableName,
+  };
+  return await dbclient.send( new DescribeLimitsCommand(params));
+}
+
+describeLimits()
+    .then((data) => console.log(data))
+    .catch((error) => console.log("An error occured while get the table limits:" + ' ' + error.message ));
