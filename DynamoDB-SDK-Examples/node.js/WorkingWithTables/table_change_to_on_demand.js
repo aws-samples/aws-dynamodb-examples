@@ -1,4 +1,10 @@
-// A simple script to switch a table to on-demand capacity mode.
+/*
+A simple script to switch a table to on-demand capacity mode.
+
+Note: Changing a table to on-demand mode may take a few minutes if DynamoDB
+must create partitions in the background to meet the minimum for on-demand
+capacity mode.
+*/
 
 const { DynamoDBClient, UpdateTableCommand } = require('@aws-sdk/client-dynamodb');
 
