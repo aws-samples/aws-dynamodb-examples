@@ -1,13 +1,19 @@
-const AWS = require("aws-sdk");
+// A simple script to delete a DynamoDB table. 
 
-const dynamodb = new AWS.DynamoDB({ region: "us-west-2" });
+const { DynamoDBClient, DeleteTableCommand } = require('@aws-sdk/client-dynamodb');
 
-const deleteTable = async () => {
-  const response = await dynamodb
-    .deleteTable({ TableName: "Music" }) // Substitute your table name for "Music"
-    .promise();
+const REGION = "us-west-2";
+const TableName = "Music";
 
-  console.log("Table has been deleted");
-};
+const dbclient = new DynamoDBClient({ region: REGION });
 
-deleteTable().catch((error) => console.error(JSON.stringify(error, null, 2)));
+async function deleteTable() {
+  const params = {
+    TableName: TableName,
+  };
+  return await dbclient.send( new DeleteTableCommand(params));
+}
+
+deleteTable()
+    .then((data) => console.log(data))
+    .catch((error) => console.log("An error occured while deleting the table:" + ' ' + error.message ));

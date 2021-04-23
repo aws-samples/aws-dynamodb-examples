@@ -9,7 +9,6 @@ This section contains Node.js code for examples and common tasks with Amazon Dyn
 | BatchGet              | [Node.js](./WorkingWithItems/batch-get.js)               |
 | BatchWrite            | [Node.js](./WorkingWithItems/batch-write.js)             |
 | DeleteItem            | [Node.js](./WorkingWithItems/delete-item.js)             |
-| DeleteItemConditional | Node.js                                                  |
 | GetItem               | [Node.js](./WorkingWithItems/get-item.js)                |
 | PutItem               | [Node.js](./WorkingWithItems/put-item.js)                |
 | PutItemConditional    | [Node.js](./WorkingWithItems/put-item-conditional.js)    |
