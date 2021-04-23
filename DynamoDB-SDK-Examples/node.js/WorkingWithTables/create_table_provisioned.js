@@ -1,41 +1,44 @@
-const AWS = require("aws-sdk");
+// A simple script to create an provisioned capacity mode DynamoDB table.
 
-const dynamodb = new AWS.DynamoDB({ region: "us-west-2" });
+const { DynamoDBClient, CreateTableCommand } = require('@aws-sdk/client-dynamodb');
 
-const createTable = async () => {
-  const response = await dynamodb
-    .createTable({
-      AttributeDefinitions: [
-        {
-          AttributeName: "Artist",
-          AttributeType: "S",
-        },
-        {
-          AttributeName: "SongTitle",
-          AttributeType: "S",
-        },
-      ],
-      KeySchema: [
-        {
-          AttributeName: "Artist",
-          KeyType: "HASH", // Partition key
-        },
-        {
-          AttributeName: "SongTitle",
-          KeyType: "RANGE", // Sort key
-        },
-      ],
-      BillingMode: "PROVISIONED",
-      ProvisionedThroughput: {
-        ReadCapacityUnits: 5,
-        WriteCapacityUnits: 10,
-      },
-      TableName: "Music", // Substitute your table name for "Music"
-    })
-    .promise();
+const REGION = "us-west-2";
+const TableName = "Music";
 
-  await dynamodb.waitFor("tableExists", { TableName: "Music" }).promise();
-  console.log("Table has been created, please continue to insert data");
-};
+const dbclient = new DynamoDBClient({ region: REGION });
 
-createTable().catch((error) => console.error(JSON.stringify(error, null, 2)));
+async function createTable() {
+    const params = {
+        AttributeDefinitions: [
+            {
+                AttributeName: "Artist",
+                AttributeType: "S",
+            },
+            {
+                AttributeName: "SongTitle",
+                AttributeType: "S",
+            },
+        ],
+        KeySchema: [
+            {
+                AttributeName: "Artist",
+                KeyType: "HASH", // Partition key
+            },
+            {
+                AttributeName: "SongTitle",
+                KeyType: "RANGE", // Sort key
+            },
+        ],
+        BillingMode: "PROVISIONED",
+        ProvisionedThroughput: {
+            ReadCapacityUnits: 5,
+            WriteCapacityUnits: 5,
+        },
+        TableName: TableName, // Substitute your table name for "Music"
+    };
+    return await dbclient.send( new CreateTableCommand(params));
+}
+
+createTable()
+    .then((data) => console.log(data))
+    .catch((error) => console.log("An error occured while deleting the table:" + ' ' + error.message ));
