@@ -29,8 +29,10 @@ async fn main() -> Result<(), dynamodb::Error> {
 
     let resp = client.create_table()
         .table_name(table_name)
-        .set_key_schema(Some(vec![hash_key_schema, range_key_schema]))
-        .set_attribute_definitions(Some(vec![hash_key_attribute, range_key_attribute]))
+        .key_schema(hash_key_schema)
+        .key_schema(range_key_schema)
+        .attribute_definitions(hash_key_attribute)
+        .attribute_definitions(range_key_attribute)
         .billing_mode(BillingMode::PayPerRequest)
         .send()
         .await?;
