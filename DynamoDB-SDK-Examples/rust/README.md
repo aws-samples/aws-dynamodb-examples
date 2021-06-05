@@ -69,3 +69,20 @@ This section contains Rust code for examples and common tasks with Amazon Dynamo
 | UpdateGlobalTable and UpdateGlobalTableSettings     | Rust |
 | UpdateTable On-Demand                               | Rust |
 | UpdateTable Provisioned                             | Rust |
+
+# Setting up environment variable
+Before you run the examples, make sure you set up the environment variable for your AWS credential & region info
+
+Linux/MacOS
+```
+export AWS_ACCESS_KEY_ID=...
+export AWS_SECRET_ACCESS_KEY=...
+export AWS_DEFAULT_REGION=... # eg. us-east-1
+```
+
+Windows
+```
+set AWS_ACCESS_KEY_ID=...
+set AWS_SECRET_ACCESS_KEY=...
+set AWS_DEFAULT_REGION=... # eg. us-east-1
+```
