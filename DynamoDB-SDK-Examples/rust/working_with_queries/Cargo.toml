@@ -1,0 +1,31 @@
+[package]
+name = "working_with_queries"
+version = "0.1.0"
+authors = ["Erben Mo <moerben@amazon.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+dynamodb = { git = "https://github.com/awslabs/aws-sdk-rust", tag = "v0.0.4-alpha", package = "aws-sdk-dynamodb" }
+tokio = { version = "1", features = ["full"] }
+
+[[bin]]
+name = "prepare-query-data"
+path = "src/prepare-query-data/main.rs"
+
+[[bin]]
+name = "query-consistent-read"
+path = "src/query-consistent-read/main.rs"
+
+[[bin]]
+name = "query-scan-filter"
+path = "src/query-scan-filter/main.rs"
+
+[[bin]]
+name = "query-projection"
+path = "src/query-projection/main.rs"
+
+[[bin]]
+name = "query-consumed-capacity"
+path = "src/query-consumed-capacity/main.rs"
