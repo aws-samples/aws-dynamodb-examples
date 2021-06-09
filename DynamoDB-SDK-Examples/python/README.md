@@ -8,8 +8,8 @@ This section contains Python code for examples and common tasks with Amazon Dyna
 | --------------------- | ------------------------------------------------------- |
 | BatchGet              | [Python](./WorkingWithItems/batch_get.py)               |
 | BatchWrite            | [Python](./WorkingWithItems/batch_write.py)             |
-| DeleteItem            | Python                                                  |
-| DeleteItemConditional | Python                                                  |
+| DeleteItem            | [Python](./WorkingWithItems/delete_item.py)             |
+| DeleteItemConditional | [Python](./WorkingWithItems/delete_item2.py)            |
 | GetItem               | [Python](./WorkingWithItems/get_item.py)                |
 | PutItem               | [Python](./WorkingWithItems/put_item.py)                |
 | PutItemConditional    | [Python](./WorkingWithItems/put_item_conditional.py)    |
