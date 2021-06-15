@@ -1,5 +1,8 @@
 use dynamodb::model::{AttributeValue, ReturnValue};
 
+// increment the "Awards" count by 1 if the current "Released" flag is set to false
+// run "cargo run --bin put-item" to create an item with "Released" flag set to false
+// run "cargo run --bin update-item" to update the "Released" flag to true
 #[tokio::main]
 async fn main() -> Result<(), dynamodb::Error> {
     let client = dynamodb::Client::from_env();
@@ -8,7 +11,6 @@ async fn main() -> Result<(), dynamodb::Error> {
     let artist = AttributeValue::S(String::from("No One You Know"));    // hash key
     let song_title = AttributeValue::S(String::from("Call Me Today"));  // range key
 
-    // increment the "Awards" count by if the current "Released" flag is set to false
     let update_expression = String::from("SET Awards = Awards + :a");
     let condition_expression = String::from("Released = :r");
     let released = AttributeValue::Bool(true);
