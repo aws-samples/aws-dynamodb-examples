@@ -25,3 +25,11 @@ path = "src/update-item/main.rs"
 [[bin]]
 name = "delete-item"
 path = "src/delete-item/main.rs"
+
+[[bin]]
+name = "conditional-put-item"
+path = "src/conditional-put-item/main.rs"
+
+[[bin]]
+name = "conditional-update-item"
+path = "src/conditional-update-item/main.rs"
