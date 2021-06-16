@@ -33,3 +33,11 @@ path = "src/conditional-put-item/main.rs"
 [[bin]]
 name = "conditional-update-item"
 path = "src/conditional-update-item/main.rs"
+
+[[bin]]
+name = "batch-write"
+path = "src/batch-write/main.rs"
+
+[[bin]]
+name = "batch-get"
+path = "src/batch-get/main.rs"
