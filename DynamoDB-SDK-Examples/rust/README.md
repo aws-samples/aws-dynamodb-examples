@@ -2,6 +2,8 @@
 
 This section contains Rust code for examples and common tasks with Amazon DynamoDB.
 
+Note: the AWS Rust SDK is still in alpha/beta. The samples in this repo worked as of their writing, but may not work with future versions of the SDK as its development progresses. If you find a samples that does not work, please [open an issue against this repo](https://github.com/aws-samples/aws-dynamodb-examples/issues).
+
 Go [here for more AWS Rust SDK examples](https://github.com/awslabs/aws-sdk-rust/tree/main/sdk/examples).
 
 ## Setting up environment variable
