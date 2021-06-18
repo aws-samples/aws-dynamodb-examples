@@ -2,6 +2,8 @@
 
 This section contains Rust code for examples and common tasks with Amazon DynamoDB.
 
+Go [here for more AWS Rust SDK examples](https://github.com/awslabs/aws-sdk-rust/tree/main/sdk/examples).
+
 ## Setting up environment variable
 Before you run the examples, make sure you set up the environment variable for your AWS credential & region info
 
