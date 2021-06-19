@@ -1,0 +1,19 @@
+[package]
+name = "working_with_streams"
+version = "0.1.0"
+authors = ["Erben Mo <moerben@amazon.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+dynamodb = { git = "https://github.com/awslabs/aws-sdk-rust", tag = "v0.0.4-alpha", package = "aws-sdk-dynamodb" }
+tokio = { version = "1", features = ["full"] }
+
+[[bin]]
+name = "enable-update-streams"
+path = "src/enable-update-streams/main.rs"
+
+[[bin]]
+name = "disable-update-streams"
+path = "src/disable-update-streams/main.rs"
