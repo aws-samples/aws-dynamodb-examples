@@ -17,3 +17,7 @@ path = "src/create-index/main.rs"
 [[bin]]
 name = "delete-index"
 path = "src/delete-index/main.rs"
+
+[[bin]]
+name = "query-index"
+path = "src/query-index/main.rs"
