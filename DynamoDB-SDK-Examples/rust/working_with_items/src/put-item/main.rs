@@ -23,6 +23,6 @@ async fn main() -> Result<(), dynamodb::Error> {
 
     let resp = request.send().await?;
 
-    println!("Item is inserted. Consumed throuhgput: {:?}", resp.consumed_capacity);
+    println!("Item is inserted. Consumed throughput: {:?}", resp.consumed_capacity);
     Ok(())
 }
