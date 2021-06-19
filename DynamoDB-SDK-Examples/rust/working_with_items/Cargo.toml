@@ -41,3 +41,11 @@ path = "src/batch-write/main.rs"
 [[bin]]
 name = "batch-get"
 path = "src/batch-get/main.rs"
+
+[[bin]]
+name = "transact-put"
+path = "src/transact-put/main.rs"
+
+[[bin]]
+name = "transact-get"
+path = "src/transact-get/main.rs"
