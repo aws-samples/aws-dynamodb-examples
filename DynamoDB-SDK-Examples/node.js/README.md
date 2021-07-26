@@ -34,11 +34,19 @@ Directory contains example code using Node.js and PartiQL with Amazon DynamoDB
 
 | All Examples 👉        | Node.js                                                           |
 | ---------------------- | ----------------------------------------------------------------- |
-| ConsistentRead         | [Node.js](./WorkingWithQueries/query-consistent-read.js)          |
+| Consistent read         | [Node.js](./WorkingWithQueries/query-consistent-read.js)          |
 | Count                  | [Node.js](./WorkingWithQueries/query-scan-count.js)               |
-| FilterExpression       | [Node.js](./WorkingWithQueries/query-filter-expression.js)        |
-| ProjectionExpression   | [Node.js](./WorkingWithQueries/query-projection-expression.js)    |
-| ReturnConsumedCapacity | [Node.js](./WorkingWithQueries/query-return-consumed-capacity.js) |
+| Filter expression       | [Node.js](./WorkingWithQueries/query-filter-expression.js)        |
+| Projection expression   | [Node.js](./WorkingWithQueries/query-projection-expression.js)    |
+| Return consumed capacity | [Node.js](./WorkingWithQueries/query-return-consumed-capacity.js) |
+| Key condition and begins_with | [Node.js](./WorkingWithQueries/query-key-condition-expression-begins-with.js) |
+| Key condition, begins_with, sort order | [Node.js](./WorkingWithQueries/query-key-condition-expression-begins-with-sort-order.js) |
+| Key condiftion and between dates | [Node.js](./WorkingWithQueries/query-key-condition-expression-between-dates.js) |
+| Key condition and between numbers | [Node.js](./WorkingWithQueries/query-key-condition-expression-between-numbers.js) |
+| Key condition and equals | [Node.js](./WorkingWithQueries/query-key-condition-expression-equals.js) |
+| Key condition and greater or equals | [Node.js](./WorkingWithQueries/query-key-condition-expression-greater-equal.js) |
+| Key condition and greater than | [Node.js](./WorkingWithQueries/query-key-condition-expression-greater.js) |
+| Key consition and less than | [Node.js](./WorkingWithQueries/query-key-condition-expression-less-equal.js) |
 
 ## Working with Scans
 
