@@ -6,7 +6,7 @@ This section contains .NET code for examples and common tasks with Amazon Dynamo
 
 | All Examples 👉       | .NET |
 | --------------------- | ---- |
-| BatchGet              | .NET |
+| BatchGet              | [.NET](./WorkingWithItems/BatchGetItem.cs) |
 | BatchWrite            | .NET |
 | DeleteItem            | [.NET](./WorkingWithItems/DeleteItem.cs) |
 | DeleteItemConditional | [.NET](./WorkingWithItems/DeleteItemConditional.cs) |
