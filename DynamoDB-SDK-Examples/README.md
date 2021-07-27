@@ -70,3 +70,7 @@ This directory contains examples in various AWS SDKs for use with Amazon DynamoD
 | UpdateGlobalTable and UpdateGlobalTableSettings     | C++ | [Go](./golang/WorkingWithTables/updateGlobalTable/updateGlobalTable.go)  | Java | JavaScript | .NET | [Node.js](./node.js/WorkingWithTables/update-global-table-and-global-table-settings.js)   | PHP | Python                                                              | Rust |
 | UpdateTable On-Demand                               | C++ | [Go](./golang/WorkingWithTables/changeTableToOnDemand/changeTableToOnDemand.go)  | Java | JavaScript | .NET | [Node.js](./node.js/WorkingWithTables/table_change_to_on_demand.js)                       | PHP | [Python](./python/WorkingWithTables/table_change_to_on-demand.py)   | Rust |
 | UpdateTable Provisioned                             | C++ | [Go](./golang/WorkingWithTables/changeTableToProvisioned/changeTableToProvisioned.go)  | Java | JavaScript | .NET | [Node.js](./node.js/WorkingWithTables/table_change_to_provisioned.js)                     | PHP | [Python](./python/WorkingWithTables/table_change_to_provisioned.py) | Rust |
+
+While not an AWS SDK, if you are looking for alternative SDKs and libraries for DynamoDB. Try the following:
+* [EfficientDynamoDB for C#](https://github.com/AllocZero/EfficientDynamoDb) is an alternative to the AWS .Net SDK.
+* [Dynamoose](https://dynamoosejs.com/) is a Mongoose inspired library for node.js and TypeScript.
