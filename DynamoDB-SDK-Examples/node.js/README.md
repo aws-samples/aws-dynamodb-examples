@@ -17,7 +17,7 @@ This section contains Node.js code for examples and common tasks with Amazon Dyn
 | UpdateItem            | [Node.js](./WorkingWithItems/update-item.js)             |
 | UpdateItemConditional | [Node.js](./WorkingWithItems/update-item-conditional.js) |
 
-## Working with PartiQL
+## Working with PartiQL for DynamoDB
 Directory contains example code using Node.js and PartiQL with Amazon DynamoDB
 
 | All Examples 👉       | Node.js                                                   |
@@ -28,9 +28,11 @@ Directory contains example code using Node.js and PartiQL with Amazon DynamoDB
 
 | All Examples 👉 | Node.js |
 | --------------- | ------- |
-|                 | Node.js |
+| Create Index    | TBD |
+| Delete Index    | TBD |
+| Query Index     | TBD |
 
-## Working with Queries
+## Working with Query Operations
 
 | All Examples 👉        | Node.js                                                           |
 | ---------------------- | ----------------------------------------------------------------- |
@@ -52,14 +54,14 @@ Directory contains example code using Node.js and PartiQL with Amazon DynamoDB
 | Projection expression   | [Node.js](./WorkingWithQueries/query-projection-expression.js)    |
 | Return consumed capacity | [Node.js](./WorkingWithQueries/query-return-consumed-capacity.js) |
 
-## Working with Scans
+## Working with Scan Operations
 
 | All Examples 👉 | Node.js |
 | --------------- | ------- |
 | Scan with Pagination | [Node.js](./WorkingWithScans/scan-fetch-all-pagination.js) |
 | Scan Parallel Segments|[Node.js](./WorkingWithScans/scan-parallel-segments.js) |
 
-## Working with Streams
+## Working with DynamoDB Streams
 
 | All Examples 👉 | Node.js |
 | --------------- | ------- |
