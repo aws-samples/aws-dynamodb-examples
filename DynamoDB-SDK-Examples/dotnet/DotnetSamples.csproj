@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.3.106.12" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 
 </Project>
