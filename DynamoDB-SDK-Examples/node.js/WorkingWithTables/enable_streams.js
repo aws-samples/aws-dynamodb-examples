@@ -1,20 +1,26 @@
-const AWS = require("aws-sdk");
+// The StreamViewType can be any of the following values 'NEW_IMAGE'|'OLD_IMAGE'|'NEW_AND_OLD_IMAGES'|'KEYS_ONLY',
+// but if you want to use Global Tables, it must be set to NEW_AND_OLD_IMAGES.
 
-const dynamodb = new AWS.DynamoDB({ region: "us-west-2" });
+const {DynamoDBClient, UpdateTableCommand } = require('@aws-sdk/client-dynamodb');
 
-const updateTable = async () => {
-  const response = await dynamodb
-    .updateTable({
-      StreamSpecification: {
-        StreamEnabled: true,
-        StreamViewType: "NEW_AND_OLD_IMAGES", // Could be any of the following values 'NEW_IMAGE'|'OLD_IMAGE'|'NEW_AND_OLD_IMAGES'|'KEYS_ONLY'
-      },
-      TableName: "Music", // Substitute your table name for "Music"
-    })
-    .promise();
+const REGION = "us-west-2";
+const TableName = "Music";
 
-  await dynamodb.waitFor("tableExists", { TableName: "Music" }).promise();
-  console.log("Table has been updated");
-};
+const dbclient = new DynamoDBClient({ region: REGION });
 
-updateTable().catch((error) => console.error(JSON.stringify(error, null, 2)));
+async function enableStreams() {
+    const params = {
+        TableName: TableName,
+        StreamSpecification: {
+            StreamEnabled: true,
+            StreamViewType: "NEW_AND_OLD_IMAGES",
+        },
+    };
+    return await dbclient.send( new UpdateTableCommand(params));
+    // await waitForTableExists({ maxWaitTime: 20, maxDelay: 5, minDelay: 1 }, { TableName: TableName }  );
+    // this code is commented out as there is something wrong with the waiters in v3. Once that is fixed, this code will be updated.
+}
+
+enableStreams()
+    .then((data) => console.log(data))
+    .catch((error) => console.log("An error occured while enabling streams:" + ' ' + error.message ));
