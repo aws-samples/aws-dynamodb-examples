@@ -82,7 +82,7 @@ Directory contains example code using Node.js and PartiQL with Amazon DynamoDB
 | Disable Autoscaling                                 | [Node.js](./WorkingWithTables/disable_auto_scaling.js)                            |
 | Enable Autoscaling                                  | [Node.js](./WorkingWithTables/enable_auto_scaling.js)                             |
 | Update Autoscaling                                  | [Node.js](./WorkingWithTables/update_auto_scaling.js)                             |
-| Disable Streams                                     | TBD                                                                          |
+| Disable Streams                                     | [Node.js](./WorkingWithTables/disable_streams.js)                                                                          |
 | Enable Streams                                      | [Node.js](./WorkingWithTables/enable_streams.js)                                  |
 | ListTables                                          | [Node.js](./WorkingWithTables/list_tables.js)                                     |
 | UpdateGlobalTable and UpdateGlobalTableSettings     | [Node.js](./WorkingWithTables/update-global-table-and-global-table-settings.js)   |
