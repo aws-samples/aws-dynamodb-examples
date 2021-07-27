@@ -34,11 +34,23 @@ Directory contains example code using Node.js and PartiQL with Amazon DynamoDB
 
 | All Examples 👉        | Node.js                                                           |
 | ---------------------- | ----------------------------------------------------------------- |
-| ConsistentRead         | [Node.js](./WorkingWithQueries/query-consistent-read.js)          |
+| Consistent read         | [Node.js](./WorkingWithQueries/query-consistent-read.js)          |
 | Count                  | [Node.js](./WorkingWithQueries/query-scan-count.js)               |
-| FilterExpression       | [Node.js](./WorkingWithQueries/query-filter-expression.js)        |
-| ProjectionExpression   | [Node.js](./WorkingWithQueries/query-projection-expression.js)    |
-| ReturnConsumedCapacity | [Node.js](./WorkingWithQueries/query-return-consumed-capacity.js) |
+| Filter expression       | [Node.js](./WorkingWithQueries/query-filter-expression.js)        |
+| Key condition and begins_with | [Node.js](./WorkingWithQueries/query-key-condition-expression-begins-with.js) |
+| Key condition, begins_with, sort order | [Node.js](./WorkingWithQueries/query-key-condition-expression-begins-with-sort-order.js) |
+| Key condiftion and between dates | [Node.js](./WorkingWithQueries/query-key-condition-expression-between-dates.js) |
+| Key condition and between numbers | [Node.js](./WorkingWithQueries/query-key-condition-expression-between-numbers.js) |
+| Key condition and equals | [Node.js](./WorkingWithQueries/query-key-condition-expression-equals.js) |
+| Key condition and greater or equals | [Node.js](./WorkingWithQueries/query-key-condition-expression-greater-equal.js) |
+| Key condition and greater than | [Node.js](./WorkingWithQueries/query-key-condition-expression-greater.js) |
+| Key condition and less than | [Node.js](./WorkingWithQueries/query-key-condition-expression-less-equal.js) |
+| Key condition and less | [Node.js](./WorkingWithQueries/query-key-condition-expression-less.js) |
+| Query with pagination | [Node.js](./WorkingWithQueries/query-with-pagination.js) |
+| Query with pagination - all data | [Node.js](./WorkingWithQueries/query-with-pagination-all-data.js) |
+| Query with backwards pagination | [Node.js](./WorkingWithQueries/query-with-pagination-backwards.js) |
+| Projection expression   | [Node.js](./WorkingWithQueries/query-projection-expression.js)    |
+| Return consumed capacity | [Node.js](./WorkingWithQueries/query-return-consumed-capacity.js) |
 
 ## Working with Scans
 
@@ -69,8 +81,8 @@ Directory contains example code using Node.js and PartiQL with Amazon DynamoDB
 | DescribeTable                                       | [Node.js](./WorkingWithTables/describe_table.js)                                  |
 | Disable Autoscaling                                 | [Node.js](./WorkingWithTables/disable_auto_scaling.js)                            |
 | Enable Autoscaling                                  | [Node.js](./WorkingWithTables/enable_auto_scaling.js)                             |
-| Update Autoscaling                                  | Node.js                                                                           |
-| Disable Streams                                     | Node.js                                                                           |
+| Update Autoscaling                                  | [Node.js](./WorkingWithTables/update_auto_scaling.js)                             |
+| Disable Streams                                     | TBD                                                                          |
 | Enable Streams                                      | [Node.js](./WorkingWithTables/enable_streams.js)                                  |
 | ListTables                                          | [Node.js](./WorkingWithTables/list_tables.js)                                     |
 | UpdateGlobalTable and UpdateGlobalTableSettings     | [Node.js](./WorkingWithTables/update-global-table-and-global-table-settings.js)   |
