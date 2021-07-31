@@ -21,7 +21,7 @@ namespace DotnetSamples.WorkingWithItems
 
             var client = new AmazonDynamoDBClient(RegionEndpoint.USWest2);
 
-            //Cration of the request as an example we will put an item on a secondary table, delete from origin table and update the status on a third table if current status is active
+            //Creation of the request. As an example, we will put an item on a secondary table, delete it from the original table and update the status on a third table if the current status is active
             var request = new TransactWriteItemsRequest()
             {
                 TransactItems = new List<TransactWriteItem>()
@@ -93,7 +93,7 @@ namespace DotnetSamples.WorkingWithItems
             catch (TransactionCanceledException cancelation)
             {
                 //We catch the error raised when the transaction is cancelled.
-                Console.WriteLine($"Transaction Cancelled: {string.Join(" ", cancelation.CancellationReasons.Where(c=> c != null).Select(c=> c.Message))}"); //List of conditions not met
+                Console.WriteLine($"Transaction Cancelled: {string.Join(string.Empty, cancelation.CancellationReasons.Where(c=> c != null).Select(c=> c.Message))}"); //We show a message that list the conditions not met
             }
             catch (Exception e)
             {
