@@ -13,8 +13,8 @@ This section contains .NET code for examples and common tasks with Amazon Dynamo
 | GetItem               | [.NET](./WorkingWithItems/GetItem.cs) |
 | PutItem               | [.NET](./WorkingWithItems/PutItem.cs) |
 | PutItemConditional    | [.NET](./WorkingWithItems/PutItemConditional.cs) |
-| TransactGet           | .NET |
-| TransactWrite         | .NET |
+| TransactGet           | [.NET](./WorkingWithItems/TransactGetItems.cs)   |
+| TransactWrite         | [.NET](./WorkingWithItems/TransactWriteItems.cs) |
 | UpdateItem            | [.NET](./WorkingWithItems/UpdateItem.cs) |
 | UpdateItemConditional | [.NET](./WorkingWithItems/UpdateItemConditional.cs) |
 
