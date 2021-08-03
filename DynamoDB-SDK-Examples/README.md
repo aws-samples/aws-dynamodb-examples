@@ -22,13 +22,13 @@ This directory contains examples in various AWS SDKs for use with Amazon DynamoD
 | --------------- | --- | --- | ---- | ---------- | ---- | ------- | --- | ------ | ---- |
 | Create Index    | C++ | Go  | Java | JavaScript | .NET | Node.js | PHP | Python | [Rust](./rust/working_with_indexes/src/create-index/main.rs) |
 | Delete Index    | C++ | Go  | Java | JavaScript | .NET | Node.js | PHP | Python | [Rust](./rust/working_with_indexes/src/delete-index/main.rs) |
-| Query Index     | C++ | Go  | Java | JavaScript | .NET | Node.js | PHP | Python | [Rust](./rust/working_with_indexes/src/query-index/main.rs) |
+| Query Index     | C++ | Go  | [Java Enhanced Async](./java/WorkingWithIndexes/TableAsyncQueryIndex.java)  | JavaScript | .NET | Node.js | PHP | Python | [Rust](./rust/working_with_indexes/src/query-index/main.rs) |
 
 ## Working with Queries
 
 | All Examples 👉        | C++ | Go  | Java | JavaScript | .NET | Node.js                                                                   | PHP | Python                                                                  | Rust |
 | ---------------------- | --- | --- | ---- | ---------- | ---- | ------------------------------------------------------------------------- | --- | ----------------------------------------------------------------------- | ---- |
-| ConsistentRead         | C++ | Go  | Java | JavaScript | .NET | [Node.js](./node.js/WorkingWithQueries/query-consistent-read.js)          | PHP | [Python](./python/WorkingWithQueries/query-consistent-read.py)          | [Rust](./rust/working_with_queries/src/query-consistent-read/main.rs) |
+| ConsistentRead         | C++ | Go  | [Java Enhanced Async](./java/WorkingWithQueries/TableAsyncQuery.java)  | JavaScript | .NET | [Node.js](./node.js/WorkingWithQueries/query-consistent-read.js)          | PHP | [Python](./python/WorkingWithQueries/query-consistent-read.py)          | [Rust](./rust/working_with_queries/src/query-consistent-read/main.rs) |
 | Count                  | C++ | Go  | Java | JavaScript | .NET | [Node.js](./node.js/WorkingWithQueries/query-scan-count.js)               | PHP | [Python](./python/WorkingWithQueries/query-scan-count.py)               | Rust |
 | FilterExpression       | C++ | Go  | Java | JavaScript | .NET | [Node.js](./node.js/WorkingWithQueries/query-filter-expression.js)        | PHP | [Python](./python/WorkingWithQueries/query_filter_expression.py)        | [Rust](./rust/working_with_queries/src/query-scan-filter/main.rs) |
 | ProjectionExpression   | C++ | Go  | Java | JavaScript | .NET | [Node.js](./node.js/WorkingWithQueries/query-projection-expression.js)    | PHP | [Python](./python/WorkingWithQueries/query_projection_expression.py)    | [Rust](./rust/working_with_queries/src/query-projection/main.rs) |
@@ -38,7 +38,7 @@ This directory contains examples in various AWS SDKs for use with Amazon DynamoD
 
 | All Examples 👉          | C++ | Go  | Java | JavaScript | .NET | Node.js | PHP | Python | Rust |
 | ------------------------ | --- | --- | ---- | ---------- | ---- | ------- | --- | ------ | ---- |
-| Scan with pagination     | C++ | Go  | Java | JavaScript | .NET | Node.js | PHP | Python | [Rust](./rust/working_with_scans/src/scan-with-pagination/main.rs) |
+| Scan with pagination     | C++ | Go  | [Java Enhanced Async](./java/WorkingWithScans/TableAsyncScan.java) | JavaScript | .NET | Node.js | PHP | Python | [Rust](./rust/working_with_scans/src/scan-with-pagination/main.rs) |
 | Scan in parallel         | C++ | Go  | Java | JavaScript | .NET | Node.js | PHP | Python | [Rust](./rust/working_with_scans/src/scan-in-parallel/main.rs) |
 
 ## Working with Streams

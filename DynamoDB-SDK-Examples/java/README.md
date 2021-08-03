@@ -25,19 +25,20 @@ This section contains JAVA code for examples and common tasks with Amazon Dynamo
 | FilterExpression       | [Java](./WorkingWithQueries/QueryWithFilterExpression.java)  |
 | ProjectionExpression   | [Java](./WorkingWithQueries/QueryWithProjectionExpression.java)  |
 | ConsistentRead         | [Java](./WorkingWithQueries/QueryConsistentRead.java)  |
+| Enhanced Async Query   | [Java](./WorkingWithQueries/TableAsyncQuery.java)  |
 
 
 ## Working with Indexes
 
 | All Examples 👉 | Java |
 | --------------- | ---- |
-|                 | Java |
+| Enhanced Async Query   | [Java](./WorkingWithIndexes/TableAsyncQueryIndex.java) |
 
 ## Working with Scans
 
 | All Examples 👉 | Java |
 | --------------- | ---- |
-|                 | Java |
+| Enhanced Async Scan FilterCondition | [Java](./WorkingWithScans/TableAsyncScan.java) |
 
 ## Working with Streams
 
