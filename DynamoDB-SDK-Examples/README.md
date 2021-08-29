@@ -18,7 +18,7 @@ This directory contains examples in various AWS SDKs for use with Amazon DynamoD
 | PartiQL SimpleSelectStatement | C++ | Go  | Java | JavaScript | .NET | [Node.js](./node.js/WorkingWithPartiQL/simple-select-statement.js) | PHP | Python | Rust |
 | PartiQL ExecuteStatement | C++ | Go  | Java | JavaScript | .NET | [Node.js](./node.js/WorkingWithPartiQL/execute-statement.js) | PHP | Python | Rust |
 | PartiQL ExecuteTransaction | C++ | Go  | Java | JavaScript | .NET | [Node.js](./node.js/WorkingWithPartiQL/execute-transaction.js) | PHP | Python | Rust |
-| PartiQL BatchExecuteStatement | C++ | Go  | Java | JavaScript | .NET | [Node.js](./node.js/WorkingWithPartiQL/batch-execute-statementjs) | PHP | Python | Rust |
+| PartiQL BatchExecuteStatement | C++ | Go  | Java | JavaScript | .NET | [Node.js](./node.js/WorkingWithPartiQL/batch-execute-statement.js) | PHP | Python | Rust |
 
 | All Examples 👉 | C++ | Go  | Java | JavaScript | .NET | Node.js | PHP | Python | Rust |
 | --------------- | --- | --- | ---- | ---------- | ---- | ------- | --- | ------ | ---- |
