@@ -16,9 +16,9 @@ This directory contains examples in various AWS SDKs for use with Amazon DynamoD
 | UpdateItem            | C++ | Go  | Java | JavaScript | [.NET](./dotnet/WorkingWithItems/UpdateItem.cs)            | [Node.js](./node.js/WorkingWithItems/update-item.js)             | PHP | [Python](./python/WorkingWithItems/updating_item.py)           | [Rust](./rust/working_with_items/src/update-item/main.rs) |
 | UpdateItemConditional | C++ | Go  | Java | JavaScript | [.NET](./dotnet/WorkingWithItems/UpdateItemConditional.cs) | [Node.js](./node.js/WorkingWithItems/update-item-conditional.js) | PHP | [Python](./python/WorkingWithItems/update_item_conditional.py) | [Rust](./rust/working_with_items/src/conditional-update-item/main.rs) |
 | PartiQL SimpleSelectStatement | C++ | Go  | Java | JavaScript | .NET | [Node.js](./node.js/WorkingWithPartiQL/simple-select-statement.js) | PHP | Python | Rust |
-| PartiQL ExecuteStatement | C++ | Go  | Java | JavaScript | .NET | [Node.js](./node.js/WorkingWithPartiQL/execute-statement.js.js) | PHP | Python | Rust |
-| PartiQL ExecuteTransaction | C++ | Go  | Java | JavaScript | .NET | [Node.js](./node.js/WorkingWithPartiQL/execute-transaction.js.js.js) | PHP | Python | Rust |
-| PartiQL BatchExecuteStatement | C++ | Go  | Java | JavaScript | .NET | [Node.js](./node.js/WorkingWithPartiQL/batch-execute-statement.js.js.js) | PHP | Python | Rust |
+| PartiQL ExecuteStatement | C++ | Go  | Java | JavaScript | .NET | [Node.js](./node.js/WorkingWithPartiQL/execute-statement.js) | PHP | Python | Rust |
+| PartiQL ExecuteTransaction | C++ | Go  | Java | JavaScript | .NET | [Node.js](./node.js/WorkingWithPartiQL/execute-transaction.js) | PHP | Python | Rust |
+| PartiQL BatchExecuteStatement | C++ | Go  | Java | JavaScript | .NET | [Node.js](./node.js/WorkingWithPartiQL/batch-execute-statementjs) | PHP | Python | Rust |
 
 | All Examples 👉 | C++ | Go  | Java | JavaScript | .NET | Node.js | PHP | Python | Rust |
 | --------------- | --- | --- | ---- | ---------- | ---- | ------- | --- | ------ | ---- |
@@ -40,8 +40,8 @@ This directory contains examples in various AWS SDKs for use with Amazon DynamoD
 
 | All Examples 👉          | C++ | Go  | Java | JavaScript | .NET | Node.js | PHP | Python | Rust |
 | ------------------------ | --- | --- | ---- | ---------- | ---- | ------- | --- | ------ | ---- |
-| Scan with pagination     | C++ | Go  | [Java Enhanced Async](./java/WorkingWithScans/TableAsyncScan.java) | JavaScript | .NET | Node.js | PHP | Python | [Rust](./rust/working_with_scans/src/scan-with-pagination/main.rs) |
-| Scan in parallel         | C++ | Go  | Java | JavaScript | .NET | Node.js | PHP | Python | [Rust](./rust/working_with_scans/src/scan-in-parallel/main.rs) |
+| Scan with pagination     | C++ | Go  | [Java Enhanced Async](./java/WorkingWithScans/TableAsyncScan.java) | JavaScript | .NET | [Node.js](./node.js/WorkingWithScans/scan-fetch-all-pagination.js) | PHP | Python | [Rust](./rust/working_with_scans/src/scan-with-pagination/main.rs) |
+| Scan in parallel         | C++ | Go  | Java | JavaScript | .NET | [Node.js](./node.js/WorkingWithScans/scan-parallel-segments.js) | PHP | Python | [Rust](./rust/working_with_scans/src/scan-in-parallel/main.rs) |
 
 ## Working with Streams
 
