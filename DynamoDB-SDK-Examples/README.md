@@ -16,7 +16,7 @@ This directory contains examples in various AWS SDKs for use with Amazon DynamoD
 | UpdateItem            | C++ | Go  | Java | JavaScript | [.NET](./dotnet/WorkingWithItems/UpdateItem.cs)            | [Node.js](./node.js/WorkingWithItems/update-item.js)             | PHP | [Python](./python/WorkingWithItems/updating_item.py)           | [Rust](./rust/working_with_items/src/update-item/main.rs) |
 | UpdateItemConditional | C++ | Go  | Java | JavaScript | [.NET](./dotnet/WorkingWithItems/UpdateItemConditional.cs) | [Node.js](./node.js/WorkingWithItems/update-item-conditional.js) | PHP | [Python](./python/WorkingWithItems/update_item_conditional.py) | [Rust](./rust/working_with_items/src/conditional-update-item/main.rs) |
 
-## Working with PartiQL
+## Working with PartiQL for DynamoDB
 
 | All Examples 👉 | C++ | Go  | Java | JavaScript | .NET | Node.js | PHP | Python | Rust |
 | --------------- | --- | --- | ---- | ---------- | ---- | ------- | --- | ------ | ---- |
