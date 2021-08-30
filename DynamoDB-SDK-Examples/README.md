@@ -15,10 +15,17 @@ This directory contains examples in various AWS SDKs for use with Amazon DynamoD
 | TransactWrite         | C++ | Go  | Java | JavaScript | [.NET](./dotnet/WorkingWithItems/TransactWriteItems.cs)           | [Node.js](./node.js/WorkingWithItems/transact-write.js)          | PHP | [Python](./python/WorkingWithItems/transact_write.py)          | [Rust](./rust/working_with_items/src/transact-put/main.rs) |
 | UpdateItem            | C++ | Go  | Java | JavaScript | [.NET](./dotnet/WorkingWithItems/UpdateItem.cs)            | [Node.js](./node.js/WorkingWithItems/update-item.js)             | PHP | [Python](./python/WorkingWithItems/updating_item.py)           | [Rust](./rust/working_with_items/src/update-item/main.rs) |
 | UpdateItemConditional | C++ | Go  | Java | JavaScript | [.NET](./dotnet/WorkingWithItems/UpdateItemConditional.cs) | [Node.js](./node.js/WorkingWithItems/update-item-conditional.js) | PHP | [Python](./python/WorkingWithItems/update_item_conditional.py) | [Rust](./rust/working_with_items/src/conditional-update-item/main.rs) |
+
+## Working with PartiQL
+
+| All Examples 👉 | C++ | Go  | Java | JavaScript | .NET | Node.js | PHP | Python | Rust |
+| --------------- | --- | --- | ---- | ---------- | ---- | ------- | --- | ------ | ---- |
 | PartiQL SimpleSelectStatement | C++ | Go  | Java | JavaScript | .NET | [Node.js](./node.js/WorkingWithPartiQL/simple-select-statement.js) | PHP | Python | Rust |
 | PartiQL ExecuteStatement | C++ | Go  | Java | JavaScript | .NET | [Node.js](./node.js/WorkingWithPartiQL/execute-statement.js) | PHP | Python | Rust |
 | PartiQL ExecuteTransaction | C++ | Go  | Java | JavaScript | .NET | [Node.js](./node.js/WorkingWithPartiQL/execute-transaction.js) | PHP | Python | Rust |
 | PartiQL BatchExecuteStatement | C++ | Go  | Java | JavaScript | .NET | [Node.js](./node.js/WorkingWithPartiQL/batch-execute-statement.js) | PHP | Python | Rust |
+
+## Working with Indexes
 
 | All Examples 👉 | C++ | Go  | Java | JavaScript | .NET | Node.js | PHP | Python | Rust |
 | --------------- | --- | --- | ---- | ---------- | ---- | ------- | --- | ------ | ---- |
