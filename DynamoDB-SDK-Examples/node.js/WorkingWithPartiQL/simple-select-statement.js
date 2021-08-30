@@ -6,10 +6,12 @@ const { unmarshall } = require("@aws-sdk/util-dynamodb");
 // Create low level client
 const dbclient = new DynamoDB({ region: REGION });
 
+const MovieTitle = "The Flash";
+
 // In PartiQL, the single quotes and double quotes matter. Double quotes are used to signify variable names,
 // single quotes are for string literals. Notice the info.directors where I am getting the array of directors
 // inside of the info map object.
-const params = { Statement: `SELECT info.directors FROM Movies WHERE "year" = 2016 AND "title" = 'The Flash'`}
+const params = { Statement: `SELECT info.directors FROM Movies WHERE "year" = 2016 AND "title" = '${MovieTitle}'`}
 
 const executePartiQLStatement = async () => {
     return data = await dbclient.executeStatement(params);
