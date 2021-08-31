@@ -8,11 +8,15 @@ const dbclient = new DynamoDB({ region: REGION });
 
 const title = "The Flash";
 
+//Even though year is a number as you can see below in Parameters, DynamoDB's JSON format notes it as a number,
+// but stores it as a string.
+const year = "2016";
+
 // In PartiQL, the single quotes and double quotes matter. Double quotes are used to signify variable names,
 // single quotes are for string literals. Notice the info.directors where I am getting the array of directors
 // inside of the info map object.
-const params = { Statement: `SELECT info.directors FROM Movies WHERE "year" = 2016 AND "title" = ?`,
-    Parameters: [{"S": title}]
+const params = { Statement: `SELECT info.directors FROM Movies WHERE "year" = ? AND "title" = ? `,
+    Parameters: [{"N": year}, {"S": title}]
 }
 
 const executePartiQLStatement = async () => {
