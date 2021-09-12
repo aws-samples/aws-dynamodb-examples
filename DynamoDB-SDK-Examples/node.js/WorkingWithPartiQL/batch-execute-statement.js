@@ -175,7 +175,5 @@ let payload = {
 insertTeams(payload)
     .then((data) => {
         console.log(JSON.stringify(data, null, 2));
-    });
-      }
-  )
-  .catch ((error) => console.error(JSON.stringify(error, null, 2)));
+    })
+    .catch ((error) => console.error(JSON.stringify(error, null, 2)));
