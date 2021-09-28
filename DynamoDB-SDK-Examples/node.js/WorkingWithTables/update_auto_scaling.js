@@ -1,3 +1,6 @@
+const { applicationAutoscalingClient } = require(@aws-sdk/client-application-auto-scaling);
+const { IAMClient, IAM } = require(@aws-sdk/client-iam);
+
 const AWS = require("aws-sdk");
 
 const applicationAutoscaling = new AWS.ApplicationAutoScaling({
@@ -5,6 +8,12 @@ const applicationAutoscaling = new AWS.ApplicationAutoScaling({
   region: "us-west-2",
   logger: console,
 });
+
+const minCapacity = 1; // The minimum capacity for the auto-scaling policy
+const maxCapacity = 100; // The maximum capacity for the auto-scaling policy
+const readTarget = 50; // The target percentage utilization for read capacity
+const writeTarget = 50; // The target percentage utilization for write capacity
+const cooldownDurationSec = 150; // How long in seconds
 
 const tableName = "Music";
 
