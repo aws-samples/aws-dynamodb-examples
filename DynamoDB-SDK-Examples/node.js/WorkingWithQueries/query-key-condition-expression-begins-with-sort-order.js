@@ -46,7 +46,7 @@ const query = async () => {
 (async () => {
     try {
         const data = await query();
-        console.log("Query succeeded:", JSON.stringify(data, null, 2));
+        console.log(JSON.stringify(data.Items[0], null, 2));
     } catch (error) {
         console.error(error);
     }

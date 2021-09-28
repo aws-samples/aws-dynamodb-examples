@@ -1,12 +1,14 @@
-const AWS = require("aws-sdk");
+//const AWS = require("aws-sdk");
 
-const dynamodb = new AWS.DynamoDB({ region: "us-west-2" });
+//const dynamodb = new AWS.DynamoDB({ region: "us-west-2" });
+const { DynamoDBClient, UpdateTableCommand, UpdateGlobalTableCommand } = require('@aws-sdk/client-dynamodb');
 
-const tableName = "Music";
+const REGION = "us-west-2";
+//const TABLENAME = "RetailDatabase";
 
 async function addGlobalTableRegion() {
   const params = {
-    TableName: tableName,
+    TableName: "RetailDatabase",
     ReplicaUpdates: [
       {
         Create: {
@@ -16,8 +18,10 @@ async function addGlobalTableRegion() {
     ],
   };
 
-  const response = await dynamodb.updateTable(params).promise();
-  return response;
+  const dbclient = new DynamoDBClient({ region: REGION });
+
+  return await dbclient.send( new UpdateTableCommand(params));
+
 }
 
 addGlobalTableRegion()

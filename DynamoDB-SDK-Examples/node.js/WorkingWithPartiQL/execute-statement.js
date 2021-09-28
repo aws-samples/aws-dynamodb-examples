@@ -6,8 +6,12 @@ const { unmarshall } = require("@aws-sdk/util-dynamodb");
 // Create low level client
 const dbclient = new DynamoDB({ region: REGION });
 
+const pk = "TEAM";
+
 // In PartiQL, we can execute statement with execute-statement which performs one action similar to Scan/Query.
-const params = { Statement: `SELECT * FROM "copa-america" WHERE "pk" = 'TEAM'`}
+const params = { Statement: `SELECT * FROM "copa-america" WHERE "pk" = ?`,
+                Parameters: [{"S": pk}]
+};
 
 const executePartiQLStatement = async () => {
     return data = await dbclient.executeStatement(params);
