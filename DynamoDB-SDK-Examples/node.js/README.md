@@ -22,10 +22,10 @@ Directory contains example code using Node.js and PartiQL with Amazon DynamoDB
 
 | All Examples 👉       | Node.js                                                   |
 | --------------------- | --------------------------------------------------------- |
-| PartiQL SimpleSelectStatement | [Node.js](./node.js/WorkingWithPartiQL/simple-select-statement.js) |
-| PartiQL ExecuteStatement | [Node.js](./node.js/WorkingWithPartiQL/execute-statement.js) | 
-| PartiQL ExecuteTransaction | [Node.js](./node.js/WorkingWithPartiQL/execute-transaction.js) |
-| PartiQL BatchExecuteStatement | [Node.js](./node.js/WorkingWithPartiQL/batch-execute-statement.js) |
+| PartiQL SimpleSelectStatement | [Node.js](./WorkingWithPartiQL/simple-select-statement.js) |
+| PartiQL ExecuteStatement | [Node.js](./WorkingWithPartiQL/execute-statement.js) | 
+| PartiQL ExecuteTransaction | [Node.js](./WorkingWithPartiQL/execute-transaction.js) |
+| PartiQL BatchExecuteStatement | [Node.js](./WorkingWithPartiQL/batch-execute-statement.js) |
 
 ## Working with Indexes
 
