@@ -18,6 +18,15 @@ This section contains Python code for examples and common tasks with Amazon Dyna
 | UpdateItem            | [Python](./WorkingWithItems/updating_item.py)           |
 | UpdateItemConditional | [Python](./WorkingWithItems/update_item_conditional.py) |
 
+## Working with PartiQL for DynamoDB
+
+| All Examples 👉       | Python                                                   |
+| --------------------- | --------------------------------------------------------- |
+| PartiQL SimpleSelectStatement | [Python](./WorkingWithPartiQL/simple-select-statement.js) |
+| PartiQL ExecuteStatement      | Python                                                    | 
+| PartiQL ExecuteTransaction    | Python                                                    |
+| PartiQL BatchExecuteStatement | Python                                                    |
+
 ## Working with Indexes
 
 | All Examples 👉 | Python |
