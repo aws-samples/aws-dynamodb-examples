@@ -1,8 +1,8 @@
-# Amazon DynamoDB Examples
+# Amazon DynamoDB Examples and AWS SDK code examples
 
-This repository contains various code samples for the [Amazon DynamoDB documentation](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Programming.html).
+This repository contains various community and AWS committed code samples for [Amazon DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Programming.html).
 
-For the SDK code examples directly, you can find each language examples here:
+For AWS SDK code examples in various languages, you can find each language examples here:
 
 * [Node.js](./DynamoDB-SDK-Examples/node.js)
 * [Java](./DynamoDB-SDK-Examples/java)
@@ -12,4 +12,4 @@ For the SDK code examples directly, you can find each language examples here:
 * [Rust](./DynamoDB-SDK-Examples/rust)
 * [Ruby](./DynamoDB-SDK-Examples/ruby)
 
-If you are up for contributing, we welcome pull requests.
+PS. If you are up for contributing, we welcome pull requests.
