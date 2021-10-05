@@ -22,7 +22,7 @@ This section contains Python code for examples and common tasks with Amazon Dyna
 
 | All Examples 👉       | Python                                                   |
 | --------------------- | --------------------------------------------------------- |
-| PartiQL SimpleSelectStatement | [Python](./WorkingWithPartiQL/simple-select-statement.js) |
+| PartiQL SimpleSelectStatement | [Python](./WorkingWithPartiQL/simple-select-statement.py) |
 | PartiQL ExecuteStatement      | Python                                                    | 
 | PartiQL ExecuteTransaction    | Python                                                    |
 | PartiQL BatchExecuteStatement | Python                                                    |
