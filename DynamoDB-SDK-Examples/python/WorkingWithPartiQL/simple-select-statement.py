@@ -12,8 +12,8 @@ sk = "metadata"
 
 try:
     response = client.execute_statement(
-        Statement= 'SELECT * FROM ExampleTable WHERE "pk" = ? AND "sk" = ?',
-        Parameters= [{"S": pk}, {"S": sk}]
+        Statement= 'SELECT * FROM ExampleTable WHERE "pk" = ?',
+        Parameters= [{"S": pk}]
     )
 except ClientError as e:
     print(e.response['Error']['Message'])
