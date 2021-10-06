@@ -32,8 +32,8 @@ To contribute, send us a pull request. For small changes, such as fixing a typo 
 Before you send us a pull request, please be sure that:
 
 1. You're working from the latest source on the **master** branch.
-2. You check [existing open](https://github.com/awsdocs/aws-doc-sdk-examples/pulls), and [recently closed](https://github.com/awsdocs/aws-doc-sdk-examples/pulls?q=is%3Apr+is%3Aclosed), pull requests to be sure that someone else hasn't already addressed the problem.
-3. You [create an issue](https://github.com/synchrophoto/DynamoDB-SDK-examples/issues/new) before working on a contribution that will take a significant amount of your time.
+2. You check [existing open](https://github.com/aws-samples/aws-dynamodb-examples/pulls), and [recently closed](https://github.com/aws-samples/aws-dynamodb-examples/pulls?q=is%3Apr+is%3Aclosed), pull requests to be sure that someone else hasn't already addressed the problem.
+3. You [create an issue](https://github.com/aws-samples/aws-dynamodb-examples/issues/new) before working on a contribution that will take a significant amount of your time.
 
 For contributions that will take a significant amount of time, [open a new issue](https://github.com/synchrophoto/DynamoDB-SDK-examples/issues) to pitch your idea before you get started. Explain the problem and describe the content you want to see added to the documentation. Let us know if you'll write it yourself or if you'd like us to help. We'll discuss your proposal with you and let you know whether we're likely to accept it. We don't want you to spend a lot of time on a contribution that might be outside the scope of the documentation or that's already in the works.
 
@@ -43,10 +43,10 @@ Help us raise the bar for code examples, so that your code example will provide 
 
 When you submit a new code example to us, we strongly encourage you to include the following:
 
-* Provide a README.md file at the root level of your submission to help users save time and effort when they work with your example. At a minimum, your README.md file should describe what your example demonstrates, call out any prerequisites needed to run it, and then tell users how to run it. [Here's a good example](https://github.com/awsdocs/aws-doc-sdk-examples/blob/master/python/example_code/lambda/scheduled_lambda/README.md) of a useful README.md file.
-* Write your code in a modular style to help users more easily copy and reuse it in their own solutions. By "modular," we mean that your code should accept inputs from the caller and return outputs to the caller. Provide comments in the code that describe these inputs and outputs. Also, don't hard-code input values in modularized code. Instead, provide these values through your unit tests, as described in the next point. [Here's a good example]( https://github.com/awsdocs/aws-doc-sdk-examples/blob/master/python/example_code/lambda/scheduled_lambda/lambda_util.py) of code written in a modular style.
-* Add some type of [unit tests](https://en.wikipedia.org/wiki/Unit_testing ) to help users more easily run your example. These unit tests can use hard-coded input values (or input values provided by the user) to call your example code. [Here's a good example](https://github.com/awsdocs/aws-doc-sdk-examples/blob/master/python/example_code/lambda/scheduled_lambda/scheduled_lambda.py) of unit tests that use hard-coded input values.
-* Add standard error or exception handling to your code to enable easier troubleshooting and recovery. [Here's a good example]( https://github.com/awsdocs/aws-doc-sdk-examples/blob/master/python/example_code/lambda/scheduled_lambda/lambda_util.py) of standard error/exception handling.  
+* Provide a README.md file at the root level of your submission to help users save time and effort when they work with your example. At a minimum, your README.md file should describe what your example demonstrates, call out any prerequisites needed to run it, and then tell users how to run it.
+* Write your code in a modular style to help users more easily copy and reuse it in their own solutions. By "modular," we mean that your code should accept inputs from the caller and return outputs to the caller. Provide comments in the code that describe these inputs and outputs. Also, don't hard-code input values in modularized code. Instead, provide these values through your unit tests, as described in the next point.
+* Add some type of [unit tests](https://en.wikipedia.org/wiki/Unit_testing ) to help users more easily run your example. These unit tests can use hard-coded input values (or input values provided by the user) to call your example code.
+* Add standard error or exception handling to your code to enable easier troubleshooting and recovery.  
 
 If your code example submission is missing any of these things, we might ask you to include them before we merge.
 
@@ -54,7 +54,7 @@ Although many older code examples in this repo don't contain all of these things
 
 ## Finding contributions to work on
 
-If you'd like to contribute, but don't have a project in mind, look at the [open issues](https://github.com/synchrophoto/DynamoDB-SDK-examples/issues) in this repository for some ideas. Any issues with the [help wanted](https://github.com/synchrophoto/DynamoDB-SDK-examples/labels/help%20wanted) or [enhancement](https://github.com/synchrophoto/DynamoDB-SDK-examples/labels/enhancement) labels are a great place to start.
+If you'd like to contribute, but don't have a project in mind, look at the [open issues](https://github.com/aws-samples/aws-dynamodb-examples/issues) in this repository for some ideas. Any issues with the [help wanted](https://github.com/aws-samples/aws-dynamodb-examples/labels/help%20wanted) or [enhancement](https://github.com/aws-samples/aws-dynamodb-examples/labels/enhancement) labels are a great place to start.
 
 In addition to written content, we really appreciate new examples for our documentation, such as examples for different platforms or environments, and examples in additional programming languages.
 
@@ -68,4 +68,4 @@ If you discover a potential security issue, please notify AWS Security via our [
 
 ## Licensing
 
-See the [LICENSE](https://github.com/synchrophoto/DynamoDB-SDK-examples/blob/master/LICENSE) file for this project's licensing. We will ask you to confirm the licensing of your contribution. We may ask you to sign a [Contributor License Agreement (CLA)](http://en.wikipedia.org/wiki/Contributor_License_Agreement) for larger changes.
+See the [LICENSE](https://github.com/aws-samples/aws-dynamodb-examples/blob/master/LICENSE) file for this project's licensing. We will ask you to confirm the licensing of your contribution. We may ask you to sign a [Contributor License Agreement (CLA)](http://en.wikipedia.org/wiki/Contributor_License_Agreement) for larger changes.
