@@ -6,7 +6,7 @@ const REGION = "us-west-2";
 const TableName = "Music";
 const IndexName = "SongTitle-Artist-index";
 
-async function createIndex() {
+async function deleteIndex() {
     const client = new DynamoDBClient({ region: REGION });
     try {
         return await client.send(
@@ -24,6 +24,6 @@ async function createIndex() {
     }
 }
 
-createIndex()
+deleteIndex()
     .then((data) => console.log(data))
     .catch((error) => console.log("An error occured while creating the index:" + ' ' + error.message ));

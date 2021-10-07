@@ -7,7 +7,7 @@ const REGION = "us-west-2";
 const TableName = "Music";
 const IndexName = "SongTitle-Artist-index";
 
-async function createIndex() {
+async function updateIndex() {
     const client = new DynamoDBClient({ region: REGION });
     try {
         return await client.send(
@@ -29,6 +29,6 @@ async function createIndex() {
     }
 }
 
-createIndex()
+updateIndex()
     .then((data) => console.log(data.TableDescription))
-    .catch((error) => console.log("An error occured while creating the index:" + ' ' + error.message ));
+    .catch((error) => console.log("An error occured while updating the index capacity:" + ' ' + error.message ));
