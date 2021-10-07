@@ -30,7 +30,8 @@ This directory contains examples in various AWS SDKs for use with Amazon DynamoD
 | All Examples 👉 | C++ | Go  | Java | JavaScript | .NET | Node.js | PHP | Python | Rust |
 | --------------- | --- | --- | ---- | ---------- | ---- | ------- | --- | ------ | ---- |
 | Create Index    | C++ | Go  | Java | JavaScript | .NET | Node.js | PHP | Python | [Rust](./rust/working_with_indexes/src/create-index/main.rs) |
-| Delete Index    | C++ | Go  | Java | JavaScript | .NET | Node.js | PHP | Python | [Rust](./rust/working_with_indexes/src/delete-index/main.rs) |
+| Update Index Provisioned Capacity    | C++ | Go  | Java | JavaScript | .NET | [Node.js](./Node.js/WorkingWithIndexes/UpdateIndexProvisionedCapacity.js) | PHP | Python | Rust |
+| Delete Index    | C++ | Go  | Java | JavaScript | .NET | [Node.js](./Node.js/WorkingWithIndexes/DeleteIndex.js) | PHP | Python | [Rust](./rust/working_with_indexes/src/delete-index/main.rs) |
 | Query Index     | C++ | Go  | [Java Enhanced Async](./java/WorkingWithIndexes/TableAsyncQueryIndex.java)  | JavaScript | .NET | Node.js | PHP | Python | [Rust](./rust/working_with_indexes/src/query-index/main.rs) |
 
 ## Working with Queries
