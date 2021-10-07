@@ -21,9 +21,9 @@ This directory contains examples in various AWS SDKs for use with Amazon DynamoD
 | All Examples 👉 | C++ | Go  | Java | JavaScript | .NET | Node.js | PHP | Python | Rust |
 | --------------- | --- | --- | ---- | ---------- | ---- | ------- | --- | ------ | ---- |
 | PartiQL SimpleSelectStatement | C++ | Go  | Java | JavaScript | .NET | [Node.js](./node.js/WorkingWithPartiQL/simple-select-statement.js) | PHP | [Python](./python/WorkingWithPartiQL/simple-select-statement.py) | Rust |
-| PartiQL ExecuteStatement | C++ | Go  | Java | JavaScript | .NET | [Node.js](./node.js/WorkingWithPartiQL/execute-statement.js) | PHP | Python | Rust |
-| PartiQL ExecuteTransaction | C++ | Go  | Java | JavaScript | .NET | [Node.js](./node.js/WorkingWithPartiQL/execute-transaction.js) | PHP | Python | Rust |
-| PartiQL BatchExecuteStatement | C++ | Go  | Java | JavaScript | .NET | [Node.js](./node.js/WorkingWithPartiQL/batch-execute-statement.js) | PHP | Python | Rust |
+| PartiQL ExecuteStatement | C++ | Go  | Java | JavaScript | .NET | [Node.js](./node.js/WorkingWithPartiQL/execute-statement.js) | PHP | [Python](./python/WorkingWithPartiQL/execute-statement.py) | Rust |
+| PartiQL ExecuteTransaction | C++ | Go  | Java | JavaScript | .NET | [Node.js](./node.js/WorkingWithPartiQL/execute-transaction.js) | PHP | [Python](./python/WorkingWithPartiQL/execute-transaction.py) | Rust |
+| PartiQL BatchExecuteStatement | C++ | Go  | Java | JavaScript | .NET | [Node.js](./node.js/WorkingWithPartiQL/batch-execute-statement.js) | PHP | [Python](./python/WorkingWithPartiQL/batch-execute-statement.py) | Rust |
 
 ## Working with Indexes
 
