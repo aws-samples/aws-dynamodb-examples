@@ -24,4 +24,4 @@ async function DescribeBackup() {
 
 DescribeBackup()
     .then((data) => console.log(data))
-    .catch((error) => console.log("An error occured while deleting a backup:" + ' ' + error.message ));
+    .catch((error) => console.log("An error occured while describing a backup:" + ' ' + error.message ));
