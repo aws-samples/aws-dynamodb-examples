@@ -3,6 +3,7 @@
 This section contains Node.js code for examples and common tasks with Amazon DynamoDB.
 
 ## Working with Items
+Example code for working with items in Amazon DynamoDB.
 
 | All Examples 👉       | Node.js                                                  |
 | --------------------- | -------------------------------------------------------- |
@@ -28,6 +29,7 @@ Directory contains example code using Node.js and PartiQL with Amazon DynamoDB
 | PartiQL BatchExecuteStatement | [Node.js](./WorkingWithPartiQL/batch-execute-statement.js) |
 
 ## Working with Indexes
+Example code for managing indexes with Amazon DynamoDB.
 
 | All Examples 👉 | Node.js |
 | --------------- | ------- |
@@ -37,6 +39,7 @@ Directory contains example code using Node.js and PartiQL with Amazon DynamoDB
 | Query Index     | TBD |
 
 ## Working with Query Operations
+Example code for performing query operations with Amazon DynamoDB.
 
 | All Examples 👉        | Node.js                                                           |
 | ---------------------- | ----------------------------------------------------------------- |
@@ -72,6 +75,7 @@ Directory contains example code using Node.js and PartiQL with Amazon DynamoDB
 |                 | Node.js |
 
 ## Working with Tables
+Example code to help you manage Amazon DynamoDB tables, manage global tables, and more.
 
 | All Examples 👉                                     | Node.js                                                                           |
 | --------------------------------------------------- | --------------------------------------------------------------------------------- |
@@ -94,3 +98,12 @@ Directory contains example code using Node.js and PartiQL with Amazon DynamoDB
 | UpdateGlobalTable and UpdateGlobalTableSettings     | [Node.js](./WorkingWithTables/update-global-table-and-global-table-settings.js)   |
 | UpdateTable On-Demand                               | [Node.js](./WorkingWithTables/table_change_to_on_demand.js)                       |
 | UpdateTable Provisioned                             | [Node.js](./WorkingWithTables/table_change_to_provisioned.js)                     |
+
+## Working with Backups
+Example code that will help you manage backups of Amazon DynamoDB tables.
+
+| All Examples 👉                                     | Node.js                                                                           |
+| --------------------------------------------------- | --------------------------------------------------------------------------------- |
+| Create an on-demand backup                             | [Node.js](./WorkingWithBackups/CreateOn-DemandBackup.js)                         |
+| Delete backup                            | [Node.js](./WorkingWithBackups/DeleteBackup.js)                        |
+| Describe backup                                   | [Node.js](./WorkingWithBackups/DescribeBackup.js)                             |
