@@ -32,7 +32,8 @@ Directory contains example code using Node.js and PartiQL with Amazon DynamoDB
 | All Examples 👉 | Node.js |
 | --------------- | ------- |
 | Create Index    | TBD |
-| Delete Index    | TBD |
+| Update Index Provisioned Capacity    | [Node.js](./WorkingWithIndexes/UpdateIndexProvisionedCapacity.js) |
+| Delete Index    | [Node.js](./WorkingWithIndexes/DeleteIndex.js) |
 | Query Index     | TBD |
 
 ## Working with Query Operations
