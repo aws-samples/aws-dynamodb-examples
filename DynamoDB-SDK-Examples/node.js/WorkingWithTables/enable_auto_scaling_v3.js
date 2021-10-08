@@ -1,7 +1,6 @@
+// An example of how to create the components for autoscaling and then apply them to a DynamoDB table.
 const { applicationAutoscalingClient } = require(@aws-sdk/client-application-auto-scaling);
 const { IAMClient, IAM } = require(@aws-sdk/client-iam);
-
-
 
 const iam = new AWS.IAM({ apiVersion: "2010-05-08", region: "us-west-2", logger: console });
 const applicationAutoscaling = new AWS.ApplicationAutoScaling({
@@ -10,9 +9,9 @@ const applicationAutoscaling = new AWS.ApplicationAutoScaling({
     logger: console,
 });
 
-const tableName = "Music";
-const roleName = `${tableName}TableScalingRole`;
-const policyName = `${tableName}TableScalingPolicy`;
+const tableName = "Music"; // The name of the provisioned capacity mode DynamoDB table to enable autoscaling on.
+const roleName = `${tableName}TableScalingRole`; // The name of the IAM role to be created.
+const policyName = `${tableName}TableScalingPolicy`; // The name of the IAM policy to be created.
 
 const minCapacity = 1; // The minimum capacity for the auto-scaling policy
 const maxCapacity = 100; // The maximum capacity for the auto-scaling policy
@@ -20,6 +19,7 @@ const readTarget = 50; // The target percentage utilization for read capacity
 const writeTarget = 50; // The target percentage utilization for write capacity
 const cooldownDurationSec = 150; // How long in seconds
 
+// Construct the IAM policy document.
 const assumeRolePolicyDocument = {
     Version: "2012-10-17",
     Statement: [
@@ -32,6 +32,7 @@ const assumeRolePolicyDocument = {
     ],
 };
 
+// Create the permissions in JSON format that are necessary for the IAM policy.
 const policyDocument = {
     Version: "2012-10-17",
     Statement: [
