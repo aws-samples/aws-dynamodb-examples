@@ -20,12 +20,12 @@ This section contains Python code for examples and common tasks with Amazon Dyna
 
 ## Working with PartiQL for DynamoDB
 
-| All Examples 👉       | Python                                                   |
+| All Examples 👉       | Python                                                            |
 | --------------------- | --------------------------------------------------------- |
 | PartiQL SimpleSelectStatement | [Python](./WorkingWithPartiQL/simple-select-statement.py) |
-| PartiQL ExecuteStatement      | Python                                                    | 
-| PartiQL ExecuteTransaction    | Python                                                    |
-| PartiQL BatchExecuteStatement | Python                                                    |
+| PartiQL ExecuteStatement      | [Python](./WorkingWithPartiQL/execute-statement.py)       |
+| PartiQL ExecuteTransaction    | [Python](./WorkingWithPartiQL/execute-transaction.py)     |
+| PartiQL BatchExecuteStatement | [Python](./WorkingWithPartiQL/batch-execute-statement.py) |
 
 ## Working with Indexes
 
