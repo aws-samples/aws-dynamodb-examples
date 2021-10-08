@@ -14,11 +14,7 @@ const maxCapacity = 100; // The maximum capacity for the auto-scaling policy
 const readTarget = 50; // The target percentage utilization for read capacity
 const writeTarget = 50; // The target percentage utilization for write capacity
 const cooldownDurationSec = 150; // How long in seconds
-
 const tableName = "Music";
-
-const minCapacity = 1; // The minimum capacity for the auto-scaling policy
-const maxCapacity = 500; // The maximum capacity for the auto-scaling policy
 
 const updateAutoScaling = async () => {
   // Register the RCU targets for the table
