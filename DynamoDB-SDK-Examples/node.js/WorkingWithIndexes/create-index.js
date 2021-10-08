@@ -2,7 +2,7 @@
 
 //Import DynamoDBClient and UpdateTableCommand from AWS SDK v3 DynamoDB Client and initialize DynamoDB with the region.
 const REGION = "us-west-2";
-import { DynamoDBClient, UpdateTableCommand } from "@aws-sdk/client-dynamodb";
+const { DynamoDBClient, UpdateTableCommand } = require('@aws-sdk/client-dynamodb');
 const client = new DynamoDBClient({ region: REGION });
 
 const createIndex = async () => {
