@@ -8,6 +8,16 @@ const client = new DynamoDBClient({ region: REGION });
 const createIndex = async () => {
     let params = {
         TableName: 'copa-america',
+        AttributeDefinitions: [
+            {
+                AttributeName: "group_id",
+                AttributeType: "S"
+            },
+            {
+                AttributeName: "group_ranking",
+                AttributeType: "S"
+            }
+        ],
         GlobalSecondaryIndexUpdates: [{
             Create: {
                 IndexName: "group_id-group_ranking-index",
@@ -29,7 +39,7 @@ const createIndex = async () => {
     }
     //Creating Indexes is supported with the UpdateTableCommand which takes the parameters such as IndexName, Schema for index and the projection.
     try {
-        const command = new UpdateTableCommand(input);
+        const command = new UpdateTableCommand(params);
         return await client.send(command);
     } catch (e) {
         console.error(JSON.stringify(e))
@@ -38,4 +48,7 @@ const createIndex = async () => {
 
 createIndex()
     .then((data) => console.log(JSON.stringify(data, null, 2)))
+    /*
+        Consoles the response with TableDescription and the TableStatus as "UPDATING" 
+    */
     .catch((error) => console.error(JSON.stringify(error, null, 2)));
