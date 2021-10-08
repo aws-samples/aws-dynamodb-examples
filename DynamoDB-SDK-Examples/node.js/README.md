@@ -91,7 +91,7 @@ Example code to help you manage Amazon DynamoDB tables, manage global tables, an
 | DescribeTable                                       | [Node.js](./WorkingWithTables/describe_table.js)                                  |
 | Disable Autoscaling                                 | [Node.js](./WorkingWithTables/disable_auto_scaling.js)                            |
 | Enable Autoscaling                                  | [Node.js](./WorkingWithTables/enable_auto_scaling.js)                             |
-| Update Autoscaling                                  | [Node.js](./WorkingWithTables/update_auto_scaling_v2.js)                             |
+| Update Autoscaling                                  | [Node.js SDK v3](./WorkingWithTables/update_auto_scaling_v3.js), [Node.js SDK v2](./WorkingWithTables/update_auto_scaling_v2.js)                              |
 | Disable Streams                                     | [Node.js](./WorkingWithTables/disable_streams.js)                                                                          |
 | Enable Streams                                      | [Node.js](./WorkingWithTables/enable_streams.js)                                  |
 | ListTables                                          | [Node.js](./WorkingWithTables/list_tables.js)                                     |
