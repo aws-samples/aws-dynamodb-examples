@@ -1,5 +1,5 @@
-// A simple script to update the provisioned capacity of a global secondary index (GSI) on an existing table DynamoDB table.
-// Note: this specific script does not alter a GSI's auto-scaling settings or Contributor Insights settings. That is a different script.
+// A simple example to update the provisioned capacity of a global secondary index (GSI) on an existing table DynamoDB table.
+// Note: this specific example does not alter a GSI's auto-scaling settings or Contributor Insights settings. That is a different script.
 
 const { DynamoDBClient, UpdateTableCommand } = require('@aws-sdk/client-dynamodb'); // ES Modules import
 
