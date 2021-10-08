@@ -1,4 +1,4 @@
-// A simple script to delete a global secondary index (GSI) on an existing table DynamoDB table.
+// A simple example to delete a global secondary index (GSI) on an existing table DynamoDB table.
 
 const { DynamoDBClient, UpdateTableCommand } = require('@aws-sdk/client-dynamodb'); // ES Modules import
 
