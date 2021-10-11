@@ -59,7 +59,7 @@ Node.js example code for performing query operations with Amazon DynamoDB.
 | Query with pagination - all data | [Node.js](./WorkingWithQueries/query-with-pagination-all-data.js) | Example of a query API call and paginating through all of the results. |
 | Query with backwards pagination | [Node.js](./WorkingWithQueries/query-with-pagination-backwards.js) | Example of a query API call and paginating backwards through the results. |
 | Projection expression   | [Node.js](./WorkingWithQueries/query-projection-expression.js)    | Example of a query API call with a projection expression. |
-|
+
 ## Working with Scan Operations
 Node.js example code for performing scan operations with Amazon DynamoDB.
 
