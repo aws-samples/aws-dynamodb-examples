@@ -23,42 +23,42 @@ Node.js example code using PartiQL for Amazon DynamoDB
 
 | All Examples 👉       | Node.js                                                   | Comments |
 | --------------------- | --------------------------------------------------------- | ------- |
-| PartiQL SimpleSelectStatement | [Node.js](./WorkingWithPartiQL/simple-select-statement.js) | |
-| PartiQL ExecuteStatement | [Node.js](./WorkingWithPartiQL/execute-statement.js) |  |
-| PartiQL ExecuteTransaction | [Node.js](./WorkingWithPartiQL/execute-transaction.js) | |
-| PartiQL BatchExecuteStatement | [Node.js](./WorkingWithPartiQL/batch-execute-statement.js) | |
+| PartiQL SimpleSelectStatement | [Node.js](./WorkingWithPartiQL/simple-select-statement.js) | Example code of a select with PartiQL in Node.js. |
+| PartiQL ExecuteStatement | [Node.js](./WorkingWithPartiQL/execute-statement.js) | Example code of a select with PartiQL in Node.js. |
+| PartiQL ExecuteTransaction | [Node.js](./WorkingWithPartiQL/execute-transaction.js) | Example code of executing a transaction using PartiQL in Node.js. |
+| PartiQL BatchExecuteStatement | [Node.js](./WorkingWithPartiQL/batch-execute-statement.js) | Example code of executing batch operations using PartiQL in Node.js. |
 
 ## Working with Indexes
 Node.js example code for managing indexes with Amazon DynamoDB.
 
 | All Examples 👉 | Node.js | Comments |
 | --------------- | ------- | ------- |
-| Create Index    | TBD | |
-| Update Index Provisioned Capacity    | [Node.js](./WorkingWithIndexes/UpdateIndexProvisionedCapacity.js) | |
-| Delete Index    | [Node.js](./WorkingWithIndexes/DeleteIndex.js) | |
-| Query Index     | TBD |
+| Create Index    | [Node.js](./WorkingWithIndexes/CreateIndex.js) | Example code on how to create an index with Node.js |
+| Update Index Provisioned Capacity    | [Node.js](./WorkingWithIndexes/UpdateIndexProvisionedCapacity.js) | Example code on how to update an existing index's provisioned capacity. |
+| Delete Index    | [Node.js](./WorkingWithIndexes/DeleteIndex.js) | Example code on how to delete an existing index with Node.js. |
+| Query Index     | TBD | Example code on how to query a secondary index with Node.js. |
 
 ## Working with Query Operations
 Node.js example code for performing query operations with Amazon DynamoDB.
 
 | All Examples 👉        | Node.js                                                           |Comments              |
 | ---------------------- | ----------------------------------------------------------------- | ---------------------- |
-| Consistent read         | [Node.js](./WorkingWithQueries/query-consistent-read.js)          | Example code of the query API call with strong consistency |
+| Consistent read         | [Node.js](./WorkingWithQueries/query-consistent-read.js)          | Example code of a query API call with strong consistency |
 | Count                  | [Node.js](./WorkingWithQueries/query-scan-count.js)               | |
-| Filter expression       | [Node.js](./WorkingWithQueries/query-filter-expression.js)        | Example code of the query API call with a filter expression |
-| Key condition and begins_with | [Node.js](./WorkingWithQueries/query-key-condition-expression-begins-with.js) | Example code of the query API call using a key condition and begins_with on the sort key |
-| Key condition, begins_with, sort order | [Node.js](./WorkingWithQueries/query-key-condition-expression-begins-with-sort-order.js) | |
-| Key condiftion and between dates | [Node.js](./WorkingWithQueries/query-key-condition-expression-between-dates.js) | |
-| Key condition and between numbers | [Node.js](./WorkingWithQueries/query-key-condition-expression-between-numbers.js) | |
-| Key condition and equals | [Node.js](./WorkingWithQueries/query-key-condition-expression-equals.js) | |
-| Key condition and greater or equals | [Node.js](./WorkingWithQueries/query-key-condition-expression-greater-equal.js) | |
-| Key condition and greater than | [Node.js](./WorkingWithQueries/query-key-condition-expression-greater.js) | |
-| Key condition and less than | [Node.js](./WorkingWithQueries/query-key-condition-expression-less-equal.js) | |
-| Key condition and less | [Node.js](./WorkingWithQueries/query-key-condition-expression-less.js) | |
-| Query with pagination | [Node.js](./WorkingWithQueries/query-with-pagination.js) | |
-| Query with pagination - all data | [Node.js](./WorkingWithQueries/query-with-pagination-all-data.js) | |
-| Query with backwards pagination | [Node.js](./WorkingWithQueries/query-with-pagination-backwards.js) | |
-| Projection expression   | [Node.js](./WorkingWithQueries/query-projection-expression.js)    | |
+| Filter expression       | [Node.js](./WorkingWithQueries/query-filter-expression.js)        | Example code of a query API call with a filter expression |
+| Key condition and begins_with | [Node.js](./WorkingWithQueries/query-key-condition-expression-begins-with.js) | Example code of a query API call using a key condition and begins_with on the sort key |
+| Key condition, begins_with, sort order | [Node.js](./WorkingWithQueries/query-key-condition-expression-begins-with-sort-order.js) | Example code of a query API call using a key condition, begins_with on the sort key, and a sort order |
+| Key condition and between dates | [Node.js](./WorkingWithQueries/query-key-condition-expression-between-dates.js) | Example code of a query API call using a key condition and between two dates. |
+| Key condition and between numbers | [Node.js](./WorkingWithQueries/query-key-condition-expression-between-numbers.js) | Example code of a query API call using a key condition and between two numbers. |
+| Key condition and equals | [Node.js](./WorkingWithQueries/query-key-condition-expression-equals.js) | Example code of a query API call using a key condition and compares two values with equals. |
+| Key condition and greater or equals | [Node.js](./WorkingWithQueries/query-key-condition-expression-greater-equal.js) | Example code of a query API call using a key condition and one value is greater than or equal to another. |
+| Key condition and greater than | [Node.js](./WorkingWithQueries/query-key-condition-expression-greater.js) | Example code of a query API call using a key condition and one value is greater than another. |
+| Key condition and less or equals | [Node.js](./WorkingWithQueries/query-key-condition-expression-less-equal.js) | Example code of a query API call using a key condition and one value is less than or equal to another. |
+| Key condition and less | [Node.js](./WorkingWithQueries/query-key-condition-expression-less.js) | Example code of a query API call using a key condition and one value is less than another. |
+| Query with pagination | [Node.js](./WorkingWithQueries/query-with-pagination.js) | Example of a query API call and paginating through the results. |
+| Query with pagination - all data | [Node.js](./WorkingWithQueries/query-with-pagination-all-data.js) | Example of a query API call and paginating through all of the results. |
+| Query with backwards pagination | [Node.js](./WorkingWithQueries/query-with-pagination-backwards.js) | Example of a query API call and paginating backwards through the results. |
+| Projection expression   | [Node.js](./WorkingWithQueries/query-projection-expression.js)    | Example of a query API call with a projection expression. |
 |
 ## Working with Scan Operations
 Node.js example code for performing scan operations with Amazon DynamoDB.
