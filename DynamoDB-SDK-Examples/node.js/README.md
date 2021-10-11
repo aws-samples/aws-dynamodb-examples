@@ -65,8 +65,8 @@ Node.js example code for performing scan operations with Amazon DynamoDB.
 
 | All Examples 👉 | Node.js | Comments              |
 | --------------- | ------- | ------- |
-| Scan with Pagination | [Node.js](./WorkingWithScans/scan-fetch-all-pagination.js) | Example code for scanning|
-| Scan Parallel Segments|[Node.js](./WorkingWithScans/scan-parallel-segments.js) | |
+| Scan with Pagination | [Node.js](./WorkingWithScans/scan-fetch-all-pagination.js) | Example code to perform a scan operation with pagingating the results. |
+| Scan Parallel Segments|[Node.js](./WorkingWithScans/scan-parallel-segments.js) | Example code to perform a parallel scan operation in segments. |
 
 ## Working with DynamoDB Streams
 
@@ -80,24 +80,23 @@ Example code to help you manage Amazon DynamoDB tables, manage global tables, an
 | All Examples 👉                                     | Node.js                                                                           | Comments              |
 | --------------------------------------------------- | --------------------------------------------------------------------------------- |---------------------|
 | Add Global Table Region                             | [Node.js](./WorkingWithTables/add-global-table-region.js)                         | An example of adding a region for DynamoDB global tables.                    |
-| Add Provisioned Capacity                            | [Node.js](./WorkingWithTables/add_provisioned_capacity.js)                        | |
-| CreateGlobalTable                                   | [Node.js](./WorkingWithTables/create-global-table.js)                             ||
-| CreateTable On-Demand                               | [Node.js](./WorkingWithTables/create_table_on_demand.js)                          ||
-| CreateTable Provisioned                             | [Node.js](./WorkingWithTables/create_table_provisioned.js)                        ||
-| Delete Global Table Region                          | [Node.js](./WorkingWithTables/delete-global-table-region.js)                      ||
-| DeleteTable                                         | [Node.js](./WorkingWithTables/delete_table.js)                                    ||
-| DescribeGlobalTable and DescribeGlobalTableSettings | [Node.js](./WorkingWithTables/describe-global-table-and-global-table-settings.js) ||
-| DescribeLimits                                      | [Node.js](./WorkingWithTables/describe_limits.js)                                 ||
-| DescribeTable                                       | [Node.js](./WorkingWithTables/describe_table.js)                                  ||
-| Disable Autoscaling                                 | [Node.js](./WorkingWithTables/disable_auto_scaling.js)                            ||
-| Enable Autoscaling                                  | [Node.js SDK v3](./WorkingWithTables/enable_auto_scaling_v3.js), [Node.js SDK v2](./WorkingWithTables/enable_auto_scaling_v2.js)                             | |
-| Update Autoscaling                                  | [Node.js SDK v3](./WorkingWithTables/update_auto_scaling_v3.js), [Node.js SDK v2](./WorkingWithTables/update_auto_scaling_v2.js)                              | |
-| Disable Streams                                     | [Node.js](./WorkingWithTables/disable_streams.js)                                                                          | |
-| Enable Streams                                      | [Node.js](./WorkingWithTables/enable_streams.js)                                  | |
-| ListTables                                          | [Node.js](./WorkingWithTables/list_tables.js)                                     | |
-| UpdateGlobalTable and UpdateGlobalTableSettings     | [Node.js](./WorkingWithTables/update-global-table-and-global-table-settings.js)   | |
-| UpdateTable On-Demand                               | [Node.js](./WorkingWithTables/table_change_to_on_demand.js)                       | |
-| UpdateTable Provisioned                             | [Node.js](./WorkingWithTables/table_change_to_provisioned.js)                     | |
+| Add Provisioned Capacity                            | [Node.js](./WorkingWithTables/add_provisioned_capacity.js)                        | Example code of adding provisioned capacity to a table. |
+| CreateTable On-Demand                               | [Node.js](./WorkingWithTables/create_table_on_demand.js)                          | Example code to create a new DynamoDB table in on-demand capacity mode. |
+| CreateTable Provisioned                             | [Node.js](./WorkingWithTables/create_table_provisioned.js)                        | Example code to create a new DynamoDB table in provisioned capacity mode. |
+| Delete Global Table Region                          | [Node.js](./WorkingWithTables/delete-global-table-region.js)                      | Example code to delete a region from a DynamoDB Global Table. |
+| DeleteTable                                         | [Node.js](./WorkingWithTables/delete_table.js)                                    | Example code to delete an existing table. |
+| DescribeGlobalTable and DescribeGlobalTableSettings | [Node.js](./WorkingWithTables/describe-global-table-and-global-table-settings.js) | Example code to describe a Global Table and/or its settings. |
+| DescribeLimits                                      | [Node.js](./WorkingWithTables/describe_limits.js)                                 | Example code to show the current state of DynamoDB table quotas an existing table. |
+| DescribeTable                                       | [Node.js](./WorkingWithTables/describe_table.js)                                  | Example code to describe an existing table and show its settings. |
+| Disable Autoscaling                                 | [Node.js](./WorkingWithTables/disable_auto_scaling.js)                            | Example code to disable autoscaling on an existing provisioned capacity mode table. |
+| Enable Autoscaling                                  | [Node.js SDK v3](./WorkingWithTables/enable_auto_scaling_v3.js)<br>[Node.js SDK v2](./WorkingWithTables/enable_auto_scaling_v2.js) | Example code to enable autoscaling on an existing provisioned capacity mode table.|
+| Update Autoscaling                                  | [Node.js SDK v3](./WorkingWithTables/update_auto_scaling_v3.js)<br>[Node.js SDK v2](./WorkingWithTables/update_auto_scaling_v2.js) | Example code to update autoscaling settings on an existing table. |
+| Disable Streams                                     | [Node.js](./WorkingWithTables/disable_streams.js)                                 | Example code to disable DynamoDB streams on a table. |
+| Enable Streams                                      | [Node.js](./WorkingWithTables/enable_streams.js)                                  | Example code to enable DynamoDB streams on a table. |
+| ListTables                                          | [Node.js](./WorkingWithTables/list_tables.js)                                     | Example code to list tables in a region for the calling account. |
+| UpdateGlobalTable and UpdateGlobalTableSettings     | [Node.js](./WorkingWithTables/update-global-table-and-global-table-settings.js)   | Example code for creating or updating a DynamoDB Global Table. |
+| UpdateTable On-Demand                               | [Node.js](./WorkingWithTables/table_change_to_on_demand.js)                       | Example code to switch a DynamoDB table to on-demand capacity mode. |
+| UpdateTable Provisioned                             | [Node.js](./WorkingWithTables/table_change_to_provisioned.js)                     | Example code to switch a DynamoDB table to provisioned capacity mode. |
 
 ## Working with Backups
 Example code that will help you manage backups of Amazon DynamoDB tables.
