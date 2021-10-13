@@ -1,6 +1,6 @@
 # Node.js SDK examples for Amazon DynamoDB
 
-This section contains Node.js code for examples and common tasks with Amazon DynamoDB.
+This respository contains Node.js code examples and common tasks done with API calls to Amazon DynamoDB.
 
 ## Working with Items
 Node.js example code for working with items in Amazon DynamoDB.
@@ -34,7 +34,7 @@ Node.js example code for managing indexes with Amazon DynamoDB.
 | All Examples 👉 | Node.js | Comments |
 | --------------- | ------- | ------- |
 | Create Index    | [Node.js](./WorkingWithIndexes/CreateIndex.js) | Example code on how to create an index with Node.js |
-| Update Index Provisioned Capacity    | [Node.js](./WorkingWithIndexes/UpdateIndexProvisionedCapacity.js) | Example code on how to update an existing index's provisioned capacity. |
+| Update Index's Provisioned Capacity    | [Node.js](./WorkingWithIndexes/UpdateIndexProvisionedCapacity.js) | Example code on how to update an existing index's provisioned capacity. |
 | Delete Index    | [Node.js](./WorkingWithIndexes/DeleteIndex.js) | Example code on how to delete an existing index with Node.js. |
 | Query Index     | TBD | Example code on how to query a secondary index with Node.js. |
 
