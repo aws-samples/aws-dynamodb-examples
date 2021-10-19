@@ -30,7 +30,11 @@
                 "dynamodb:GetItem",
                 "dynamodb:Scan",
                 "dynamodb:Query",
-                "dynamodb:UpdateItem"
+                "dynamodb:UpdateItem",
+                "dynamodb:PartiQLInsert",
+                "dynamodb:PartiQLUpdate",
+                "dynamodb:PartiQLDelete",
+                "dynamodb:PartiQLSelect"
             ],
             "Resource": "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DDB::TableName}"
         },
