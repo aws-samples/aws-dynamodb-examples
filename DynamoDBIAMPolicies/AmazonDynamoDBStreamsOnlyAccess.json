@@ -1,0 +1,16 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "AccessStreamOnly",
+            "Effect": "Allow",
+            "Action": [
+                "dynamodb:DescribeStream",
+                "dynamodb:GetRecords",
+                "dynamodb:GetShardIterator",
+                "dynamodb:ListStreams"
+            ],
+            "Resource": "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DDB::TableName}/stream/*"
+        }
+    ]
+}

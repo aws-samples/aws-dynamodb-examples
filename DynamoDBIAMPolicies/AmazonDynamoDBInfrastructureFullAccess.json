@@ -1,0 +1,102 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "DynamoDBTableAndDAXAccess",
+            "Effect": "Allow",
+            "Action": [
+                "dynamodb:DescribeContributorInsights",
+                "dynamodb:RestoreTableToPointInTime",
+                "dynamodb:UpdateGlobalTable",
+                "dynamodb:DeleteTable",
+                "dynamodb:UpdateTableReplicaAutoScaling",
+                "dynamodb:DescribeTable",
+                "dynamodb:DescribeContinuousBackups",
+                "dynamodb:UpdateTimeToLive",
+                "dynamodb:CreateTable",
+                "dynamodb:UpdateGlobalTableSettings",
+                "dynamodb:UpdateTable",
+                "dynamodb:DescribeTableReplicaAutoScaling",
+                "dynamodb:ListTagsOfResource",
+                "dynamodb:CreateTableReplica",
+                "dynamodb:UpdateContributorInsights",
+                "dynamodb:CreateBackup",
+                "dynamodb:UpdateContinuousBackups",
+                "dynamodb:TagResource",
+                "dynamodb:CreateGlobalTable",
+                "dynamodb:ConditionCheckItem",
+                "dynamodb:UntagResource",
+                "dynamodb:DeleteTableReplica",
+                "dynamodb:DescribeTimeToLive",
+                "dynamodb:RestoreTableFromBackup",
+                "dax:DecreaseReplicationFactor",
+                "dax:DeleteCluster",
+                "dax:UpdateCluster",
+                "dax:TagResource",
+                "dax:CreateCluster",
+                "dax:UntagResource",
+                "dax:RebootNode",
+                "dax:DescribeClusters",
+                "dax:IncreaseReplicationFactor",
+                "dax:ListTags"
+            ],
+            "Resource": [
+                "arn:aws:dax:${AWS::Region}:${AWS::AccountId}:cache/*",
+                "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/*"
+            ]
+        },
+        {
+            "Sid": "DynamoDBTableSpecificAccess",
+            "Effect": "Allow",
+            "Action": [
+                "dynamodb:DescribeContributorInsights",
+                "dynamodb:UpdateContributorInsights",
+                "dynamodb:DescribeStream",
+                "dynamodb:UpdateGlobalTable",
+                "dynamodb:UpdateGlobalTableSettings",
+                "dynamodb:DescribeGlobalTableSettings",
+                "dynamodb:DescribeGlobalTable",
+                "dynamodb:RestoreTableFromBackup",
+                "dynamodb:CreateGlobalTable",
+                "dynamodb:DescribeBackup",
+                "dynamodb:DeleteBackup"
+            ],
+            "Resource": [
+                "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/*/index/*",
+                "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/*/stream/*",
+                "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/*/backup/*",
+                "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:global-table/*"
+            ]
+        },
+        {
+            "Sid": "HigherLevelAccess",
+            "Effect": "Allow",
+            "Action": [
+                "dax:DescribeParameters",
+                "dax:CreateSubnetGroup",
+                "dax:UpdateSubnetGroup",
+                "dax:DeleteParameterGroup",
+                "dax:DeleteSubnetGroup",
+                "dax:DescribeEvents",
+                "dax:DescribeSubnetGroups",
+                "dax:UpdateParameterGroup",
+                "dax:DescribeParameterGroups",
+                "dax:DescribeDefaultParameters",
+                "dax:CreateParameterGroup",
+                "dynamodb:ListTables",
+                "dynamodb:ListBackups",
+                "dynamodb:PurchaseReservedCapacityOfferings",
+                "dynamodb:ListStreams",
+                "dynamodb:ListContributorInsights",
+                "dynamodb:DescribeReservedCapacityOfferings",
+                "dynamodb:ListGlobalTables",
+                "dynamodb:DescribeReservedCapacity",
+                "dynamodb:DescribeLimits"
+            ],
+            "Resource": [
+                "arn:aws:dax:${AWS::Region}:${AWS::AccountId}:*",
+                "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:*"
+            ]
+        }
+    ]
+}
