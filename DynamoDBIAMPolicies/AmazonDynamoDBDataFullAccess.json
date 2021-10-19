@@ -1,0 +1,47 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "DynamoDBIndexAndStreamAccess",
+            "Effect": "Allow",
+            "Action": [
+                "dynamodb:GetShardIterator",
+                "dynamodb:Scan",
+                "dynamodb:Query",
+                "dynamodb:DescribeStream",
+                "dynamodb:GetRecords",
+                "dynamodb:ListStreams"
+            ],
+            "Resource": [
+                "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DDB::TableName}/index/*",
+                "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DDB::TableName}/stream/*"
+            ]
+        },
+        {
+            "Sid": "DynamoDBTableAccess",
+            "Effect": "Allow",
+            "Action": [
+                "dynamodb:BatchGetItem",
+                "dynamodb:BatchWriteItem",
+                "dynamodb:ConditionCheckItem",
+                "dynamodb:PutItem",
+                "dynamodb:DescribeTable",
+                "dynamodb:DeleteItem",
+                "dynamodb:GetItem",
+                "dynamodb:Scan",
+                "dynamodb:Query",
+                "dynamodb:UpdateItem"
+            ],
+            "Resource": "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DDB::TableName}"
+        },
+        {
+            "Sid": "DynamoDBDescribeLimitsAccess",
+            "Effect": "Allow",
+            "Action": "dynamodb:DescribeLimits",
+            "Resource": [
+                "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DDB::TableName}",
+                "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DDB::TableName}/index/*"
+            ]
+        }
+    ]
+}
