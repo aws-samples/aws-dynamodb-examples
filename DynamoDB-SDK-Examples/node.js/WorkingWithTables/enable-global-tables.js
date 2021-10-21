@@ -49,7 +49,7 @@ isStreamsEnabled()
     .then (() => {
         enableGlobalTables();
     }) */
-    .catch((error) => console.log("An error occured while checking if DynamoDB Streams are enabled:" + ' ' + error.message ));
+    .catch((error) => console.log("An error occurred while checking if DynamoDB Streams are enabled:" + ' ' + error.message ));
 
 enableStreams()
     .then((data) => console.log(data))
