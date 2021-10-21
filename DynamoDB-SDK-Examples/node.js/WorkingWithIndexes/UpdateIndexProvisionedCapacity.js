@@ -31,4 +31,4 @@ async function updateIndex() {
 
 updateIndex()
     .then((data) => console.log(data.TableDescription))
-    .catch((error) => console.log("An error occured while updating the index capacity:" + ' ' + error.message ));
+    .catch((error) => console.log("An error occurred while updating the index capacity:" + ' ' + error.message ));

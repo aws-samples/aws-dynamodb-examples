@@ -16,4 +16,4 @@ async function describeLimits() {
 
 describeLimits()
     .then((data) => console.log(data))
-    .catch((error) => console.log("An error occured while get the table limits:" + ' ' + error.message ));
+    .catch((error) => console.log("An error occurred while get the table limits:" + ' ' + error.message ));
