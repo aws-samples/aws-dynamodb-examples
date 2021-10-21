@@ -106,3 +106,10 @@ Example code that will help you manage backups of Amazon DynamoDB tables.
 | Create an on-demand backup                             | [Node.js](./WorkingWithBackups/CreateOn-DemandBackup.js)                         | Sample code to create an on-demand backup of a DynamoDB table using Node.js. |
 | Delete backup                            | [Node.js](./WorkingWithBackups/DeleteBackup.js)                        | Sample code to delete an on-demand backup of a DynamoDB table using Node.js. |
 | Describe backup                                   | [Node.js](./WorkingWithBackups/DescribeBackup.js)                             | Sample code to describe a specific on-demand backup of a DynamoDB table using Node.js. |
+
+## Working with Streams
+Example code that will help you manage Amazon DynamoDB Streams
+
+| All Examples 👉  | Node.js                                        | Comments                                    |
+| ---------------  | ---------------------------------------------- | ------------------------------------------- |
+| Read from stream | [Node.js](./WorkingWithStreams/read-stream.js) | Sample code to read from a DynamoDB Stream. |
