@@ -16,4 +16,4 @@ async function deleteTable() {
 
 deleteTable()
     .then((data) => console.log(data))
-    .catch((error) => console.log("An error occured while deleting the table:" + ' ' + error.message ));
+    .catch((error) => console.log("An error occurred while deleting the table:" + ' ' + error.message ));

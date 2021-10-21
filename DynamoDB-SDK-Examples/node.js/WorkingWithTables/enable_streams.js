@@ -23,4 +23,4 @@ async function enableStreams() {
 
 enableStreams()
     .then((data) => console.log(data))
-    .catch((error) => console.log("An error occured while enabling streams:" + ' ' + error.message ));
+    .catch((error) => console.log("An error occurred while enabling streams:" + ' ' + error.message ));

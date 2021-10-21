@@ -1,6 +1,6 @@
 // An example of how to create the components for autoscaling and then apply them to a DynamoDB table.
-const { applicationAutoscalingClient } = require(@aws-sdk/client-application-auto-scaling);
-const { IAMClient, IAM } = require(@aws-sdk/client-iam);
+const { applicationAutoscalingClient } = require("@aws-sdk/client-application-auto-scaling");
+const { IAMClient, IAM } = require("@aws-sdk/client-iam");
 
 const iam = new AWS.IAM({ apiVersion: "2010-05-08", region: "us-west-2", logger: console });
 const applicationAutoscaling = new AWS.ApplicationAutoScaling({

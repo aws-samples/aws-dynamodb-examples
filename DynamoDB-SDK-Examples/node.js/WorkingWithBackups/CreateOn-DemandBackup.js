@@ -22,4 +22,4 @@ async function createBackup() {
 
 createBackup()
     .then((data) => console.log(data))
-    .catch((error) => console.log("An error occured while creating the on-demand backup:" + ' ' + error.message ));
+    .catch((error) => console.log("An error occurred while creating the on-demand backup:" + ' ' + error.message ));
