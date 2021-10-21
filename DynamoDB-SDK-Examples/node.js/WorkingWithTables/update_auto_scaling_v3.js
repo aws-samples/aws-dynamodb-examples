@@ -1,5 +1,5 @@
-const { applicationAutoscalingClient } = require(@aws-sdk/client-application-auto-scaling);
-const { IAMClient, IAM } = require(@aws-sdk/client-iam);
+const { applicationAutoscalingClient } = require("@aws-sdk/client-application-auto-scaling");
+const { IAMClient, IAM } = require("@aws-sdk/client-iam");
 
 const REGION = "us-west-2";
 

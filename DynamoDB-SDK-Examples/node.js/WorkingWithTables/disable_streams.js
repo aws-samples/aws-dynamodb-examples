@@ -19,4 +19,4 @@ async function disableStreams() {
 
 disableStreams()
     .then((data) => console.log(data))
-    .catch((error) => console.log("An error occured while disabling streams:" + ' ' + error.message ));
+    .catch((error) => console.log("An error occurred while disabling streams:" + ' ' + error.message ));
