@@ -1,8 +1,9 @@
 # Node.js SDK examples for Amazon DynamoDB
 
-This respository contains Node.js code examples and common tasks done with API calls to Amazon DynamoDB.
+This repository contains Node.js code examples and common tasks done with API calls to Amazon DynamoDB.
 
 ## Working with Items
+
 Node.js example code for working with items in Amazon DynamoDB.
 
 | All Examples 👉       | Node.js                                                  | Comments |
@@ -19,6 +20,7 @@ Node.js example code for working with items in Amazon DynamoDB.
 | UpdateItemConditional | [Node.js](./WorkingWithItems/update-item-conditional.js) | Example code of UpdateItem API call with a conditional expression. |
 
 ## Working with PartiQL for DynamoDB
+
 Node.js example code using PartiQL for Amazon DynamoDB
 
 | All Examples 👉       | Node.js                                                   | Comments |
@@ -29,6 +31,7 @@ Node.js example code using PartiQL for Amazon DynamoDB
 | PartiQL BatchExecuteStatement | [Node.js](./WorkingWithPartiQL/batch-execute-statement.js) | Example code of executing batch operations using PartiQL in Node.js. |
 
 ## Working with Indexes
+
 Node.js example code for managing indexes with Amazon DynamoDB.
 
 | All Examples 👉 | Node.js | Comments |
@@ -39,6 +42,7 @@ Node.js example code for managing indexes with Amazon DynamoDB.
 | Query Index     | TBD | Example code on how to query a secondary index with Node.js. |
 
 ## Working with Query Operations
+
 Node.js example code for performing query operations with Amazon DynamoDB.
 
 | All Examples 👉        | Node.js                                                           |Comments              |
@@ -61,11 +65,12 @@ Node.js example code for performing query operations with Amazon DynamoDB.
 | Projection expression   | [Node.js](./WorkingWithQueries/query-projection-expression.js)    | Example of a query API call with a projection expression. |
 
 ## Working with Scan Operations
+
 Node.js example code for performing scan operations with Amazon DynamoDB.
 
 | All Examples 👉 | Node.js | Comments              |
 | --------------- | ------- | ------- |
-| Scan with Pagination | [Node.js](./WorkingWithScans/scan-fetch-all-pagination.js) | Example code to perform a scan operation with pagingating the results. |
+| Scan with Pagination | [Node.js](./WorkingWithScans/scan-fetch-all-pagination.js) | Example code to perform a scan operation with paginating the results. |
 | Scan Parallel Segments|[Node.js](./WorkingWithScans/scan-parallel-segments.js) | Example code to perform a parallel scan operation in segments. |
 
 ## Working with DynamoDB Streams
@@ -75,6 +80,7 @@ Node.js example code for performing scan operations with Amazon DynamoDB.
 |                 | Node.js | |
 
 ## Working with Tables
+
 Example code to help you manage Amazon DynamoDB tables, manage global tables, and more using Node.js.
 
 | All Examples 👉                                     | Node.js                                                                           | Comments              |
@@ -99,6 +105,7 @@ Example code to help you manage Amazon DynamoDB tables, manage global tables, an
 | UpdateTable Provisioned                             | [Node.js](./WorkingWithTables/table_change_to_provisioned.js)                     | Example code to switch a DynamoDB table to provisioned capacity mode. |
 
 ## Working with Backups
+
 Example code that will help you manage backups of Amazon DynamoDB tables.
 
 | All Examples 👉                                     | Node.js           | Comments |
