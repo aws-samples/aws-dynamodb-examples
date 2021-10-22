@@ -7,9 +7,9 @@ using Amazon.DynamoDBv2.Model;
 
 namespace DotnetSamples.WorkingWithQueries
 {
-    public class QueryFilterExpression
+    public class QueryProjectionExpression
     {
-        public static async Task FilterExpressionDbClientExampleAsync()
+        public async Task QueryProjectionExpressionDbClientExmaple()
         {
             try
             {
@@ -17,12 +17,15 @@ namespace DotnetSamples.WorkingWithQueries
                 var request = new QueryRequest
                 {
                     TableName="MyTableName",
+                    ProjectionExpression="CustomerId, #cn",
+                    ExpressionAttributeNames= new Dictionary<string, string>
+                    {
+                        { "#cn", "CustomerName" }
+                    },
                     KeyConditionExpression="PK = :pk",
-                    FilterExpression="CustomerName = :cn",
                     ExpressionAttributeValues = new Dictionary<string, AttributeValue>
                     {
                         { ":pk", new AttributeValue { S="Customer1" } },
-                        { ":cn", new AttributeValue { S="John Smith" }}
                     },
                 };
 
@@ -33,7 +36,7 @@ namespace DotnetSamples.WorkingWithQueries
             catch(Exception ex)
             {
                 Console.WriteLine(ex.Message);
-            }          
+            } 
         }
     }
 }
