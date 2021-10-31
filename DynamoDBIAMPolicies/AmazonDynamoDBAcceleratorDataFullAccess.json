@@ -1,0 +1,21 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "AmazonDynamoDBDAXDataOperations",
+            "Effect": "Allow",
+            "Action": [
+                "dax:GetItem",
+                "dax:PutItem",
+                "dax:ConditionCheckItem",
+                "dax:BatchGetItem",
+                "dax:BatchWriteItem",
+                "dax:DeleteItem",
+                "dax:Query",
+                "dax:UpdateItem",
+                "dax:Scan"
+            ],
+            "Resource": "arn:aws:dax:${AWS::Region}:${AWS::AccountId}:cache/*"
+        }
+    ]
+}
