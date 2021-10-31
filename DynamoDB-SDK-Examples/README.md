@@ -1,5 +1,7 @@
 # DynamoDB SDK Examples
+
 This directory contains examples in various AWS SDKs for use with Amazon DynamoDB. We are always looking for new contributions if you want to submit a pull request.
+
 ## Working with Items
 
 | All Examples 👉       | C++ | Go  | Java | JavaScript | .NET                                         | Node.js                                                          | PHP | Python                                                         | Rust |
@@ -53,9 +55,9 @@ This directory contains examples in various AWS SDKs for use with Amazon DynamoD
 
 ## Working with Streams
 
-| All Examples 👉 | C++ | Go  | Java | JavaScript | .NET | Node.js | PHP | Python | Rust |
-| --------------- | --- | --- | ---- | ---------- | ---- | ------- | --- | ------ | ---- |
-|                 | C++ | Go  | Java | JavaScript | .NET | Node.js | PHP | Python | Rust |
+| All Examples 👉  | C++ | Go  | Java | JavaScript | .NET | Node.js                                                | PHP | Python | Rust |
+| ---------------- | --- | --- | ---- | ---------- | ---- | ------------------------------------------------------ | --- | ------ | ---- |
+| Read from stream | C++ | Go  | Java | JavaScript | .NET | [Node.js](./node.js/WorkingWithStreams/read-stream.js) | PHP | Python | Rust |
 
 ## Working with Tables
 

@@ -26,4 +26,4 @@ async function deleteIndex() {
 
 deleteIndex()
     .then((data) => console.log(data))
-    .catch((error) => console.log("An error occured while creating the index:" + ' ' + error.message ));
+    .catch((error) => console.log("An error occurred while creating the index:" + ' ' + error.message ));

@@ -9,7 +9,7 @@ services:
   app-node:
     depends_on:
       - dynamodb-local
-    image: banst/awscli
+    image: amazon/aws-cli
     container_name: app-node
     ports:
      - "8080:8080"
