@@ -10,7 +10,7 @@ let isDone = false
 // In PartiQL, we can execute statement with execute-statement which performs one action similar to Scan operation and returns NextToken which could be used to retrieve the next page/set of records.
 let params = {
     Statement: `SELECT * from "cars-demo"`,
-    NextToken: nextToken
+    NextToken: null
 }
 
 while (!isDone) {
