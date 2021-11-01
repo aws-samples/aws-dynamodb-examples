@@ -2,6 +2,11 @@
 
 This section contains Python code for examples and common tasks with Amazon DynamoDB.
 
+## Working with DynamodbTest
+| All Examples 👉       | Python                                                  |
+| --------------------- | ------------------------------------------------------- |
+| GenerateTestData      | [Python](./WorkingWithTestData/test_data_generator.py)               |
+
 ## Working with Items
 
 | All Examples 👉       | Python                                                  |
