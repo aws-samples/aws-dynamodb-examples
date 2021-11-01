@@ -2,6 +2,7 @@ import boto3
 
 from botocore.exceptions import ClientError
 
+# execute statment works with low level client.
 dynamodb = boto3.client('dynamodb', region_name='us-east-1')
 params = {
     'statement': 'SELECT * FROM "cerberus-test-3"',
@@ -21,6 +22,7 @@ while True:
             response = dynamodb.execute_statement(
                 Statement=params['statement'], NextToken=params['next_token'])
 
+        # for paginated results response includes nexttoken which can be used for pagination
         if 'NextToken' in response:
             params['next_token'] = response['NextToken']
             print("Next token is updated")
