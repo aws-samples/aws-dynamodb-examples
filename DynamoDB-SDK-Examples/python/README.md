@@ -5,7 +5,7 @@ This section contains Python code for examples and common tasks with Amazon Dyna
 ## Working with DynamodbTest
 | All Examples 👉       | Python                                                  |
 | --------------------- | ------------------------------------------------------- |
-| GenerateTestData      | [Python](./WorkingWithTestData/test_data_generator.py)               |
+| GenerateTestData      | [Python](./WorkingWithTestData/test_data_generator.py)  |
 
 ## Working with Items
 
