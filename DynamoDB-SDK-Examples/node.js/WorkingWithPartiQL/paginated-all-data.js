@@ -13,26 +13,30 @@ let params = {
     NextToken: null
 }
 
-while (!isDone) {
-    try {
-        let response = await dbclient.executeStatement(params);
-        /*  Returns response as Items and NextToken if the statement execution has more items.
-            {
-                "Items":[],
-                "NextToken":""
+    (async () => {
+        while (!isDone) {
+            try {
+                let response = await dbclient.executeStatement(params);
+                /*  Returns response as Items and NextToken if the statement execution has more items.
+                    {
+                        "Items":[],
+                        "NextToken":""
+                    }
+                */
+                //Iterate through the Items array returned in the data variable and then unmarshall the DynamoDB JSON format to "regular" json format.
+                console.log("----------- start of page ---------------");
+                data.Items.forEach(function (item) {
+                    console.log(JSON.stringify(unmarshall(item), null, 2));
+                });
+                console.log("NextToken : ", data.NextToken);
+                console.log("----------- end of page ---------------");
+                if (data.NextToken != undefined) {
+                    params.NextToken = data.NextToken
+                } else {
+                    isDone = true;
+                }
+            } catch (error) {
+                console.error(JSON.stringify(error, null, 2));
             }
-         */
-        //Iterate through the Items array returned in the data variable and then unmarshall the DynamoDB JSON format to "regular" json format.
-        data.Items.forEach(function (item) {
-            console.log(JSON.stringify(unmarshall(item), null, 2));
-        });
-        if (data.NextToken != undefined) {
-            params.NextToken = data.NextToken
-        } else {
-            isDone = true;
         }
-    } catch (error) {
-        console.error(JSON.stringify(error, null, 2));
-    }
-}
-
+    })();
