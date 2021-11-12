@@ -7,6 +7,7 @@ A selection of example Amazon DynamoDB and DAX IAM policies with more restrictiv
 * ***[AmazonDynamoDB+DAXDataFullAccess](./AmazonDynamoDB+DAXDataFullAccess.json)*** - A template policy for allowing read/write access to both Amazon DynamoDB and Amazon DynamoDB Accelerator (DAX).
 * ***[AmazonDynamoDBInfrastructureFullAccess](./AmazonDynamoDBInfrastructureFullAccess.json)*** - A template to assign access the DynamoDB and DAX infrastructure so people can only manage those services, but not read or change data in any table, index, stream, or cache. For this policy, you could customize in a few ways. 1/ Update *${DDB::TableName}* to be a specific set of table names. 2/ Use the wildcard (\*) for *${DDB::TableName}* and *${AWS::Region}* to prevent someone from restoring a backup from a table and then setting a policy to allow themselves read access on the table.
 * ***[AmazonDynamoDBStreamsOnlyAccess](./AmazonDynamoDBStreamsOnlyAccess.json)*** - A template to allow read-only access to DynamoDB Streams.
+* ***[AmazonDynamoDBAppendOnlyAccess.json](./AmazonDynamoDBAppendOnlyAccess.json)*** - A template that would allow read and append only (so, no updates) for a DynamoDB table.
 
 These policy examples are templatized, for the moment. The three template values you need to replace with value or wildcards are:
 
