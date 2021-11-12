@@ -1,0 +1,50 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "DynamoDBIndexAndStreamAccess",
+            "Effect": "Allow",
+            "Action": [
+                "dynamodb:PartiQLInsert",
+                "dynamodb:PartiQLSelect",
+                "dynamodb:ConditionCheckItem",
+                "dynamodb:Scan",
+                "dynamodb:Query",
+                "dynamodb:GetItem",
+                "dynamodb:DescribeTable",
+                "dynamodb:BatchGetItem",
+                "dynamodb:GetShardIterator",
+                "dynamodb:DescribeStream",
+                "dynamodb:GetRecords",
+                "dynamodb:ListStreams"
+            ],
+            "Resource": [
+                "Resource": "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DDB::TableName}",
+                "Resource": "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DDB::TableName}/*"
+            ]
+        },
+        {
+            "Sid": "DynamoDBTableDenyAccess",
+            "Effect": "Deny",
+            "Action": [
+                "dynamodb:BatchWriteItem",
+                "dynamodb:PutItem",
+                "dynamodb:DeleteItem",
+                "dynamodb:UpdateItem",
+                "dynamodb:PartiQLUpdate",
+                "dynamodb:PartiQLDelete"
+            ],
+            "Resource": "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DDB::TableName}",
+            "Resource": "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DDB::TableName}/*"
+        },
+        {
+            "Sid": "DynamoDBDescribeLimitsAccess",
+            "Effect": "Allow",
+            "Action": "dynamodb:DescribeLimits",
+            "Resource": [
+                "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DDB::TableName}",
+                "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DDB::TableName}/index/*"
+            ]
+        }
+    ]
+}
