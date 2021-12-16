@@ -37,7 +37,7 @@ async function getItems() {
                 return delay(backoffTime);
             }
             else {
-                condition = False;
+                condition = false;
                 console.log("Max retry Done or not retriable");
                 throw err;
             }
