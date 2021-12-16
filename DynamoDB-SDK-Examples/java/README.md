@@ -53,10 +53,10 @@ This section contains JAVA code for examples and common tasks with Amazon Dynamo
 | Add Global Table Region                             | Java |
 | Add Provisioned Capacity                            | Java |
 | CreateGlobalTable                                   | Java |
-| CreateTable On-Demand                               | Java |
-| CreateTable Provisioned                             | Java |
+| CreateTable On-Demand                               | [Java](./WorkingWithTables/CreateTableOnDemand.java) |
+| CreateTable Provisioned                             | [Java](./WorkingWithTables/CreateTableProvisioned.java) |
 | Delete Global Table Region                          | Java |
-| DeleteTable                                         | Java |
+| DeleteTable                                         | [Java](./WorkingWithTables/DeleteTable.java) |
 | DescribeGlobalTable and DescribeGlobalTableSettings | Java |
 | DescribeLimits                                      | Java |
 | DescribeTable                                       | Java |
