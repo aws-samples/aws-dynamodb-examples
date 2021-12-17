@@ -5,8 +5,11 @@ const {
   ExportTableToPointInTimeCommand,
 } = require("@aws-sdk/client-dynamodb");
 
-const s3_bucket_name = "aws-dynamodb-pitr-demo";
-const table_arn = "arn:aws:dynamodb:us-east-1:554995069609:table/Music";
+// S3 bucket should be created before hand, and best practice is to enable encryption and version
+// Make sure PITR is enabled in DYNAMODB table
+// Make sure to replace with proper bucket name and account id
+const s3_bucket_name = "YOUR S3 Bucket";
+const table_arn = "arn:aws:dynamodb:us-east-1:YOUR ACCOUNT ID:table/Music";
 
 async function exportTables() {
   const client = new DynamoDBClient({ region: "us-east-1" });
@@ -16,8 +19,8 @@ async function exportTables() {
         S3Bucket: s3_bucket_name,
         TableArn: table_arn,
         ExportFormat: "DYNAMODB_JSON",
-        ExportTime: new Date("Thud Dec 16 2021 16:46:00 GMT-0600 (CST)"),
-        S3Prefix: "DYNAMOExport",
+        ExportTime: new Date("Thu Dec 16 2021 16:46:00 GMT-0600 (CST)"),
+        S3Prefix: "DYNAMODB-Export",
         S3SseAlgorithm: "AES256",
       })
     );
