@@ -1,5 +1,8 @@
 // A simple script to delete a DynamoDB table.
 
+// Be advised that when you delete a table, it does not delete auto-scaling info (e.g. scalable
+// targets, scaling policies) or CloudWatch alarms. This must be done in seperate calls.
+
 const { DynamoDBClient, DeleteTableCommand } = require('@aws-sdk/client-dynamodb');
 
 const REGION = "us-west-2";
