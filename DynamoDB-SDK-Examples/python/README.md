@@ -75,7 +75,7 @@ This section contains Python code for examples and common tasks with Amazon Dyna
 | CreateTable On-Demand                               | [Python](./WorkingWithTables/create_table_on-demand.py)      |
 | CreateTable Provisioned                             | [Python](./WorkingWithTables/create_table_provisioned.py)    |
 | Delete Global Table Region                          | [Python](./WorkingWithTables/delete_global_table_region.py)  |
-| DeleteTable                                         | [Python](./WorkingWithTables/delete_table.py)                |
+| DeleteTable*                                        | [Python](./WorkingWithTables/delete_table.py)                |
 | DescribeGlobalTable and DescribeGlobalTableSettings | Python                                                       |
 | DescribeLimits                                      | [Python](./WorkingWithTables/describe_limits.py)             |
 | DescribeTable                                       | [Python](./WorkingWithTables/describe_table.py)              |
@@ -88,3 +88,5 @@ This section contains Python code for examples and common tasks with Amazon Dyna
 | UpdateGlobalTable and UpdateGlobalTableSettings     | Python                                                       |
 | UpdateTable On-Demand                               | [Python](./WorkingWithTables/table_change_to_on-demand.py)   |
 | UpdateTable Provisioned                             | [Python](./WorkingWithTables/table_change_to_provisioned.py) |
+
+*Be advised that when you delete a table, it does not delete auto-scaling info (e.g. scalable targets, scaling policies) or CloudWatch alarms. This must be done in seperate calls.
