@@ -51,21 +51,21 @@ This section contains JAVA code for examples and common tasks with Amazon Dynamo
 | All Examples 👉                                     | Java |
 | --------------------------------------------------- | ---- |
 | Add Global Table Region                             | Java |
-| Add Provisioned Capacity                            | Java |
+| Add Provisioned Capacity                            | [Java](./WorkingWithTables/AddProvisionedCapacity.java) |
 | CreateGlobalTable                                   | Java |
-| CreateTable On-Demand                               | Java |
-| CreateTable Provisioned                             | Java |
+| CreateTable On-Demand                               | [Java](./WorkingWithTables/CreateTableOnDemand.java) |
+| CreateTable Provisioned                             | [Java](./WorkingWithTables/CreateTableProvisioned.java) |
 | Delete Global Table Region                          | Java |
-| DeleteTable                                         | Java |
+| DeleteTable                                         | [Java](./WorkingWithTables/DeleteTable.java) |
 | DescribeGlobalTable and DescribeGlobalTableSettings | Java |
-| DescribeLimits                                      | Java |
-| DescribeTable                                       | Java |
+| DescribeLimits                                      | [Java](./WorkingWithTables/DescribeLimits.java) |
+| DescribeTable                                       | [Java](./WorkingWithTables/DescribeTable.java) |
 | Disable Autoscaling                                 | Java |
 | Enable Autoscaling                                  | Java |
 | Update Autoscaling                                  | Java |
 | Disable Streams                                     | Java |
 | Enable Streams                                      | Java |
-| ListTables                                          | Java |
+| ListTables                                          | [Java](./WorkingWithTables/ListTables.java) |
 | UpdateGlobalTable and UpdateGlobalTableSettings     | Java |
-| UpdateTable On-Demand                               | Java |
-| UpdateTable Provisioned                             | Java |
+| UpdateTable On-Demand                               | [Java](./WorkingWithTables/TableChangeToOnDemand.java) |
+| UpdateTable Provisioned                             | [Java](./WorkingWithTables/TableChangeToOnProvisioned.java) |
