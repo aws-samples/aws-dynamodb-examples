@@ -69,3 +69,9 @@ This section contains JAVA code for examples and common tasks with Amazon Dynamo
 | UpdateGlobalTable and UpdateGlobalTableSettings     | Java |
 | UpdateTable On-Demand                               | Java |
 | UpdateTable Provisioned                             | Java |
+
+## Working with DAX
+
+| All Examples 👉        | Java |
+| ---------------------- | ---- |
+| Enhanced DAX         | [Java](./WorkingWithDax/EnhancedDax.java)  |
