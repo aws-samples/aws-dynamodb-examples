@@ -16,3 +16,12 @@ PS. If you are up for contributing, we welcome community pull requests.
 
 
 All code in this repository is provided as is, where is. There are no guarantees, either expressed or implied. It is up to you to check what they do and utilize the code responsibly.
+
+Special thanks to other contributors to this repo before it was moved over to this current location. Here are their GitHub users:
+* @jprivillaso
+* @tywalch
+* @normj
+* @jasonwadsworth
+* @johanrin
+* @DejanBelic
+* @TLaue
