@@ -1,4 +1,4 @@
-*Note: Since the publishing of this code example, DynamoDB has a [implemented Import for S3](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/S3DataImport.HowItWorks.html) as a feature into the service. This featre may fit your needs better and be cheaper than using this example code.*
+*Note: Since the publishing of this code example, Amazon DynamoDB has implemented [Import for S3](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/S3DataImport.HowItWorks.html) as a feature in the service. This feature may fit your needs better and be cheaper than using this example code.*
 
 
 # Python script to load data from S3 into a new DynamoDB table
