@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+
+    <title>Global Serverless Application Test Page</title>
+    <link rel="icon" type="image/x-icon" href="https://dynamodbworkshop.s3.amazonaws.com/favicon.ico">
+    <link rel="stylesheet" href="index.css">
+
+    <style>
+
+    </style>
+    <script src="./index.js" defer></script>
+      <script>
+        function saveit() {
+            if(document.getElementById('api').value.length > 0) {
+                setCookie(document.getElementById('api').value);
+            } else {
+                alert('Please enter the URL for your Rest API');
+            }
+
+      }
+      function trimInput() {
+          document.getElementById('api').value = document.getElementById('api').value.trim();
+      }
+      </script>
+
+  </head>
+  <body>
+    <div class="main">
+      <div class="title">
+
+        <a href="https://dynamodbworkshop.s3.amazonaws.com/index.html" class="titlelink">Global Serverless Workshop</a>
+<!--        <a href="http://dynamodbworkshop.s3-website-us-east-1.amazonaws.com/">SWS</a>-->
+
+      </div>
+
+<!--      <div class="tab">-->
+<!--        <button class="tablinks" onclick="clickHandle(event, 'Video')">Video</button>-->
+<!--        <button class="tablinks" onclick="clickHandle(event, 'API')">API</button>-->
+<!--        <button class="tablinks" onclick="clickHandle(event, 'Latency')">Latency</button>-->
+<!--      </div>-->
+
+<!--      <div id="Video" class="tabcontent">-->
+<!--        <div>-->
+<!--          Watch the rabbit video here in two regions.-->
+<!--        </div>-->
+<!--      </div>-->
+
+<!--      <div id="API" class="tabcontent">-->
+<!--        <h3>Try the raw APIs</h3>-->
+<!--      </div>-->
+
+<!--      <div id="Latency" class="tabcontent">-->
+<!--        <h3>Coming Soon</h3>-->
+<!--      </div>-->
+
+
+
+      <table id="tableform">
+         <tr><td>API Gateway URL</td>
+           <td>
+           <input type="text" id="api" name="api" size="70" value="" onChange="trimInput()">
+         </td>
+           <td>
+             <button onClick="saveit()">save</button>
+           </td></tr>
+          <tr><td></td><td style="color:silver">
+            https://osswul9dje.execute-api.us-west-2.amazonaws.com/api/
+<!--              https://amq5jff8gd.execute-api.us-west-2.amazonaws.com/api/-->
+              <br/>
+            https://ue5621fb06.execute-api.us-east-2.amazonaws.com/api/
+<!--              https://icte9dyln9.execute-api.us-east-2.amazonaws.com/api/-->
+          </td></tr>
+        <tr><td colspan="10"><hr/></td></tr>
+
+
+      </table>
+
+      <table id="list"></table>
+
+      <table id="results"></table>
+
+      <table id="debug"></table>
+      <hr/>
+
+
+    </div>
+
+        <script>
+
+<!-- UI Tabs function -->
+<!--        function clickHandle(evt, animalName) {-->
+<!--          let i, tabcontent, tablinks;-->
+
+<!--          // This is to clear the previous clicked content.-->
+<!--          tabcontent = document.getElementsByClassName("tabcontent");-->
+<!--          for (i = 0; i < tabcontent.length; i++) {-->
+<!--            tabcontent[i].style.display = "none";-->
+<!--          }-->
+
+<!--          // Set the tab to be "active".-->
+<!--          tablinks = document.getElementsByClassName("tablinks");-->
+<!--          for (i = 0; i < tablinks.length; i++) {-->
+<!--            tablinks[i].className = tablinks[i].className.replace(" active", "");-->
+<!--          }-->
+
+<!--          // Display the clicked tab and set it to active.-->
+<!--          document.getElementById(animalName).style.display = "block";-->
+<!--          evt.currentTarget.className += " active";-->
+<!--        }-->
+      </script>
+
+  </body>
+</html>

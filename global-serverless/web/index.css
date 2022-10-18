@@ -1,0 +1,141 @@
+/* Style the tab */
+.tab {
+    overflow: hidden;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f1f1f1;
+
+}
+
+/* Style the buttons inside the tab */
+.tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+    font-size: 17px;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+    background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+    background-color: #ccc;
+}
+
+/* Style the tab content */
+.tabcontent {
+    display: none;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    border-top: none;
+}
+
+.hourglass {
+    font-size: 18px;
+    visibility: hidden;
+
+}
+
+.main {
+    background-color:whitesmoke; border-radius:8px; padding:8px; font-family:Arial;
+}
+
+#list {
+    margin-bottom:20px;
+}
+
+#tableform {
+    background-color: whitesmoke; padding:5px; margin: 5px; border-radius:8px;
+}
+#results {
+    background-color:none;
+    padding:5px;
+}
+
+.tabledata {
+    background-color: lightgray; padding:8px; margin: 5px;
+    border-radius:4px;
+    color:dimgray;
+}
+.tablenull {
+    background-color: whitesmoke;
+}
+.tablesummary {
+    font-size:smaller;
+}
+
+.runall {
+    font-size:x-small;
+}
+.go{
+    font-size:larger;
+
+}
+.gobig {
+    font-size:x-large;
+    width:50px;
+}
+.titlelink {
+    text-decoration:none;
+    font-weight:bold;
+    color:darkslateblue;
+}
+button {
+    border-radius:6px;  margin-left:5px;
+    padding-left:6px;
+    padding-right:6px;
+    padding-top:1px;
+    padding-bottom:1px;
+
+}
+
+button:hover {
+    background-color: grey; /* Green */
+    color: white;
+}
+
+.latency {
+    color:green;
+}
+
+.error {
+    color:red;
+}
+
+.dataheader {
+    color:#333;
+    padding:4px;
+
+}
+
+.datavalue {
+    color:dimgray;
+    font-size: x-large;
+    background-color:gainsboro;
+    margin:3px;
+    padding:4px;
+}
+.datavaluenew {
+    color:greenyellow;
+    font-size: x-large;
+    background-color:darkseagreen;
+    margin:3px;
+    padding:4px;
+}
+
+.title {
+    background-color: gainsboro;
+    padding:8px;
+
+    border-radius:8px;
+    font-size: large;
+    height:24px;
+}
