@@ -20,7 +20,10 @@ async function callApi(cookie, api, index) {
     const colorPalette = getColors();
     const color=colorPalette[index];
 
+    const regionCount = document.getElementById('list').rows.length;
+
     let latencyCell = document.getElementById(cookie + '-latency');
+    let totalLatencyCell = document.getElementById(cookie + '-totallatency');
 
     const started = new Date().getTime();
     // document.getElementById('hg' + index).style.visibility = 'visible';
@@ -35,21 +38,34 @@ async function callApi(cookie, api, index) {
 
         let LambdaLatency = data?.Latency;
 
-        latencyCell.innerHTML = '<span class="latency">'
-            + (LambdaLatency ?  LambdaLatency + ' ms Lambda-to-DynamoDB,<br/>' : '') +  latency + ' ms from browser'
+        latencyCell.innerHTML = '<span class="latency">&nbsp;'
+            + (LambdaLatency ?  LambdaLatency + ' ms&nbsp;<br/>&nbsp;<span style="color:gray; font-size:smaller">DynamoDB</span>&nbsp;' : '')
             + '</span>';
+
+        totalLatencyCell.innerHTML = '<span class="latency">&nbsp;'
+            +  latency + ' ms&nbsp;<br/>&nbsp;<span style="color:gray; font-size:smaller">Total</span>&nbsp;'
+            + '</span>';
+
 
         const results = document.getElementById('results');
         // const res = document.getElementById('res');
 
-        const row0 = results.insertRow(0);
+        const row0 = results.insertRow(-1);
 
         for(let i=0; i < index; i++) {
             const cell0 = row0.insertCell(-1);
             cell0.className = "tablenull";
         }
+
+
         const cell1 = row0.insertCell(-1);
         cell1.className = "tablenull";
+
+
+        // for(let i=0; i < index; i++) {
+        //     const cell00 = row0.insertCell(-1);
+        //     cell00.className = "tablenull";
+        // }
 
         let res = document.createElement('table');
         cell1.appendChild(res);
@@ -91,9 +107,14 @@ async function callApi(cookie, api, index) {
 
                     });
 
+                    const cellFinal = row.insertCell(-1);
+                    cellFinal.className = "cellFinal";
+                    cellFinal.innerHTML =  ''; // 'timings here';
+
                 });
 
             }
+            document.getElementById('clearPanel').style.display = 'inline';
 
         } else {
 
@@ -114,16 +135,21 @@ async function callApi(cookie, api, index) {
                 const SK =  data['SK'];
                 cell2.innerHTML = '<div>SK<div class="datavalue">' + SK + '</div></div>';
 
-
                 const cell3 = row.insertCell(-1);
                 cell3.className = "dataheader";
                 cell3.style="background-color:" + colorPalette[index];
                 const bookmark =  data['Attributes']['Bookmark'];
                 cell3.innerHTML = '<div>Bookmark<div class="datavaluenew">' + bookmark[Object.keys(bookmark)[0]] + '</div></div>';
 
+                const cellFinal = row.insertCell(-1);
+                cellFinal.className = "cellFinal";
+                cellFinal.innerHTML = ''; // 'timings here';
+
                 const cell9 = row0.insertCell(-1);
                 cell9.className = "tablenull";
                 cell9.innerHTML = '&nbsp;';
+
+                document.getElementById('clearPanel').style.display = 'inline';
 
             } else {
 
@@ -131,6 +157,7 @@ async function callApi(cookie, api, index) {
                     console.error(data.Error);
                     latencyCell.innerHTML = '<span class="error">Error</span>';
                 } else {
+
                     // console.log(JSON.stringify(data, null, 2))
                 }
             }
@@ -210,12 +237,13 @@ function getCookiesForList() {
             cell7.style="background-color:" + colorPalette[index];
             cell7.innerHTML = "<button class='gobig' onClick=callApi('" + cookie + "','" + cookieObj[cookie] + "update/" + demo_item_pk + "/" + demo_item_sk + "/-1','"+index.toString()+"')>&lt;&lt;</button>&nbsp;<button class='gobig' onClick=callApi('" + cookie + "','" + cookieObj[cookie] + "update/" + demo_item_pk + "/" + demo_item_sk + "/1','"+index.toString()+"')>&gt;&gt;</button>";
 
-
             const cell8 = row.insertCell(-1);
-            cell8.innerHTML = '<span class="hourglass" id="hg' + table.rows.length + '" >⌛</span>';
+            cell8.style="background-color:" + colorPalette[index];
+            cell8.id = cookie + '-latency';
 
             const cell9 = row.insertCell(-1);
-            cell9.id = cookie + '-latency';
+            cell9.style="background-color:" + colorPalette[index];
+            cell9.id = cookie + '-totallatency';
 
         }
 
@@ -225,46 +253,56 @@ function getCookiesForList() {
 }
 
 function setCookie(value) {
-    let days = 1000;
-    let expires = "";
-    if (days) {
-        let date = new Date();
-        date.setTime(date.getTime() + (days*24*60*60*1000));
-        expires = "; expires=" + date.toUTCString();
+
+    if(typeof value === 'object' || value.length === 0) {
+        console.log('Error: no URL was entered');
+
+    } else {
+
+        let days = 1000;
+        let expires = "";
+        if (days) {
+            let date = new Date();
+            date.setTime(date.getTime() + (days*24*60*60*1000));
+            expires = "; expires=" + date.toUTCString();
+        }
+
+        let region = 'us-west-2'; // may be reset
+
+        let amazonDomainPos = value.search('amazonaws.com');
+        if(amazonDomainPos > 0) {
+            let prefix = value.slice(0, amazonDomainPos-1);
+
+            region = prefix.slice(prefix.lastIndexOf('.') + 1);
+        }
+
+        let cookieName = region;
+
+        if(cookieName && cookieName.length > 0) {
+            document.cookie = cookieName + "=" + (value || "")  + expires + "; path=/";
+        }
+
+        getCookiesForList();
     }
-
-    let region = 'us-west-2'; // will be reset
-
-    let amazonDomainPos = value.search('amazonaws.com');
-    if(amazonDomainPos > 0) {
-        let prefix = value.slice(0, amazonDomainPos-1);
-
-        region = prefix.slice(prefix.lastIndexOf('.') + 1);
-    }
-
-    // let cookieName = prompt("API Name", region);
-    let cookieName = region;
-
-    if(cookieName && cookieName.length > 0) {
-        document.cookie = cookieName + "=" + (value || "")  + expires + "; path=/";
-    }
-
-    getCookiesForList();
 }
 
-function getCookie(name) {
-    let nameEQ = name + "=";
-    let ca = document.cookie.split(';');
-    for(let i=0;i < ca.length;i++) {
-        let c = ca[i];
-        while (c.charAt(0)===' ') c = c.substring(1,c.length);
-        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length,c.length);
-    }
-    return null;
-}
+// function getCookie(name) {
+//     let nameEQ = name + "=";
+//     let ca = document.cookie.split(';');
+//     for(let i=0;i < ca.length;i++) {
+//         let c = ca[i];
+//         while (c.charAt(0)===' ') c = c.substring(1,c.length);
+//         if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length,c.length);
+//     }
+//     return null;
+// }
 
 function eraseCookie(name) {
-    document.cookie = name+'=; Max-Age=-99999999;';
+    document.cookie = name+'=; Max-Age=-99999999; path=/';
     getCookiesForList();
 }
 
+function clearResults() {
+    document.getElementById('results').innerHTML = '';
+    document.getElementById('clearPanel').style.display = 'none';
+}
