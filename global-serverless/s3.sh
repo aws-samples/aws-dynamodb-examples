@@ -1,1 +1,1 @@
-aws s3 sync web/ s3://dynamodbworkshop
+aws s3 sync web/ s3://dynamodbworkshop/global-serverless/

@@ -44,6 +44,7 @@
 
 }
 
+
 .main {
     background-color:whitesmoke; border-radius:8px; padding:8px; font-family:Arial;
 }
@@ -104,6 +105,7 @@ button:hover {
 
 .latency {
     color:green;
+
 }
 
 .error {
@@ -138,4 +140,39 @@ button:hover {
     border-radius:8px;
     font-size: large;
     height:24px;
+}
+
+#clearPanel {
+    color: gainsboro;
+    display:none;
+    padding-left:10px;
+    padding-bottom:5px;
+}
+.hrc {
+    display:inline-block;
+    width:700px;
+    margin-top:10px;
+}
+.cellFinal {
+    width:120px;
+    color: green;
+}
+
+#sampleAPI1, #sampleAPI2 {
+    border:none;
+    background-color:gainsboro;
+    color:grey;
+    cursor:hand;
+
+}
+#addAPI {
+    border:1px solid grey;
+    cursor:hand;
+}
+
+.container {
+    display: flex;
+}
+.item {
+    flex-grow: 1;
 }

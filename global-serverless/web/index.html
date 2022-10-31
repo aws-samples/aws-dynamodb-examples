@@ -28,6 +28,7 @@
       function trimInput() {
           document.getElementById('api').value = document.getElementById('api').value.trim();
       }
+
       </script>
 
   </head>
@@ -36,7 +37,12 @@
       <div class="title">
 
         <a href="https://dynamodbworkshop.s3.amazonaws.com/index.html" class="titlelink">Global Serverless Workshop</a>
-<!--        <a href="http://dynamodbworkshop.s3-website-us-east-1.amazonaws.com/">SWS</a>-->
+<!--        <a href="http://dynamodbworkshop.s3-website-us-east-1.amazonaws.com/global-serverless/">SWS</a>-->
+           &nbsp;&nbsp;
+           <button id="addAPI" onClick="setCookie(prompt('Please enter the URL for your API Gateway', ''))">Add API</button>
+
+            <button id="sampleAPI1" onClick="setCookie(prompt('Sample API 1', 'https://osswul9dje.execute-api.us-west-2.amazonaws.com/api/'))">Sample API 1</button>
+            <button id="sampleAPI2" onClick="setCookie(prompt('Sample API 2', 'https://ue5621fb06.execute-api.us-east-2.amazonaws.com/api/'))">Sample API 2</button>
 
       </div>
 
@@ -62,33 +68,23 @@
 
 
 
-      <table id="tableform">
-         <tr><td>API Gateway URL</td>
-           <td>
-           <input type="text" id="api" name="api" size="70" value="" onChange="trimInput()">
-         </td>
-           <td>
-             <button onClick="saveit()">save</button>
-           </td></tr>
-          <tr><td></td><td style="color:silver">
-            https://osswul9dje.execute-api.us-west-2.amazonaws.com/api/
-<!--              https://amq5jff8gd.execute-api.us-west-2.amazonaws.com/api/-->
-              <br/>
-            https://ue5621fb06.execute-api.us-east-2.amazonaws.com/api/
-<!--              https://icte9dyln9.execute-api.us-east-2.amazonaws.com/api/-->
-          </td></tr>
-        <tr><td colspan="10"><hr/></td></tr>
 
-
-      </table>
 
       <table id="list"></table>
 
+      <div id='clearPanel' onClick="clearResults()">
+        CLEAR &nbsp;&nbsp;&nbsp; <hr class="hrc" />
+      </div>
+
       <table id="results"></table>
 
-      <table id="debug"></table>
-      <hr/>
+<!--      <div class="container">-->
+<!--        <div class="item">Region 1</div>-->
+<!--        <div class="item">Region 2</div>-->
+<!--        <div class="item">Timings</div>-->
+<!--      </div>-->
 
+      <table id="debug"></table>
 
     </div>
 

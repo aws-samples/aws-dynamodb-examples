@@ -1,17 +1,18 @@
-## Global Serverless workshop 
-🌎🌍🌏
+## Global Serverless workshop 🌎 🌍 🌏
 
 Welcome! This workshop will show you how to use DynamoDB Global Tables as the
 foundation for a resilient multi-region serverless application.
 
-### Scenario 🎥 🎞 ️📺   
+### Scenario 
+🎥 🎞 📺   
 Let's imagine we run a consulting shop that specializes in building serverless applications 
 for the media and entertainment industry.  This morning we received a request from a major 
 streaming service. The would like us to propose and build a replacement for their end-user 
 app that lets customers find and watch content.  For the project to be a success, the app must
 meet the following requirements:
 
-### Requirements 📝 ☑️ ☑️  
+### Requirements 
+📝 ☑️ ☑️  
 
 * Users can browse available movies and shows 
 * Bookmarking so that user can resume a show later
@@ -76,7 +77,7 @@ Or
 ```
 aws dynamodb create-table \
     --region us-west-2 \
-    --table-name global-serverless \
+    --table-name global-serverless2 \
     --attribute-definitions \
         AttributeName=PK,AttributeType=S \
         AttributeName=SK,AttributeType=S \
@@ -84,57 +85,25 @@ aws dynamodb create-table \
         AttributeName=PK,KeyType=HASH \
         AttributeName=SK,KeyType=RANGE \
     --billing-mode PAY_PER_REQUEST \
-    --query '{"New Table ":TableDescription.TableArn, "Status    ":TableDescription.TableStatus }'
+    --query '{"New Table ":TableDescription.TableArn, 
+              "Status    ":TableDescription.TableStatus }'
 
 ```
 
-2. Wait a minute for the table to be created. Then add a single item:
+2. Wait a moment for the table to be created. 
 
+Check to see when the table status changes 
+from CREATING to ACTIVE by running this command:
 ```
-aws dynamodb put-item \
-  --table-name global-serverless \
-  --region us-west-2 \
-  --item '{ "PK": {"S": "user100"}, "SK": {"S": "AshlandValley"}, "Bookmark": {"N": "0"} }' 
+aws dynamodb describe-table \
+--table-name global-serverless \
+--query '{TableStatus: Table.TableStatus}'
 ```
 
+3.Our table is in us-west-2 (Oregon). 
+Let's make it a **Global Table** by requesting a replica in us-east-2 (Ohio).
 
-#### Open the Web App
-The contents of the [web](/web) folder are static files with no AWS credentials nor AWS code included.  
-The app is able to make standard HTTPS GET calls to remote URLs on your behalf.  Soon we will direct it to call an API Gateway that you deploy.
-
- * Go to [https://dynamodbworkshop.s3.amazonaws.com/index.html](https://dynamodbworkshop.s3.amazonaws.com/index.html)
-
-Alternately, you can open the local index.html file from your local /web folder.
-
-
-#### Deploy backend API service to the first region
-1. Run ```aws configure``` and press enter four times. Notice the current region is shown on the third prompt. Run the command again if you need to change the region to 'us-west-2'
-2. Run ```export AWS_DEFAULT_REGION=us-west-2``` (is this necessary after step 1? t.b.d.)
-3. Run ```chalice deploy``` and wait for the infrastructure to be created.
-4. When the script completes, it reports a list of resources deployed. The Rest API URL is noteworthy.  
-5. Copy that URL and paste it into a new browser tab to test it. You should see a JSON response of {ping: "ok"}
-6. Return to the web app, and paste in this URL and click Save.
-7. New buttons appear. Click the **ping** button to make a call to your URL. Notice the round-trip latency is shown. This is the time taken as measured by code in the browser.
-8. Click the **get-item** button next. You should see the one item in your DynamoDB table.
-9. Update the bookmark by clicking the **>>** button. This will update the item and increment the bookmark by one.
-10. Click the **get-item** button again. Do you see the same item again?  Even though DynamoDB reads are by default "eventually consistent", you would have to be both quick and lucky to detect an inconsistent read.
-
-
-## Go Global
-
-#### Deploy to the second region
-1. Review and repeat steps 1-8 above.  
-2. In step 1 and 2, change the default region to ```us-east-2```  This is the Ohio region.
-3. Chalice should generate a new Rest service for you with us-east-2 embedded in the URL.
-4. Add this URL to the web app, and a second row of buttons appears in an alternate color.
-
-The buttons will not work because we don't have a DynamoDB table in this region yet!
-
-#### Add Table Replica
-With DynamoDB, setting up multi-region replication is as simple as requesting a new replica be made.
-There are no VPCs, security groups, routing, or Internet Gatweay components required.
-
-1. Run this command to request a new replica in the us-east-2 (Ohio) region.
+Run this command to create a new replica in the us-east-2 (Ohio) region.
 ```
 aws dynamodb update-table --table-name global-serverless --region=us-west-2 --cli-input-json  \
 '{"ReplicaUpdates": [
@@ -144,8 +113,59 @@ aws dynamodb update-table --table-name global-serverless --region=us-west-2 --cl
     ]}'
 ```
 
-2. Wait about five minutes for the replica to be setup.
+Check to see the table's replica status
+by running this command:
+```
+aws dynamodb describe-table \
+--table-name global-serverless \
+--query '{TableStatus: Table.TableStatus,
+             Replicas: Table.Replicas}'
+```
 
+4. Next, add some data to the table:
+Writing to a Global Table is done by writing to any of the regional replica tables.
+
+Run this command to create a new item with put-item:
+```
+aws dynamodb put-item \
+  --table-name global-serverless \
+  --region us-west-2 \
+  --item '{ "PK": {"S": "user100"}, "SK": {"S": "AshlandValley"}, "Bookmark": {"N": "0"} }' 
+```
+
+This item represents a user's bookmark of how many seconds 
+they have watched of a particular show.
+
+#### Deploy the backend API service to the first region
+
+1. Run ```aws configure``` and press enter four times. Notice the current region is shown on the third prompt. Run the command again if you need to change the region to 'us-west-2'
+2. Run ```chalice deploy``` and wait for the infrastructure to be created.
+4. When the script completes, it reports a list of resources deployed. The Rest API URL is noteworthy.  
+5. Copy that URL and paste it into a new browser tab to test it. You should see a JSON response of {ping: "ok"}
+6. You can type in certain paths to the end of the URL. Add the word scan so that the URL now ends with ```/api/scan```
+ You should see a JSON response representing the results of a table scan.
+7. Remove the word scan and then copy the API URL for use in the next steps.
+
+
+#### Open the Web App
+* Click to [https://dynamodbworkshop.s3.amazonaws.com/global-serverless/index.html](https://dynamodbworkshop.s3.amazonaws.com/global-serverless/index.html)
+
+This app deployed as a static html site and does not directly make any calls to AWS.
+Instead it prompts you to enter an API URL. When you click save, it will store the URL
+as a browser cookie, and show a set of buttons which you can use to test the API.
+
+1. Paste in the API URL to the web app and click Save. Test the API works by pressing the Ping button.
+
+The app code is found in your local [web](/web) folder. You could open the same html from here 
+or deploy the folder to a web server or public S3 bucket (optional).
+
+
+#### Deploy the service stack to the second region
+1. Run ```aws configure``` and press enter four times. Notice the current region is shown on the third prompt. 
+2. Run this command again but now change the region to 'us-east-2'
+3. Run ```chalice deploy``` and wait for the infrastructure to be created in us-east-2.
+4. When the script completes, it reports a list of resources deployed. The Rest API URL is noteworthy. 
+5. Copy and paste this URL to the web app, and a second row of buttons appears in an alternate color.
 
 #### Test Global Tables performance
 Return to the web app and play with the read and write buttons. 
