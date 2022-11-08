@@ -1,3 +1,10 @@
+// Global-Serverless web app code
+// This webapp makes HTTP GET calls to API Gateways that you have setup previously, or to demo APIGWs
+// There is no AWS code here nor authentication. It's designed as a kind of test harness or playground so you can
+//  try out reads and writes to DynamoDB Global Table replicas around the world.
+//
+
+let writeStarted = null;
 
 getCookiesForList();
 
@@ -26,6 +33,7 @@ async function callApi(cookie, api, index) {
     let totalLatencyCell = document.getElementById(cookie + '-totallatency');
 
     const started = new Date().getTime();
+
     // document.getElementById('hg' + index).style.visibility = 'visible';
 
     const response = await fetch(api);
@@ -39,16 +47,17 @@ async function callApi(cookie, api, index) {
         let LambdaLatency = data?.Latency;
 
         latencyCell.innerHTML = '<span class="latency">&nbsp;'
-            + (LambdaLatency ?  LambdaLatency + ' ms&nbsp;<br/>&nbsp;<span style="color:gray; font-size:smaller">DynamoDB</span>&nbsp;' : '')
+            + (LambdaLatency ?  LambdaLatency.toLocaleString() + ' ms&nbsp;<br/>&nbsp;<span style="color:gray; font-size:smaller">DynamoDB</span>&nbsp;' : '')
             + '</span>';
 
         totalLatencyCell.innerHTML = '<span class="latency">&nbsp;'
-            +  latency + ' ms&nbsp;<br/>&nbsp;<span style="color:gray; font-size:smaller">Total</span>&nbsp;'
+            +  latency.toLocaleString() + ' ms&nbsp;<br/>&nbsp;<span style="color:gray; font-size:smaller">Total</span>&nbsp;'
             + '</span>';
 
 
         const results = document.getElementById('results');
-        // const res = document.getElementById('res');
+
+        // const container = document.getElementById('container');
 
         const row0 = results.insertRow(-1);
 
@@ -57,20 +66,28 @@ async function callApi(cookie, api, index) {
             cell0.className = "tablenull";
         }
 
-
         const cell1 = row0.insertCell(-1);
         cell1.className = "tablenull";
 
-
-        // for(let i=0; i < index; i++) {
-        //     const cell00 = row0.insertCell(-1);
-        //     cell00.className = "tablenull";
-        // }
-
         let res = document.createElement('table');
+
+        res.className = 'resTable';
+
         cell1.appendChild(res);
 
-        if('Items' in data || 'Item' in data) {
+        // container.appendChild(res);
+
+        let readAfterWriteSpan;
+
+        if(writeStarted) {
+            const readAfterWriteTime = new Date().getTime();
+            readAfterWriteSpan = readAfterWriteTime - writeStarted;
+        } else {
+            readAfterWriteSpan = null;
+        }
+
+
+        if('Items' in data || 'Item' in data) {  // get-item
 
             let items = [];
             if('Item' in data) {
@@ -103,13 +120,15 @@ async function callApi(cookie, api, index) {
                         const cell1 = row.insertCell(-1);
                         cell1.className = "dataheader";
                         cell1.style="background-color:" + colorPalette[index];
-                        cell1.innerHTML = '<div>' + attr + '<div class="datavalue">' + item[attr][Object.keys(item[attr])[0]] + '</div></div>';
+                        cell1.innerHTML = '<div class="databox">' + attr + '<div class="datavalue">' + item[attr][Object.keys(item[attr])[0]] + '</div></div>';
 
                     });
 
                     const cellFinal = row.insertCell(-1);
                     cellFinal.className = "cellFinal";
-                    cellFinal.innerHTML =  ''; // 'timings here';
+                    if(readAfterWriteSpan && readAfterWriteSpan < 19999) {
+                        cellFinal.innerHTML =  Math.round(readAfterWriteSpan/100) / 10 + ' seconds<br/>since update';
+                    }
 
                 });
 
@@ -118,7 +137,9 @@ async function callApi(cookie, api, index) {
 
         } else {
 
-            if('Attributes' in data && 'Bookmark' in data['Attributes']) {
+            if('Attributes' in data && 'Bookmark' in data['Attributes']) {  // update
+
+                writeStarted = new Date().getTime();
 
                 const row0 = res.insertRow(0);
                 const row = res.insertRow(0);
@@ -138,16 +159,24 @@ async function callApi(cookie, api, index) {
                 const cell3 = row.insertCell(-1);
                 cell3.className = "dataheader";
                 cell3.style="background-color:" + colorPalette[index];
-                const bookmark =  data['Attributes']['Bookmark'];
-                cell3.innerHTML = '<div>Bookmark<div class="datavaluenew">' + bookmark[Object.keys(bookmark)[0]] + '</div></div>';
+                const newBookmarkObj =  data['Attributes']['Bookmark'];
+                const newBookmark = newBookmarkObj[Object.keys(newBookmarkObj)[0]];
+
+                const incrementAction = api.substring(api.lastIndexOf('/') + 1);
+                const oldValue = (Number(newBookmark) + (Number(incrementAction) * -1));
+
+                cell3.innerHTML = '<div>Bookmark <div class="datavaluenew"><span class="datavalueold">' + oldValue + '&nbsp;➡&nbsp;️</span>' + newBookmark + '</div></div>';
+
 
                 const cellFinal = row.insertCell(-1);
                 cellFinal.className = "cellFinal";
-                cellFinal.innerHTML = ''; // 'timings here';
+                if(readAfterWriteSpan && readAfterWriteSpan < 19999) {
+                    cellFinal.innerHTML =  Math.round(readAfterWriteSpan/100) / 10 + ' seconds<br/>since update';
+                }
 
-                const cell9 = row0.insertCell(-1);
-                cell9.className = "tablenull";
-                cell9.innerHTML = '&nbsp;';
+                // const cell9 = row0.insertCell(-1);
+                // cell9.className = "tablenull";
+                // cell9.innerHTML = '&nbsp;';
 
                 document.getElementById('clearPanel').style.display = 'inline';
 
@@ -195,22 +224,22 @@ function getCookiesForList() {
     table.innerHTML = '';
 
     const rs = table.insertRow(0);
-    const cs = rs.insertCell(-1);
-    const cs2 = rs.insertCell(-1);
-    const cs3 = rs.insertCell(-1);
-
-    // cs3.innerHTML = "<button class='runall' >RUN ALL</button>";
+    // const cs = rs.insertCell(-1);
+    // const cs2 = rs.insertCell(-1);
+    // const cs3 = rs.insertCell(-1);
 
     Object.keys(cookieObj).forEach((cookie, index)=>{
 
         if(cookie !== "") {
             const row = table.insertRow(-1);
 
+            let stackRegion = cookieObj[cookie].split('.')[2];
+
             const cell2 = row.insertCell(-1);
             cell2.className = "tabledata";
             cell2.style="background-color:" + colorPalette[index];
 
-            cell2.innerHTML = cookieObj[cookie].split('.')[2] + '<br/>' + cookieObj[cookie].split('.')[0]
+            cell2.innerHTML = '<b>' + stackRegion + '</b><br/>' + cookieObj[cookie].split('.')[0]
 
             const cell3 = row.insertCell(-1);
             cell3.className = "tabledata";
