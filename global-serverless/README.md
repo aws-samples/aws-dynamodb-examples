@@ -3,16 +3,14 @@
 Welcome! This workshop will show you how to use DynamoDB Global Tables as the
 foundation for a resilient multi-region serverless application.
 
-### Scenario 
-🎥 🎞 📺   
+### Scenario 🎥 🎞 📺   
 Let's imagine we run a consulting shop that specializes in building serverless applications 
 for the media and entertainment industry.  This morning we received a request from a major 
 streaming service. The would like us to propose and build a replacement for their end-user 
 app that lets customers find and watch content.  For the project to be a success, the app must
 meet the following requirements:
 
-### Requirements 
-📝 ☑️ ☑️  
+### Requirements 📝 ☑️ ☑️  
 
 * Users can browse available movies and shows 
 * Bookmarking so that user can resume a show later
@@ -151,7 +149,7 @@ they have watched of a particular show.
 * Click to [https://dynamodbworkshop.s3.amazonaws.com/global-serverless/index.html](https://dynamodbworkshop.s3.amazonaws.com/global-serverless/index.html)
 
 This app deployed as a static html site and does not directly make any calls to AWS.
-Instead it prompts you to enter an API URL. When you click save, it will store the URL
+Instead it has an **Add API** button by which you can enter an API URL. When you click save, it will store the URL
 as a browser cookie, and show a set of buttons which you can use to test the API.
 
 1. Paste in the API URL to the web app and click Save. Test the API works by pressing the Ping button.

@@ -56,9 +56,14 @@
 #tableform {
     background-color: whitesmoke; padding:5px; margin: 5px; border-radius:8px;
 }
+
 #results {
     background-color:none;
     padding:5px;
+
+}
+.resTable {
+
 }
 
 .tabledata {
@@ -88,6 +93,7 @@
     text-decoration:none;
     font-weight:bold;
     color:darkslateblue;
+    font-size:large;
 }
 button {
     border-radius:6px;  margin-left:5px;
@@ -120,30 +126,42 @@ button:hover {
 
 .datavalue {
     color:dimgray;
-    font-size: x-large;
+    font-size: large;
+    text-align: center;
     background-color:gainsboro;
-    margin:3px;
-    padding:4px;
+    margin:2px;
+    padding:3px;
 }
 .datavaluenew {
     color:greenyellow;
-    font-size: x-large;
+    font-size: large;
+    font-weight:bold;
+    text-align: center;
     background-color:darkseagreen;
     margin:3px;
     padding:4px;
 }
 
+.datavalueold {
+    color:grey;
+    font-size:small;
+}
+
+.databox {
+    color:gray;
+}
+
 .title {
     background-color: gainsboro;
     padding:8px;
-
+    color:grey;
+    font-size:small;
     border-radius:8px;
-    font-size: large;
     height:24px;
 }
 
 #clearPanel {
-    color: gainsboro;
+    color: gray;
     display:none;
     padding-left:10px;
     padding-bottom:5px;
@@ -152,19 +170,24 @@ button:hover {
     display:inline-block;
     width:700px;
     margin-top:10px;
+    color: gainsboro;
+    border:none;
+    height:1px;
+    background-color: gainsboro;
 }
 .cellFinal {
     width:120px;
-    color: green;
+    color: silver;
+    padding-left:8px;
 }
 
-#sampleAPI1, #sampleAPI2 {
+#sampleAPI1, #sampleAPI2, #sampleAPI3 {
     border:none;
     background-color:gainsboro;
     color:grey;
     cursor:hand;
-
 }
+
 #addAPI {
     border:1px solid grey;
     cursor:hand;
@@ -172,7 +195,17 @@ button:hover {
 
 .container {
     display: flex;
+
 }
 .item {
     flex-grow: 1;
+    border:2px solid cyan;
+    padding:5px;
+    margin:3px;
+}
+
+.samples {
+    font-size:small;
+    color:silver;
+    background-color: chocolate;
 }
