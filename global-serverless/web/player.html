@@ -1,0 +1,124 @@
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>GlobalFlix</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <link rel="icon" type="image/x-icon" href="https://dynamodbworkshop.s3.amazonaws.com/favicon.ico">
+  <!-- <script defer src="https://use.fontawesome.com/releases/v5.1.0/js/all.js" integrity="sha384-3LK/3kTpDE/Pkp8gTNp2gR/2gOiwQ6QaO7Td0zV76UFJVhqLl4Vl3KL1We6q6wR9" crossorigin="anonymous"></script> -->
+  <script src="https://kit.fontawesome.com/5eb4a18675.js" crossorigin="anonymous"></script>
+
+  <script src="./player.js" defer></script>
+      <script>
+        function saveit() {
+            if(document.getElementById('api').value.length > 0) {
+                setCookie(document.getElementById('api').value);
+            } else {
+                alert('Please enter the URL for your Rest API');
+            }
+
+      }
+      </script>
+
+  <link rel="stylesheet" href="player.css">
+</head>
+<body onload="loadVideo()">
+  <div class="wrapper">
+
+    <!-- HEADER -->
+    <header>
+      <div class="globalflixLogo">
+        <a id="logo" href="./globalflix.html"><img src="./logo.PNG?raw=true" alt="Logo Image"></a>
+      </div>      
+      <nav class="main-nav">                     
+      </nav>
+      <nav class="sub-nav">
+        <div class="regions" id="list"></div> 
+        <a class="settings" href="./index.html" alt="Settings"><i class="fas fa-xl fa-gear sub-nav-logo"></i></a>        
+      </nav>      
+    </header>
+    <!-- END OF HEADER -->
+    
+    <!-- MAIN CONTAINER -->
+    <section class="main-container" >
+
+      <div class="video-box">
+        <div class="item wow fadeInUpBig" style="visibility: visible;">
+            <i class="fa fa-film"></i>
+            <p id="progress" class="number">-</p>
+            <span></span>
+            <p>Video Progress</p>
+        </div>
+        <div class="item wow fadeInUpBig" style="visibility: visible;">
+          <i class="fa fa-gauge"></i>
+          <p id="latency" class="number">-</p>
+          <span></span>
+          <p>Write Latency</p>
+        </div>
+        <div class="player" id="player">
+          <video class="player_video viewer" id="video"></video>
+    
+          <div class="player_controls">
+            <div class="progress-range" title="Jump-to">
+              <div class="progress-bar"></div>
+            </div>
+            <div class="left-controls">
+              <button class="player_button toggle" title='Toggle Play'><i class="fa fa-play" title="Play" id="play-btn"></i></button>
+              <button class="player_button stop" title='Start over'><i class="fa fa-stop" title="Play" id="stop-btn"></i></button>
+              <button class="player_button speaker"><i id="speaker_icon" class="fa fa-volume-up" aria-hidden="true"></i></button>
+              <input type="range" name="volume" class="player_slider" min="0" max="1" step="0.05" value="1"></input>
+            </div>
+            <div class="right-controls">
+              <!-- I don't see the need for spped changes but I'm leaving the code in for now -->
+              <!-- <button class="player_button rate_icon"><i class="fa fa-spinner" aria-hidden="true"></i></button>
+              <input type="range" name="playbackRate" class="player_slider" min="0.5" max="2" step="0.1" value="1"></input> -->
+              <button data-skip="-10" class="player_button"><i class="fa fa-fast-backward" aria-hidden="true"></i></button>
+              <button data-skip="10" class="player_button"><i class="fa fa-fast-forward" aria-hidden="true"></i></button>
+              <div class="time">
+                <span class="time-elapsed">00:00 / </span>
+                <span class="time-duration">00:00</span>
+              </div>
+              <button class="player_button screenSize"><i id="screenSize_icon" class="fa fa-expand" aria-hidden="true"></i></button>
+            </div>
+          </div>
+        </div>
+        <div class="item wow fadeInUpBig" style="visibility: visible;">
+          <i class="fa fa-database"></i>
+          <p id="region0" class="number">-</p>
+          <span></span>
+          <p id="region0_text">-</p>
+        </div>
+        <div class="item wow fadeInUpBig" style="visibility: visible;">
+          <i class="fa fa-database"></i>
+          <p id="region1" class="number">-</p>
+          <span></span>
+          <p id="region1_text">-</p>
+        </div>
+      </div>
+      
+    <!-- END OF MAIN CONTAINER -->
+
+    <!-- FOOTER -->
+    <footer>
+
+      <div class="code-holder">
+        <code id="log"></code>
+      </div>
+      <div class="code-holder severe">
+        <code id="logSev"></code>
+      </div>
+      <div class="logos">
+        <a href="#"><i class="fab fa-facebook-square fa-2x logo"></i></a>
+        <a href="#"><i class="fab fa-instagram fa-2x logo"></i></a>
+        <a href="#"><i class="fab fa-twitter fa-2x logo"></i></a>
+        <a href="#"><i class="fab fa-youtube fa-2x logo"></i></a>
+      </div>
+      <p>&copy 2022 Globalflix, Inc.</p>
+    </footer>
+    <!-- END OF FOOTER -->
+  </div>
+</body>
+</html>

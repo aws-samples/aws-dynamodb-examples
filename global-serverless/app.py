@@ -115,6 +115,38 @@ def update(PK, SK, VAL):
             response['Latency'] = lambda_latency
             return response
 
+@app.route('/update/{PK}/{SK}/{VAL}/{THUMB}', methods=['GET'], cors=True)
+def update(PK, SK, VAL, THUMB):
+
+    params = {"TableName": dynamodb_table_name,
+              "Key": {"PK": {"S": PK},
+                      "SK": {"S": SK}
+                      },
+              "ReturnValues": 'UPDATED_NEW',
+              "UpdateExpression": 'SET bookmark = :b, thumb = :t',
+              "ExpressionAttributeValues": {":b": {"S": str(VAL)}, ":t": {"S": str(THUMB)}}
+              }
+
+    tic = time.perf_counter()
+
+    try:
+        response = ddb.update_item(**params)
+    except Exception as err:
+        return {'Error': str(err)}
+
+    toc = time.perf_counter()
+    lambda_latency = round((toc - tic) * 1000)
+
+    if 'Item' in response.keys():
+        item = response['Item']
+        return {'Item': item, 'Latency': lambda_latency}
+    else:
+        if 'Attributes' in response.keys() and 'bookmark' in response['Attributes']:
+            response['PK'] = PK
+            response['SK'] = SK
+            response['Latency'] = lambda_latency
+            return response
+
 
 def create_dynamodb_client(region="us-west-2"):
     return boto3.client("dynamodb", region_name=region)

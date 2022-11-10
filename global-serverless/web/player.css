@@ -1,0 +1,580 @@
+/* CSS VARIABLES */
+:root {
+    --primary: #141414;
+    --light: #F3F3F3;
+    --dark: 	#686868;
+  }
+  
+  html, body {
+    width: 100vw;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    background-color: var(--primary);
+    color: var(--light);
+    font-family: Arial, Helvetica, sans-serif;
+    box-sizing: border-box;
+    line-height: 1.4;
+  }
+  
+  img {
+    max-width: 100%;
+  }
+  
+  h1 {
+    padding-top: 60px;  
+  }
+  
+  .wrapper {
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* HEADER */
+  header {
+    padding: 20px 20px 0 20px;
+    position: fixed;
+    top: 0;
+    display: grid;  
+    grid-gap:5px;
+    grid-template-columns: 1fr 4fr 1fr;
+    grid-template-areas: 
+     "nt mn mn sb . . . "; 
+    background-color: var(--primary);
+    width: 100%;
+    margin-bottom: 0px;  
+  }
+  
+  .globalflixLogo {
+    grid-area: nt;
+    object-fit: cover;
+    width: 140px;
+    max-height: 100%;
+    
+    padding-left: 30px;
+    padding-top: 0px;  
+  }
+  
+  .globalflixLogo img {  
+    height: 45px;     
+  }
+  
+  #logo {
+    color: #E50914;  
+    margin: 0; 
+    padding: 0; 
+  }
+  
+  
+  .main-nav {
+    grid-area: mn;
+    padding: 0 50px 0 0;
+  }
+  
+  .main-nav a {
+    color: var(--light);
+    text-decoration: none;
+    margin: 5px;  
+  }
+  
+  .main-nav a:hover {
+    color: var(--dark);
+  }
+
+  .regionButton {
+    border: none;
+    border-radius: 6px;;
+    color: white;
+    padding: 8px 16px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    -webkit-transition-duration: 0.4s;
+    transition-duration: 0.4s;
+  }
+
+  .regionButton:hover {
+    box-shadow: 0 6px 8px 0 rgba(255, 153, 0, 0.24), 0 8px 20px 0 rgba(255, 153, 0, 0.19);
+  }
+
+  .active {
+    background-color: #FF9900;
+  }
+
+  .inactive {
+    border: 1px solid #FF9900;
+    background-color: transparent;
+  }
+
+  .down {
+    background-color: red;
+  }
+  
+  .sub-nav {
+    grid-area: sb;
+    padding: 0 40px 0 40px;
+  }
+  
+  .sub-nav a {
+    color: var(--light);
+    text-decoration: none;
+    display: inline-block;
+    padding-top: 20px;;
+  }
+  
+  .sub-nav a:hover {
+    color: var(--dark);
+  }
+  
+  
+  /* MAIN CONTIANER */
+  .main-container {
+    padding: 30px;
+  }
+  
+  .box {
+    display: grid;
+    grid-gap: 20px;
+    grid-template-columns: repeat(4, minmax(100px, 1fr));
+  }
+  
+  .box a {
+    transition: transform .3s;  
+  }
+  
+  .box a:hover {
+    transition: transform .3s;
+    -ms-transform: scale(1.2);
+    -webkit-transform: scale(1.2);  
+    transform: scale(1.2);
+  }
+  
+  .box img {
+    border-radius: 2px;
+  }
+  
+  /* LINKS */
+  .link {
+    padding: 50px;
+  }
+  
+  .sub-links ul {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-gap: 20px;
+    grid-template-columns: repeat(4, 1fr);
+  }
+  
+  .sub-links a {
+    color: var(--dark);
+    text-decoration: none;
+  }
+  
+  .sub-links a:hover {
+    color: var(--dark);
+    text-decoration: underline;
+  }
+  
+  .logos a{
+    padding: 10px;
+  }
+  
+  .logo {
+    color: var(--dark);
+  }
+
+  .regions {
+    float: left;
+    padding-right: 50px;
+  }
+  
+  .code-holder {
+    height:48px;
+  }
+
+  .code-holder code {
+    font-size: large;
+  }
+
+  .severe {
+    color: red;
+    font-weight: bold;
+  }
+  
+  /* FOOTER */
+  footer {
+    padding: 20px;
+    text-align: center;
+    color: var(--dark);
+    margin: 10px;
+  }
+  
+  /* MEDIA QUERIES */
+  
+  @media(max-width: 900px) {
+  
+    header {
+      display: grid;
+      grid-gap: 20px;
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-areas: 
+      "nt nt nt  .  .  . sb . . . "
+      "mn mn mn mn mn mn  mn mn mn mn";
+    }
+  
+    .box {
+      display: grid;
+      grid-gap: 20px;
+      grid-template-columns: repeat(4, minmax(100px, 1fr));
+    }
+  
+  }
+  
+  @media(max-width: 700px) {
+  
+    header {
+      display: grid;
+      grid-gap: 20px;
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-areas: 
+      "nt nt nt  .  .  . sb . . . "
+      "mn mn mn mn mn mn  mn mn mn mn";
+    }
+  
+    .box {
+      display: grid;
+      grid-gap: 20px;
+      grid-template-columns: repeat(3, minmax(100px, 1fr));
+    }
+  
+    .sub-links ul {
+      display: grid;
+      grid-gap: 20px;
+      grid-template-columns: repeat(3, 1fr);
+    }
+     
+  }
+  
+  @media(max-width: 500px) {
+  
+    .wrapper {
+      font-size: 15px;
+    }
+  
+    header {
+      margin: 0;
+      padding: 20px 0 0 0;
+      position: static;
+      display: grid;
+      grid-gap: 20px;
+      grid-template-columns: repeat(1, 1fr);
+      grid-template-areas: 
+      "nt"    
+      "mn"
+      "sb";
+      text-align: center;
+    }
+  
+    .globalflixLogo {
+      max-width: 100%;
+      margin: auto;
+      padding-right: 20px;
+    }
+  
+    .main-nav {
+      display: grid;
+      grid-gap: 0px;
+      grid-template-columns: repeat(1, 1fr);
+      text-align: center;
+    }
+  
+    h1 {
+      text-align: center;
+      font-size: 18px;
+    }
+  
+   
+  
+    .box {
+      display: grid;
+      grid-gap: 20px;
+      grid-template-columns: repeat(1, 1fr);
+      text-align: center;    
+    }
+  
+    .box a:hover {
+      transition: transform .3s;
+      -ms-transform: scale(1);
+      -webkit-transform: scale(1);  
+      transform: scale(1.05);
+    }
+  
+    .logos {
+      display: grid;
+      grid-gap: 20px;
+      grid-template-columns: repeat(2, 1fr);
+      text-align: center;
+    }
+  
+    .sub-links ul {
+      display: grid;
+      grid-gap: 20px;
+      grid-template-columns: repeat(1, 1fr);
+      text-align: center;
+      font-size: 15px;
+    }
+
+  }
+
+  .item{
+    width: 25%;
+    height: 100%;
+    padding: 50px 0px;
+    text-align: center;
+  }
+
+  .item p.number{
+    font-size: 40px;
+    padding: 0;
+    font-weight: bold;
+  }
+  
+  .item p{
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 18px;
+    margin: 0;
+    padding: 10px;
+  }
+   
+  .item span{
+    width: 60px;
+    background: rgba(255, 255, 255, 0.8);
+    height: 2px;
+    display: block;
+    margin: 0 auto;
+  }
+
+  .item i{
+    vertical-align: middle;
+    font-size: 50px;
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .video-box {
+    margin-top: 3em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .player {
+    width: 100%;
+    max-width: 50rem;
+    border: 0.25rem solid rgba(0, 0, 0, 0.445);
+    position: relative;
+    font-size: 0;
+    overflow: hidden;
+  }
+  .player_video {
+    width: 100%;
+    cursor: pointer;
+  }
+  .fa {
+    color: white;
+    font-size: 1rem;
+  }
+  
+  .fa-play:hover,
+  .fa-pause:hover,
+  .fa-stop:hover,
+  .fa-volume-up:hover,
+  .fa-fast-backward:hover,
+  .fa-fast-forward:hover {
+    color: dodgerblue;
+    cursor: pointer;
+  }
+  
+  .player_button {
+    background: none;
+    border: 0;
+    line-height: 1;
+    color: white;
+    text-align: center;
+    outline: 0;
+    padding: 5;
+    cursor: pointer;
+    max-width: 50px;
+    font-size: 1rem;
+  }
+  .player_button:focus,
+  .player_button:hover {
+    border-color: #ffc600;
+    border-color: blue;
+  }
+  .player_slider {
+    width: 0.75rem;
+    height: 3rem;
+  }
+  .player_controls {
+    display: flex;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    transform: translateY(100%) translateX(-5px); 
+    transition: all 0.3s;
+    flex-wrap: wrap; 
+    background: rgba(0, 0, 0, 0.1);
+    padding: 0 1.5rem;
+  }
+  .player:hover .player_controls {
+    transform: translateY(0);
+  }
+  
+  .player:hover .progress-range {
+    height: 0.75rem;
+  }
+  
+  .right-controls {
+    display: flex;
+    justify-content: flex-end;
+  }
+  .left-controls {
+    display: flex;
+    justify-content: flex-start;
+  }
+  
+  .player_controls > * {
+    flex: 1;
+  }
+  .progress-range {
+    flex: 10;
+    position: relative;
+    display: flex;
+    flex-basis: 100%;
+    height: 1.5em;
+    transition: height 0.3s;
+    background: rgba(0, 0, 0, 0.25);
+    cursor: pointer;
+  }
+  .progress-bar {
+    background: dodgerblue;
+    width: 50%;
+    height: 100%;
+    border-radius: 1.5em;
+    transition: all 250ms ease;
+  }
+  
+  .player:fullscreen {
+    max-width: none;
+    width: 100%;
+  }
+  .player:-webkit-full-screen {
+    /*CHROME*/
+    max-width: none;
+    width: 100%;
+  }
+  .player:-moz-full-screen {
+    /*FIREFOX*/
+    max-width: none;
+    width: 100%;
+  }
+  
+  .time {
+    text-align: right;
+    position: relative;
+    top: 0.85em;
+    padding-left: 0.5em;
+    margin-right: 1em;
+    color: white;
+    font-weight: 600;
+    font-size: 1rem;
+    /* user-select: none; */
+  }
+  
+  .time-elapsed,
+  .fa-fast-forward {
+    padding-left: 0.75em;
+  }
+  
+  /**/
+  /*css to style input type="range"*/
+  input[type='range'] {
+    -webkit-appearance: none;
+    background: transparent;
+    width: 40%;
+    margin: 0 20px;
+  }
+  input[type='range']:focus {
+    outline: none;
+  }
+  input[type='range']::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 5px;
+    cursor: pointer;
+    box-shadow: inset 1px 1px 1px rgba(0, 0, 0, 0), 0 0 1px rgba(13, 13, 13, 0);
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 50px;
+    border: 0.2px solid rgba(1, 1, 1, 0);
+  }
+  input[type='range']::-webkit-slider-thumb {
+    height: 0.75em;
+    width: 1em;
+    border-radius: 0.25em;
+    background: dodgerblue;
+    cursor: pointer;
+    -webkit-appearance: none;
+    margin-top: -4px;
+    box-shadow: 0 0 2px rgb(15, 14, 80);
+  }
+  
+  input[type='range']::-moz-range-track {
+    /*?*/
+    width: 100%;
+    height: 8.4px;
+    cursor: pointer;
+    box-shadow: 1px 1px 1px rgba(0, 0, 0, 0), 0 0 1px rgba(13, 13, 13, 0);
+    background: #ffffff;
+    border-radius: 1.3px;
+    border: 0.2px solid rgba(1, 1, 1, 0);
+  }
+  input[type='range']::-moz-range-thumb {
+    /*?*/
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0), 0 0 0 rgba(13, 13, 13, 0);
+    height: 12px;
+    width: 17px;
+    border-radius: 50px;
+    /* background: #ffc600; */
+    background: blue;
+    cursor: pointer;
+  }
+  
+  @media (max-width: 827px) {
+    .fa {
+      color: white;
+      font-size: 0.9rem;
+    }
+    button + button {
+      margin-left: 0;
+    }
+    .time {
+      padding-left: 0;
+      margin-right: 0.5em;
+    }
+  
+    .time-elapsed,
+    .fa-fast-forward {
+      padding-left: 0.75em;
+    }
+    .player {
+      width: 80%;
+    }
+  }
+  @media (max-width: 600px) {
+    .player {
+      width: 95%;
+    }
+  }

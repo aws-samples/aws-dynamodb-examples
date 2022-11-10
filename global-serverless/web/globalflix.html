@@ -1,0 +1,74 @@
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>GlobalFlix</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <link rel="icon" type="image/x-icon" href="https://dynamodbworkshop.s3.amazonaws.com/favicon.ico">
+  <!-- <script defer src="https://use.fontawesome.com/releases/v5.1.0/js/all.js" integrity="sha384-3LK/3kTpDE/Pkp8gTNp2gR/2gOiwQ6QaO7Td0zV76UFJVhqLl4Vl3KL1We6q6wR9" crossorigin="anonymous"></script> -->
+  <script src="https://kit.fontawesome.com/5eb4a18675.js" crossorigin="anonymous"></script>
+
+  <script src="./globalflix.js" defer></script>
+      <script>
+        function saveit() {
+            if(document.getElementById('api').value.length > 0) {
+                setCookie(document.getElementById('api').value);
+            } else {
+                alert('Please enter the URL for your Rest API');
+            }
+
+      }
+      </script>
+
+  <link rel="stylesheet" href="globalflix.css">
+</head>
+<body onload="loadLibrary()">
+  <div class="wrapper">
+
+    <!-- HEADER -->
+    <header>
+      <div class="globalflixLogo">
+        <a id="logo" href="#home"><img src="./logo.PNG?raw=true" alt="Globalflix"></a>
+      </div>      
+      <nav class="main-nav">
+            
+      </nav>
+      <nav class="sub-nav">
+        <div class="regions" id="list"></div> 
+        <a class="settings" href="./index.html" alt="Settings"><i class="fas fa-xl fa-gear sub-nav-logo"></i></a>        
+      </nav>      
+    </header>
+    <!-- END OF HEADER -->
+    
+    <!-- MAIN CONTAINER -->
+    <section class="main-container" >
+
+      <h1 id="continueHeader" style="display: none;">Continue Watching</h1>
+      <div class="box" id="continueList"></div>
+      
+
+      <div class="location" id="home">
+        <h1 id="popularHeader" title="Latency to Query 'library' PK for videos">Popular on Globalflix</h1>
+        <div class="box" id="popularList"></div>
+      </div>
+
+      <div id="debug"></div>
+    <!-- END OF MAIN CONTAINER -->
+
+    <!-- FOOTER -->
+    <footer>
+      <div class="logos">
+        <a href="#"><i class="fab fa-facebook-square fa-2x logo"></i></a>
+        <a href="#"><i class="fab fa-instagram fa-2x logo"></i></a>
+        <a href="#"><i class="fab fa-twitter fa-2x logo"></i></a>
+        <a href="#"><i class="fab fa-youtube fa-2x logo"></i></a>
+      </div>
+      <p>&copy 2022 Globalflix, Inc.</p>
+    </footer>
+    <!-- END OF FOOTER -->
+  </div>
+</body>
+</html>
