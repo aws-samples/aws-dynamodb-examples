@@ -65,7 +65,7 @@ Or
 1. Run ```aws sts get-caller-identity``` to verify the AWS CLI and run ```python3 --version```
 2. Install [AWS Chalice](https://github.com/aws/chalice) ```python3 -m pip install chalice```
 3. Run ```git clone https://github.com/aws-samples/aws-dynamodb-examples.git```
-4. Run ```cd global-serverless```
+4. Run ```cd aws-dynamodb-examples/global-serverless```
 5. Notice the [app.py](app.py) file. This code defines Lambda function and API Gateway routes. 
 
 
@@ -75,7 +75,7 @@ Or
 ```
 aws dynamodb create-table \
     --region us-west-2 \
-    --table-name global-serverless2 \
+    --table-name global-serverless \
     --attribute-definitions \
         AttributeName=PK,AttributeType=S \
         AttributeName=SK,AttributeType=S \
@@ -95,6 +95,7 @@ from CREATING to ACTIVE by running this command:
 ```
 aws dynamodb describe-table \
 --table-name global-serverless \
+--region-name us-west-2 \
 --query '{TableStatus: Table.TableStatus}'
 ```
 
@@ -111,11 +112,11 @@ aws dynamodb update-table --table-name global-serverless --region=us-west-2 --cl
     ]}'
 ```
 
-Check to see the table's replica status
-by running this command:
+Check to see the table's replica status by running this command:
 ```
 aws dynamodb describe-table \
 --table-name global-serverless \
+--region-name us-west-2 \
 --query '{TableStatus: Table.TableStatus,
              Replicas: Table.Replicas}'
 ```
@@ -123,16 +124,23 @@ aws dynamodb describe-table \
 4. Next, add some data to the table:
 Writing to a Global Table is done by writing to any of the regional replica tables.
 
-Run this command to create a new item with put-item:
+Run this command to load video library items into the table with batch-write-item:
 ```
-aws dynamodb put-item \
-  --table-name global-serverless \
-  --region us-west-2 \
-  --item '{ "PK": {"S": "user100"}, "SK": {"S": "AshlandValley"}, "Bookmark": {"N": "0"} }' 
+aws dynamodb batch-write-item \
+--region-name us-west-2 \
+--request-items file://sample-data.json
 ```
 
-This item represents a user's bookmark of how many seconds 
-they have watched of a particular show.
+These items are how the UI will display which videos are available to stream.
+
+
+5. Verify data was written:
+```
+aws dynamodb get-item \
+--table-name global-serverless \
+--region-name us-west-2 \
+--key '{"PK": {"S": "library"}, "SK": {"S": "01"}}'
+```
 
 #### Deploy the backend API service to the first region
 

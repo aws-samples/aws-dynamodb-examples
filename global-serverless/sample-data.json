@@ -1,0 +1,271 @@
+{
+    "global-serverless": [
+        {
+            "PutRequest": {
+                "Item": {
+                    "PK": {
+                        "S": "user100"
+                    },
+                    "SK": {
+                        "S": "AshlandValley"
+                    },
+                    "Bookmark": {
+                        "N": 0
+                    }
+                }
+            }
+        },
+        {
+            "PutRequest": {
+                "Item": {
+                    "PK": {
+                        "S": "library"
+                    },
+                    "SK": {
+                        "S": "01"
+                    },
+                    "thumb": {
+                        "S": "https://img.youtube.com/vi/_cMxraX_5RE/maxresdefault.jpg"
+                    },
+                    "title": {
+                        "S": "Sprite Fright"
+                    },
+                    "video": {
+                        "S": "https://upload.wikimedia.org/wikipedia/commons/7/76/Sprite_Fright_-_Blender_Open_Movie-full_movie.webm"
+                    }
+                }
+            }
+        },
+        {
+            "PutRequest": {
+                "Item": {
+                    "PK": {
+                        "S": "library"
+                    },
+                    "SK": {
+                        "S": "02"
+                    },
+                    "thumb": {
+                        "S": "https://img.youtube.com/vi/PVGeM40dABA/maxresdefault.jpg"
+                    },
+                    "title": {
+                        "S": "Coffee Run"
+                    },
+                    "video": {
+                        "S": "https://upload.wikimedia.org/wikipedia/commons/3/3f/Coffee_Run_-_Blender_Open_Movie-full_movie.webm"
+                    }
+                }
+            }
+        },
+        {
+            "PutRequest": {
+                "Item": {
+                    "PK": {
+                        "S": "library"
+                    },
+                    "SK": {
+                        "S": "03"
+                    },
+                    "thumb": {
+                        "S": "https://img.youtube.com/vi/WhWc3b3KhnY/maxresdefault.jpg"
+                    },
+                    "title": {
+                        "S": "Spring"
+                    },
+                    "video": {
+                        "S": "https://upload.wikimedia.org/wikipedia/commons/a/a5/Spring_-_Blender_Open_Movie.webm"
+                    }
+                }
+            }
+        },
+        {
+            "PutRequest": {
+                "Item": {
+                    "PK": {
+                        "S": "library"
+                    },
+                    "SK": {
+                        "S": "04"
+                    },
+                    "thumb": {
+                        "S": "https://img.youtube.com/vi/pKmSdY56VtY/maxresdefault.jpg"
+                    },
+                    "title": {
+                        "S": "Hero"
+                    },
+                    "video": {
+                        "S": "https://upload.wikimedia.org/wikipedia/commons/a/a9/HERO_-_Blender_Open_Movie-full_movie.webm"
+                    }
+                }
+            }
+        },
+        {
+            "PutRequest": {
+                "Item": {
+                    "PK": {
+                        "S": "library"
+                    },
+                    "SK": {
+                        "S": "05"
+                    },
+                    "thumb": {
+                        "S": "https://img.youtube.com/vi/apiu3pTIwuY/maxresdefault.jpg"
+                    },
+                    "title": {
+                        "S": "The Daily Dweebs"
+                    },
+                    "video": {
+                        "S": "https://upload.wikimedia.org/wikipedia/commons/b/b2/The_Daily_Dweebs_-_Blender_Open_Movie-full_movie.webm"
+                    }
+                }
+            }
+        },
+        {
+            "PutRequest": {
+                "Item": {
+                    "PK": {
+                        "S": "library"
+                    },
+                    "SK": {
+                        "S": "06"
+                    },
+                    "thumb": {
+                        "S": "https://img.youtube.com/vi/mN0zPOpADL4/maxresdefault.jpg"
+                    },
+                    "title": {
+                        "S": "Agent 327"
+                    },
+                    "video": {
+                        "S": "https://archive.org/download/MacArthur_Foundation_100andChange_dQw4w9WgXcQ/Rick_Astley_-_Never_Gonna_Give_You_Up_dQw4w9WgXcQ.webm"
+                    }
+                }
+            }
+        },
+        {
+            "PutRequest": {
+                "Item": {
+                    "PK": {
+                        "S": "library"
+                    },
+                    "SK": {
+                        "S": "07"
+                    },
+                    "thumb": {
+                        "S": "https://img.youtube.com/vi/SkVqJ1SGeL0/maxresdefault.jpg"
+                    },
+                    "title": {
+                        "S": "Caminandes Llamigos"
+                    },
+                    "video": {
+                        "S": "https://upload.wikimedia.org/wikipedia/commons/a/ab/Caminandes_3_-_Llamigos_-_Blender_Animated_Short.webm"
+                    }
+                }
+            }
+        },
+        {
+            "PutRequest": {
+                "Item": {
+                    "PK": {
+                        "S": "library"
+                    },
+                    "SK": {
+                        "S": "08"
+                    },
+                    "thumb": {
+                        "S": "https://img.youtube.com/vi/lqiN98z6Dak/maxresdefault.jpg"
+                    },
+                    "title": {
+                        "S": "Glass Half"
+                    },
+                    "video": {
+                        "S": "https://upload.wikimedia.org/wikipedia/commons/0/02/Glass_Half_-_Blender_Open_Movie-full_movie.webm"
+                    }
+                }
+            }
+        },
+        {
+            "PutRequest": {
+                "Item": {
+                    "PK": {
+                        "S": "library"
+                    },
+                    "SK": {
+                        "S": "09"
+                    },
+                    "thumb": {
+                        "S": "https://img.youtube.com/vi/Y-rmzh0PI3c/maxresdefault.jpg"
+                    },
+                    "title": {
+                        "S": "Cosmos Laundromat"
+                    },
+                    "video": {
+                        "S": "https://upload.wikimedia.org/wikipedia/commons/3/36/Cosmos_Laundromat_-_First_Cycle_-_Official_Blender_Foundation_release.webm"
+                    }
+                }
+            }
+        },
+        {
+            "PutRequest": {
+                "Item": {
+                    "PK": {
+                        "S": "library"
+                    },
+                    "SK": {
+                        "S": "10"
+                    },
+                    "thumb": {
+                        "S": "https://img.youtube.com/vi/Z4C82eyhwgU/maxresdefault.jpg"
+                    },
+                    "title": {
+                        "S": "Caminandes"
+                    },
+                    "video": {
+                        "S": "https://upload.wikimedia.org/wikipedia/commons/7/7c/Caminandes_-_Gran_Dillama_-_Blender_Foundation%27s_new_Open_Movie.webm"
+                    }
+                }
+            }
+        },
+        {
+            "PutRequest": {
+                "Item": {
+                    "PK": {
+                        "S": "library"
+                    },
+                    "SK": {
+                        "S": "11"
+                    },
+                    "thumb": {
+                        "S": "https://i.ytimg.com/vi/umNfA9m6Kis/maxresdefault.jpg"
+                    },
+                    "title": {
+                        "S": "Tears of Steel"
+                    },
+                    "video": {
+                        "S": "https://upload.wikimedia.org/wikipedia/commons/c/cb/Tears_of_Steel_1080p.webm"
+                    }
+                }
+            }
+        },
+        {
+            "PutRequest": {
+                "Item": {
+                    "PK": {
+                        "S": "library"
+                    },
+                    "SK": {
+                        "S": "12"
+                    },
+                    "thumb": {
+                        "S": "https://ddz4ak4pa3d19.cloudfront.net/cache/c0/60/c06025684683b743edd574fd7096f6c0.jpg"
+                    },
+                    "title": {
+                        "S": "Big Buck Bunny"
+                    },
+                    "video": {
+                        "S": "https://commons.wikimedia.org/wiki/File:Big_Buck_Bunny_4K.webm"
+                    }
+                }
+            }
+        }
+    ]
+}
