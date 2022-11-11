@@ -104,7 +104,7 @@ Let's make it a **Global Table** by requesting a replica in us-east-2 (Ohio).
 
 Run this command to create a new replica in the us-east-2 (Ohio) region.
 ```
-aws dynamodb update-table --table-name global-serverless --region=us-west-2 --cli-input-json  \
+aws dynamodb update-table --table-name global-serverless --region us-west-2 --cli-input-json  \
 '{"ReplicaUpdates": [
     {
         "Create": {"RegionName": "us-east-2" }
