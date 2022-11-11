@@ -63,7 +63,7 @@ Or
 
 #### Verify Environment
 1. Run ```aws sts get-caller-identity``` to verify the AWS CLI and run ```python3 --version```
-2. Install [AWS Chalice](https://github.com/aws/chalice) ```python3 -m pip install chalice```
+2. Install [Boto3](https://boto3.amazonaws.com/v1/documentation/api/latest/index.html) and [AWS Chalice](https://github.com/aws/chalice) ```sudo python3 -m pip install chalice boto3```
 3. Run ```git clone https://github.com/aws-samples/aws-dynamodb-examples.git```
 4. Run ```cd aws-dynamodb-examples/global-serverless```
 5. Notice the [app.py](app.py) file. This code defines Lambda function and API Gateway routes. 
