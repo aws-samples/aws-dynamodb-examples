@@ -95,7 +95,7 @@ from CREATING to ACTIVE by running this command:
 ```
 aws dynamodb describe-table \
 --table-name global-serverless \
---region-name us-west-2 \
+--region us-west-2 \
 --query '{TableStatus: Table.TableStatus}'
 ```
 
@@ -116,7 +116,7 @@ Check to see the table's replica status by running this command:
 ```
 aws dynamodb describe-table \
 --table-name global-serverless \
---region-name us-west-2 \
+--region us-west-2 \
 --query '{TableStatus: Table.TableStatus,
              Replicas: Table.Replicas}'
 ```
@@ -127,7 +127,7 @@ Writing to a Global Table is done by writing to any of the regional replica tabl
 Run this command to load video library items into the table with batch-write-item:
 ```
 aws dynamodb batch-write-item \
---region-name us-west-2 \
+--region us-west-2 \
 --request-items file://sample-data.json
 ```
 
@@ -138,7 +138,7 @@ These items are how the UI will display which videos are available to stream.
 ```
 aws dynamodb get-item \
 --table-name global-serverless \
---region-name us-west-2 \
+--region us-west-2 \
 --key '{"PK": {"S": "library"}, "SK": {"S": "01"}}'
 ```
 
