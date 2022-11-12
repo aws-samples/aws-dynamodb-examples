@@ -100,14 +100,14 @@ aws dynamodb describe-table \
 ```
 
 3.Our table is in us-west-2 (Oregon). 
-Let's make it a **Global Table** by requesting a replica in us-east-2 (Ohio).
+Let's make it a **Global Table** by requesting a replica in eu-west-1 (Europe/Dublin).
 
-Run this command to create a new replica in the us-east-2 (Ohio) region.
+Run this command to create a new replica in the eu-west-1 (Europe/Dublin) region.
 ```
 aws dynamodb update-table --table-name global-serverless --region us-west-2 --cli-input-json  \
 '{"ReplicaUpdates": [
     {
-        "Create": {"RegionName": "us-east-2" }
+        "Create": {"RegionName": "eu-west-1" }
         }
     ]}'
 ```
@@ -168,8 +168,8 @@ or deploy the folder to a web server or public S3 bucket (optional).
 
 #### Deploy the service stack to the second region
 1. Run ```aws configure``` and press enter four times. Notice the current region is shown on the third prompt. 
-2. Run this command again but now change the region to 'us-east-2'
-3. Run ```chalice deploy``` and wait for the infrastructure to be created in us-east-2.
+2. Run this command again but now change the region to 'eu-west-1'
+3. Run ```chalice deploy``` and wait for the infrastructure to be created in eu-west-1.
 4. When the script completes, it reports a list of resources deployed. The Rest API URL is noteworthy. 
 5. Copy and paste this URL to the web app, and a second row of buttons appears in an alternate color.
 
