@@ -229,7 +229,7 @@ function updateBookmark() {
           }
           
         }
-    }, 5000);
+    }, 500);
 }
 
 async function writeBookmark(currentProgress) {
@@ -285,7 +285,7 @@ async function writeBookmark(currentProgress) {
     }
 
     failCount += 1;
-    if (failCount >= 3) {
+    if (failCount >= 30) {
       target = activeCookie == 1 ? 1 : 0
       console.log(target)
       regionSwitch(activeCookie == 1 ? 0 : 1)
