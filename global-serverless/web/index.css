@@ -1,3 +1,7 @@
+.indexbody {
+    background-color:#111;
+}
+
 /* Style the tab */
 .tab {
     overflow: hidden;
@@ -46,11 +50,21 @@
 
 
 .main {
-    background-color:whitesmoke; border-radius:8px; padding:8px; font-family:Arial;
+    background-color: black;
+    border-radius:8px;
+    padding:8px;
+    font-family:Arial;
 }
 
 #list {
+    margin-top:10px;
     margin-bottom:20px;
+
+}
+
+#list td {
+    border: 2px solid black;
+    border-radius: 6px;
 }
 
 #tableform {
@@ -63,16 +77,18 @@
 
 }
 .resTable {
-
+    background-color: black;
 }
 
 .tabledata {
-    background-color: lightgray; padding:8px; margin: 5px;
-    border-radius:4px;
+    background-color: lightgray;
+    margin: 8px;
+    border-radius:6px;
+    padding:10px;
     color:dimgray;
 }
 .tablenull {
-    background-color: whitesmoke;
+    background-color: black;
 }
 .tablesummary {
     font-size:smaller;
@@ -92,9 +108,10 @@
 .titlelink {
     text-decoration:none;
     font-weight:bold;
-    color:darkslateblue;
+    color:dodgerblue;
     font-size:large;
 }
+
 button {
     border-radius:6px;  margin-left:5px;
     padding-left:6px;
@@ -152,9 +169,9 @@ button:hover {
 }
 
 .title {
-    background-color: gainsboro;
+    background-color: #222;
     padding:8px;
-    color:grey;
+    color:gainsboro;
     font-size:small;
     border-radius:8px;
     height:24px;
@@ -191,6 +208,9 @@ button:hover {
 #addAPI {
     border:1px solid grey;
     cursor:hand;
+    background-color:dimgray;
+    color: whitesmoke;
+    font-size:larger;
 }
 
 .container {

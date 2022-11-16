@@ -59,7 +59,7 @@ async function callApi(cookie, api, index) {
 
         // const container = document.getElementById('container');
 
-        const row0 = results.insertRow(-1);
+        const row0 = results.insertRow(0);
 
         for(let i=0; i < index; i++) {
             const cell0 = row0.insertCell(-1);
@@ -223,10 +223,7 @@ function getCookiesForList() {
 
     table.innerHTML = '';
 
-    const rs = table.insertRow(0);
-    // const cs = rs.insertCell(-1);
-    // const cs2 = rs.insertCell(-1);
-    // const cs3 = rs.insertCell(-1);
+    // const rs = table.insertRow(0);
 
     Object.keys(cookieObj).forEach((cookie, index)=>{
 
