@@ -32,7 +32,7 @@
       </script>
 
   </head>
-  <body>
+  <body class="indexbody">
     <div class="main">
       <div class="title">
 
@@ -41,34 +41,14 @@
            &nbsp;&nbsp;
            <button id="addAPI" onClick="setCookie(prompt('Please enter the URL for your API Gateway', ''))">Add API</button>
 
-          &nbsp;&nbsp;&nbsp;&nbsp;Sample APIs:&nbsp;
+<!--          &nbsp;&nbsp;&nbsp;&nbsp;Sample APIs:&nbsp;-->
 
-          <button id="sampleAPI1" onClick="setCookie(prompt('Sample API Oregon', 'https://osswul9dje.execute-api.us-west-2.amazonaws.com/api/'))">Oregon</button>
-          <button id="sampleAPI2" onClick="setCookie(prompt('Sample API Ireland', 'https://mjr9wyamog.execute-api.eu-west-1.amazonaws.com/api/'))">Ireland</button>
-          <button id="sampleAPI3" onClick="setCookie(prompt('Sample API Singapore', 'https://voax9a7ub2.execute-api.ap-southeast-1.amazonaws.com/api/'))">Singapore</button>
-          <a href="./globalflix.html" style="float: right;"><img src="./logo.png?raw=true" alt="Globalflix" style="height: 32px; margin-top:-4px;"></a>
+<!--          <button id="sampleAPI1" onClick="setCookie(prompt('Sample API Oregon', 'https://osswul9dje.execute-api.us-west-2.amazonaws.com/api/'))">Oregon</button>-->
+<!--          <button id="sampleAPI2" onClick="setCookie(prompt('Sample API Ireland', 'https://mjr9wyamog.execute-api.eu-west-1.amazonaws.com/api/'))">Ireland</button>-->
+<!--          <button id="sampleAPI3" onClick="setCookie(prompt('Sample API Singapore', 'https://voax9a7ub2.execute-api.ap-southeast-1.amazonaws.com/api/'))">Singapore</button>-->
+<!--          -->
+        <a href="./globalflix.html" style="float: right;"><img src="./logo.png?raw=true" alt="Globalflix" style="height: 32px; margin-top:-4px;"></a>
       </div>
-
-<!--      <div class="tab">-->
-<!--        <button class="tablinks" onclick="clickHandle(event, 'Video')">Video</button>-->
-<!--        <button class="tablinks" onclick="clickHandle(event, 'API')">API</button>-->
-<!--        <button class="tablinks" onclick="clickHandle(event, 'Latency')">Latency</button>-->
-<!--      </div>-->
-
-<!--      <div id="Video" class="tabcontent">-->
-<!--        <div>-->
-<!--          Watch the rabbit video here in two regions.-->
-<!--        </div>-->
-<!--      </div>-->
-
-<!--      <div id="API" class="tabcontent">-->
-<!--        <h3>Try the raw APIs</h3>-->
-<!--      </div>-->
-
-<!--      <div id="Latency" class="tabcontent">-->
-<!--        <h3>Coming Soon</h3>-->
-<!--      </div>-->
-
 
       <table id="list"></table>
 
@@ -78,40 +58,10 @@
 
       <table id="results"></table>
 
-
-<!--      <div class="container" id="container">-->
-<!--        <div class="item">Region 1</div>-->
-<!--        <div class="item">Region 2</div>-->
-<!--        <div class="item">Timings</div>-->
-<!--      </div>-->
-
       <table id="debug"></table>
 
     </div>
 
-        <script>
-
-<!-- UI Tabs function -->
-<!--        function clickHandle(evt, animalName) {-->
-<!--          let i, tabcontent, tablinks;-->
-
-<!--          // This is to clear the previous clicked content.-->
-<!--          tabcontent = document.getElementsByClassName("tabcontent");-->
-<!--          for (i = 0; i < tabcontent.length; i++) {-->
-<!--            tabcontent[i].style.display = "none";-->
-<!--          }-->
-
-<!--          // Set the tab to be "active".-->
-<!--          tablinks = document.getElementsByClassName("tablinks");-->
-<!--          for (i = 0; i < tablinks.length; i++) {-->
-<!--            tablinks[i].className = tablinks[i].className.replace(" active", "");-->
-<!--          }-->
-
-<!--          // Display the clicked tab and set it to active.-->
-<!--          document.getElementById(animalName).style.display = "block";-->
-<!--          evt.currentTarget.className += " active";-->
-<!--        }-->
-      </script>
 
   </body>
 </html>
