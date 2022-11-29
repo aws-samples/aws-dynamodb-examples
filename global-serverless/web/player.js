@@ -163,10 +163,23 @@ async function getBookmark(cookie, start, region) {
           });
         }
       }
+
+      if (region==0) {
+        const logSev = document.getElementById('logSev');
+        logSev.innerText = ""
+      } else {
+        const logSev2 = document.getElementById('logSev2');
+        logSev2.innerText = ""
+      }
     }
   } catch(error) {
-    const log = document.getElementById('logSev');
-    log.innerText = "Error reading from " + cookie
+    if (region==0) {
+      const logSev = document.getElementById('logSev');
+      logSev.innerText = "Error reading from " + cookie
+    } else {
+      const logSev2 = document.getElementById('logSev2');
+      logSev2.innerText = "Error reading from " + cookie
+    }
 
     const regionProgress = document.getElementById('region' + region);
     regionProgress.textContent = "Error"
@@ -261,6 +274,24 @@ async function writeBookmark(currentProgress) {
         const log = document.getElementById('log');
         log.classList.remove("severe")
         log.innerText = "Bookmark " + timeString + " written to " + cookie + " in " + LambdaLatency + "ms"
+
+        var cookie = Object.keys(cookieObj)[0]
+        var cookie2 = Object.keys(cookieObj)[1]
+
+        if (typeof cookie !== 'undefined' && typeof cookie2 !== 'undefined') {
+            const region0 = document.getElementById(cookie);
+            const region1 = document.getElementById(cookie2);
+
+            if (activeCookie==0) {
+                region0.classList.replace("down", "active")
+                const logSev = document.getElementById('logSev');
+                logSev.innerText = ""
+            } else {
+                region1.classList.replace("down", "active")
+                const logSev2 = document.getElementById('logSev2');
+                logSev2.innerText = ""
+            }
+        }
     } else {
         popularHeader.textContent = 'Error: HTTP ' + response.status;
         console.log('HTTP-Error: ' + response.status)
