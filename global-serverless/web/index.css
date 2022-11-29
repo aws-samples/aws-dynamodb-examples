@@ -59,6 +59,9 @@
 #list {
     margin-top:10px;
     margin-bottom:20px;
+    background-color:gray;
+    border-radius:6px;
+    padding:5px;
 
 }
 
@@ -70,17 +73,25 @@
     border-radius: 6px;
 }
 
+
 #tableform {
     background-color: whitesmoke; padding:5px; margin: 5px; border-radius:8px;
 }
 
 #results {
-    background-color:none;
+    margin-top:40px;
     padding:5px;
+    border:1px solid #222;
 
 }
+
+.resHeader {
+    color:orange;
+}
+
 .resTable {
     background-color: black;
+    padding-left:10px;
 }
 
 .tabledata {
@@ -90,6 +101,16 @@
     padding:10px;
     color:dimgray;
 }
+
+.tabledataBookmark {
+    background-color: lightgray;
+    margin: 8px;
+    border-radius:6px;
+    padding:10px;
+    color:dimgray;
+    text-align: center;
+}
+
 .tablenull {
     background-color: black;
 }
@@ -105,7 +126,7 @@
 
 }
 .gobig {
-    font-size:x-large;
+    font-size:18pt;
     width:50px;
 }
 .titlelink {
@@ -180,12 +201,7 @@ button:hover {
     height:24px;
 }
 
-#clearPanel {
-    color: gray;
-    display:none;
-    padding-left:10px;
-    padding-bottom:5px;
-}
+
 .hrc {
     display:inline-block;
     width:700px;
@@ -214,6 +230,13 @@ button:hover {
     background-color:dimgray;
     color: whitesmoke;
     font-size:larger;
+}
+
+#clearButton {
+    border:1px solid #111;
+    background-color: #222;
+    cursor:hand;
+    color: grey;
 }
 
 .container {

@@ -55,15 +55,16 @@ async function callApi(cookie, api, index) {
             + '</span>';
 
 
-        const results = document.getElementById('results');
+        // const results = document.getElementById('results');
 
-        // const container = document.getElementById('container');
+        const resultsBody = document.getElementById('resultsBody');
 
-        const row0 = results.insertRow(0);
+        const row0 = resultsBody.insertRow(0);
 
         for(let i=0; i < index; i++) {
             const cell0 = row0.insertCell(-1);
-            cell0.className = "tablenull";
+            cell0.className = "resTable";
+
         }
 
         const cell1 = row0.insertCell(-1);
@@ -126,14 +127,14 @@ async function callApi(cookie, api, index) {
 
                     const cellFinal = row.insertCell(-1);
                     cellFinal.className = "cellFinal";
-                    if(readAfterWriteSpan && readAfterWriteSpan < 19999) {
+                    if(readAfterWriteSpan && readAfterWriteSpan < 9999) {
                         cellFinal.innerHTML =  Math.round(readAfterWriteSpan/100) / 10 + ' seconds<br/>since update';
                     }
 
                 });
 
             }
-            document.getElementById('clearPanel').style.display = 'inline';
+            document.getElementById('clearButton').style.display = 'inline';
 
         } else {
 
@@ -174,11 +175,7 @@ async function callApi(cookie, api, index) {
                     cellFinal.innerHTML =  Math.round(readAfterWriteSpan/100) / 10 + ' seconds<br/>since update';
                 }
 
-                // const cell9 = row0.insertCell(-1);
-                // cell9.className = "tablenull";
-                // cell9.innerHTML = '&nbsp;';
-
-                document.getElementById('clearPanel').style.display = 'inline';
+                document.getElementById('clearButton').style.display = 'inline';
 
             } else {
 
@@ -223,58 +220,72 @@ function getCookiesForList() {
 
     table.innerHTML = '';
 
-    // const rs = table.insertRow(0);
+    document.getElementById('resultsHeadRow').innerHTML = null;
 
-    Object.keys(cookieObj).forEach((cookie, index)=>{
+        Object.keys(cookieObj).forEach((cookie, index)=>{
 
-        if(cookie !== "") {
-            const row = table.insertRow(-1);
+            if(cookie !== "") {
 
-            let stackRegion = cookieObj[cookie].split('.')[2];
+                document.getElementById('gf').style.display = 'inline';
+                document.getElementById('list').style.display = 'block';
+                document.getElementById('results').style.display = 'block';
 
-            const cell2 = row.insertCell(-1);
-            cell2.className = "tabledata";
-            cell2.style="background-color:" + colorPalette[index];
-
-            cell2.innerHTML = '<b>' + stackRegion + '</b><br/>' + cookieObj[cookie].split('.')[0]
-
-            const cell3 = row.insertCell(-1);
-            cell3.className = "tabledata";
-            cell3.style="background-color:" + colorPalette[index];
-            cell3.innerHTML = "<button onClick=eraseCookie('"+cookie+"')>X</button>"
-
-            const cell4 = row.insertCell(-1);
-            cell4.className = "tabledata";
-            cell4.style="background-color:" + colorPalette[index];
-            cell4.innerHTML = "<button class='go' onClick=callApi('" + cookie + "','" + cookieObj[cookie] + "','"+index.toString()+"')>ping</button>";
-
-            const cell5 = row.insertCell(-1);
-            cell5.className = "tabledata";
-            cell5.style="background-color:" + colorPalette[index];
-            cell5.innerHTML = "<button class='go' onClick=callApi('" + cookie + "','" + cookieObj[cookie] + "get/" + demo_item_pk + "/" + demo_item_sk + "','"+index.toString()+"')>get-item</button>";
-
-            const cell6 = row.insertCell(-1);
-            cell6.className = "tabledata";
-            cell6.style="background-color:" + colorPalette[index];
-            cell6.innerHTML = "update<br/>bookmark:";
-
-            const cell7 = row.insertCell(-1);
-            cell7.className = "tabledata";
-            cell7.style="background-color:" + colorPalette[index];
-            cell7.innerHTML = "<button class='gobig' onClick=callApi('" + cookie + "','" + cookieObj[cookie] + "update/" + demo_item_pk + "/" + demo_item_sk + "/-1','"+index.toString()+"')>&lt;&lt;</button>&nbsp;<button class='gobig' onClick=callApi('" + cookie + "','" + cookieObj[cookie] + "update/" + demo_item_pk + "/" + demo_item_sk + "/1','"+index.toString()+"')>&gt;&gt;</button>";
-
-            const cell8 = row.insertCell(-1);
-            cell8.style="background-color:" + colorPalette[index];
-            cell8.id = cookie + '-latency';
-
-            const cell9 = row.insertCell(-1);
-            cell9.style="background-color:" + colorPalette[index];
-            cell9.id = cookie + '-totallatency';
-
-        }
+                const row = table.insertRow(-1);
 
 
-    });
+                let stackRegion = cookieObj[cookie].split('.')[2];
+
+                const cell2 = row.insertCell(-1);
+                cell2.className = "tabledata";
+                cell2.style="background-color:" + colorPalette[index];
+
+                cell2.innerHTML = '<b>' + stackRegion + '</b><br/>' + cookieObj[cookie].split('.')[0]
+
+                const cell3 = row.insertCell(-1);
+                cell3.className = "tabledata";
+                cell3.style="background-color:" + colorPalette[index];
+                cell3.innerHTML = "<button onClick=eraseCookie('"+cookie+"')>X</button>"
+
+                const cell4 = row.insertCell(-1);
+                cell4.className = "tabledata";
+                cell4.style="background-color:" + colorPalette[index];
+                cell4.innerHTML = "<button class='go' onClick=callApi('" + cookie + "','" + cookieObj[cookie] + "','"+index.toString()+"')>ping API</button>";
+
+                const cell5 = row.insertCell(-1);
+                cell5.className = "tabledata";
+                cell5.style="background-color:" + colorPalette[index];
+                cell5.innerHTML = "<button class='go' onClick=callApi('" + cookie + "','" + cookieObj[cookie] + "get/" + demo_item_pk + "/" + demo_item_sk + "','"+index.toString()+"')>get-item</button>";
+
+                // const cell6 = row.insertCell(-1);
+                // cell6.className = "tabledata";
+                // cell6.style="background-color:" + colorPalette[index];
+                // cell6.innerHTML = "update<br/>bookmark:";
+
+                const cell7 = row.insertCell(-1);
+                cell7.className = "tabledataBookmark";
+                cell7.style="background-color:" + colorPalette[index];
+                cell7.innerHTML = "Update item bookmark:<br/><button class='gobig' onClick=callApi('" + cookie + "','" + cookieObj[cookie] + "update/" + demo_item_pk + "/" + demo_item_sk + "/-1','"+index.toString()+"')>➖</button>&nbsp;<button class='gobig' onClick=callApi('" + cookie + "','" + cookieObj[cookie] + "update/" + demo_item_pk + "/" + demo_item_sk + "/1','"+index.toString()+"')>➕</button>";
+
+                const cell8 = row.insertCell(-1);
+                cell8.style="background-color:" + colorPalette[index];
+                cell8.id = cookie + '-latency';
+
+                const cell9 = row.insertCell(-1);
+                cell9.style="background-color:" + colorPalette[index];
+                cell9.id = cookie + '-totallatency';
+
+
+                const resultsHeadRow = document.getElementById('resultsHeadRow');
+                const resultsHeadCell = resultsHeadRow.insertCell(-1);
+                resultsHeadCell.style = "min-width:200px;padding:5px;padding-left:10px;padding-right:10px;color:black;font-size:larger;background-color:" + colorPalette[index];
+                resultsHeadCell.innerHTML = cookie;
+
+            }
+
+        });
+
+
+
 
 }
 
@@ -329,6 +340,6 @@ function eraseCookie(name) {
 }
 
 function clearResults() {
-    document.getElementById('results').innerHTML = '';
-    document.getElementById('clearPanel').style.display = 'none';
+    document.getElementById('resultsBody').innerHTML = '';
+    document.getElementById('clearButton').style.display = 'none';
 }
