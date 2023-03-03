@@ -10,6 +10,7 @@ const retryNamedExceptions = ['LimitExceededException',
 async function getItems() {
     let retries = 0;
     let condition = true;
+    let backoffTime = 0;
     const MAX_RETRY = 7;
     const client = new DynamoDBClient({ region: "us-east-1", maxRetries: 0 });
     const ddbDocClient = DynamoDBDocumentClient.from(client);
@@ -41,7 +42,7 @@ async function getItems() {
                 console.log("Max retry Done or not retriable");
                 throw err;
             }
-        }
+        } 
     }
 }
 
