@@ -1,7 +1,7 @@
 const { DynamoDBClient, ScanCommand, DescribeTableCommand } = require('@aws-sdk/client-dynamodb');
 const { program } = require('commander');
 
-async function scanDynamoDbTable(region, tableName) {
+async function printDistinctPKs(region, tableName) {
     const dynamoDb = new DynamoDBClient({ region : region });
 
     const describeTableCommand = new DescribeTableCommand({ TableName: tableName });
@@ -85,5 +85,5 @@ if (!options.tableName) {
 }
 
 // Call the function with the specified table name and region
-scanDynamoDbTable(options.region, options.tableName);
+printDistinctPKs(options.region, options.tableName);
 

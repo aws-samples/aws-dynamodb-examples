@@ -56,8 +56,6 @@ def insert_item(tableName, skType, skValue):
 
     table = dynamodb.Table(tableName)
 
-    largest_number = decimal.Decimal("9.9999999999999999999999999999999999999e+125")
-
     put_item_params = {
         "pk": "sample-pk-value",
         "sk": skValue,

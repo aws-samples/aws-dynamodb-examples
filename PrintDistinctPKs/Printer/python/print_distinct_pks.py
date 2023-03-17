@@ -9,7 +9,7 @@ MAX_SORT_KEY_VALUE_S = str(256 * chr(0x10FFFF))
 MAX_SORT_KEY_VALUE_N = decimal.Decimal('9.9999999999999999999999999999999999999E+125')
 MAX_SORT_KEY_VALUE_B = boto3.dynamodb.types.Binary(b'\xFF' * 1024)
 
-def scan_dynamodb_table(region, table_name):
+def print_distinct_pks(region, table_name):
     dynamodb = boto3.resource('dynamodb', region_name=region)
     table = dynamodb.Table(table_name)
 
@@ -77,4 +77,4 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # Call the function with the specified table name
-    scan_dynamodb_table(args.region, args.table_name)
+    print_distinct_pks(args.region, args.table_name)
