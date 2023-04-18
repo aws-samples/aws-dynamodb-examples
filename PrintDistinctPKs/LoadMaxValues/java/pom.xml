@@ -32,6 +32,11 @@
                 <artifactId>dynamodb</artifactId>
                 <version>2.17.126</version>
             </dependency>
+            <dependency> 
+                <groupId>software.amazon.awssdk</groupId>
+                <artifactId>core</artifactId>
+                <version>2.17.126</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <dependencies>
@@ -47,6 +52,11 @@
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>dynamodb</artifactId>
+            <version>2.17.126</version>
+        </dependency>
+        <dependency> 
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>core</artifactId>
             <version>2.17.126</version>
         </dependency>
     </dependencies>

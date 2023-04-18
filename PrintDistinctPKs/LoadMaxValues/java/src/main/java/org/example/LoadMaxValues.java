@@ -62,11 +62,17 @@ public class LoadMaxValues {
         for (int i = 0; i < 256; i++) {
             sb.append("\uDBFF\uDFFF");
         }
-        MAX_SORT_KEY_VALUE_S = AttributeValue.fromS(sb.toString());
-        MAX_SORT_KEY_VALUE_N = AttributeValue.fromN("9.9999999999999999999999999999999999999E+125");
+//        MAX_SORT_KEY_VALUE_S = AttributeValue.fromS(sb.toString());
+//        MAX_SORT_KEY_VALUE_N = AttributeValue.fromN("9.9999999999999999999999999999999999999E+125");
+//        byte[] maxBytes = new byte[1024];
+//        Arrays.fill(maxBytes, (byte) 0xFF);
+//        MAX_SORT_KEY_VALUE_B = AttributeValue.fromB(SdkBytes.fromByteArray(maxBytes));
+
+        MAX_SORT_KEY_VALUE_S = AttributeValue.builder().s(sb.toString()).build();
+        MAX_SORT_KEY_VALUE_N = AttributeValue.builder().n("9.9999999999999999999999999999999999999E+125").build();
         byte[] maxBytes = new byte[1024];
         Arrays.fill(maxBytes, (byte) 0xFF);
-        MAX_SORT_KEY_VALUE_B = AttributeValue.fromB(SdkBytes.fromByteArray(maxBytes));
+        MAX_SORT_KEY_VALUE_B = AttributeValue.builder().b(SdkBytes.fromByteArray(maxBytes)).build();
 
         createTable(S_TABLE_NAME, ScalarAttributeType.S);
         createTable(N_TABLE_NAME, ScalarAttributeType.N);
