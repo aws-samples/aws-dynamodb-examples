@@ -3,7 +3,7 @@ package org.example;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.*;
 import software.amazon.awssdk.core.SdkBytes;
-import software.amazon.awssdk.core.exception.SdkClientException;
+import software.amazon.awssdk.core.exception.SdkException;
 import software.amazon.awssdk.services.sts.StsClient;
 import software.amazon.awssdk.services.sts.model.GetCallerIdentityRequest;
 import software.amazon.awssdk.services.sts.model.GetCallerIdentityResponse;
@@ -25,35 +25,46 @@ public class LoadMaxValues {
 
     public static void main(String[] args) {
 
-        String regionEnv = System.getenv("AWS_DEFAULT_REGION");
-    
-        if (regionEnv == null || regionEnv.isEmpty()) {
-            System.out.println("Error: AWS_DEFAULT_REGION environment variable is not set.");
-            System.exit(1);
-        }
-    
-        software.amazon.awssdk.regions.Region region = null;
-    
-        try {
-            region = software.amazon.awssdk.regions.Region.of(regionEnv);
-        } catch (IllegalArgumentException e) {
-            System.out.println("Error: Invalid AWS region specified in AWS_DEFAULT_REGION.");
-            System.exit(1);
-        }
-    
-        dynamoDb = DynamoDbClient.builder().region(region).build();
-    
-        // Validate region by making an API call to AWS STS service
-        try {
-            StsClient stsClient = StsClient.builder().region(region).build();
-            GetCallerIdentityRequest request = GetCallerIdentityRequest.builder().build();
-            GetCallerIdentityResponse response = stsClient.getCallerIdentity(request);
-            System.out.println("Region is valid. Account ID: " + response.account());
-        } catch (SdkClientException e) {
-            System.out.println("Error: Unable to validate region. Check your AWS credentials and region.");
-            System.exit(1);
-        }
+        String tableName;
+        String region;
 
+        if (args.length != 2 || !args[2].equals("--region")) {
+            System.out.println("Error: --region param not passed, checking AWS_DEFAULT_REGION environment variable.");
+
+            // If they didn't pass the table name and region on the command line, see if they
+            //  passed it in environment variables
+            region = System.getenv("AWS_DEFAULT_REGION");
+
+            if (region == null || region.isEmpty()) {
+                System.out.println("Error: AWS_DEFAULT_REGION environment variable is not set.");
+                System.exit(1);
+            } else {
+                software.amazon.awssdk.regions.Region awsRegion = null;
+    
+                try {
+                    awsRegion = software.amazon.awssdk.regions.Region.of(region);
+                } catch (IllegalArgumentException e) {
+                    System.out.println("Error: Invalid AWS region specified in AWS_DEFAULT_REGION.");
+                    System.exit(1);
+                }
+    
+                dynamoDb = DynamoDbClient.builder().region(awsRegion).build();
+    
+                // Validate region by making an API call to AWS STS service
+                try {
+                    StsClient stsClient = StsClient.builder().region(awsRegion).build();
+                    GetCallerIdentityRequest request = GetCallerIdentityRequest.builder().build();
+                    GetCallerIdentityResponse response = stsClient.getCallerIdentity(request);
+                    System.out.println("Region is valid. Account ID: " + response.account());
+                } catch (SdkException e) {
+                    System.out.println("Error: Unable to validate region. Check your AWS credentials and region.");
+                    System.exit(1);
+                }
+            } 
+        } else {
+            region = args[1];
+        }
+    
         // We need to create a string that is encoded in UTF-8 to 1024 bytes of the highest
         // code point.  This is 256 code points.  Each code point is a 4 byte value in UTF-8.
         // In Java, the code point needs to be specified as a surrogate pair of characters, thus
@@ -62,11 +73,6 @@ public class LoadMaxValues {
         for (int i = 0; i < 256; i++) {
             sb.append("\uDBFF\uDFFF");
         }
-//        MAX_SORT_KEY_VALUE_S = AttributeValue.fromS(sb.toString());
-//        MAX_SORT_KEY_VALUE_N = AttributeValue.fromN("9.9999999999999999999999999999999999999E+125");
-//        byte[] maxBytes = new byte[1024];
-//        Arrays.fill(maxBytes, (byte) 0xFF);
-//        MAX_SORT_KEY_VALUE_B = AttributeValue.fromB(SdkBytes.fromByteArray(maxBytes));
 
         MAX_SORT_KEY_VALUE_S = AttributeValue.builder().s(sb.toString()).build();
         MAX_SORT_KEY_VALUE_N = AttributeValue.builder().n("9.9999999999999999999999999999999999999E+125").build();
