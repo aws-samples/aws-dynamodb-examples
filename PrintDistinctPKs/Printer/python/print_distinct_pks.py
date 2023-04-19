@@ -68,7 +68,6 @@ def print_distinct_pks(region, table_name):
             else:
                 raise
 
-
 if __name__ == '__main__':
     # Define CLI arguments
     parser = argparse.ArgumentParser()
