@@ -1,0 +1,11 @@
+{
+    "name": "dynamodb-load-max-sk-value",
+    "version": "1.0.0",
+    "description": "A simple script to test the loading of a maximum sort key value",
+    "main": "loadMaxValues.js",
+    "dependencies": {
+        "@aws-sdk/client-dynamodb": "^3.293.0",
+        "commander": "^10.0.0"
+    }
+}
+

@@ -1,0 +1,11 @@
+{
+    "name": "dynamodb-print-distinct-pks",
+    "version": "1.0.0",
+    "description": "A simple script to show an optimal method for printing a distinct list of Primary Keys in a DynamoDB Table",
+    "main": "print_distinct_pks.js",
+    "dependencies": {
+        "@aws-sdk/client-dynamodb": "^3.293.0",
+        "commander": "^10.0.0"
+    }
+}
+
