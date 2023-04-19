@@ -7,8 +7,8 @@ tmpCredentials.json
 **/node_modules/**
 get-temp-credentials.sh
 package-lock.json
-package.json
 .idea/*
+*.swp
 **/.vs/
 **/bin/
 **/obj/
