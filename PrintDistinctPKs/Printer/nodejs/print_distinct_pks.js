@@ -34,6 +34,7 @@ async function printDistinctPKs(region, tableName) {
                 TableName: tableName,
                 Limit: 1,
                 ExclusiveStartKey: lastEvaluatedKey,
+                ProjectionExpression: 'pk',
             };
 
             const scanCommand = new ScanCommand(scanParams);
