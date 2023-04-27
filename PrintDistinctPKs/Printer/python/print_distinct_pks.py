@@ -34,6 +34,7 @@ def print_distinct_pks(region, table_name):
             scan_params = {
                 'TableName': table_name,
                 'Limit': 1,
+                'ProjectionExpression': 'pk',
             }
 
             if last_evaluated_key:

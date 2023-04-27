@@ -15,3 +15,4 @@ docker run --rm -it \
   -e DYNAMODB_TABLE_NAME=my-table-name \
   print-distinct-pks
 
+docker rmi -f print-distinct-pks 

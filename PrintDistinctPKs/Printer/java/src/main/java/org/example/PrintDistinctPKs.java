@@ -114,7 +114,8 @@ public class PrintDistinctPKs {
                 ScanRequest.Builder scanRequestBuilder = ScanRequest.builder()
                         .tableName(tableName)
                         .limit(1)
-                        .exclusiveStartKey(lastEvaluatedKey);
+                        .exclusiveStartKey(lastEvaluatedKey)
+                        .projectionExpression("pk");
 
                 ScanResponse response = dynamoDb.scan(scanRequestBuilder.build());
                 if (!response.items().isEmpty()) {
