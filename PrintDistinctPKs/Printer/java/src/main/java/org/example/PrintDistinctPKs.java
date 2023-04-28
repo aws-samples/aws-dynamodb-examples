@@ -111,13 +111,13 @@ public class PrintDistinctPKs {
 
         while (true) {
             try {
-                ScanRequest.Builder scanRequestBuilder = ScanRequest.builder()
+                 ScanRequest scanRequest = ScanRequest.builder()
                         .tableName(tableName)
                         .limit(1)
                         .exclusiveStartKey(lastEvaluatedKey)
-                        .projectionExpression("pk");
+                        .projectionExpression("pk").build();
 
-                ScanResponse response = dynamoDb.scan(scanRequestBuilder.build());
+                ScanResponse response = dynamoDb.scan(scanRequest);
                 if (!response.items().isEmpty()) {
                     System.out.println(response.items().get(0).get(partitionKeyName).s());
                 }
