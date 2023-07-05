@@ -1,0 +1,273 @@
+{
+  "ModelName": "Payments System",
+  "ModelMetadata": {
+    "Author": "",
+    "DateCreated": "May 18, 2023, 10:24 AM",
+    "DateLastModified": "May 18, 2023, 03:50 PM",
+    "Description": "",
+    "AWSService": "Amazon DynamoDB",
+    "Version": "3.0"
+  },
+  "DataModel": [
+    {
+      "TableName": "ReoccuringPayments",
+      "KeyAttributes": {
+        "PartitionKey": {
+          "AttributeName": "PK",
+          "AttributeType": "S"
+        },
+        "SortKey": {
+          "AttributeName": "SK",
+          "AttributeType": "S"
+        }
+      },
+      "NonKeyAttributes": [
+        {
+          "AttributeName": "Email",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "PaymentDay",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "PaymentAmount",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "LastPaymentDate",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "NextPaymentDate",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "LastReminderDate",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "NextReminderDate",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "SKU",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "PaymentDetails",
+          "AttributeType": "M"
+        },
+        {
+          "AttributeName": "CreatedDate",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "ProcessedDate",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "ProcessedAmount",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "TTL",
+          "AttributeType": "N"
+        }
+      ],
+      "TableFacets": [
+        {
+          "FacetName": "Subscription",
+          "KeyAttributeAlias": {
+            "PartitionKeyAlias": "AccountId",
+            "SortKeyAlias": "SubId#SKU"
+          },
+          "TableData": [
+            {
+              "PK": {
+                "S": "ACC#123"
+              },
+              "SK": {
+                "S": "SUB#123#SKU#999"
+              },
+              "Email": {
+                "S": "s@s.com"
+              },
+              "PaymentDay": {
+                "S": "28"
+              },
+              "PaymentAmount": {
+                "S": "12.99"
+              },
+              "LastPaymentDate": {
+                "S": "2023-05-18T14:15:39.247Z"
+              },
+              "NextPaymentDate": {
+                "S": "2023-06-28"
+              },
+              "LastReminderDate": {
+                "S": "2023-05-21T14:15:39.247Z"
+              },
+              "NextReminderDate": {
+                "S": "2023-06-21"
+              },
+              "SKU": {
+                "S": "999"
+              },
+              "PaymentDetails": {
+                "M": {
+                  "default-card": {
+                    "S": "1234123412341234"
+                  },
+                  "default-address": {
+                    "S": "12 Bridge Street, Birmingham, B12 7ST"
+                  }
+                }
+              },
+              "CreatedDate": {
+                "S": "2023-05-18T09:41:25.856Z"
+              }
+            }
+          ],
+          "NonKeyAttributes": [
+            "Email",
+            "PaymentDay",
+            "PaymentAmount",
+            "LastPaymentDate",
+            "NextPaymentDate",
+            "LastReminderDate",
+            "NextReminderDate",
+            "SKU",
+            "PaymentDetails",
+            "CreatedDate"
+          ],
+          "DataAccess": {
+            "MySql": {}
+          }
+        },
+        {
+          "FacetName": "Receipts",
+          "KeyAttributeAlias": {
+            "PartitionKeyAlias": "AccountId",
+            "SortKeyAlias": "ProcessedDate#SKU"
+          },
+          "TableData": [
+            {
+              "PK": {
+                "S": "ACC#123"
+              },
+              "SK": {
+                "S": "REC#12023-05-28T14:15:39.24#SKU#999"
+              },
+              "Email": {
+                "S": "s@s.com"
+              },
+              "SKU": {
+                "S": "999"
+              },
+              "ProcessedDate": {
+                "S": "2023-05-28T14:15:39.247Z"
+              },
+              "ProcessedAmount": {
+                "S": "12.99"
+              },
+              "TTL": {
+                "N": "1700318200"
+              }
+            }
+          ],
+          "NonKeyAttributes": [
+            "Email",
+            "SKU",
+            "ProcessedDate",
+            "ProcessedAmount",
+            "TTL"
+          ],
+          "DataAccess": {
+            "MySql": {}
+          }
+        }
+      ],
+      "GlobalSecondaryIndexes": [
+        {
+          "IndexName": "GSI-1",
+          "KeyAttributes": {
+            "PartitionKey": {
+              "AttributeName": "NextReminderDate",
+              "AttributeType": "S"
+            },
+            "SortKey": {
+              "AttributeName": "LastReminderDate",
+              "AttributeType": "S"
+            }
+          },
+          "Projection": {
+            "ProjectionType": "INCLUDE",
+            "NonKeyAttributes": [
+              "SK",
+              "PK",
+              "SKU",
+              "Email",
+              "NextPaymentDate"
+            ]
+          }
+        },
+        {
+          "IndexName": "GSI-2",
+          "KeyAttributes": {
+            "PartitionKey": {
+              "AttributeName": "NextPaymentDate",
+              "AttributeType": "S"
+            },
+            "SortKey": {
+              "AttributeName": "LastPaymentDate",
+              "AttributeType": "S"
+            }
+          },
+          "Projection": {
+            "ProjectionType": "INCLUDE",
+            "NonKeyAttributes": [
+              "PK",
+              "SK",
+              "Email",
+              "PaymentDay",
+              "PaymentAmount",
+              "SKU",
+              "PaymentDetails"
+            ]
+          }
+        }
+      ],
+      "DataAccess": {
+        "MySql": {}
+      },
+      "BillingMode": "PROVISIONED",
+      "ProvisionedCapacitySettings": {
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": 5,
+          "WriteCapacityUnits": 5
+        },
+        "AutoScalingRead": {
+          "ScalableTargetRequest": {
+            "MinCapacity": 1,
+            "MaxCapacity": 10,
+            "ServiceRole": "AWSServiceRoleForApplicationAutoScaling_DynamoDBTable"
+          },
+          "ScalingPolicyConfiguration": {
+            "TargetValue": 70
+          }
+        },
+        "AutoScalingWrite": {
+          "ScalableTargetRequest": {
+            "MinCapacity": 1,
+            "MaxCapacity": 10,
+            "ServiceRole": "AWSServiceRoleForApplicationAutoScaling_DynamoDBTable"
+          },
+          "ScalingPolicyConfiguration": {
+            "TargetValue": 70
+          }
+        }
+      }
+    }
+  ]
+}

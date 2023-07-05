@@ -1,0 +1,220 @@
+{
+  "ModelName": "Chat",
+  "ModelMetadata": {
+    "Author": "",
+    "DateCreated": "Oct 05, 2022, 06:02 PM",
+    "DateLastModified": "Apr 14, 2023, 02:17 AM",
+    "Description": "",
+    "AWSService": "Amazon DynamoDB",
+    "Version": "3.0"
+  },
+  "DataModel": [
+    {
+      "TableName": "Chat",
+      "KeyAttributes": {
+        "PartitionKey": {
+          "AttributeName": "PK",
+          "AttributeType": "S"
+        },
+        "SortKey": {
+          "AttributeName": "SK",
+          "AttributeType": "S"
+        }
+      },
+      "NonKeyAttributes": [
+        {
+          "AttributeName": "RoomID",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "Comment",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "CreatedAt",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "UpdatedAt",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "CommentCreatedAt",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "CreatedBy",
+          "AttributeType": "S"
+        }
+      ],
+      "GlobalSecondaryIndexes": [
+        {
+          "IndexName": "RoomID_Comment_IDX",
+          "KeyAttributes": {
+            "PartitionKey": {
+              "AttributeName": "RoomID",
+              "AttributeType": "S"
+            },
+            "SortKey": {
+              "AttributeName": "CreatedAt",
+              "AttributeType": "S"
+            }
+          },
+          "Projection": {
+            "ProjectionType": "ALL"
+          }
+        }
+      ],
+      "TableData": [
+        {
+          "PK": {
+            "S": "User:UserA"
+          },
+          "SK": {
+            "S": "2023-04-01T12:00:00.001Z"
+          },
+          "RoomID": {
+            "S": "Music"
+          },
+          "Comment": {
+            "S": "Hello!"
+          },
+          "CreatedAt": {
+            "S": "2023-04-01T12:00:00.001Z"
+          }
+        },
+        {
+          "PK": {
+            "S": "User:UserB"
+          },
+          "SK": {
+            "S": "2023-04-01T12:00:01.001Z"
+          },
+          "RoomID": {
+            "S": "Movie"
+          },
+          "Comment": {
+            "S": "What's your favorite?"
+          },
+          "CreatedAt": {
+            "S": "2023-04-01T12:00:01.001Z"
+          }
+        },
+        {
+          "PK": {
+            "S": "User:UserC"
+          },
+          "SK": {
+            "S": "2023-04-01T12:00:05.001Z"
+          },
+          "RoomID": {
+            "S": "Art"
+          },
+          "Comment": {
+            "S": "I love aaa."
+          },
+          "CreatedAt": {
+            "S": "2023-04-01T12:00:05.001Z"
+          }
+        },
+        {
+          "PK": {
+            "S": "User:UserA"
+          },
+          "SK": {
+            "S": "2023-04-01T13:00:00.001Z"
+          },
+          "RoomID": {
+            "S": "Music"
+          },
+          "Comment": {
+            "S": "I like a Rock music."
+          },
+          "CreatedAt": {
+            "S": "2023-04-01T12:00:50.001Z"
+          }
+        },
+        {
+          "PK": {
+            "S": "Room:Music"
+          },
+          "SK": {
+            "S": "meta"
+          },
+          "CreatedBy": {
+            "S": "UserA"
+          }
+        },
+        {
+          "PK": {
+            "S": "User:UserA"
+          },
+          "SK": {
+            "S": "2023-04-01T14:00:00.001Z"
+          },
+          "RoomID": {
+            "S": "Art"
+          },
+          "Comment": {
+            "S": "Me too."
+          },
+          "CreatedAt": {
+            "S": "2023-04-01T14:00:00.001Z"
+          }
+        },
+        {
+          "PK": {
+            "S": "Room:Art"
+          },
+          "SK": {
+            "S": "meta"
+          },
+          "CreatedBy": {
+            "S": "UserF"
+          }
+        },
+        {
+          "PK": {
+            "S": "Room:Movie"
+          },
+          "SK": {
+            "S": "meta"
+          },
+          "CreatedBy": {
+            "S": "UserE"
+          }
+        }
+      ],
+      "DataAccess": {
+        "MySql": {}
+      },
+      "BillingMode": "PROVISIONED",
+      "ProvisionedCapacitySettings": {
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": 5,
+          "WriteCapacityUnits": 5
+        },
+        "AutoScalingRead": {
+          "ScalableTargetRequest": {
+            "MinCapacity": 1,
+            "MaxCapacity": 10,
+            "ServiceRole": "AWSServiceRoleForApplicationAutoScaling_DynamoDBTable"
+          },
+          "ScalingPolicyConfiguration": {
+            "TargetValue": 70
+          }
+        },
+        "AutoScalingWrite": {
+          "ScalableTargetRequest": {
+            "MinCapacity": 1,
+            "MaxCapacity": 10,
+            "ServiceRole": "AWSServiceRoleForApplicationAutoScaling_DynamoDBTable"
+          },
+          "ScalingPolicyConfiguration": {
+            "TargetValue": 70
+          }
+        }
+      }
+    }
+  ]
+}

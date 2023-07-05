@@ -1,0 +1,430 @@
+{
+  "ModelName": "Connected Vehicle",
+  "ModelMetadata": {
+    "Author": "Esteban Serna",
+    "DateCreated": "Jun 16, 2023, 04:27 PM",
+    "DateLastModified": "Jun 23, 2023, 04:36 PM",
+    "Description": "",
+    "AWSService": "Amazon DynamoDB",
+    "Version": "3.0"
+  },
+  "DataModel": [
+    {
+      "TableName": "Connected_Vehicle",
+      "KeyAttributes": {
+        "PartitionKey": {
+          "AttributeName": "PK",
+          "AttributeType": "S"
+        },
+        "SortKey": {
+          "AttributeName": "SK",
+          "AttributeType": "S"
+        }
+      },
+      "NonKeyAttributes": [
+        {
+          "AttributeName": "user_id",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "vehicle_id",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "torque",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "airbags",
+          "AttributeType": "M"
+        },
+        {
+          "AttributeName": "drivetrain",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "user_name",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "user_phone",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "engine",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "horsepower",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "mirrors",
+          "AttributeType": "M"
+        },
+        {
+          "AttributeName": "seats",
+          "AttributeType": "M"
+        },
+        {
+          "AttributeName": "cameras",
+          "AttributeType": "M"
+        },
+        {
+          "AttributeName": "autonomous_driving",
+          "AttributeType": "M"
+        },
+        {
+          "AttributeName": "expiration_date",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "expiration_ttl",
+          "AttributeType": "S"
+        }
+      ],
+      "TableFacets": [
+        {
+          "FacetName": "Vehicle",
+          "KeyAttributeAlias": {
+            "PartitionKeyAlias": "PK",
+            "SortKeyAlias": "SK"
+          },
+          "TableData": [
+            {
+              "PK": {
+                "S": "VIN#WDDJK7DA4FF954840"
+              },
+              "SK": {
+                "S": "#META#"
+              },
+              "vehicle_id": {
+                "S": "WDDJK7DA4FF954840"
+              },
+              "torque": {
+                "S": "308"
+              },
+              "drivetrain": {
+                "S": "4WD"
+              },
+              "engine": {
+                "S": "gasoline"
+              },
+              "horsepower": {
+                "S": "406"
+              }
+            },
+            {
+              "PK": {
+                "S": "VIN#WDDJK7DA4FF954840"
+              },
+              "SK": {
+                "S": "FEATURE#AUTODRIVE"
+              },
+              "autonomous_driving": {
+                "M": {
+                  "is_enabled": true,
+                  "version": "v0.000.1 beta"
+                }
+              }
+            },
+            {
+              "PK": {
+                "S": "VIN#WDDJK7DA4FF954840"
+              },
+              "SK": {
+                "S": "FEATURE#CAMERAS"
+              },
+              "cameras": {
+                "M": {
+                  "cameras": {
+                    "front_camera_center": {
+                      "foo": "bar"
+                    },
+                    "rear_camera_center": {
+                      "foo": "bar"
+                    }
+                  },
+                  "recording_is_active": true
+                }
+              }
+            },
+            {
+              "PK": {
+                "S": "VIN#WDDJK7DA4FF954840"
+              },
+              "SK": {
+                "S": "FEATURE#MIRRORS"
+              },
+              "mirrors": {
+                "M": {
+                  "position": {
+                    "is_active": false,
+                    "left": {
+                      "x": 59,
+                      "y": 61,
+                      "z": 76
+                    },
+                    "right": {
+                      "x": 92,
+                      "y": 18,
+                      "z": 10
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "PK": {
+                "S": "VIN#WDDJK7DA4FF954840"
+              },
+              "SK": {
+                "S": "ID#cbrawley0"
+              }
+            },
+            {
+              "PK": {
+                "S": "VIN#WDDJK7DA4FF954840"
+              },
+              "SK": {
+                "S": "F#cbrawley0#ACTIVE#CAMERAS#<sub_feature>\t"
+              },
+              "user_id": {
+                "S": "cbrawley0"
+              },
+              "vehicle_id": {
+                "S": "WDDJK7DA4FF954840"
+              },
+              "cameras": {
+                "M": {
+                  "cameras": {
+                    "front_camera_center": {
+                      "foo": "bar"
+                    },
+                    "rear_camera_center": {
+                      "foo": "bar"
+                    }
+                  },
+                  "recording_is_active": true
+                }
+              }
+            }
+          ],
+          "NonKeyAttributes": [
+            "user_id",
+            "vehicle_id",
+            "torque",
+            "airbags",
+            "drivetrain",
+            "engine",
+            "horsepower",
+            "mirrors",
+            "seats",
+            "cameras",
+            "autonomous_driving",
+            "expiration_date"
+          ],
+          "DataAccess": {
+            "MySql": {}
+          }
+        },
+        {
+          "FacetName": "User",
+          "KeyAttributeAlias": {
+            "PartitionKeyAlias": "PK",
+            "SortKeyAlias": "SK"
+          },
+          "TableData": [
+            {
+              "PK": {
+                "S": "ID#cbrawley0"
+              },
+              "SK": {
+                "S": "#META#"
+              },
+              "user_name": {
+                "S": "cbrawley0"
+              },
+              "user_phone": {
+                "S": "+17778889999"
+              }
+            },
+            {
+              "PK": {
+                "S": "ID#cbrawley0"
+              },
+              "SK": {
+                "S": "PREFERENCES#CAMERAS"
+              },
+              "user_name": {
+                "S": "cbrawley0"
+              },
+              "cameras": {
+                "M": {
+                  "cameras": {
+                    "front_camera_center": {
+                      "foo": "bar"
+                    },
+                    "rear_camera_center": {
+                      "foo": "bar"
+                    }
+                  },
+                  "recording_is_active": true
+                }
+              }
+            },
+            {
+              "PK": {
+                "S": "ID#cbrawley0"
+              },
+              "SK": {
+                "S": "F#ACTIVE#CAMERAS#<sub_feature>"
+              },
+              "user_name": {
+                "S": "cbrawley0"
+              },
+              "cameras": {
+                "M": {
+                  "cameras": {
+                    "front_camera_center": {
+                      "foo": "bar"
+                    },
+                    "rear_camera_center": {
+                      "foo": "bar"
+                    }
+                  },
+                  "recording_is_active": true
+                }
+              },
+              "expiration_date": {
+                "S": "2099-12-12T23:59:59"
+              },
+              "expiration_ttl": {
+                "S": "4102462799"
+              }
+            },
+            {
+              "PK": {
+                "S": "ID#cbrawley0"
+              },
+              "SK": {
+                "S": "F#EXPIRED#SEATS#<sub_feature>"
+              },
+              "user_name": {
+                "S": "cbrawley0"
+              },
+              "seats": {
+                "M": {
+                  "driver_seat": {
+                    "cusion_1": 19,
+                    "temperature": 87,
+                    "x": 39,
+                    "y": 19,
+                    "z": 80
+                  },
+                  "heating_is_active": true,
+                  "passenger_seat": {
+                    "cusion_1": 11,
+                    "temperature": -99,
+                    "x": 95,
+                    "y": 21,
+                    "z": 71
+                  },
+                  "position_is_active": false
+                }
+              },
+              "expiration_date": {
+                "S": "2023-05-05 23:59:59"
+              },
+              "expiration_ttl": {
+                "S": "1683345599"
+              }
+            },
+            {
+              "PK": {
+                "S": "ID#cbrawley0"
+              },
+              "SK": {
+                "S": "PREFERENCES#SEATS"
+              },
+              "user_name": {
+                "S": "cbrawley0"
+              },
+              "seats": {
+                "M": {
+                  "driver_seat": {
+                    "cusion_1": 19,
+                    "temperature": 87,
+                    "x": 39,
+                    "y": 19,
+                    "z": 80
+                  },
+                  "heating_is_active": true,
+                  "passenger_seat": {
+                    "cusion_1": 11,
+                    "temperature": -99,
+                    "x": 95,
+                    "y": 21,
+                    "z": 71
+                  },
+                  "position_is_active": false
+                }
+              }
+            },
+            {
+              "PK": {
+                "S": "ID#cbrawley0"
+              },
+              "SK": {
+                "S": "VIN#WDDJK7DA4FF954840"
+              }
+            }
+          ],
+          "NonKeyAttributes": [
+            "user_name",
+            "user_phone",
+            "mirrors",
+            "seats",
+            "cameras",
+            "autonomous_driving",
+            "expiration_date",
+            "expiration_ttl"
+          ],
+          "DataAccess": {
+            "MySql": {}
+          }
+        }
+      ],
+      "DataAccess": {
+        "MySql": {}
+      },
+      "BillingMode": "PROVISIONED",
+      "ProvisionedCapacitySettings": {
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": 5,
+          "WriteCapacityUnits": 5
+        },
+        "AutoScalingRead": {
+          "ScalableTargetRequest": {
+            "MinCapacity": 1,
+            "MaxCapacity": 10,
+            "ServiceRole": "AWSServiceRoleForApplicationAutoScaling_DynamoDBTable"
+          },
+          "ScalingPolicyConfiguration": {
+            "TargetValue": 70
+          }
+        },
+        "AutoScalingWrite": {
+          "ScalableTargetRequest": {
+            "MinCapacity": 1,
+            "MaxCapacity": 10,
+            "ServiceRole": "AWSServiceRoleForApplicationAutoScaling_DynamoDBTable"
+          },
+          "ScalingPolicyConfiguration": {
+            "TargetValue": 70
+          }
+        }
+      }
+    }
+  ]
+}
