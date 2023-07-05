@@ -1,0 +1,737 @@
+{
+  "ModelName": "Game-Player-Profiles",
+  "ModelMetadata": {
+    "Author": "",
+    "DateCreated": "Apr 14, 2023, 10:02 AM",
+    "DateLastModified": "Apr 14, 2023, 10:52 AM",
+    "Description": "",
+    "AWSService": "Amazon DynamoDB",
+    "Version": "3.0"
+  },
+  "DataModel": [
+    {
+      "TableName": "game-player-profiles",
+      "KeyAttributes": {
+        "PartitionKey": {
+          "AttributeName": "PK",
+          "AttributeType": "S"
+        },
+        "SortKey": {
+          "AttributeName": "SK",
+          "AttributeType": "S"
+        }
+      },
+      "NonKeyAttributes": [
+        {
+          "AttributeName": "Type",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "ActivityEndTime",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "ActivityName",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "ActivityReward",
+          "AttributeType": "M"
+        },
+        {
+          "AttributeName": "ActivityStartTime",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "ActivityType",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "TaskName",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "TaskDescription",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "TaskStatus",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "TaskReward",
+          "AttributeType": "M"
+        },
+        {
+          "AttributeName": "CreatedAt",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "UpdatedAt",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "Nickname",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "Email",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "Gender",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "Avatar",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "Currency",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "PlayerLevel",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "PlayerHealth",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "PlayerExperience",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "EquipmentName",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "EquipmentType",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "EquipmentAttributes",
+          "AttributeType": "M"
+        },
+        {
+          "AttributeName": "ItemName",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "ItemType",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "ItemCount",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "ItemAttributes",
+          "AttributeType": "M"
+        },
+        {
+          "AttributeName": "FriendList",
+          "AttributeType": "L"
+        }
+      ],
+      "TableFacets": [
+        {
+          "FacetName": "Metadata",
+          "KeyAttributeAlias": {
+            "PartitionKeyAlias": "playerID",
+            "SortKeyAlias": "#METEADATA#playerID"
+          },
+          "TableData": [
+            {
+              "PK": {
+                "S": "player001"
+              },
+              "SK": {
+                "S": "#METADATA#player001"
+              },
+              "Type": {
+                "S": "Metadata"
+              },
+              "CreatedAt": {
+                "S": "1618500000"
+              },
+              "UpdatedAt": {
+                "S": "1620000000"
+              },
+              "Nickname": {
+                "S": "John"
+              },
+              "Email": {
+                "S": "john@example.com"
+              },
+              "Gender": {
+                "S": "male"
+              },
+              "Avatar": {
+                "S": "s3://gaming-blki65wn3bgc-lob-avatar/player001.png"
+              },
+              "Currency": {
+                "S": "500"
+              },
+              "PlayerLevel": {
+                "S": "10"
+              },
+              "PlayerHealth": {
+                "S": "80"
+              },
+              "PlayerExperience": {
+                "S": "1000"
+              }
+            }
+          ],
+          "NonKeyAttributes": [
+            "Type",
+            "CreatedAt",
+            "UpdatedAt",
+            "Nickname",
+            "Email",
+            "Gender",
+            "Avatar",
+            "Currency",
+            "PlayerLevel",
+            "PlayerHealth",
+            "PlayerExperience"
+          ],
+          "DataAccess": {
+            "MySql": {}
+          }
+        },
+        {
+          "FacetName": "Friends",
+          "KeyAttributeAlias": {
+            "PartitionKeyAlias": "playerID",
+            "SortKeyAlias": "FRIENDS#playerID"
+          },
+          "TableData": [
+            {
+              "PK": {
+                "S": "player001"
+              },
+              "SK": {
+                "S": "FRIENDS#player001"
+              },
+              "Type": {
+                "S": "Friends"
+              },
+              "FriendList": {
+                "L": [
+                  {
+                    "M": {
+                      "FriendId": {
+                        "S": "player002"
+                      },
+                      "FriendName": {
+                        "S": "Alice"
+                      }
+                    }
+                  },
+                  {
+                    "M": {
+                      "FriendId": {
+                        "S": "player003"
+                      },
+                      "FriendName": {
+                        "S": "Bob"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "NonKeyAttributes": [
+            "Type",
+            "FriendList"
+          ],
+          "DataAccess": {
+            "MySql": {}
+          }
+        },
+        {
+          "FacetName": "Items",
+          "KeyAttributeAlias": {
+            "PartitionKeyAlias": "playerID",
+            "SortKeyAlias": "ITEMS#ItemID"
+          },
+          "TableData": [
+            {
+              "PK": {
+                "S": "player001"
+              },
+              "SK": {
+                "S": "ITEMS#001"
+              },
+              "Type": {
+                "S": "Item"
+              },
+              "ItemName": {
+                "S": "Health Potion"
+              },
+              "ItemType": {
+                "S": "Consumable"
+              },
+              "ItemCount": {
+                "S": "5"
+              },
+              "ItemAttributes": {
+                "M": {
+                  "M": {
+                    "HP": {
+                      "N": "50"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "PK": {
+                "S": "player001"
+              },
+              "SK": {
+                "S": "ITEMS#002"
+              },
+              "Type": {
+                "S": "Item"
+              },
+              "ItemName": {
+                "S": "Armor of the Knight"
+              },
+              "ItemType": {
+                "S": "Armor"
+              },
+              "ItemCount": {
+                "S": "1"
+              },
+              "ItemAttributes": {
+                "M": {
+                  "M": {
+                    "DEF": {
+                      "N": "100"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "PK": {
+                "S": "player001"
+              },
+              "SK": {
+                "S": "ITEMS#003"
+              },
+              "Type": {
+                "S": "Item"
+              },
+              "ItemName": {
+                "S": "Sword of the Dragon"
+              },
+              "ItemType": {
+                "S": "Weapon"
+              },
+              "ItemCount": {
+                "S": "1"
+              },
+              "ItemAttributes": {
+                "M": {
+                  "M": {
+                    "ATK": {
+                      "N": "100"
+                    },
+                    "DEF": {
+                      "N": "50"
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "NonKeyAttributes": [
+            "Type",
+            "ItemName",
+            "ItemType",
+            "ItemCount",
+            "ItemAttributes"
+          ],
+          "DataAccess": {
+            "MySql": {}
+          }
+        },
+        {
+          "FacetName": "Equipments",
+          "KeyAttributeAlias": {
+            "PartitionKeyAlias": "playerID",
+            "SortKeyAlias": "EQUIPMENTS#EquipID"
+          },
+          "TableData": [
+            {
+              "PK": {
+                "S": "player001"
+              },
+              "SK": {
+                "S": "EQUIPMENTS#001"
+              },
+              "Type": {
+                "S": "Equipment"
+              },
+              "EquipmentName": {
+                "S": "Sword of the Dragon"
+              },
+              "EquipmentType": {
+                "S": "Weapon"
+              },
+              "EquipmentAttributes": {
+                "M": {
+                  "M": {
+                    "ATK": {
+                      "N": "100"
+                    },
+                    "DEF": {
+                      "N": "50"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "PK": {
+                "S": "player001"
+              },
+              "SK": {
+                "S": "EQUIPMENTS#001EQUIPMENTS#002"
+              },
+              "Type": {
+                "S": "Equipment"
+              },
+              "EquipmentName": {
+                "S": "Armor of the Knight"
+              },
+              "EquipmentType": {
+                "S": "Armor"
+              },
+              "EquipmentAttributes": {
+                "M": {
+                  "M": {
+                    "DEF": {
+                      "N": "100"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "PK": {
+                "S": "player001"
+              },
+              "SK": {
+                "S": "EQUIPMENTS#003"
+              },
+              "Type": {
+                "S": "Equipment"
+              },
+              "EquipmentName": {
+                "S": "Ring of the Mage"
+              },
+              "EquipmentType": {
+                "S": "Accessory"
+              },
+              "EquipmentAttributes": {
+                "M": {
+                  "M": {
+                    "SP": {
+                      "N": "50"
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "NonKeyAttributes": [
+            "Type",
+            "EquipmentName",
+            "EquipmentType",
+            "EquipmentAttributes"
+          ],
+          "DataAccess": {
+            "MySql": {}
+          }
+        },
+        {
+          "FacetName": "Tasks",
+          "KeyAttributeAlias": {
+            "PartitionKeyAlias": "playerID",
+            "SortKeyAlias": "TASK#TaskID"
+          },
+          "TableData": [
+            {
+              "PK": {
+                "S": "player001"
+              },
+              "SK": {
+                "S": "TASK#001"
+              },
+              "Type": {
+                "S": "Task"
+              },
+              "TaskName": {
+                "S": "Find the Lost TreasureFind the Lost Treasure"
+              },
+              "TaskDescription": {
+                "S": "Get clues from a lost adventurer and find the lost treasure."
+              },
+              "TaskStatus": {
+                "S": "InProgress"
+              },
+              "TaskReward": {
+                "M": {
+                  "M": {
+                    "Gold": {
+                      "N": "100"
+                    },
+                    "XP": {
+                      "N": "50"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "PK": {
+                "S": "player001"
+              },
+              "SK": {
+                "S": "TASK#002"
+              },
+              "Type": {
+                "S": "Task"
+              },
+              "TaskName": {
+                "S": "Defeat Magic Monsters"
+              },
+              "TaskDescription": {
+                "S": "Go to the Magic Forest and defeat three magic monsters."
+              },
+              "TaskStatus": {
+                "S": "Completed"
+              },
+              "TaskReward": {
+                "M": {
+                  "M": {
+                    "Gold": {
+                      "N": "200"
+                    },
+                    "XP": {
+                      "N": "100"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "PK": {
+                "S": "player001"
+              },
+              "SK": {
+                "S": "TASK#003"
+              },
+              "Type": {
+                "S": "Task"
+              },
+              "TaskName": {
+                "S": "Rescue the Princess"
+              },
+              "TaskDescription": {
+                "S": "Go to the Demon King's Castle and rescue the princess who is being held captive by the Demon King."
+              },
+              "TaskStatus": {
+                "S": "Available"
+              },
+              "TaskReward": {
+                "M": {
+                  "M": {
+                    "Gold": {
+                      "N": "500"
+                    },
+                    "XP": {
+                      "N": "200"
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "NonKeyAttributes": [
+            "Type",
+            "TaskName",
+            "TaskDescription",
+            "TaskStatus",
+            "TaskReward"
+          ],
+          "DataAccess": {
+            "MySql": {}
+          }
+        },
+        {
+          "FacetName": "Activities",
+          "KeyAttributeAlias": {
+            "PartitionKeyAlias": "playerID",
+            "SortKeyAlias": "ACTIVITY#ActivityID"
+          },
+          "TableData": [
+            {
+              "PK": {
+                "S": "player001"
+              },
+              "SK": {
+                "S": "ACTIVITY#001"
+              },
+              "Type": {
+                "S": "Activity"
+              },
+              "ActivityEndTime": {
+                "S": "1647475199"
+              },
+              "ActivityName": {
+                "S": "Hunting Trip"
+              },
+              "ActivityReward": {
+                "M": {
+                  "M": {
+                    "Gold": {
+                      "N": "50"
+                    },
+                    "XP": {
+                      "N": "200"
+                    }
+                  }
+                }
+              },
+              "ActivityStartTime": {
+                "S": "1647388800"
+              },
+              "ActivityType": {
+                "S": "Hunting"
+              }
+            },
+            {
+              "PK": {
+                "S": "player001"
+              },
+              "SK": {
+                "S": "ACTIVITY#002"
+              },
+              "Type": {
+                "S": "Activity"
+              },
+              "ActivityEndTime": {
+                "S": "1647647999"
+              },
+              "ActivityName": {
+                "S": "Mining Adventure"
+              },
+              "ActivityReward": {
+                "M": {
+                  "M": {
+                    "Gold": {
+                      "N": "1000"
+                    },
+                    "XP": {
+                      "N": "500"
+                    }
+                  }
+                }
+              },
+              "ActivityStartTime": {
+                "S": "1647561600"
+              },
+              "ActivityType": {
+                "S": "Mining"
+              }
+            },
+            {
+              "PK": {
+                "S": "player001"
+              },
+              "SK": {
+                "S": "ACTIVITY#003"
+              },
+              "Type": {
+                "S": "Activity"
+              },
+              "ActivityEndTime": {
+                "S": "1647820799"
+              },
+              "ActivityName": {
+                "S": "Arena Challenge"
+              },
+              "ActivityReward": {
+                "M": {
+                  "M": {
+                    "Gold": {
+                      "N": "2000"
+                    },
+                    "XP": {
+                      "N": "1000"
+                    }
+                  }
+                }
+              },
+              "ActivityStartTime": {
+                "S": "1647734400"
+              },
+              "ActivityType": {
+                "S": "Arena"
+              }
+            }
+          ],
+          "NonKeyAttributes": [
+            "Type",
+            "ActivityEndTime",
+            "ActivityName",
+            "ActivityReward",
+            "ActivityStartTime",
+            "ActivityType"
+          ],
+          "DataAccess": {
+            "MySql": {}
+          }
+        }
+      ],
+      "DataAccess": {
+        "MySql": {}
+      },
+      "BillingMode": "PROVISIONED",
+      "ProvisionedCapacitySettings": {
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": 5,
+          "WriteCapacityUnits": 5
+        },
+        "AutoScalingRead": {
+          "ScalableTargetRequest": {
+            "MinCapacity": 1,
+            "MaxCapacity": 10,
+            "ServiceRole": "AWSServiceRoleForApplicationAutoScaling_DynamoDBTable"
+          },
+          "ScalingPolicyConfiguration": {
+            "TargetValue": 70
+          }
+        },
+        "AutoScalingWrite": {
+          "ScalableTargetRequest": {
+            "MinCapacity": 1,
+            "MaxCapacity": 10,
+            "ServiceRole": "AWSServiceRoleForApplicationAutoScaling_DynamoDBTable"
+          },
+          "ScalingPolicyConfiguration": {
+            "TargetValue": 70
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,195 @@
+{
+  "ModelName": "Session management step by step",
+  "ModelMetadata": {
+    "Author": "",
+    "DateCreated": "May 11, 2023, 09:18 PM",
+    "DateLastModified": "May 11, 2023, 11:19 PM",
+    "Description": "",
+    "AWSService": "Amazon DynamoDB",
+    "Version": "3.0"
+  },
+  "DataModel": [
+    {
+      "TableName": "session_store",
+      "KeyAttributes": {
+        "PartitionKey": {
+          "AttributeName": "PK",
+          "AttributeType": "S"
+        },
+        "SortKey": {
+          "AttributeName": "SK",
+          "AttributeType": "S"
+        }
+      },
+      "NonKeyAttributes": [
+        {
+          "AttributeName": "customer_id",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "parent_access_token",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "parent_session_state",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "last_login_time",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "access_token",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "session_state",
+          "AttributeType": "S"
+        }
+      ],
+      "GlobalSecondaryIndexes": [
+        {
+          "IndexName": "GSI1_inverse",
+          "KeyAttributes": {
+            "PartitionKey": {
+              "AttributeName": "SK",
+              "AttributeType": "S"
+            },
+            "SortKey": {
+              "AttributeName": "PK",
+              "AttributeType": "S"
+            }
+          },
+          "Projection": {
+            "ProjectionType": "ALL"
+          }
+        }
+      ],
+      "TableData": [
+        {
+          "PK": {
+            "S": "suuid#c342etj3"
+          },
+          "SK": {
+            "S": "child#suuid#ert54fbgn"
+          },
+          "access_token": {
+            "S": "lko98uib"
+          },
+          "session_state": {
+            "S": "active"
+          }
+        },
+        {
+          "PK": {
+            "S": "suuid#c342etj3"
+          },
+          "SK": {
+            "S": "child#suuid#kljhfytf23"
+          },
+          "access_token": {
+            "S": "acg45jhi"
+          },
+          "session_state": {
+            "S": "closing"
+          }
+        },
+        {
+          "PK": {
+            "S": "suuid#c342etj3"
+          },
+          "SK": {
+            "S": "c#ABC"
+          },
+          "last_login_time": {
+            "S": "2023-05-12T11:30:00"
+          },
+          "access_token": {
+            "S": "d234ltj2"
+          },
+          "session_state": {
+            "S": "active"
+          }
+        },
+        {
+          "PK": {
+            "S": "suuid#d0004tj2"
+          },
+          "SK": {
+            "S": "c#ABC"
+          },
+          "last_login_time": {
+            "S": "2023-05-12T11:30:00"
+          },
+          "access_token": {
+            "S": "q010ltj2"
+          },
+          "session_state": {
+            "S": "closing"
+          }
+        },
+        {
+          "PK": {
+            "S": "suuid#l221et00"
+          },
+          "SK": {
+            "S": "c#XYZ"
+          },
+          "last_login_time": {
+            "S": "2023-04-30T15:22:09"
+          },
+          "access_token": {
+            "S": "q213law5"
+          },
+          "session_state": {
+            "S": "active"
+          }
+        },
+        {
+          "PK": {
+            "S": "suuid#l221et00"
+          },
+          "SK": {
+            "S": "child#suuid#ljy22tf0"
+          },
+          "access_token": {
+            "S": "j143lawy"
+          },
+          "session_state": {
+            "S": "active"
+          }
+        }
+      ],
+      "DataAccess": {
+        "MySql": {}
+      },
+      "BillingMode": "PROVISIONED",
+      "ProvisionedCapacitySettings": {
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": 5,
+          "WriteCapacityUnits": 5
+        },
+        "AutoScalingRead": {
+          "ScalableTargetRequest": {
+            "MinCapacity": 1,
+            "MaxCapacity": 10,
+            "ServiceRole": "AWSServiceRoleForApplicationAutoScaling_DynamoDBTable"
+          },
+          "ScalingPolicyConfiguration": {
+            "TargetValue": 70
+          }
+        },
+        "AutoScalingWrite": {
+          "ScalableTargetRequest": {
+            "MinCapacity": 1,
+            "MaxCapacity": 10,
+            "ServiceRole": "AWSServiceRoleForApplicationAutoScaling_DynamoDBTable"
+          },
+          "ScalingPolicyConfiguration": {
+            "TargetValue": 70
+          }
+        }
+      }
+    }
+  ]
+}

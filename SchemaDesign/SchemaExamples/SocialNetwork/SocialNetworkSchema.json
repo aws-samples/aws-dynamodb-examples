@@ -1,0 +1,283 @@
+{
+  "ModelName": "FFiitt",
+  "ModelMetadata": {
+    "Author": "",
+    "DateCreated": "Mar 03, 2022, 11:29 PM",
+    "DateLastModified": "May 17, 2023, 09:43 PM",
+    "Description": "",
+    "AWSService": "Amazon DynamoDB",
+    "Version": "3.0"
+  },
+  "DataModel": [
+    {
+      "TableName": "SNS",
+      "KeyAttributes": {
+        "PartitionKey": {
+          "AttributeName": "PK",
+          "AttributeType": "S"
+        },
+        "SortKey": {
+          "AttributeName": "SK",
+          "AttributeType": "S"
+        }
+      },
+      "NonKeyAttributes": [
+        {
+          "AttributeName": "follower#",
+          "AttributeType": "N"
+        },
+        {
+          "AttributeName": "following#",
+          "AttributeType": "N"
+        },
+        {
+          "AttributeName": "post#",
+          "AttributeType": "N"
+        },
+        {
+          "AttributeName": "ttl",
+          "AttributeType": "N"
+        },
+        {
+          "AttributeName": "name",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "content",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "imageUrl",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "timestamp",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "etc",
+          "AttributeType": "S"
+        }
+      ],
+      "TableData": [
+        {
+          "PK": {
+            "S": "u#12345"
+          },
+          "SK": {
+            "S": "\"info\""
+          },
+          "name": {
+            "S": "hyuklee"
+          },
+          "content": {
+            "S": "My name is Hyuk Lee"
+          },
+          "imageUrl": {
+            "S": "s3://...."
+          },
+          "etc": {
+            "S": "..."
+          }
+        },
+        {
+          "PK": {
+            "S": "u#12345"
+          },
+          "SK": {
+            "S": "\"count\""
+          },
+          "follower#": {
+            "N": "3000000000"
+          },
+          "following#": {
+            "N": "971"
+          },
+          "post#": {
+            "N": "4945"
+          }
+        },
+        {
+          "PK": {
+            "S": "u#12345#follower"
+          },
+          "SK": {
+            "S": "u#23456"
+          }
+        },
+        {
+          "PK": {
+            "S": "u#12345#follower"
+          },
+          "SK": {
+            "S": "u#34567"
+          }
+        },
+        {
+          "PK": {
+            "S": "u#12345#follower"
+          },
+          "SK": {
+            "S": "u#45678"
+          }
+        },
+        {
+          "PK": {
+            "S": "u#12345#following"
+          },
+          "SK": {
+            "S": "u#56789"
+          }
+        },
+        {
+          "PK": {
+            "S": "u#12345#following"
+          },
+          "SK": {
+            "S": "u#67890"
+          }
+        },
+        {
+          "PK": {
+            "S": "u#12345#following"
+          },
+          "SK": {
+            "S": "u#78912"
+          }
+        },
+        {
+          "PK": {
+            "S": "u#12345#post"
+          },
+          "SK": {
+            "S": "p#12345"
+          },
+          "content": {
+            "S": "content for a post"
+          },
+          "imageUrl": {
+            "S": "s3://...."
+          },
+          "timestamp": {
+            "S": "1571827560"
+          }
+        },
+        {
+          "PK": {
+            "S": "u#12345#post"
+          },
+          "SK": {
+            "S": "p#23456"
+          },
+          "content": {
+            "S": "content for a post"
+          },
+          "imageUrl": {
+            "S": "s3://...."
+          },
+          "timestamp": {
+            "S": "1571827561"
+          }
+        },
+        {
+          "PK": {
+            "S": "p#12345#likelist"
+          },
+          "SK": {
+            "S": "u#23456"
+          }
+        },
+        {
+          "PK": {
+            "S": "p#12345#likelist"
+          },
+          "SK": {
+            "S": "u#34567"
+          }
+        },
+        {
+          "PK": {
+            "S": "p#12345#likelist"
+          },
+          "SK": {
+            "S": "u#45678"
+          }
+        },
+        {
+          "PK": {
+            "S": "p#12345#likecount"
+          },
+          "SK": {
+            "S": "\"count\""
+          },
+          "etc": {
+            "S": "100"
+          }
+        },
+        {
+          "PK": {
+            "S": "u#12345#timeline"
+          },
+          "SK": {
+            "S": "p#34567#u#56789"
+          },
+          "ttl": {
+            "N": "1571827560"
+          }
+        },
+        {
+          "PK": {
+            "S": "u#12345#timeline"
+          },
+          "SK": {
+            "S": "p#45678#u#67890"
+          },
+          "ttl": {
+            "N": "1571827560"
+          }
+        },
+        {
+          "PK": {
+            "S": "u#12345#timeline"
+          },
+          "SK": {
+            "S": "p#56789#u#78901"
+          },
+          "ttl": {
+            "N": "1571827560"
+          }
+        }
+      ],
+      "DataAccess": {
+        "MySql": {}
+      },
+      "BillingMode": "PROVISIONED",
+      "ProvisionedCapacitySettings": {
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": 5,
+          "WriteCapacityUnits": 5
+        },
+        "AutoScalingRead": {
+          "ScalableTargetRequest": {
+            "MinCapacity": 1,
+            "MaxCapacity": 10,
+            "ServiceRole": "AWSServiceRoleForApplicationAutoScaling_DynamoDBTable"
+          },
+          "ScalingPolicyConfiguration": {
+            "TargetValue": 70
+          }
+        },
+        "AutoScalingWrite": {
+          "ScalableTargetRequest": {
+            "MinCapacity": 1,
+            "MaxCapacity": 10,
+            "ServiceRole": "AWSServiceRoleForApplicationAutoScaling_DynamoDBTable"
+          },
+          "ScalingPolicyConfiguration": {
+            "TargetValue": 70
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,405 @@
+{
+  "ModelName": "Complaint management",
+  "ModelMetadata": {
+    "Author": "",
+    "DateCreated": "May 10, 2023, 04:43 PM",
+    "DateLastModified": "Jun 13, 2023, 02:44 PM",
+    "Description": "Considering most common access patterns for a complaint management system",
+    "AWSService": "Amazon DynamoDB",
+    "Version": "3.0"
+  },
+  "DataModel": [
+    {
+      "TableName": "Complaint_management_system",
+      "KeyAttributes": {
+        "PartitionKey": {
+          "AttributeName": "PK",
+          "AttributeType": "S"
+        },
+        "SortKey": {
+          "AttributeName": "SK",
+          "AttributeType": "S"
+        }
+      },
+      "NonKeyAttributes": [
+        {
+          "AttributeName": "customer_id",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "complaint_id",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "comm_id",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "comm_date",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "complaint_state",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "current_state",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "creation_time",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "severity",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "complaint_description",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "comm_text",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "attachments",
+          "AttributeType": "SS"
+        },
+        {
+          "AttributeName": "agentID",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "escalated_to",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "escalation_time",
+          "AttributeType": "S"
+        }
+      ],
+      "GlobalSecondaryIndexes": [
+        {
+          "IndexName": "Customer_Complaint_GSI",
+          "KeyAttributes": {
+            "PartitionKey": {
+              "AttributeName": "customer_id",
+              "AttributeType": "S"
+            },
+            "SortKey": {
+              "AttributeName": "complaint_id",
+              "AttributeType": "S"
+            }
+          },
+          "Projection": {
+            "ProjectionType": "ALL"
+          }
+        },
+        {
+          "IndexName": "Escalations_GSI",
+          "KeyAttributes": {
+            "PartitionKey": {
+              "AttributeName": "escalated_to",
+              "AttributeType": "S"
+            },
+            "SortKey": {
+              "AttributeName": "escalation_time",
+              "AttributeType": "S"
+            }
+          },
+          "Projection": {
+            "ProjectionType": "ALL"
+          }
+        },
+        {
+          "IndexName": "Agents_Comments_GSI",
+          "KeyAttributes": {
+            "PartitionKey": {
+              "AttributeName": "agentID",
+              "AttributeType": "S"
+            },
+            "SortKey": {
+              "AttributeName": "comm_date",
+              "AttributeType": "S"
+            }
+          },
+          "Projection": {
+            "ProjectionType": "ALL"
+          }
+        }
+      ],
+      "TableData": [
+        {
+          "PK": {
+            "S": "Complaint123"
+          },
+          "SK": {
+            "S": "comm#2023-04-30T12:00:24#comm1"
+          },
+          "comm_id": {
+            "S": "comm1"
+          },
+          "comm_date": {
+            "S": "2023-04-30T12:00:24"
+          },
+          "complaint_state": {
+            "S": "investigating"
+          },
+          "comm_text": {
+            "S": "<comm text>"
+          },
+          "agentID": {
+            "S": "AgentA"
+          }
+        },
+        {
+          "PK": {
+            "S": "Complaint123"
+          },
+          "SK": {
+            "S": "comm#2023-04-30T12:35:54#comm2"
+          },
+          "comm_id": {
+            "S": "comm2"
+          },
+          "comm_date": {
+            "S": "2023-04-30T12:35:54"
+          },
+          "complaint_state": {
+            "S": "resolved"
+          },
+          "comm_text": {
+            "S": "<comm text>"
+          },
+          "attachments": {
+            "SS": [
+              "s3://URL_for_attachment1",
+              "s3://URL_for_attachment2"
+            ]
+          },
+          "agentID": {
+            "S": "AgentA"
+          }
+        },
+        {
+          "PK": {
+            "S": "Complaint1321"
+          },
+          "SK": {
+            "S": "comm#2023-05-10T16:00:00#comm3"
+          },
+          "comm_id": {
+            "S": "comm3"
+          },
+          "comm_date": {
+            "S": "2023-05-10T16:00:00"
+          },
+          "complaint_state": {
+            "S": "investigating"
+          },
+          "comm_text": {
+            "S": "<comm text>"
+          },
+          "agentID": {
+            "S": "AgentB"
+          }
+        },
+        {
+          "PK": {
+            "S": "Complaint1444"
+          },
+          "SK": {
+            "S": "comm#2022-12-31T19:32:00#comm4"
+          },
+          "comm_id": {
+            "S": "comm4"
+          },
+          "comm_date": {
+            "S": "2022-12-31T19:32:00"
+          },
+          "complaint_state": {
+            "S": "waiting"
+          },
+          "comm_text": {
+            "S": "<comm text>"
+          }
+        },
+        {
+          "PK": {
+            "S": "Complaint1444"
+          },
+          "SK": {
+            "S": "comm#2022-12-31T19:40:00#comm5"
+          },
+          "comm_id": {
+            "S": "comm5"
+          },
+          "comm_date": {
+            "S": "2022-12-31T19:40:00"
+          },
+          "complaint_state": {
+            "S": "assigned"
+          },
+          "comm_text": {
+            "S": "<comm text>"
+          },
+          "attachments": {
+            "SS": [
+              "s3://URL_for_attachment1"
+            ]
+          },
+          "agentID": {
+            "S": "AgentC"
+          }
+        },
+        {
+          "PK": {
+            "S": "Complaint123"
+          },
+          "SK": {
+            "S": "metadata"
+          },
+          "customer_id": {
+            "S": "custABC"
+          },
+          "complaint_id": {
+            "S": "Complaint123"
+          },
+          "current_state": {
+            "S": "resolved"
+          },
+          "creation_time": {
+            "S": "2023-04-30T12:00:00"
+          },
+          "severity": {
+            "S": "P2"
+          },
+          "complaint_description": {
+            "S": "<description text>"
+          }
+        },
+        {
+          "PK": {
+            "S": "Complaint1444"
+          },
+          "SK": {
+            "S": "metadata"
+          },
+          "customer_id": {
+            "S": "custXY32"
+          },
+          "complaint_id": {
+            "S": "Complaint1444"
+          },
+          "current_state": {
+            "S": "assigned"
+          },
+          "creation_time": {
+            "S": "2022-12-31T19:39:57"
+          },
+          "severity": {
+            "S": "P1"
+          },
+          "complaint_description": {
+            "S": "<description text>"
+          },
+          "escalated_to": {
+            "S": "AgentB"
+          },
+          "escalation_time": {
+            "S": "2023-01-03T04:00:07"
+          }
+        },
+        {
+          "PK": {
+            "S": "Complaint1321"
+          },
+          "SK": {
+            "S": "metadata"
+          },
+          "customer_id": {
+            "S": "custXYZ"
+          },
+          "complaint_id": {
+            "S": "Complaint1321"
+          },
+          "current_state": {
+            "S": "investigating"
+          },
+          "creation_time": {
+            "S": "2023-05-10T15:58:00"
+          },
+          "severity": {
+            "S": "P2"
+          },
+          "complaint_description": {
+            "S": "<descr_text>"
+          },
+          "escalated_to": {
+            "S": "AgentB"
+          },
+          "escalation_time": {
+            "S": "2023-05-15T14:00:00"
+          }
+        },
+        {
+          "PK": {
+            "S": "Complaint0987"
+          },
+          "SK": {
+            "S": "metadata"
+          },
+          "customer_id": {
+            "S": "custXYZ"
+          },
+          "complaint_id": {
+            "S": "Complaint0987"
+          },
+          "current_state": {
+            "S": "assigned"
+          },
+          "creation_time": {
+            "S": "2023-06-10T12:30:08"
+          },
+          "severity": {
+            "S": "P3"
+          },
+          "complaint_description": {
+            "S": "<description text>"
+          }
+        }
+      ],
+      "DataAccess": {
+        "MySql": {}
+      },
+      "BillingMode": "PROVISIONED",
+      "ProvisionedCapacitySettings": {
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": 5,
+          "WriteCapacityUnits": 5
+        },
+        "AutoScalingRead": {
+          "ScalableTargetRequest": {
+            "MinCapacity": 1,
+            "MaxCapacity": 10,
+            "ServiceRole": "AWSServiceRoleForApplicationAutoScaling_DynamoDBTable"
+          },
+          "ScalingPolicyConfiguration": {
+            "TargetValue": 70
+          }
+        },
+        "AutoScalingWrite": {
+          "ScalableTargetRequest": {
+            "MinCapacity": 1,
+            "MaxCapacity": 10,
+            "ServiceRole": "AWSServiceRoleForApplicationAutoScaling_DynamoDBTable"
+          },
+          "ScalingPolicyConfiguration": {
+            "TargetValue": 70
+          }
+        }
+      }
+    }
+  ]
+}
