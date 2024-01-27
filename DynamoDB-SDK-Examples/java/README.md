@@ -69,3 +69,9 @@ This section contains JAVA code for examples and common tasks with Amazon Dynamo
 | UpdateGlobalTable and UpdateGlobalTableSettings     | Java |
 | UpdateTable On-Demand                               | [Java](./WorkingWithTables/TableChangeToOnDemand.java) |
 | UpdateTable Provisioned                             | [Java](./WorkingWithTables/TableChangeToOnProvisioned.java) |
+
+## Custom Use Cases
+
+| All Examples 👉            | Java |
+| -------------------------- | ------ |
+| OverrideCredentialsPutItem | [Java](./CustomUseCases/OverrideCredentialsProviderOnPutItemRequest.java) |
