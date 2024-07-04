@@ -1,0 +1,1 @@
+mysqlsh --user=${MYSQL_USERNAME} --password=${MYSQL_PASSWORD}  --host=${MYSQL_HOST} < create_tables.sql
