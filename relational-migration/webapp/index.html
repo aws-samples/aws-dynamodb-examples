@@ -1,0 +1,179 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+
+    <title>Database Application</title>
+    <link rel="icon" type="image/x-icon" href="https://dynamodbworkshop.s3.amazonaws.com/favicon.ico">
+    <link rel="stylesheet" href="index.css">
+
+    <script src="./sql-samples.js" defer></script>
+    <script src="./index.js" defer></script>
+    <script src="./api.js" defer></script>
+    <script src="./form.js" defer></script>
+    <script src="./generate.js" defer></script>
+
+</head>
+<body class="indexbody" onLoad="renderNav()">
+<div class="main">
+    <div class="title">
+        &nbsp;&nbsp;<a href="" target=_blank class="titlelink">Database Application</a>
+        <button id="setApiButton"
+                onClick="setCookie(prompt('Sample API', 'https://g4zp6m9brf.execute-api.us-east-2.amazonaws.com/api/'))">
+            Target API</button>
+        <span id="apiTitle">
+
+        </span>
+        &nbsp;&nbsp;&nbsp;
+        <a href="https://github.com/robm26/migration" class="about" target="_blank">code</a>
+        <!--        <button id="sampleAPI2" onClick="setCookie(prompt('Sample API Ireland', 'https://mjr9wyamog.execute-api.eu-west-1.amazonaws.com/api/'))">Ireland</button>-->
+        <!--        <button id="sampleAPI3" onClick="setCookie(prompt('Sample API Singapore', 'https://voax9a7ub2.execute-api.ap-southeast-1.amazonaws.com/api/'))">Singapore</button>-->
+
+    </div>
+    <br/>
+    <div id="bodycontent">
+
+        <input type="hidden" name="tableName" id="tableName"  />
+        <input type="hidden" name="tableMetadata" id="tableMetadata"  />
+        <input type="hidden" name="dataset" id="dataset"  />
+        <input type="hidden" name="engine" id="engine" value="MySQL" />
+        <input type="hidden" name="tab" id="tab" value="CRUD" />
+
+        <div style="width: 100%; display: table;" id="leftNavDivPanel">
+            <div style="display: table-row">
+                <div style="display: table-cell" ></div>
+                <div style="display: table-cell" >
+                    <div class="" id="tabs">
+                        Access pattern:
+                        <button class="tabActive" onclick="openTab('CRUD')">CRUD</button>
+                        <button class="tabInactive" onclick="openTab('Querying')">Querying</button>
+                        <button class="tabInactive" onclick="openTab('Multi-step')">Multi-step</button>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: table-row;">
+                <div style="width: 10%; display: table-cell;" id="leftNavDiv">
+                    <button class="tablesButton" id="tablesButton" onClick="listTables()">Tables</button>
+                    <table id="leftNavTable"></table>
+                </div>
+
+                <div style="display: table-cell; ">
+                    <div id="CRUD" class="tab" style="display:block;">
+                        <span id="tableTitle" class="tableTitle"></span>
+                        <span id="tableTitleValue" class="tableTitleValue"></span>
+
+                        <table id="tablePanel" class="tablePanelHidden" >
+                            <tr>
+                                <td rowspan="2" class="crudMainPanel">
+                                    <div id="tableDetails">
+                                        <form id="formQuery" method="post" action="" onsubmit="return false;">
+                                            <table id="tableCrudButtons"></table>
+                                        </form>
+
+                                        <div id="log" class="log"></div>
+                                        <br/>
+
+                                        <div id="gridDiv" class="gridDiv">
+                                            <table id="grid1" ></table>
+                                            <form id="formItem" method="post" action=""  onsubmit="return false;">
+                                                <table id="tblForm" ></table>
+                                            </form>
+                                            <table id="tblItem" ></table>
+                                        </div>
+                                    </div>
+
+                                    <div id="generateDiv" class="GenHidden">
+                                        <button id="btnGenerate" onClick="generate()">GENERATE</button>
+                                        <span id="generateType"></span>
+                                        <br/><br/>
+                                        <div class="generateResults" id="generateResults">
+                                            <button id="btnCopy" onClick="copyText()">COPY</button><br/>
+                                            <textarea id="textGen" ></textarea>
+                                        </div>
+                                    </div>
+                                </td>
+                            <tr>
+                                <td id="tableListTd" class="tableButtonCell">
+                                    <table id="tableList"></table>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div id="Querying" class="tab" style="display:none">
+                        <span id="tableTitle2" class="tableTitle"></span>
+                        <span id="tableTitleValue2" class="tableTitleValue"></span>
+
+                        <div>
+                            <form id="formQuerying" method="post" action="" onsubmit="return false;">
+
+                                <table id="indexSummary" class="indexSummary"></table>
+
+                                <div id="generateIndexDiv" class="GenHidden">
+                                    <button id="btnGenerateIndexes" onClick="generate('indexes')">GENERATE</button>
+                                    <span> DynamoDB table definition with these indexes</span>
+                                    <br/>
+                                    <br/>
+                                    <div class="generateResults" id="generateIndexResults">
+                                        <button onClick="copyText('indexes')">COPY</button><br/>
+                                        <textarea id="textGenIndex" ></textarea>
+                                    </div>
+                                </div>
+                                <div id="foreignKey">
+                                    <div id="FKs">
+                                        <button id="btnFKs" onclick="showFKs()">Foreign Key relationships </button>
+                                        <div id="fkGrid"></div>
+                                    </div>
+                                </div>
+
+                                <div class="sqlPanel" >
+                                    <span id="sampleButtons"></span>
+                                    <br/><br/>
+                                    <button class="sqlButton" onClick="runsql()">RUN SQL</button>
+                                    <button class="sqlButtonClear" onClick="clearsql()">CLEAR</button>
+
+                                    <div id="log2" class="log">log2</div>
+
+                                    <textarea id="sqlText" class="sqlText" >SELECT ...</textarea>
+                                </div>
+                            </form>
+                        </div>
+                        <table id="sqlGrid" class="gridDiv"></table>
+
+                    </div>
+
+                    <div id="Multi-step" class="tab" style="display:none">
+                        Multi-step
+                        <ul>
+                            <li>
+                                <p>Multi-step actions involving reading & writing, such as:
+                                <pre> UPDATE/DELETE MyTable<br/> WHERE <br/>&nbsp;&nbsp;&nbsp;(subquery is true) </pre>
+                                </p>
+                            </li>
+                            <li>SQL text expressions</li>
+                            <li>Business logic in stored procedures</li>
+                        </ul>
+                        These can be implemented as a custom job running outside of DynamoDB, that performs operations in a loop.
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <br/>
+
+    </div>
+
+</div>
+
+
+</body>
+</html>

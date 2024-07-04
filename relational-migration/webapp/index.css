@@ -1,0 +1,509 @@
+
+.indexbody {
+    background-color:#fff;
+}
+
+.titlelink {
+    text-decoration:none;
+    font-weight:bold;
+    color:dodgerblue;
+    font-size:large;
+}
+
+.main {
+
+    border-radius:8px;
+    padding:8px;
+    font-family:Arial;
+}
+
+#bodycontent {
+    background-color: whitesmoke;
+    border-radius:8px;
+    padding:8px;
+    font-family:Arial;
+}
+#addAPI {
+    border:1px solid grey;
+    cursor:hand;
+    background-color:gray;
+    color: whitesmoke;
+
+}
+button {
+    border-radius:6px;
+    margin-left:5px;
+    padding-left:6px;
+    padding-right:6px;
+    padding-top:1px;
+    padding-bottom:1px;
+    border:1px solid silver;
+    background-color:gainsboro;
+}
+
+#crud_table {
+    border:none;
+    border-radius:5px;
+    border:1px solid silver;
+}
+
+#crud_table td {
+    padding:7px;
+    border-radius:3px;
+    vertical-align:top;
+    background-color:silver;
+
+}
+#apiTitle {
+    padding-left:10px;
+    padding:5px;
+    background-color:whitesmoke;
+    font-size:x-small;
+    border-radius:5px;
+    color:grey;
+}
+.tabActive {
+    background-color:gainsboro;
+    font-weight:bold;
+    border-top-left-radius: 7px;
+    border-top-right-radius: 7px;
+    border-bottom-right-radius: 0px;
+    border-bottom-left-radius: 0px;
+    padding-bottom:8px;
+    border-bottom: 1px solid gainsboro;
+
+}
+.tabInactive {
+    background-color: whitesmoke;
+    font-weight: normal;
+    border-top-left-radius: 7px;
+    border-top-right-radius: 7px;
+    border-bottom-right-radius: 0px;
+    border-bottom-left-radius: 0px;
+    padding-bottom:8px;
+    border-bottom: none;
+
+}
+.tab {
+    border-radius:3px;
+    margin-left:5px;
+    padding:8px;
+    background-color: gainsboro;
+}
+
+#tabs {
+    color:grey;
+}
+.crudbutton {
+
+    border-radius:3px;
+    border:1px solid grey;
+}
+
+.tablePanelHidden {
+    border:2px solid blue;
+    display:none;
+}
+
+.tablePanel {
+    background-color:lightgray;
+    margin-left:10px;
+    border-spacing: 0;
+    border-radius:5px;
+    padding:5px;
+    display:block;
+
+}
+
+.gridDiv {
+    background-color:lightgray;
+}
+#grid{
+    background-color:gainsboro;
+    margin-left:10px;
+    border-spacing: 0;
+}
+#grid tr td {
+    padding:5px;
+    border: 1px solid silver;
+    margin: none;
+    padding-right:10px;
+
+}
+.gridHeader {
+    background-color:silver;
+    font-weight:bold;
+    margin: 3px;
+    text-align:center;
+}
+
+.tablesButton {
+    border: 1px solid dimgray;
+}
+.tableButton {
+    margin-left:15px;
+    border: 1px solid dimgray;
+    color: dimgray;
+
+}
+.tableButtonActive {
+    background-color:whitesmoke;
+    color:black;
+    margin-left:15px;
+    font-weight: bold;
+    border: 1px solid dimgray;
+
+}
+.debug {
+    background-color:lemonchiffon;
+}
+.metadataHeader {
+
+}
+.metadataData {
+    border:1px solid dimgray;
+}
+
+#tableDetails {
+    background-color:#D3D3D3;
+    padding:5px;
+
+}
+
+
+#tableDetailsTable {
+
+}
+#tableList {
+    display: table-cell;
+    vertical-align: top;
+}
+#tableListTd {
+    padding-top:5px;
+    padding-right:10px;
+    display:flex;
+}
+#setApiButton {
+    border: 1px solid silver;
+    background-color:whitesmoke;
+}
+#debug {
+    background-color: lightsteelblue;
+    padding:5px;
+}
+.grid1 {
+    border-radius:10px;
+    border-collapse: collapse;
+    font-size:larger;
+}
+.grid1 td {
+    border: 1px solid dimgray;
+    font-size: smaller;
+    color: #555;
+}
+.gridHeader {
+    padding:4px;
+}
+.gridData {
+    background-color: silver;
+    padding:4px;
+}
+.gridDataFinal {
+    background-color: silver;
+    padding:4px;
+    /*border-bottom:2px dashed slategray;*/
+}
+
+.gridDataLabel {
+    background-color: #c9c9c9;
+    padding:4px;
+    border:none !important;
+    border-bottom:2px solid lightgrey !important;
+    border-top:2px solid lightgrey !important;
+
+}
+#CRUD {
+
+}
+.crudMainPanel {
+    vertical-align:top;
+}
+.newItemForm {
+    background-color:gray;
+    border-collapse: collapse;
+}
+.newItemForm td {
+    border: 1px solid dimgray;
+}
+#formItem {
+    background-color: lightgray;
+}
+.formSubmitCell {
+    padding:3px;
+    background-color: lightgray;
+    padding-top:8px;
+    border:1px solid lightgray !important;
+}
+.formSubmitButton {
+    float:right;
+    border:1px solid dimgray;
+    background-color:gainsboro;
+    color:dimgray;
+}
+input {
+    background-color:gainsboro;
+    border:none;
+    border-radius:4px;
+    margin:2px;
+    color:dimgray;
+}
+.gridData input {
+    background-color: #ccc;
+    font-size:larger;
+    color:MidnightBlue;
+}
+.callStatus {
+    padding-top:5px;
+    padding-left:15px;
+}
+
+.log {
+    padding:2px;
+    padding-left:10px;
+    padding-right:5px;
+    margin-top:5px;
+    margin-left:15px !important;
+    margin-right:15px !important;
+    background-color: #e0e0bf;
+    border-radius:5px;
+    visibility: hidden;
+    display: inline-block;
+}
+
+.PK {
+    background-color:SkyBlue;
+    padding:4px;
+}
+.PKheader {
+    background-color:SkyBlue;
+    font-weight:bold;
+    padding:4px;
+    text-align:center;
+}
+.SK {
+    background-color: LightGreen;
+    padding:4px;
+}
+.SKheader {
+    background-color:LightGreen;
+    font-weight:bold;
+    padding:4px;
+    text-align:center;
+}
+#tableCrudButtons {
+
+}
+#tableCrudButtons td {
+    padding:2px;
+    border-radius:4px;
+    background-color:lightgray;
+    padding-right:12px;
+}
+
+.findButton{
+    width:80px;
+    border: 1px solid dimgray;
+    color: dimgray;
+    margin-left:4px;
+}
+.getFormCell {
+    border:1px solid silver;
+    border-radius:4px;
+    border-spacing: 10px;
+    padding-left:6px !important;
+    padding-right:8px !important;
+    color:dimgray;
+}
+
+.pkFindBox {
+    background-color:gainsboro;
+    margin-left:5px;
+    border:1px solid silver;
+    width:80px;
+
+}
+
+#btnGenerate, #btnGenerateIndexes {
+    font-weight:bold;
+}
+
+.GenVisible {
+    visibility: visible;
+    background-color:silver;
+    margin:20px;
+    padding:10px;
+    border-radius:5px;
+    font-size:smaller;
+    color:#444;
+
+}
+.GenHidden {
+    height:400px;
+    display:none;
+}
+#textGen, #textGenIndex {
+    background-color:lightgray;
+    color:#222222;
+    border:none;
+    border-radius:7px;
+    margin-top:10px;
+    height:360px;
+    width:500px;
+    padding:8px;
+    box-sizing:border-box;
+}
+
+.tableButtonCell {
+    vertical-align: top;
+    height:30px;
+}
+
+.generateResults {
+    display:none;
+}
+#btnCopy {
+    float:right;
+    font-size:smaller;
+}
+
+#leftNavDivPanel {
+    background-color:whitesmoke;
+
+}
+
+#leftNavDiv {
+    background-color:gainsboro;
+    border-radius:4px;
+
+    padding:5px;
+}
+.sqlText {
+    border-radius:3px;
+    color:#333;
+    width: 90%;
+    height: 150px;
+    padding:10px;
+    margin:10px;
+    border:none;
+    background-color:whitesmoke;
+
+}
+
+.sqlText:focus {
+    outline: none !important;
+    background-color:white;
+    border:none;
+    box-shadow: 0 0 2px dodgerblue;
+}
+.sqlButton {
+    color:dimgray;
+    background-color:whitesmoke;
+    font-weight:bold;
+    font-size:larger;
+}
+.sqlButtonClear {
+    color:dimgray;
+    background-color:whitesmoke;
+}
+.sqlPanel {
+    background-color:lightgrey;
+    border-radius:5px;
+    padding:8px;
+    margin:5px;
+}
+#sampleButtons {
+    font-size:smaller;
+    color:dimgray;
+}
+.tableTitle {
+    display: inline-block;
+    padding-left:5px;
+    padding-bottom:7px;
+}
+.tableTitleValue {
+    font-size:larger;
+    font-weight:bold;
+    padding-left:3px;
+    padding-bottom:7px;
+    color:#444;
+
+    display: inline-block;
+
+}
+
+.indexSummary {
+    margin-top:0;
+    margin-left:10px;
+}
+
+.indexSummary td {
+
+}
+#sqlGrid {
+    margin-top:15px;
+    margin-bottom:10px;
+    margin-left:5px;
+    border-radius:5px;
+}
+
+#sqlGrid thead:first-child td {
+    background-color: DarkGray;
+    padding:8px;
+}
+
+#FKs {
+    background-color:silver;
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-top: 3px;
+    margin-bottom:15px;
+    /*margin:20px;*/
+    padding:10px;
+    border-radius:5px;
+    font-size:smaller;
+    color:#444;
+    visibility: hidden;
+}
+
+#btnFKs {
+    font-weight:bold;
+}
+.fkSpacer {
+    background-color: green;
+}
+
+.fkTable {
+    border:2px solid silver;
+    border-radius:5px;
+    margin: 5px;
+
+}
+.fkTable td {
+    text-align:center;
+    padding:7px;
+    background-color:#aaa;
+    font-size:larger;
+    color: black;
+}
+.fkTable td:nth-child(2) {
+
+    width:300px;
+}
+.fkTable tr:first-child td {
+    background-color:#888;
+}
+.about {
+    text-decoration:none;
+    color:navy;
+    font-size:smaller;
+}

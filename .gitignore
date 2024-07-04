@@ -14,3 +14,14 @@ package-lock.json
 **/obj/
 **/launchSettings.json
 **/.idea/*
+
+
+**/.idea/
+**/.DS_Store
+**/.chalice/deployments/
+**/.chalice/deployed/
+target-tables/
+relational-migration/setenv.sh
+.chalice/config.json
+syncs3.sh
+

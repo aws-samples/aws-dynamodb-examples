@@ -1,0 +1,3 @@
+chalice
+boto3
+mysql-connector-python
