@@ -1,4 +1,4 @@
-mysqlsh -h ${MYSQL_HOST} -u ${MYSQL_USERNAME} -p${MYSQL_PASSWORD} < ./source-tables/create_tables.sql
+mysql -h ${MYSQL_HOST} -u ${MYSQL_USERNAME} -p${MYSQL_PASSWORD} < ./source-tables/create_tables.sql
 cd load
 python3 load.py Products.py
 python3 load.py Customers.py
