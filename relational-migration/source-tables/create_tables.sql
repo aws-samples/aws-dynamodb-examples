@@ -7,7 +7,6 @@ DROP TABLE IF EXISTS Orders;
 DROP TABLE IF EXISTS Customers;
 DROP TABLE IF EXISTS Products;
 DROP TABLE IF EXISTS Reps;
--- DROP TABLE IF EXISTS CustomerLedger;
 
 CREATE TABLE Customers (
   cust_id varchar(20) NOT NULL,

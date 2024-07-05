@@ -21,7 +21,7 @@ package-lock.json
 **/.chalice/deployments/
 **/.chalice/deployed/
 target-tables/
-relational-migration/setenv.sh
+relational-migration/syncs3.sh
 .chalice/config.json
 syncs3.sh
 

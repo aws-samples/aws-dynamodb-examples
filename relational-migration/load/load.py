@@ -89,8 +89,6 @@ def main(dynamodb=None, mysql_conn=None):
             insert1 = "INSERT INTO " + job_info['table'] + " (" + ','.join(rowkeys) + ") "
             insert1 += "VALUES (" + ("%s," * len(rowkeys))[:-1] + ")"
             insert2 =  list(rowvals)
-#             print(insert1)
-#             print(insert2)
 
             if preview_only:
                 print(insert2)
@@ -102,10 +100,8 @@ def main(dynamodb=None, mysql_conn=None):
 
                 except Exception as e:
                     errors += 1
-
-                    print('ee')
+                    print(e)
                     list(rowvals)
-                    print('eee')
 
 
     if(job_info['db'] == 'mysql'):

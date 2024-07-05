@@ -43,12 +43,13 @@ def engine():
 
 
 def list_tables():
-    request = "SELECT table_name FROM information_schema.tables WHERE table_schema = '" + mysql_db + "'"
+    request = "SELECT TABLE_NAME FROM information_schema.tables WHERE table_schema = '" + mysql_db + "'"
     mysql_cur.execute(request)
     result = mysql_cur.fetchall()
+    print(result)
     tables = []
     for t in result:
-        tables.append(t['table_name'])
+        tables.append(t['TABLE_NAME'])
 
     return tables
 
