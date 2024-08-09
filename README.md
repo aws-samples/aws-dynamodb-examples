@@ -27,7 +27,7 @@ Key highlights include:
 
 These examples are designed to help developers, data scientists, and AI enthusiasts quickly get started with building sophisticated AI applications on AWS, using best practices for cloud-native development.
 
-[Integration with LangChain Message History and Bedrock](../aws-dynamodb-examples/Bedrock-Examples/Langchain/)
+[Integration with LangChain Message History and Bedrock](./Bedrock-Examples/Langchain/chat_history.ipynb)
 
 ---
 
