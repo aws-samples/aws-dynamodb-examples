@@ -14,6 +14,23 @@ We also have AWS SDK [code examples for DynamoDB in various languages](https://g
 * [Rust](./DynamoDB-SDK-Examples/rust)
 * [Ruby](./DynamoDB-SDK-Examples/ruby)
 
+---
+## DynamoDB Examples with Amazon Bedrock
+This repository provides comprehensive examples of how to integrate Amazon Bedrock's powerful large language models (LLMs) with AWS DynamoDB for building scalable, context-aware chatbots and AI applications. These examples demonstrate how to leverage DynamoDB's NoSQL database capabilities to persist conversation history and user interactions, ensuring continuity in AI-driven conversations across sessions.
+
+Key highlights include:
+
+- Bedrock Integration: Seamlessly connect to Amazon Bedrock to harness the power of cutting-edge LLMs from providers like Anthropic, AI21 Labs, and more.
+- DynamoDB for Context Management: Utilize DynamoDB to store and retrieve chat history, enabling AI models to maintain context and deliver more coherent and relevant responses over time.
+- Scalable and Serverless Architecture: Build applications that are both scalable and cost-effective, with DynamoDB handling large-scale data storage and Bedrock providing robust AI capabilities without the need to manage underlying infrastructure.
+- Real-world Applications: Explore practical examples, including setting up the environment, creating DynamoDB tables, integrating with Bedrock, and building a fully functional web-based chatbot using Streamlit.
+
+These examples are designed to help developers, data scientists, and AI enthusiasts quickly get started with building sophisticated AI applications on AWS, using best practices for cloud-native development.
+
+[Integration with LangChain Message History and Bedrock](../aws-dynamodb-examples/Bedrock-Examples/Langchain/)
+
+---
+
 PS. If you are up for contributing, we welcome community pull requests.
 
 
