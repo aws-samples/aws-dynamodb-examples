@@ -1,7 +1,21 @@
-- [`cloudformation`](./infrastructure_as_code/cloudformation/README.md): Includes all the templates in this repository that are deployable via AWS Cloudformation. One folder per solution that includes a deployable cloudformation template, the project MUST have a README.md file that explains the need of the template.
-- [`cdk`](./infrastructure_as_code/cdk/README.md): One folder per solution that includes a deployable CDK project. The project MUST have a README.md file that explains why this project is important, the pre-requisites and how to deploy it.
-- [`security`](./infrastructure_as_code/security/README.md): IAM policies examples in JSON format, optionally you can include CDK and Cloudformation examples.
+# 🗂️ Infrastructure as Code # Update me !!
 
-We have [IAM policies for DynamoDB](https://github.com/aws-samples/aws-dynamodb-examples/tree/master/DynamoDBIAMPolicies), [a script to load an existing table](https://github.com/aws-samples/aws-dynamodb-examples/tree/master/nosqlworkbenchscript) into NoSQL Workbench, [CloudFormation examples](https://github.com/aws-samples/aws-dynamodb-examples/tree/master/cloudformation), and [a CDK to track table size and item count histories to CloudWatch](https://github.com/aws-samples/aws-dynamodb-examples/tree/master/DynamoDBCustomMetrics).
+This folder contains templates and projects for deploying Amazon DynamoDB resources to AWS using Infrastructure as Code (IaC) tools.
 
-We also have AWS SDK [code examples for DynamoDB in various languages](https://github.com/aws-samples/aws-dynamodb-examples/tree/master/DynamoDB-SDK-Examples). You can find each language examples here:
+## 📁 CloudFormation
+
+The cloudformation folder includes all the templates in this repository that are deployable via AWS CloudFormation. Each solution has a dedicated folder that contains a deployable CloudFormation template, along with a README.md file that explains the purpose of the template.
+
+[Explore the CloudFormation templates »](./cloudformation/README.md)
+
+## 📁 AWS CDK
+
+The cdk folder contains AWS CDK projects, with one folder per solution that includes a deployable CDK stack. Each project has a README.md file that explains the importance of the solution, the pre-requisites, and how to deploy it.
+
+[Check out the AWS CDK examples »](./cdk/README.md)
+
+## 📁 Security
+
+The security folder includes examples of IAM policies in JSON format that can be used to secure your DynamoDB resources. Optionally, you can find CDK and CloudFormation examples for these policies as well.
+
+[Discover the DynamoDB security policies »](./security/README.md)
