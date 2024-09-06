@@ -1,0 +1,7 @@
+- [`cloudformation`](./infrastructure_as_code/cloudformation/README.md): Includes all the templates in this repository that are deployable via AWS Cloudformation. One folder per solution that includes a deployable cloudformation template, the project MUST have a README.md file that explains the need of the template.
+- [`cdk`](./infrastructure_as_code/cdk/README.md): One folder per solution that includes a deployable CDK project. The project MUST have a README.md file that explains why this project is important, the pre-requisites and how to deploy it.
+- [`security`](./infrastructure_as_code/security/README.md): IAM policies examples in JSON format, optionally you can include CDK and Cloudformation examples.
+
+We have [IAM policies for DynamoDB](https://github.com/aws-samples/aws-dynamodb-examples/tree/master/DynamoDBIAMPolicies), [a script to load an existing table](https://github.com/aws-samples/aws-dynamodb-examples/tree/master/nosqlworkbenchscript) into NoSQL Workbench, [CloudFormation examples](https://github.com/aws-samples/aws-dynamodb-examples/tree/master/cloudformation), and [a CDK to track table size and item count histories to CloudWatch](https://github.com/aws-samples/aws-dynamodb-examples/tree/master/DynamoDBCustomMetrics).
+
+We also have AWS SDK [code examples for DynamoDB in various languages](https://github.com/aws-samples/aws-dynamodb-examples/tree/master/DynamoDB-SDK-Examples). You can find each language examples here:
