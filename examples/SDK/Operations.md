@@ -1,4 +1,4 @@
-## DynamoDB Operations covered in this samples
+## DynamoDB Operations covered in this samples - Table needs to be updated
 
 | Operation                                           | Java | .NET | Node.js | Python | Rust | Go  |
 | --------------------------------------------------- | :--: | :--: | :-----: | :----: | :--: | :-: |

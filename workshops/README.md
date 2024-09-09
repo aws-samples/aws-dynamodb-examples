@@ -14,4 +14,7 @@ The workshops in this folder cover a wide range of topics, from DynamoDB fundame
 
 Whether you're new to DynamoDB or looking to expand your expertise, these workshops provide an invaluable learning experience. Browse the available workshops and choose the ones that align with your specific goals and interests.
 
-[Check out the DynamoDB workshops »](./README.md)
+Check out the DynamoDB workshops »
+
+- [Global serverless workshop](./global-serverless/README.md)
+- [Relational to DynamoDB migration workshop](./relational-migration/README.md)

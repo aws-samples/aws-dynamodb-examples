@@ -1,77 +1,61 @@
-# JAVA SDK examples for Amazon DynamoDB
+# 📚 Java SDK Examples for Amazon DynamoDB
 
-This section contains JAVA code for examples and common tasks with Amazon DynamoDB.
+Welcome to the Java SDK examples for Amazon DynamoDB. This section contains a comprehensive collection of Java code samples that demonstrate how to work with various DynamoDB operations and features.
 
-## Working with Items
+## 🛠️ Explore the Examples
 
-| All Examples 👉       | Java |
-| --------------------- | ---- |
-| BatchGet              | [Java](./WorkingWithItems/BatchGetItem.java) |
-| BatchWrite            | [Java](./WorkingWithItems/BatchWriteItem.java)  |
-| DeleteItemConditional | [Java](./WorkingWithItems/DeleteItem.java)  |
-| GetItem               | [Java](./WorkingWithItems/GetItem.java)  |
-| PutItem               | [Java](./WorkingWithItems/PutItem.java)  |
-| PutItemConditional    | [Java](./WorkingWithItems/PutItemConditional.java)  |
-| TransactGet           | [Java](./WorkingWithItems/TransactGetItem.java)  |
-| TransactWrite         | [Java](./WorkingWithItems/TransactWriteItem.java)  |
-| UpdateItem            | [Java](./WorkingWithItems/UpdateItem.java)  |
-| UpdateItemConditional | [Java](./WorkingWithItems/UpdateItemConditional.java)  |
+Dive into the following sections to discover the Java SDK examples for DynamoDB:
 
-## Working with Queries
+## 👨‍💻 Working with Items
 
-| All Examples 👉        | Java |
-| ---------------------- | ---- |
-| SortKeyBetween         | [Java](./WorkingWithQueries/QueryWithSortKey.java)  |
-| FilterExpression       | [Java](./WorkingWithQueries/QueryWithFilterExpression.java)  |
-| ProjectionExpression   | [Java](./WorkingWithQueries/QueryWithProjectionExpression.java)  |
-| ConsistentRead         | [Java](./WorkingWithQueries/QueryConsistentRead.java)  |
-| Enhanced Async Query   | [Java](./WorkingWithQueries/TableAsyncQuery.java)  |
+Explore a wide range of operations for managing individual items in your DynamoDB tables, from batch processing to conditional updates.
 
+[View the Item examples »](./sdk_v1/data_plane/WorkingWithItems/)
 
-## Working with Indexes
+## 🔍 Working with Queries
 
-| All Examples 👉 | Java |
-| --------------- | ---- |
-| Enhanced Async Query   | [Java](./WorkingWithIndexes/TableAsyncQueryIndex.java) |
+Learn how to efficiently query your DynamoDB tables, with examples covering sorting, filtering, projections, and more.
 
-## Working with Scans
+[Explore the Query examples »](./sdk_v1/data_plane/WorkingWithQueries)
 
-| All Examples 👉 | Java |
-| --------------- | ---- |
-| Enhanced Async Scan FilterCondition | [Java](./WorkingWithScans/TableAsyncScan.java) |
+## 🔍 Working with Indexes
 
-## Working with Streams
+Discover how to leverage secondary indexes to optimize your data access patterns.
 
-| All Examples 👉 | Java |
-| --------------- | ---- |
-|                 | Java |
+[Check out the Index examples »](./sdk_v1/data_plane/WorkingWithIndexes)
 
-## Working with Tables
+## 🔍 Working with Scans
 
-| All Examples 👉                                     | Java |
-| --------------------------------------------------- | ---- |
-| Add Global Table Region                             | Java |
-| Add Provisioned Capacity                            | [Java](./WorkingWithTables/AddProvisionedCapacity.java) |
-| CreateGlobalTable                                   | Java |
-| CreateTable On-Demand                               | [Java](./WorkingWithTables/CreateTableOnDemand.java) |
-| CreateTable Provisioned                             | [Java](./WorkingWithTables/CreateTableProvisioned.java) |
-| Delete Global Table Region                          | Java |
-| DeleteTable                                         | [Java](./WorkingWithTables/DeleteTable.java) |
-| DescribeGlobalTable and DescribeGlobalTableSettings | Java |
-| DescribeLimits                                      | [Java](./WorkingWithTables/DescribeLimits.java) |
-| DescribeTable                                       | [Java](./WorkingWithTables/DescribeTable.java) |
-| Disable Autoscaling                                 | Java |
-| Enable Autoscaling                                  | Java |
-| Update Autoscaling                                  | Java |
-| Disable Streams                                     | Java |
-| Enable Streams                                      | Java |
-| ListTables                                          | [Java](./WorkingWithTables/ListTables.java) |
-| UpdateGlobalTable and UpdateGlobalTableSettings     | Java |
-| UpdateTable On-Demand                               | [Java](./WorkingWithTables/TableChangeToOnDemand.java) |
-| UpdateTable Provisioned                             | [Java](./WorkingWithTables/TableChangeToOnProvisioned.java) |
+Learn how to perform full table scans, including techniques for improving performance.
 
-## Custom Use Cases
+[Browse the Scan examples »](./sdk_v1/data_plane/WorkingWithScans)
 
-| All Examples 👉            | Java |
-| -------------------------- | ------ |
-| OverrideCredentialsPutItem | [Java](./CustomUseCases/OverrideCredentialsProviderOnPutItemRequest.java) |
+## 🌊 Working with Streams
+
+Dive into the world of DynamoDB Streams and learn how to read and process real-time changes to your table data.
+
+[Explore the Stream examples »](./sdk_v1/data_plane/WorkingWithStreams)
+
+## 🗃️ Working with Tables
+
+From creating and deleting tables to managing global tables and auto-scaling, this section has you covered for all your table management needs.
+
+[Discover the Table examples »](./sdk_v1/control_plane/WorkingWithTables)
+
+## 🆕 Custom Use Cases
+
+Explore examples that demonstrate advanced or specialized use cases for the DynamoDB Java SDK.
+
+[Check out the Custom Use Cases »](./sdk_v1/data_plane/CustomUseCases)
+
+# 🚀 Get Started
+
+Each example in this folder comes with a README file that provides detailed instructions on setup, usage, and relevant context. Feel free to browse the examples and adapt the code to your specific DynamoDB-powered applications.
+
+If you have any questions or need further assistance, don't hesitate to [create an issue](https://github.com/aws-samples/aws-dynamodb-examples/issues/new) in the repository.
+
+# Detailed list of supported operations
+
+<!-- TODO: Create issue to Sync the operations with the code -->
+
+You can consult the list of all the supported operations in this repo in the [Operations.md](./Operations.md)

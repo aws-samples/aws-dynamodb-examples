@@ -17,4 +17,8 @@ Some of the script categories you'll find in this folder include:
 
 Each script in this folder is accompanied by a README file that explains the script's purpose, its usage, and any relevant prerequisites or dependencies. Feel free to browse the scripts and adapt them to your specific needs.
 
-[Discover the DynamoDB utility scripts »](./README.md)
+Discover the DynamoDB utility scripts »
+
+- [DynamoDB local with Docker](./docker/README.md)
+- [Import Data from NoSQL Workbench](./nosqlworkbenchscript/README.md)
+- [Print distinct PKs](./PrintDistinctPKs/README.md)

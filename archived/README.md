@@ -22,4 +22,4 @@ If you encounter any issues or have questions about the archived samples, feel f
 
 ## Archived resources.
 
-[None]
+- [Python script to load data from S3 into a new DynamoDB table](./LoadS3toDynamoDB/README.md)
