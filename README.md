@@ -12,7 +12,7 @@ This is an AWS community-driven repository packed with [Amazon DynamoDB](https:/
 
 ## 🚀 Supported Languages 🚀
 
-[![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)](./examples/SDK/node.js/README.md) [![Java](https://img.shields.io/badge/Java-007396?style=for-the-badge&logo=java&logoColor=white)](./examples/SDK/java/README.md) [![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)](./examples/SDK/python/README.md) [![.Net](https://img.shields.io/badge/.Net-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)](./examples/SDK/dotnet/README.md) [![Golang](https://img.shields.io/badge/Go-00ADD8?style=for-the-badge&logo=go&logoColor=white)](./examples/SDK/golang/README.md) [![Rust](https://img.shields.io/badge/Rust-000000?style=for-the-badge&logo=rust&logoColor=white)](./examples/SDK/rust/README.md) [![Ruby](https://img.shields.io/badge/Ruby-CC342D?style=for-the-badge&logo=ruby&logoColor=white)](./examples/SDK/ruby/README.md)
+[![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)](./examples/SDK/node.js/README.md) [![Java](https://img.shields.io/badge/Java-007396?style=for-the-badge&logo=openjdk&logoColor=white)](./examples/SDK/java/README.md) [![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)](./examples/SDK/python/README.md) [![.Net](https://img.shields.io/badge/.Net-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)](./examples/SDK/dotnet/README.md) [![Golang](https://img.shields.io/badge/Go-00ADD8?style=for-the-badge&logo=go&logoColor=white)](./examples/SDK/golang/README.md) [![Rust](https://img.shields.io/badge/Rust-000000?style=for-the-badge&logo=rust&logoColor=white)](./examples/SDK/rust/README.md) [![Ruby](https://img.shields.io/badge/Ruby-CC342D?style=for-the-badge&logo=ruby&logoColor=white)](./examples/SDK/ruby/README.md)
 
 ### 💡 Tips:
 
@@ -32,7 +32,7 @@ Explore the various folders and resources in this comprehensive DynamoDB reposit
 
 <!-- Space for the content Hero -->
 
-## 🌟 Bedrock and DynamoDB: Powering the Next Generation of AI Applications 🌟
+## 🌟 Bedrock and DynamoDB: Powering the Next Generation of AI Applications
 
 Dive into this repository and unlock the power of integrating Amazon Bedrock's cutting-edge large language models (LLMs) with the scalable NoSQL capabilities of AWS DynamoDB. These comprehensive examples will guide you through building context-aware chatbots and sophisticated AI applications that can maintain seamless conversations across sessions.
 
