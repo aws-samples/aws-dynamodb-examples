@@ -1,71 +1,55 @@
-# .NET SDK examples for Amazon DynamoDB
+# 📚 .NET SDK Examples for Amazon DynamoDB
 
-This section contains .NET code for examples and common tasks with Amazon DynamoDB.
+Welcome to the .NET SDK examples for Amazon DynamoDB. This section contains a comprehensive collection of .NET code samples that demonstrate how to work with various DynamoDB operations and features.
 
-## Working with Items
+## 🛠️ Explore the Examples
 
-| All Examples 👉       | .NET |
-| --------------------- | ---- |
-| BatchGet              | [.NET](./WorkingWithItems/BatchGetItem.cs) |
-| BatchWrite            | [.NET](./WorkingWithItems/BatchWriteItem.cs) |
-| DeleteItem            | [.NET](./WorkingWithItems/DeleteItem.cs) |
-| DeleteItemConditional | [.NET](./WorkingWithItems/DeleteItemConditional.cs) |
-| GetItem               | [.NET](./WorkingWithItems/GetItem.cs) |
-| PutItem               | [.NET](./WorkingWithItems/PutItem.cs) |
-| PutItemConditional    | [.NET](./WorkingWithItems/PutItemConditional.cs) |
-| TransactGet           | [.NET](./WorkingWithItems/TransactGetItems.cs)   |
-| TransactWrite         | [.NET](./WorkingWithItems/TransactWriteItems.cs) |
-| UpdateItem            | [.NET](./WorkingWithItems/UpdateItem.cs) |
-| UpdateItemConditional | [.NET](./WorkingWithItems/UpdateItemConditional.cs) |
+Dive into the following sections to discover the .NET SDK examples for DynamoDB:
 
-## Working with Indexes
+## 👨‍💻 Working with Items
 
-| All Examples 👉 | .NET |
-| --------------- | ---- |
-|                 | .NET |
+Explore a wide range of operations for managing individual items in your DynamoDB tables, from batch processing to conditional updates.
 
-## Working with Queries
+[View the Item examples »](./sdk_v1/data_plane/WorkingWithItems/)
 
-| All Examples 👉        | .NET |
-| ---------------------- | ---- |
-| ConsistentRead         | .NET |
-| Count                  | .NET |
-| FilterExpression       | .NET |
-| ProjectionExpression   | .NET |
-| ReturnConsumedCapacity | .NET |
+## 🔍 Working with Queries
 
-## Working with Scans
+Learn how to efficiently query your DynamoDB tables, with examples covering sorting, filtering, projections, and more.
 
-| All Examples 👉 | .NET |
-| --------------- | ---- |
-|                 | .NET |
+[Explore the Query examples »](./sdk_v1/data_plane/WorkingWithQueries)
 
-## Working with Streams
+## 🔍 Working with Indexes
 
-| All Examples 👉 | .NET |
-| --------------- | ---- |
-|                 | .NET |
+Discover how to leverage secondary indexes to optimize your data access patterns.
 
-## Working with Tables
+[Check out the Index examples »](./sdk_v2/WorkingWithIndexes)
 
-| All Examples 👉                                     | .NET |
-| --------------------------------------------------- | ---- |
-| Add Global Table Region                             | .NET |
-| Add Provisioned Capacity                            | .NET |
-| CreateGlobalTable                                   | .NET |
-| CreateTable On-Demand                               | .NET |
-| CreateTable Provisioned                             | .NET |
-| Delete Global Table Region                          | .NET |
-| DeleteTable                                         | .NET |
-| DescribeGlobalTable and DescribeGlobalTableSettings | .NET |
-| DescribeLimits                                      | .NET |
-| DescribeTable                                       | .NET |
-| Disable Autoscaling                                 | .NET |
-| Enable Autoscaling                                  | .NET |
-| Update Autoscaling                                  | .NET |
-| Disable Streams                                     | .NET |
-| Enable Streams                                      | .NET |
-| ListTables                                          | .NET |
-| UpdateGlobalTable and UpdateGlobalTableSettings     | .NET |
-| UpdateTable On-Demand                               | .NET |
-| UpdateTable Provisioned                             | .NET |
+## 🔍 Working with Scans
+
+Learn how to perform full table scans, including techniques for improving performance.
+
+[Browse the Scan examples »](./sdk_v2/WorkingWithScans)
+
+## 🌊 Working with Streams
+
+Dive into the world of DynamoDB Streams and learn how to read and process real-time changes to your table data.
+
+[Explore the Stream examples »](./sdk_v2/WorkingWithStreams)
+
+## 🗃️ Working with Tables
+
+From creating and deleting tables to managing global tables and auto-scaling, this section has you covered for all your table management needs.
+
+[Discover the Table examples »](./sdk_v2/WorkingWithTables)
+
+# 🚀 Get Started
+
+Each example in this folder comes with a README file that provides detailed instructions on setup, usage, and relevant context. Feel free to browse the examples and adapt the code to your specific DynamoDB-powered applications.
+
+If you have any questions or need further assistance, don't hesitate to [create an issue](https://github.com/aws-samples/aws-dynamodb-examples/issues/new) in the repository.
+
+# Detailed list of supported operations
+
+<!-- TODO: Create issue to Sync the operations with the code -->
+
+You can consult the list of all the supported operations in this repo in the [Operations.md](./Operations.md)
