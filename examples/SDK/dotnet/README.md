@@ -4,37 +4,25 @@ Welcome to the .NET SDK examples for Amazon DynamoDB. This section contains a co
 
 ## 🛠️ Explore the Examples
 
-Dive into the following sections to discover the .NET SDK examples for DynamoDB:
+Dive into the following sections to discover the .NET SDK examples for DynamoDB, explore the full project here
 
 ## 👨‍💻 Working with Items
 
 Explore a wide range of operations for managing individual items in your DynamoDB tables, from batch processing to conditional updates.
 
-[View the Item examples »](./sdk_v1/data_plane/WorkingWithItems/)
+[View the Item examples »](./sdk_v2/WorkingWithItems/)
 
 ## 🔍 Working with Queries
 
 Learn how to efficiently query your DynamoDB tables, with examples covering sorting, filtering, projections, and more.
 
-[Explore the Query examples »](./sdk_v1/data_plane/WorkingWithQueries)
+[Explore the Query examples »](./sdk_v2/WorkingWithQueries)
 
 ## 🔍 Working with Indexes
 
 Discover how to leverage secondary indexes to optimize your data access patterns.
 
 [Check out the Index examples »](./sdk_v2/WorkingWithIndexes)
-
-## 🔍 Working with Scans
-
-Learn how to perform full table scans, including techniques for improving performance.
-
-[Browse the Scan examples »](./sdk_v2/WorkingWithScans)
-
-## 🌊 Working with Streams
-
-Dive into the world of DynamoDB Streams and learn how to read and process real-time changes to your table data.
-
-[Explore the Stream examples »](./sdk_v2/WorkingWithStreams)
 
 ## 🗃️ Working with Tables
 
@@ -45,8 +33,6 @@ From creating and deleting tables to managing global tables and auto-scaling, th
 # 🚀 Get Started
 
 Each example in this folder comes with a README file that provides detailed instructions on setup, usage, and relevant context. Feel free to browse the examples and adapt the code to your specific DynamoDB-powered applications.
-
-If you have any questions or need further assistance, don't hesitate to [create an issue](https://github.com/aws-samples/aws-dynamodb-examples/issues/new) in the repository.
 
 # Detailed list of supported operations
 

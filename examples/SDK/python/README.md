@@ -1,92 +1,53 @@
 # Python (boto3) SDK examples for Amazon DynamoDB
 
-This section contains Python code for examples and common tasks with Amazon DynamoDB.
+Welcome to the Python SDK examples for Amazon DynamoDB. This section contains a comprehensive collection of Java code samples that demonstrate how to work with various DynamoDB operations and features.
 
-## Working with DynamodbTest
-| All Examples 👉       | Python                                                  |
-| --------------------- | ------------------------------------------------------- |
-| GenerateTestData      | [Python](./WorkingWithTestData/test_data_generator.py)  |
+## 🛠️ Explore the Examples
 
-## Working with Items
+Dive into the following sections to discover the Python SDK examples for DynamoDB:
 
-| All Examples 👉       | Python                                                  |
-| --------------------- | ------------------------------------------------------- |
-| BatchGet              | [Python](./WorkingWithItems/batch_get.py)               |
-| BatchWrite            | [Python](./WorkingWithItems/batch_write.py)             |
-| DeleteItem            | [Python](./WorkingWithItems/delete_item.py)             |
-| DeleteItemConditional | [Python](./WorkingWithItems/delete_item2.py)            |
-| GetItem               | [Python](./WorkingWithItems/get_item.py)                |
-| PutItem               | [Python](./WorkingWithItems/put_item.py)                |
-| PutItemConditional    | [Python](./WorkingWithItems/put_item_conditional.py)    |
-| TransactGet           | [Python](./WorkingWithItems/transact_get.py)            |
-| TransactWrite         | [Python](./WorkingWithItems/transact_write.py)          |
-| UpdateItem            | [Python](./WorkingWithItems/updating_item.py)           |
-| UpdateItemConditional | [Python](./WorkingWithItems/update_item_conditional.py) |
+## 👨‍💻 Working with Items
 
-## Working with PartiQL for DynamoDB
+Explore a wide range of operations for managing individual items in your DynamoDB tables, from batch processing to conditional updates.
 
-| All Examples 👉       | Python                                                            |
-| --------------------- | --------------------------------------------------------- |
-| PartiQL SimpleSelectStatement | [Python](./WorkingWithPartiQL/simple-select-statement.py) |
-| PartiQL ExecuteStatement      | [Python](./WorkingWithPartiQL/execute-statement.py)       |
-| PartiQL ExecuteTransaction    | [Python](./WorkingWithPartiQL/execute-transaction.py)     |
-| PartiQL BatchExecuteStatement | [Python](./WorkingWithPartiQL/batch-execute-statement.py) |
+[View the Item examples »](./data_plane/WorkingWithItems/)
 
-## Working with Indexes
+## 🔍 Working with Queries
 
-| All Examples 👉 | Python |
-| --------------- | ------ |
-|                 | Python |
+Learn how to efficiently query your DynamoDB tables, with examples covering sorting, filtering, projections, and more.
 
-## Working with Queries
+[Explore the Query examples »](./data_plane/WorkingWithQueries)
 
-| All Examples 👉        | Python                                                           |
-| ---------------------- | ---------------------------------------------------------------- |
-| ConsistentRead         | [Python](./WorkingWithQueries/query-consistent-read.py)          |
-| Count                  | [Python](./WorkingWithQueries/query-scan-count.py)               |
-| FilterExpression       | [Python](./WorkingWithQueries/query_filter_expression.py)        |
-| ProjectionExpression   | [Python](./WorkingWithQueries/query_projection_expression.py)    |
-| ReturnConsumedCapacity | [Python](./WorkingWithQueries/query-return-consumed-capacity.py) |
+## 🔍 Working with Indexes
 
-## Working with Scans
+Discover how to leverage secondary indexes to optimize your data access patterns.
 
-| All Examples 👉 | Python |
-| --------------- | ------ |
-| Simple Scan            | [Python](./WorkingWithScans/scan_simple.py)                |
-| Paginate Scan          | [Python](./WorkingWithScans/scan_paginate.py)              |
-| Parallel Scan          | [Python](./WorkingWithScans/scan_parallel.py)              |
-| Boto3 Paginator Scan   | [Python](./WorkingWithScans/scan_with_paginator.py)        |
-| FilterExpression       | [Python](./WorkingWithScans/scan_filter_expression.py)     |
-| ProjectionExpression   | [Python](./WorkingWithScans/scan_projection_expression.py) |
+[Check out the Index examples »](./data_plane/WorkingWithIndexes)
 
-## Working with Streams
+## 🔍 Working with Scans
 
-| All Examples 👉 | Python |
-| --------------- | ------ |
-|                 | Python |
+Learn how to perform full table scans, including techniques for improving performance.
 
-## Working with Tables
+[Browse the Scan examples »](./data_plane/WorkingWithScans)
 
-| All Examples 👉                                     | Python                                                       |
-| --------------------------------------------------- | ------------------------------------------------------------ |
-| Add Global Table Region                             | [Python](./WorkingWithTables/add_global_table_region.py)     |
-| Add Provisioned Capacity                            | [Python](./WorkingWithTables/add_provisioned_capacity.py)    |
-| CreateGlobalTable                                   | Python                                                       |
-| CreateTable On-Demand                               | [Python](./WorkingWithTables/create_table_on-demand.py)      |
-| CreateTable Provisioned                             | [Python](./WorkingWithTables/create_table_provisioned.py)    |
-| Delete Global Table Region                          | [Python](./WorkingWithTables/delete_global_table_region.py)  |
-| DeleteTable*                                        | [Python](./WorkingWithTables/delete_table.py)                |
-| DescribeGlobalTable and DescribeGlobalTableSettings | Python                                                       |
-| DescribeLimits                                      | [Python](./WorkingWithTables/describe_limits.py)             |
-| DescribeTable                                       | [Python](./WorkingWithTables/describe_table.py)              |
-| Disable Autoscaling                                 | [Python](./WorkingWithTables/disable_auto-scaling.py)        |
-| Enable Autoscaling                                  | [Python](./WorkingWithTables/enable_auto-scaling.py)         |
-| Update Autoscaling                                  | Python                                                       |
-| Disable Streams                                     | Python                                                       |
-| Enable Streams                                      | [Python](./WorkingWithTables/enable_streams.py)              |
-| ListTables                                          | [Python](./WorkingWithTables/list_tables.py)                 |
-| UpdateGlobalTable and UpdateGlobalTableSettings     | Python                                                       |
-| UpdateTable On-Demand                               | [Python](./WorkingWithTables/table_change_to_on-demand.py)   |
-| UpdateTable Provisioned                             | [Python](./WorkingWithTables/table_change_to_provisioned.py) |
+## 🌊 Working with Streams
 
-*Be advised that when you delete a table, it does not delete auto-scaling info (e.g. scalable targets, scaling policies) or CloudWatch alarms. This must be done in seperate calls.
+Dive into the world of DynamoDB Streams and learn how to read and process real-time changes to your table data.
+
+[Explore the Stream examples »](./data_plane/WorkingWithStreams)
+
+## 🗃️ Working with Tables
+
+From creating and deleting tables to managing global tables and auto-scaling, this section has you covered for all your table management needs.
+
+[Discover the Table examples »](./control_plane/WorkingWithTables)
+
+# 🚀 Get Started
+
+Each example in this folder comes with a README file that provides detailed instructions on setup, usage, and relevant context. Feel free to browse the examples and adapt the code to your specific DynamoDB-powered applications.
+
+# Detailed list of supported operations
+
+<!-- TODO: Create issue to Sync the operations with the code -->
+
+You can consult the list of all the supported operations in this repo in the [Operations.md](./Operations.md)
