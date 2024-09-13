@@ -52,8 +52,6 @@ Explore examples that demonstrate advanced or specialized use cases for the Dyna
 
 Each example in this folder comes with a README file that provides detailed instructions on setup, usage, and relevant context. Feel free to browse the examples and adapt the code to your specific DynamoDB-powered applications.
 
-If you have any questions or need further assistance, don't hesitate to [create an issue](https://github.com/aws-samples/aws-dynamodb-examples/issues/new) in the repository.
-
 # Detailed list of supported operations
 
 <!-- TODO: Create issue to Sync the operations with the code -->

@@ -1,71 +1,25 @@
-# Golang SDK examples for Amazon DynamoDB
+# 🐹 Golang SDK examples for Amazon DynamoDB
 
 This section contains Golang code for examples and common tasks with Amazon DynamoDB.
 
-## Working with Items
+## ⚠️ Deprecation Warning: Golang SDK v1 Examples ⚠️
 
-| All Examples 👉       | Go  |
-| --------------------- | --- |
-| BatchGet              | [Go](./WorkingWithItems/batchGetItem.go)  |
-| BatchWrite            | [Go](./WorkingWithItems/batchWriteItem.go)   |
-| DeleteItem            | [Go](./WorkingWithItems/deleteItem.go)   |
-| DeleteItemConditional | [Go](./WorkingWithItems/deleteItemConditional.go)   |
-| GetItem               | [Go](./WorkingWithItems/getItem.go)   |
-| PutItem               | [Go](./WorkingWithItems/putItem.go)   |
-| PutItemConditional    | [Go](./WorkingWithItems/putItemConditional.go)   |
-| TransactGet           | Go  |
-| TransactWrite         | Go  |
-| UpdateItem            | [Go](./WorkingWithItems/updateItem.go)   |
-| UpdateItemConditional | [Go](./WorkingWithItems/updateItemConditional.go)   |
+With the announce of [EOS for the Golang SDK v1](https://aws.amazon.com/blogs/developer/announcing-end-of-support-for-aws-sdk-for-go-v1-on-july-31-2025/), all the v1 examples in this repository are in maintenance mode as well. If you want to collaborate migrating the current examples to v2 you are encouraged to send a PR.
 
-## Working with Indexes
+## 🛠️ Working with Items
 
-| All Examples 👉 | Go  |
-| --------------- | --- |
-|                 | Go  |
+Explore a wide range of operations for managing individual items in your DynamoDB tables, from batch processing to conditional updates.
 
-## Working with Queries
+[View the Item examples »](./sdk_v1/WorkingWithItems/)
 
-| All Examples 👉        | Go  |
-| ---------------------- | --- |
-| ConsistentRead         | Go  |
-| Count                  | Go  |
-| FilterExpression       | Go  |
-| ProjectionExpression   | Go  |
-| ReturnConsumedCapacity | Go  |
+## 🗃️ Working with Tables
 
-## Working with Scans
+From creating and deleting tables to managing global tables and auto-scaling, this section has you covered for all your table management needs.
 
-| All Examples 👉 | Go  |
-| --------------- | --- |
-|                 | Go  |
+[Discover the Table examples »](./sdk_v1/WorkingWithTables)
 
-## Working with Streams
+# Detailed list of supported operations
 
-| All Examples 👉 | Go  |
-| --------------- | --- |
-|                 | Go  |
+<!-- TODO: Create issue to Sync the operations with the code -->
 
-## Working with Tables
-
-| All Examples 👉                                     | Go |
-| --------------------------------------------------- | -- |
-| Add Global Table Region                             | [Go](./WorkingWithTables/addGlobalTableRegion/addGlobalTableRegion.go) |
-| Add Provisioned Capacity                            | [Go](./WorkingWithTables/addProvisionedCapacity/addProvisionedCapacity.go) |
-| CreateGlobalTable                                   | [Go](./WorkingWithTables/createGlobalTable/createGlobalTable.go) |
-| CreateTable On-Demand                               | [Go](./WorkingWithTables/createTableOnDemand/createTableOnDemand.go) |
-| CreateTable Provisioned                             | [Go](./WorkingWithTables/createTableProvisioned/createTableProvisioned.go) |
-| Delete Global Table Region                          | [Go](./WorkingWithTables/deleteGlobalTableRegion/deleteGlobalTableRegion.go) |
-| DeleteTable                                         | [Go](./WorkingWithTables/deleteTable/deleteTable.go) |
-| DescribeGlobalTable and DescribeGlobalTableSettings | [Go](./WorkingWithTables/describeGlobalTable/describeGlobalTable.go) |
-| DescribeLimits                                      | [Go](./WorkingWithTables/describeLimits/describeLimits.go) |
-| DescribeTable                                       | [Go](./WorkingWithTables/describeTable/describeTable.go) |
-| Disable Autoscaling                                 | [Go](./WorkingWithTables/disableAutoscaling/disableAutoscaling.go) |
-| Enable Autoscaling                                  | [Go](./WorkingWithTables/enableAutoscaling/enableAutoscaling.go) |
-| Update Autoscaling                                  | [Go](./WorkingWithTables/updateAutoscaling/updateAutoscaling.go) |
-| Disable Streams                                     | [Go](./WorkingWithTables/disableStreams/disableStreams.go) |
-| Enable Streams                                      | [Go](./WorkingWithTables/enableStreams/enableStreams.go) |
-| ListTables                                          | [Go](./WorkingWithTables/listTables/listTables.go) |
-| UpdateGlobalTable and UpdateGlobalTableSettings     | [Go](./WorkingWithTables/updateGlobalTable/updateGlobalTable.go) |
-| UpdateTable On-Demand                               | [Go](./WorkingWithTables/changeTableToOnDemand/changeTableToOnDemand.go) |
-| UpdateTable Provisioned                             | [Go](./WorkingWithTables/changeTableToProvisioned/changeTableToProvisioned.go) |
+You can consult the list of all the supported operations in this repo in the [Operations](./Operations.md) page.

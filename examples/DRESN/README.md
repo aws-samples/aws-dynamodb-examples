@@ -10,7 +10,7 @@ The DRESN stack offers a powerful set of tools and technologies that work togeth
 
 **React:** The React frontend framework enables the creation of dynamic, responsive, and user-friendly user interfaces. React's component-based architecture and virtual DOM make it efficient for building complex, single-page applications.
 
-**Express:** The Express.js web application framework for Node.js simplifies the development of the backend API. It provides a robust set of features for routing, middleware, and handling HTTP requests and responses.
+**Express:** The Express.js web application framework for Node.js simplifies the development of the backend API. It provides a robust set of features for routing, middleware, and handling HTTP requests and responses. This will be used for the very simple and early projects, as we will be redirecting our focus to SAM
 
 **AWS SAM:** The Serverless Application Model (SAM) allows you to define your serverless application resources, including the DynamoDB table and Lambda functions, in a simple and declarative way. This makes it easier to deploy your application to AWS and manage its infrastructure.
 
