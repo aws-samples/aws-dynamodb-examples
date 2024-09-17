@@ -1,4 +1,4 @@
-# 🗒️ Scripts # Update me !!
+# 🗒️ Scripts
 
 The scripts folder contains a variety of utility scripts that can be executed locally or on an EC2 instance to perform specific actions on your DynamoDB tables. These scripts serve a particular purpose and are intended to achieve a very specific task.
 
