@@ -1,0 +1,30 @@
+{
+  "name": "basic-backend",
+  "description": "Enhanced backend project sample for the NodeJS Express React DynamoDB and SAM (NERDS) Stack",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.620.0",
+    "@aws-sdk/lib-dynamodb": "^3.620.0",
+    "@aws-sdk/util-dynamodb": "^3.620.0",
+    "aws-sdk": "^2.1664.0",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "nanoid": "^5.0.7"
+  },
+  "type": "module",
+  "config": {
+    "ddbhost": "0.0.0.0",
+    "ddbport": "8000",
+    "ddbtable": "Tasks"
+  },
+  "scripts": {
+    "start-db": "echo \"CID=$(docker run -p $npm_package_config_ddbport:$npm_package_config_ddbport -d amazon/dynamodb-local -jar DynamoDBLocal.jar -sharedDb)\" > .ddb_cid",
+    "stop-db": "source .ddb_cid && docker stop $CID && rm .ddb_cid",
+    "start-backend": "node src/server.js",
+    "create-table": "aws dynamodb create-table --table-name $npm_package_config_ddbtable --attribute-definitions AttributeName=PK,AttributeType=S --key-schema AttributeName=PK,KeyType=HASH --billing-mode PAY_PER_REQUEST --endpoint-url http://$npm_package_config_ddbhost:$npm_package_config_ddbport --no-cli-page",
+    "show-tables": "aws dynamodb list-tables --endpoint-url http://$npm_package_config_ddbhost:$npm_package_config_ddbport --no-cli-page",
+    "scan-table": "aws dynamodb scan --table-name $npm_package_config_ddbtable --endpoint-url http://$npm_package_config_ddbhost:$npm_package_config_ddbport --no-cli-page"
+  }
+}
