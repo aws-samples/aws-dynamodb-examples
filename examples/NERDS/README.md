@@ -1,10 +1,10 @@
-# 🔥 DRESN - DynamoDB React Express SAM NodeJS 🔥
+# 🔥 NERDS - NodeJS Express React DynamoDB and SAM 🔥
 
-Welcome to the DRESN stack - a sizzling hot combination of DynamoDB, React, Express, SAM, and Node.js. This setup will help you bootstrap your application development by connecting it to a DynamoDB table, which provides virtually unlimited scale and low latency with the benefits of a managed service.
+Welcome to the NERDS stack - a sizzling hot combination of DynamoDB, React, Express, SAM, and Node.js. This setup will help you bootstrap your application development by connecting it to a DynamoDB table, which provides virtually unlimited scale and low latency with the benefits of a managed service.
 
-## 🚀 Benefits of the DRESN Stack
+## 🚀 Benefits of the NERDS Stack
 
-The DRESN stack offers a powerful set of tools and technologies that work together seamlessly to build scalable and robust web applications:
+The NERDS stack offers a powerful set of tools and technologies that work together seamlessly to build scalable and robust web applications:
 
 **DynamoDB:** As the backbone of the stack, DynamoDB provides a highly scalable and fully managed NoSQL database service. With its flexible data model, fast performance, and automatic scaling, DynamoDB is an ideal choice for modern, data-intensive applications.
 
@@ -20,7 +20,7 @@ By combining these powerful technologies, the DRESN stack provides a comprehensi
 
 ## 🛠️ Getting Started
 
-To get started with the DRESN stack, navigate to the folders with the stack at different stages.
+To get started with the NERDS stack, navigate to the folders with the stack at different stages.
 
 ### 🎨 Basic Template
 
