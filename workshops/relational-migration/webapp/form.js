@@ -194,6 +194,14 @@ async function runQuery(table, queryRequest){
         responseJSON.forEach((item, index) => {
             const cols = Object.keys(item);
 
+
+            const row = dataGrid.insertRow(-1);
+            cols.forEach((col) => {
+                const cell = row.insertCell(-1);
+                cell.innerText = item[col];
+                cell.className = 'gridData';
+            });
+
             if(index === 0) { // show column names
                 const gridHeader = dataGrid.createTHead();
                 const row0 = gridHeader.insertRow(-1);
@@ -203,12 +211,6 @@ async function runQuery(table, queryRequest){
                     cell0.innerHTML = col;
                 });
             }
-            const row = dataGrid.insertRow(-1);
-            cols.forEach((col) => {
-                const cell = row.insertCell(-1);
-                cell.innerText = item[col];
-                cell.className = 'gridData';
-            });
         });
     }
 
@@ -221,7 +223,6 @@ async function runsql(){
     console.log(sqlStmt);
 
     document.getElementById('sqlGrid').innerHTML = null;
-
 
     const response = await postApi('/runsql', {sql:sqlStmt});
 

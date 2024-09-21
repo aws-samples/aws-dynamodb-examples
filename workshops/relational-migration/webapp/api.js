@@ -47,8 +47,36 @@ async function postApi(action, body) {
 
 function fillGrid(data, grid, table, tableMetadata) {
     if(!grid) return;
-
     clear(grid);
+
+    let all_cols = {};
+    let cols_ordered = [];
+
+    let ks = JSON.parse(tableMetadata)['Table']['KeySchema'];
+    let pkName = ks[0]['AttributeName'];
+    let skName = ks.length > 1 ? ks[1]['AttributeName'] : null;
+
+
+    data.forEach((item, index) => {
+        const cols = Object.keys(item);
+        cols.forEach((col) => {
+            if(col in all_cols) {
+                // column known
+            } else {
+                all_cols[col] = 1; // key existence not value is what's being tracked
+            }
+        });
+    });
+
+    cols_ordered.push(pkName);
+    if(skName) {
+        cols_ordered.push(skName);
+    }
+    Object.keys(all_cols).forEach((col) => {
+        if(!cols_ordered.includes(col)) {
+            cols_ordered.push(col);
+        }
+    });
 
     log(null);
     let myGrid = document.getElementById(grid) || grid;
@@ -56,24 +84,21 @@ function fillGrid(data, grid, table, tableMetadata) {
     if(data.length === 0) { log('0 records'); }
 
     data.forEach((item, index) => {
-        const cols = Object.keys(item);
-
-        let ks = JSON.parse(tableMetadata)['Table']['KeySchema'];
+        // const cols = Object.keys(item);
 
         let itemKey = {};
-        let pkName = ks[0]['AttributeName'];
-        let skName = ks.length > 1 ? ks[1]['AttributeName'] : null;
 
         itemKey[pkName] =  item[pkName];
         if(skName) {
             itemKey[skName] =  item[skName];
         }
+        // console.log(JSON.stringify(item, null, 2));
 
         if(index === 1) { // show column names
 
             const gridHeader = myGrid.createTHead();
             const row0 = gridHeader.insertRow(0);
-            cols.forEach((col) => {
+            cols_ordered.forEach((col) => {
                 const cell0 = row0.insertCell(-1);
                 if(col === pkName) {
                     cell0.className = "PKheader";
@@ -82,7 +107,7 @@ function fillGrid(data, grid, table, tableMetadata) {
                 } else {
                     cell0.className = "gridHeader";
                 }
-                cell0.innerHTML = col;
+                cell0.innerHTML = col ;
             });
 
             const cellDH = row0.insertCell(-1);
@@ -90,7 +115,7 @@ function fillGrid(data, grid, table, tableMetadata) {
             cellDH.innerHTML = '';
         }
         const row = myGrid.insertRow(-1);
-        cols.forEach((col) => {
+        cols_ordered.forEach((col) => {
             const cell1 = row.insertCell(-1);
             if(col === pkName) {
                 cell1.className = "PK";
@@ -100,7 +125,7 @@ function fillGrid(data, grid, table, tableMetadata) {
                 cell1.className = "gridData";
             }
 
-            cell1.innerHTML = item[col] ;
+            cell1.innerHTML = item[col] || '';
         });
 
         const cellD = row.insertCell(-1);
@@ -144,12 +169,19 @@ function tableSchemaGrid(metadata, grid) {
     const row = myGrid.insertRow(-1);
 
     const cell1 = row.insertCell(-1);
-    if(Ks.length>1) {
-        cell1.rowSpan = 2;
-    }
+
     cell1.className = "gridDataLabel";
 
-    cell1.innerHTML = Ks.length>1 ? 'Composite key': 'Primary key';
+    if(document.getElementById('stage').value === 'dynamodb') {
+        cell1.innerHTML = 'Partition key (HASH)';
+    } else {
+        if(Ks.length>1) {
+            cell1.rowSpan = 2;
+            cell1.innerHTML = 'Composite key'
+        } else {
+            cell1.innerHTML = 'Primary key'
+        }
+    }
 
     const cell2 = row.insertCell(-1);
     cell2.className = "PK";
@@ -161,6 +193,12 @@ function tableSchemaGrid(metadata, grid) {
 
     if(Ks.length > 1) {
         const row = myGrid.insertRow(-1);
+        if(document.getElementById('stage').value === 'dynamodb') {
+            const cell0 = row.insertCell(-1);
+            cell0.className = "gridDataLabel";
+            cell0.innerHTML = "Sort Key (RANGE)";
+        }
+
         const cell = row.insertCell(-1);
         cell.className = "SK";
         cell.innerHTML = Ks[1]['AttributeName'];

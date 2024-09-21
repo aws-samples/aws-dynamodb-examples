@@ -21,12 +21,13 @@ def job_info():
     job_params = {
         'db': 'mysql',
         'table': 'app_db.Products',
-        'row_count': 12,
+        'row_count': 14,
     }
     return job_params
 
-categories = ['Street', 'Street', 'Street', 'Street', 'Street', 'Street', 'Street', 'Snow', 'Air', 'Sea', 'Lake', 'Lake']
-products = ['Bicycle', 'Car', 'Truck', 'Motorcycle', 'Moped', 'Scooter', 'Skateboard', 'Snowboard', 'Helicopter', 'Jet Ski', 'Kayak', 'Canoe']
+categories = ['Street', 'Street', 'Street', 'Street', 'Street', 'Street', 'Street', 'Snow', 'Snow', 'Air', 'Air', 'Sea', 'Lake', 'Lake', 'Sea']
+
+products = ['Bicycle', 'Car', 'Truck', 'Motorcycle', 'Moped', 'Scooter', 'Skateboard', 'Snowboard', 'Sled', 'Helicopter', 'Drone', 'Jet Ski', 'Kayak', 'Canoe', 'Motor Boat']
 
 def random_string(length=8):
     letters = string.ascii_letters

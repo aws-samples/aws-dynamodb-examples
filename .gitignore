@@ -20,8 +20,10 @@ package-lock.json
 **/.DS_Store
 **/.chalice/deployments/
 **/.chalice/deployed/
-target-tables/
-relational-migration/syncs3.sh
-.chalice/config.json
-syncs3.sh
+workshops/relational-migration/target-tables/
+workshops/relational-migration/syncs3.sh
+workshops/relational-migration/.chalice/config.json
+workshops/relational-migration/setenv.sh
+workshops/relational-migration/setenvd.sh
+workshops/relational-migration/source-tables/app_db.*
 
