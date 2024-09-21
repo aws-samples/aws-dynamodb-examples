@@ -10,20 +10,28 @@ import boto3
 import os, sys
 import json
 
-table_name = None
+
+# customize sql here or pass in as arg 2
+sqlfile = None    # sql = 'SELECT * FROM Products LIMIT 3'
 sql = None
+
+table_name = None
 s3_path = None
 
 if len(sys.argv) > 1:
     table_name = sys.argv[1]
-
-
-if table_name:
     sql = "SELECT * FROM " + table_name
-    s3_path = 'migrations/' + table_name + '/'
-else:
-    s3_path = 'migrations/custom/'
 
+else:
+    print('pass in table_name as command line arg 1')
+    exit()
+
+if len(sys.argv) > 2:
+    sqlfile = sys.argv[2]
+    s = open(sqlfile, "r")
+    sql = s.read()
+
+s3_path = 'migrations/' + table_name + '/'
 
 s3_bucket = 's3-import-demo'
 region = 'us-east-2'
@@ -52,7 +60,7 @@ def main():
       db=mysql_db
     )
     print('Connecting to : ' + mysql_host + ', db: ' + mysql_db)
-    print('Running SQL   : ' + sql)
+    print('Running SQL   : \n\n' + sql)
     print()
 
     cur = mydb.cursor(buffered=True, dictionary=True)
@@ -60,6 +68,8 @@ def main():
     cur.execute(sql)
 
     res = cur.fetchall()
+
+    print('Converting query results to DynamoDB JSON & Writing to S3\n')
     rowcount = 0
     filetext = ''
     for row in res:

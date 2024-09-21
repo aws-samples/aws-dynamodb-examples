@@ -43,10 +43,12 @@ def engine():
 
 
 def list_tables():
-    request = "SELECT TABLE_NAME FROM information_schema.tables WHERE table_schema = '" + mysql_db + "'"
+    request = "SELECT TABLE_NAME FROM information_schema.tables "
+    request += "WHERE table_schema = '" + mysql_db + "' AND table_type = 'BASE TABLE'"
     mysql_cur.execute(request)
     result = mysql_cur.fetchall()
-    print(result)
+    # print(result)
+
     tables = []
     for t in result:
         tables.append(t['TABLE_NAME'])
@@ -97,7 +99,6 @@ def scan_table(table):
     request += "FROM " + mysql_db + "." + table + " "
     request += "LIMIT " + str(limit)
 
-
     mysql_cur.execute(request)
     result = mysql_cur.fetchall()
     dataset = format_sql_dataset(result)
@@ -115,9 +116,9 @@ def query(table, request):
 
     key_vals = list(request['queryRequest']['queryConditions'].values())
 
-    get_stmt = 'SELECT * FROM ' + table + ' WHERE ' + sql_condition
+    query_stmt = 'SELECT * FROM ' + table + ' WHERE ' + sql_condition
 
-    mysql_cur.execute(get_stmt, key_vals)
+    mysql_cur.execute(query_stmt, key_vals)
     result = mysql_cur.fetchall()
     dataset = format_sql_dataset(result)
 
@@ -126,13 +127,13 @@ def query(table, request):
 
 def get_record(table, request):
 
-    keyList = list(request['recordKey'].keys())
+    keyList = list(request['Key'].keys())
     sql_condition = keyList[0] + ' = %s'
 
     if len(keyList) > 1:
         sql_condition += ' AND ' + keyList[1] + ' = %s'
 
-    key_vals = list(request['recordKey'].values())
+    key_vals = list(request['Key'].values())
 
     get_stmt = 'SELECT * FROM ' + table + ' WHERE ' + sql_condition
 
@@ -207,6 +208,7 @@ def delete_record(table, recordKey):
     return({"status":mysql_cur.rowcount})
 
 def format_sql_dataset(dataset):
+
     formatted_dataset = []
     for index, row in enumerate(dataset):
         formatted_row = {}

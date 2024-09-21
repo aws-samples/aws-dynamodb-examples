@@ -1,33 +1,48 @@
-import os
-# import time, datetime
-import json
 from chalice import Chalice
-from chalicelib import mysql_calls as db
-# from chalicelib import dynamodb_calls as db
-
-import mysql.connector
-import logging
-
 import boto3
 from botocore.exceptions import ClientError
+import logging
+import os
+import json
+import mysql.connector
+
+
+migration_stage = 'dynamodb'
+# 'relational', 'dual-write', 'dynamodb']
+
+if "MIGRATION_STAGE" in os.environ:
+    migration_stage = os.environ['MIGRATION_STAGE']
+
+if migration_stage == 'relational' or migration_stage == 'dual-write':
+    from chalicelib import mysql_calls as db
+else:
+    from chalicelib import dynamodb_calls as db
 
 app = Chalice(app_name='migration')
 
 region = "us-east-2"
-sql = "select * from Boston"
 
 if "AWS_DEFAULT_REGION" in os.environ:
     region = os.environ['AWS_DEFAULT_REGION']
 
 @app.route('/', methods=['GET'], cors=True)
 def ping():
-    return {'engine': db.engine()}
+    request = app.current_request
+    context = request.to_dict()['context']
+    return_status = {'engine': db.engine()}
+
+    if 'stage' in context:
+        return_status['stage'] = context['stage']
+
+    return return_status
 
 
 @app.route('/list_tables', methods=['GET'], cors=True)
 def list_tables():
     request = app.current_request
-#     print(request.to_dict())
+#     print('*****')
+#     print(json.dumps(request.to_dict(), indent=2))
+
     return db.list_tables()
 
 

@@ -81,8 +81,7 @@ button {
     border-bottom-right-radius: 0px;
     border-bottom-left-radius: 0px;
     padding-bottom:8px;
-    border-bottom: none;
-
+    border-bottom: 1px solid whitesmoke;
 }
 .tab {
     border-radius:3px;
@@ -94,6 +93,7 @@ button {
 #tabs {
     color:grey;
 }
+
 .crudbutton {
 
     border-radius:3px;
@@ -141,15 +141,21 @@ button {
     border: 1px solid dimgray;
 }
 .tableButton {
-    margin-left:15px;
+    margin-left:10px;
     border: 1px solid dimgray;
     color: dimgray;
-
+    font-weight:bold;
 }
+.tableButtonIndex {
+    margin-left:20px;
+    border: 1px solid dimgray;
+    color: dimgray;
+}
+
 .tableButtonActive {
     background-color:whitesmoke;
     color:black;
-    margin-left:15px;
+    margin-left:10px;
     font-weight: bold;
     border: 1px solid dimgray;
 
@@ -216,7 +222,7 @@ button {
 
 .gridDataLabel {
     background-color: #c9c9c9;
-    padding:4px;
+    padding:5px;
     border:none !important;
     border-bottom:2px solid lightgrey !important;
     border-top:2px solid lightgrey !important;
@@ -234,6 +240,9 @@ button {
 }
 .newItemForm td {
     border: 1px solid dimgray;
+}
+.newItemForm input {
+    font-size:larger;
 }
 #formItem {
     background-color: lightgray;
@@ -506,4 +515,7 @@ input {
     text-decoration:none;
     color:navy;
     font-size:smaller;
+}
+#leftNavTable td {
+    float:left;
 }

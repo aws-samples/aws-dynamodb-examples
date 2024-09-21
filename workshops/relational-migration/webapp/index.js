@@ -47,8 +47,11 @@ async function renderNav() {
 
     const rootTest = await callApi('/'); // smoke test to ensure API responds with {"engine":"xyz"}
     const engine = rootTest['engine'];
+    const stage = rootTest['stage'];
     document.getElementById('engine').value = engine;
-    document.getElementById('tablesButton').innerText = engine + ' tables';
+    document.getElementById('stage').value = stage;
+    document.getElementById('pageTitle').innerHTML = engine + ' App';
+    // document.getElementById('tablesButton').innerText = engine + ' tables';
 }
 
 function openTab(tabName) {
@@ -98,19 +101,34 @@ async function listTables() {
 
     const list = await callApi('/list_tables');
 
+    if(list.length === 0) {
+        const row = tableListTable.insertRow(-1);
+        const cell1 = row.insertCell();
+        cell1.innerHTML = 'no tables found';
+    }
+
     list.forEach((item, index) => {
 
         const row = tableListTable.insertRow(-1);
         const cell1 = row.insertCell();
 
         const newButton = document.createElement('button');
-        newButton.textContent = item;
-        newButton.className = "tableButton";
+
         newButton.id = 'btn' + item;
 
+        newButton.className = "tableButton";
         newButton.onclick = () => tableClickHandler(item);
 
+        let dotPosition = item.indexOf('.');
+        if(dotPosition === -1) {
+            newButton.textContent = item;
+            newButton.className = "tableButton";
+        } else {
+            newButton.textContent = item.substring(dotPosition+1);
+            newButton.className = "tableButtonIndex";
+        }
         cell1.appendChild(newButton);
+
     });
 }
 async function tableClickHandler(table) {
@@ -120,9 +138,18 @@ async function tableClickHandler(table) {
 
     setTableTitle(table);
 
-    const resetButton = document.getElementsByClassName('tableButtonActive');
-    if(resetButton.length>0) {
-        resetButton[0].className = 'tableButton';
+    const resetButtons = document.getElementsByClassName('tableButtonActive');
+    if(resetButtons.length>0) {
+        // resetButton[0].className = 'tableButton';
+
+        let buttonText = resetButtons[0].textContent || resetButtons[0].innerText;
+
+        if(buttonText.indexOf('.') === -1 ) {
+            resetButtons[0].className = 'tableButton';
+        } else {
+            resetButtons[0].className = 'tableButtonIndex';
+        }
+
     }
 
     const clickedButton = document.getElementById('btn' + table);
@@ -139,15 +166,27 @@ async function tableClickHandler(table) {
 }
 
 async function descTableClick(table) {
+    let indexName = null;
+    let dotPosition = table.indexOf('.');
+
+    if(dotPosition > -1) {
+        indexName = table.substring(dotPosition+1);
+    }
 
     clear('tblForm');
     document.getElementById('dataset').value = null;
+    let tableMetadata = null;
 
     const descTableResult = await callApi('/desc_table/' + table);
-    const tableMetadata = formatMetadata(descTableResult, table);
+
+    if(Array.isArray(descTableResult)) {
+        tableMetadata = formatMetadata(descTableResult, table); // Relational SQL
+    } else {
+        tableMetadata = {'Table': descTableResult}; // DynamoDB
+    }
+
     document.getElementById('tableName').value = table;
     document.getElementById('tableMetadata').value = JSON.stringify(tableMetadata);
-
 
     const ADs = tableMetadata['Table']['AttributeDefinitions'];
     const Ks = tableMetadata['Table']['KeySchema'];
@@ -228,9 +267,11 @@ async function descTableClick(table) {
     cell2.appendChild(btn2);
 
     tableSchemaGrid(tableMetadata, 'grid1');
+    if(document.getElementById('stage').value !== 'dynamodb') {
+        document.getElementById('generateDiv').className = 'GenVisible';
+        document.getElementById('generateType').innerHTML = 'DynamoDB Table Definition';
+    }
 
-    document.getElementById('generateDiv').className = 'GenVisible';
-    document.getElementById('generateType').innerHTML = 'DynamoDB Table Definition';
 }
 
 async function descIndexesClick(table) {
@@ -343,6 +384,7 @@ async function descIndexesClick(table) {
                     indexSearchButton.id = 'isBtn' + idx + '#' + idxKey;
                     indexSearchButton.innerText = 'GO';
                     indexSearchButton.onclick = () => {
+
                         let qr = {'queryRequest': {'queryConditions': {}}};
                         qr['queryRequest']['index'] = idxCol['IndexName'];
 
@@ -464,11 +506,12 @@ function generate(type) {
         textBox = document.getElementById('textGen');
         genDiv = document.getElementById('generateResults');
     }
-
-    const generated = generateDDB(tableMetadata, dataset);
-    textBox.value = generated;
-    // genDiv.style.display = 'block';
-    genDiv.style.display = genDiv.style.display === 'block' ? 'none' : 'block';
+    if(document.getElementById('stage').value !== 'dynamodb') {
+        const generated = generateDDB(tableMetadata, dataset);
+        textBox.value = generated;
+        // genDiv.style.display = 'block';
+        genDiv.style.display = genDiv.style.display === 'block' ? 'none' : 'block';
+    }
 
     return {};
 }
