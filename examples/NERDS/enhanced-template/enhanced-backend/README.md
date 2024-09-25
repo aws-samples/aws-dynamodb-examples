@@ -8,9 +8,11 @@ We will be working with an ehnahced task example where you will retrieve the tas
 
 This project contains source code and supporting files for a sample application running on Express and NodeJS with Amazon DynamoDB local. It includes the following files and folders:
 
-![enhanced-recording](./enhanced-recording.gif)
+![enhanced-recording](./documentation/enhanced-backend.gif)
 
-- `src` - Code for the express application and the APIs.
+## Folder Description
+
+- `src` - Code for the express application and the APIs, and sample script to populate table.
 - `package.json` - Includes all the scripts to work on this project and the pre-requisites.
 
 This application will create a couple of API methods to add and list the ToDos.
@@ -24,32 +26,19 @@ This application will create a couple of API methods to add and list the ToDos.
 
 ## Usage
 
-To start working with this project you need to first run `npm install`.
-
-### Running the tool in conjuntion with the front end.
-
-![Demo](./documentation/Darn-basic-stack.gif)
-
 ### DynamoDB local
 
 This application will store all the information in an Amazon DynamoDB local instance, you will experience all the benefits from Amazon DynamoDB in your workstation.
 
 Execute the command `npm run start-db`. If this is the first time running the command your output should look like the one below. Docker will obtain the latest version for you!
 
-```shell
+To start working with this project you need to first run `npm install`.
+
+```bash
 ❯ npm run start-db
 
-> basic-backend@0.0.1 start-db
+> enhanced-backend@0.0.1 start-db
 > echo "CID=$(docker run -p $npm_package_config_ddbport:$npm_package_config_ddbport -d amazon/dynamodb-local -jar DynamoDBLocal.jar -sharedDb)" > .ddb_cid
-
-Unable to find image 'amazon/dynamodb-local:latest' locally
-latest: Pulling from amazon/dynamodb-local
-decbb28a26fa: Pull complete
-4b968a8d55bd: Pull complete
-4f4fb700ef54: Pull complete
-16d147f186fa: Pull complete
-Digest: sha256:d7ebddeb60fa418bcda218a6c6a402a58441b2a20d54c9cb1d85fd5194341753
-Status: Downloaded newer image for amazon/dynamodb-local:latest
 ```
 
 If you want to stop DynamoDB local execution you just need to run the command `npm run stop-db`. The long number at the end represents your docker container ID.
@@ -57,7 +46,7 @@ If you want to stop DynamoDB local execution you just need to run the command `n
 ```shell
 ❯ npm run stop-db
 
-> basic-backend@0.0.1 stop-db
+> enhanced-backend@0.0.1 stop-db
 > source .ddb_cid && docker stop $CID && rm .ddb_cid
 
 904e9a494f0f09acd027e33d275d3a51a05716f09cc4eace87b778bc3e65e650
@@ -65,15 +54,15 @@ If you want to stop DynamoDB local execution you just need to run the command `n
 
 ### Working with DynamoDB tables
 
-This project consists of a To-Do application and you will be storing all the items in a DynamoDB table. First you need to create a `Notes` table, where you will store all your to-dos.
+This project consists of a To-Do application and you will be storing all the items in a DynamoDB table. First you need to create a `recipes-table` table, where you will store all your to-dos.
 
-Run the command `npm run create-table`.
+Run the command command. `npm run create-recipes-table`
 
-```shell
-❯ npm run create-table
+```bash
+❯ npm run create-recipes-table
 
-> basic-backend@0.0.1 create-table
-> aws dynamodb create-table --table-name $npm_package_config_ddbtable --attribute-definitions AttributeName=PK,AttributeType=S --key-schema AttributeName=PK,KeyType=HASH --billing-mode PAY_PER_REQUEST --endpoint-url http://$npm_package_config_ddbhost:$npm_package_config_ddbport --no-cli-page
+> enhanced-backend@0.0.1 create-recipes-table
+> aws dynamodb create-table --table-name $npm_package_config_ddbEnhancedTable --attribute-definitions AttributeName=PK,AttributeType=S AttributeName=SK,AttributeType=S --key-schema AttributeName=PK,KeyType=HASH AttributeName=SK,KeyType=RANGE --billing-mode PAY_PER_REQUEST --endpoint-url http://${npm_package_config_ddbhost}:${npm_package_config_ddbport} --no-cli-page
 
 {
     "TableDescription": {
@@ -81,17 +70,25 @@ Run the command `npm run create-table`.
             {
                 "AttributeName": "PK",
                 "AttributeType": "S"
+            },
+            {
+                "AttributeName": "SK",
+                "AttributeType": "S"
             }
         ],
-        "TableName": "Notes",
+        "TableName": "social-recipes",
         "KeySchema": [
             {
                 "AttributeName": "PK",
                 "KeyType": "HASH"
+            },
+            {
+                "AttributeName": "SK",
+                "KeyType": "RANGE"
             }
         ],
         "TableStatus": "ACTIVE",
-        "CreationDateTime": "2024-07-29T10:40:09.344000-04:00",
+        "CreationDateTime": "2024-09-25T13:38:11.310000-04:00",
         "ProvisionedThroughput": {
             "LastIncreaseDateTime": "1969-12-31T19:00:00-05:00",
             "LastDecreaseDateTime": "1969-12-31T19:00:00-05:00",
@@ -101,54 +98,42 @@ Run the command `npm run create-table`.
         },
         "TableSizeBytes": 0,
         "ItemCount": 0,
-        "TableArn": "arn:aws:dynamodb:ddblocal:000000000000:table/Notes",
+        "TableArn": "arn:aws:dynamodb:ddblocal:000000000000:table/social-recipes",
         "BillingModeSummary": {
             "BillingMode": "PAY_PER_REQUEST",
-            "LastUpdateToPayPerRequestDateTime": "2024-07-29T10:40:09.344000-04:00"
+            "LastUpdateToPayPerRequestDateTime": "2024-09-25T13:38:11.310000-04:00"
         },
         "DeletionProtectionEnabled": false
     }
 }
 ```
 
-If you run the command twice by mistake, the second time you will get an error saying that you already have a table called `Notes`.
-
-```shell
-❯ npm run create-table
-
-> basic-backend@0.0.1 create-table
-> aws dynamodb create-table --table-name $npm_package_config_ddbtable --attribute-definitions AttributeName=PK,AttributeType=S --key-schema AttributeName=PK,KeyType=HASH --billing-mode PAY_PER_REQUEST --endpoint-url http://$npm_package_config_ddbhost:$npm_package_config_ddbport --no-cli-page
-
-
-An error occurred (ResourceInUseException) when calling the CreateTable operation: Cannot create preexisting table
-```
-
 ### List all the existing tables
 
 To idenfity which tables you have created execute the command `npm run show-tables`.
 
-```shell
+```bash
 ❯ npm run show-tables
 
-> basic-backend@0.0.1 show-tables
-> aws dynamodb list-tables --endpoint-url http://$npm_package_config_ddbhost:$npm_package_config_ddbport
+> enhanced-backend@0.0.1 show-tables
+> aws dynamodb list-tables --endpoint-url http://$npm_package_config_ddbhost:$npm_package_config_ddbport --no-cli-page
 
 {
     "TableNames": [
-        "Notes"
+        "social-recipes"
     ]
 }
 ```
 
 ### Retrieve all the items from one table
 
-To return all the elements from the `Notes` table you can run the command `npm run scan-table`. However if your table is empty you will get this output.
+List all the elements in the `social-recipes` table (Scan a table). `npm run scan-recipes`. However if your table is empty you will get this output.
 
-```shell
-❯ npm run scan-table
+```bash
+❯ npm run scan-recipes
 
-> basic-backend@0.0.1 scan-table
-> aws dynamodb scan --table-name $npm_package_config_ddbtable --endpoint-url http://$npm_package_config_ddbhost:$npm_package_config_ddbport
+> enhanced-backend@0.0.1 scan-recipes
+> aws dynamodb scan --table-name $npm_package_config_ddbEnhancedTable --endpoint-url http://$npm_package_config_ddbhost:$npm_package_config_ddbport --no-cli-page
 
 {
     "Items": [],
@@ -156,6 +141,96 @@ To return all the elements from the `Notes` table you can run the command `npm r
     "ScannedCount": 0,
     "ConsumedCapacity": null
 }
+```
+
+### Populate sample data
+
+Populate the `social-recipes` table with sample fake data:
+
+```bash
+❯ npm run populate-recipe-table
+
+> enhanced-backend@0.0.1 populate-recipe-table
+> node src/populate.js
+
+Successfully inserted batch of 7 items
+All items have been processed
+```
+
+Scan the table one more time `npm run scan-recipes`
+
+```bash
+❯ npm run scan-recipes
+
+> enhanced-backend@0.0.1 scan-recipes
+> aws dynamodb scan --table-name $npm_package_config_ddbEnhancedTable --endpoint-url http://$npm_package_config_ddbhost:$npm_package_config_ddbport --no-cli-page
+
+{
+    "Items": [
+        {
+            "taskDate": {
+                "S": "2024-09-21T10:35:39"
+            },
+            "SK": {
+                "S": "TASK#0#2024-09-21T10:35:39#hUkIVS7H3BKlEmQTNvNOe"
+            },
+            "taskPriority": {
+                "S": "0"
+            },
+            "description": {
+                "S": "Corvina is the best for a seviche"
+            },
+            "PK": {
+                "S": "USER#4Rl17WTewD6aa1-k73cBJ"
+            },
+            "title": {
+                "S": "Get some Corvina"
+            },
+            "userId": {
+                "S": "4Rl17WTewD6aa1-k73cBJ"
+            },
+            "taskId": {
+                "S": "hUkIVS7H3BKlEmQTNvNOe"
+            }
+        },
+        ...
+        ...
+        {
+            "SK": {
+                "S": "USER#4Rl17WTewD6aa1-k73cBJ"
+            },
+            "Priorities": {
+                "L": [
+                    {
+                        "N": "0"
+                    },
+                    {
+                        "N": "1"
+                    },
+                    {
+                        "N": "2"
+                    },
+                    {
+                        "N": "3"
+                    }
+                ]
+            },
+            "PK": {
+                "S": "USER#4Rl17WTewD6aa1-k73cBJ"
+            },
+            "userId": {
+                "S": "4Rl17WTewD6aa1-k73cBJ"
+            },
+            "Name": {
+                "S": "John Doe"
+            }
+        }
+    ],
+    "Count": 7,
+    "ScannedCount": 7,
+    "ConsumedCapacity": null
+}
+
 ```
 
 ### Initialize the backend
@@ -167,7 +242,7 @@ Tip: execute this command in a new terminal
 ```shell
 ❯ npm run start-backend
 
-> basic-backend@0.0.1 start-backend
+> enhanced-backend@0.0.1 start-backend
 > node src/server.js
 
 Server is running on port 3000
