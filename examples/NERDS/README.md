@@ -25,3 +25,9 @@ To get started with the NERDS stack, navigate to the folders with the stack at d
 ### 🎨 Basic Template
 
 The [basic template](./basic-template/README.md) folder contains a basic template, which is a simple React-based application that will help you get started with working with DynamoDB. All the resources used in this lab are executed locally, so please make sure you have downloaded all the prerequisites before trying to run the sample applications.
+
+### 🎨 Enhanced Template
+
+The [enhanced template](./enhanced-template/README.md) folder contains an enhanced version of the basic template, which is a simple React-based application that will help you get started with working with DynamoDB. The table in this example uses a combination of Partition Key and a Sort Key that allows us to run more elegant queries in the backend and avoid to fetch unecessary data, this example showcase the use of [Query Operations](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Query.html).
+
+All the resources used in this lab are executed locally, so please make sure you have downloaded all the prerequisites before trying to run the sample applications.
