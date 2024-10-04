@@ -44,6 +44,14 @@ npm run build-backend
 npm run start-backend
 ```
 
+# Setup
+
+![demo.gif](./documentation/demo.gif)
+
+# Creating an user
+
+![demo-api.gif](./documentation/demo-api.gif)
+
 ## Available Scripts
 
 - `npm run start-db`: Start local DynamoDB container
