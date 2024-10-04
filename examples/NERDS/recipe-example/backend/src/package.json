@@ -1,0 +1,10 @@
+{
+  "name": "create-user",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.658.1",
+    "@aws-sdk/util-dynamodb": "^3.658.1",
+    "nanoid": "^5.0.7"
+  }
+}
