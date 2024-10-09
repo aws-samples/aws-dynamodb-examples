@@ -28,7 +28,7 @@
     "show-tables": "aws dynamodb list-tables --endpoint-url http://$npm_package_config_ddbhost:$npm_package_config_ddbport --no-cli-page",
     "scan-recipes": "aws dynamodb scan --table-name $npm_package_config_ddbRecipeTable --endpoint-url http://$npm_package_config_ddbhost:$npm_package_config_ddbport --no-cli-page",
     "build-backend": "sam build",
-    "start-backend": "parent_dir_name=$(basename $(pwd)) && sam local start-api --host $npm_package_config_ddbhost --env-vars env.json --docker-network ${parent_dir_name}_default --debug",
+    "start-backend": "parent_dir_name=$(basename $(pwd)) && sam local start-api --host $npm_package_config_ddbhost --env-vars env.json --docker-network ${parent_dir_name}_default --debug ",
     "create-user": "curl -s -X POST http://$npm_package_config_ddbhost:$npm_package_config_apiport/users -H 'Content-Type: application/json' -d '{\"email\":\"user@example.com\", \"name\":\"John Doe\",\"phone_number\":\"+1234567890\",\"dietary_preferences\":[\"vegetarian\",\"gluten-free\"]}' -w '\\n%{http_code}'"
   },
   "jest": {
