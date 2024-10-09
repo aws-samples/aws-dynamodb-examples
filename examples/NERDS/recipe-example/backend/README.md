@@ -93,3 +93,47 @@ To start development:
 3. Rebuild the application (`npm run build-backend`)
 4. Start the local API (`npm run start-backend`)
 5. Test your changes using the provided npm scripts or tools like Postman
+
+## Sample Data
+
+Please notice that we will be updating the sample data while we introduce new functionality.
+
+### Release one (user and recipes)
+
+#### User information
+
+```json
+{
+  "email": "user@example.com",
+  "name": "John Doe",
+  "nickname": "thedoe",
+  "dietaryPreferences": [],
+  "description": "Welcome to my recipe page! I hope you enjoy my food!",
+  "pictureUrl": "url path",
+  "profileThumbnails": "url path"
+}
+```
+
+#### New Recipe
+
+```json
+{
+  "recipeName": "Fish and Chips",
+  "recipeDescription": "The best fish and chips you will ever taste",
+  "recipePrepTime": 40,
+  "recipeCookTime": 10,
+  "ingridients": [
+    { "Cod": 1, "units": "piece", "comment": "Don't use frozen pieces" },
+    { "Potatoes": 1, "units": "piece", "comment": "1 large" },
+    { "Oil": 20, "units": "oz", "comment": "Frying oil, use your favorite" }
+  ],
+  "recipeComments": 0,
+  "recipeReactions": { "likes": 0 },
+  "recipeStars": 5,
+  "recipePresentation": "I really love fish and chips, this is my recipe",
+  "recipeDescription": "Welcome to my recipe page! I hope you enjoy my food!",
+  "recipePictureUrl": "url path",
+  "recipeThumbnails": "url path",
+  "recipePhotos": ["url path", "url path"]
+}
+```
