@@ -90,7 +90,7 @@ Resources:
           Type: Api
           Properties:
             RestApiId: !Ref RecipeAPI
-            Path: /recipes
+            Path: /users/{userId}/recipes
             Method: POST
 
   GetRecipeFunction:
@@ -129,7 +129,7 @@ Resources:
           Type: Api
           Properties:
             RestApiId: !Ref RecipeAPI
-            Path: /recipes/{recipeId}
+            Path: /users/{userId}/recipes/{recipeId}
             Method: DELETE
 
   ListRecipesFunction:
@@ -142,7 +142,7 @@ Resources:
           Type: Api
           Properties:
             RestApiId: !Ref RecipeAPI
-            Path: /recipes
+            Path: /users/{userId}/recipes
             Method: GET
 
   # DynamoDB table for storing recipes and users
