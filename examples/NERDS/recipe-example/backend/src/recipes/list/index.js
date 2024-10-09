@@ -8,30 +8,35 @@ const ddbDocClient = DynamoDBDocumentClient.from(client);
 
 export const handler = async (event) => {
   try {
-    const { userId, sort, search, ingredient, tag, prepTime } =
-      event.queryStringParameters || {};
+    const { userId } = event.pathParameters || {};
+
+    if (!userId) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ message: "userId is required" }),
+      };
+    }
 
     let queryParams = {
       TableName: process.env.TABLE_NAME,
-      KeyConditionExpression: "begins_with(PK, :pk)",
+      KeyConditionExpression: "PK = :pk AND begins_with(SK, :sk)",
       ExpressionAttributeValues: {
-        ":pk": "RECIPE#",
+        ":pk": `USER#${userId}`,
+        ":sk": "RECIPE#",
       },
     };
 
-    if (userId) {
-      queryParams.FilterExpression = "userId = :userId";
-      queryParams.ExpressionAttributeValues[":userId"] = userId;
-    }
-
-    // Add more conditions based on other query parameters (sort, search, ingredient, tag, prepTime)
-    // This would require additional GSIs or complex filtering logic
-
     const { Items } = await ddbDocClient.send(new QueryCommand(queryParams));
+
+    // Transform the items to remove the PK and SK
+    const recipes = Items.map((item) => {
+      const { PK, SK, ...recipeData } = item;
+      return { ...recipeData };
+    });
 
     return {
       statusCode: 200,
-      body: JSON.stringify(Items),
+      body: JSON.stringify(recipes),
     };
   } catch (error) {
     console.error("Error listing recipes:", error);
