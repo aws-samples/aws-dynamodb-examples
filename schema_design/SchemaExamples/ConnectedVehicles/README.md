@@ -1,11 +1,41 @@
+# Connected Vehicles Data Modeling with Amazon DynamoDB
 
-# Connected Vehicles
+## Overview
 
-Scope of this document a detailed data modeling and schema design approach for a "Connected Vehicles" use case using Amazon DynamoDB.
-The document involves connected vehicles where manufacturers can offer different features/functionality as subscriptions for users to enable.
-We describe a data model consisting of four main entities - Vehicle, Features, User (Customer), and Preferences.
-We describe a single table design approach, where the Partition Key (PK) identifies the entity type (VIN# for vehicles, ID# for users) and the Sort Key (SK) organizes the data within each entity.
-The document walks through 22 key access patterns that need to be supported, such as creating/retrieving vehicles, managing user preferences, linking users to vehicles, and managing subscriptions.
-For each access pattern, the document covers the specific PK and SK used, as well as the relevant DynamoDB operations (PutItem, Query, UpdateItem, DeleteItem, BatchWriteItem).
-The goal is to model the relationships between vehicles, features, and user preferences in an efficient and scalable way using Amazon DynamoDB's single table design principles.
-A final schema design is provided, showing how the different entities and access patterns are mapped to the DynamoDB table structure.
+This document outlines a detailed data modeling and schema design approach for a "Connected Vehicles" use case using Amazon DynamoDB. The model supports a system where vehicle manufacturers can offer various features and functionalities as subscriptions for users to enable.
+
+## Key Entities
+
+1. Vehicle
+2. Features
+3. User (Customer)
+4. Preferences
+
+## Design Approach
+
+We employ a single table design with the following key structure:
+
+- Partition Key (PK): Identifies the entity type (e.g., VIN# for vehicles, ID# for users)
+- Sort Key (SK): Organizes data within each entity
+
+## Access Patterns
+
+The document covers 22 key access patterns, including but not limited to:
+
+- Creating and retrieving vehicles
+- Managing user preferences
+- Linking users to vehicles
+- Managing subscriptions
+
+For each access pattern, we provide:
+- Specific PK and SK used
+- Relevant DynamoDB operations (PutItem, Query, UpdateItem, DeleteItem, BatchWriteItem)
+
+## Goals
+
+- Model relationships between vehicles, features, and user preferences efficiently
+- Ensure scalability using Amazon DynamoDB's single table design principles
+
+## Schema Design
+
+A comprehensive schema design is included, demonstrating how different entities and access patterns map to the DynamoDB table structure.
