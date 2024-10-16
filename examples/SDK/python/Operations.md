@@ -47,3 +47,7 @@
 | UpdateGlobalTable and UpdateGlobalTableSettings     |     ❌     |     |
 | UpdateTable On-Demand                               |     ✅     |     |
 | UpdateTable Provisioned                             |     ✅     |     |
+| Query with pagination                               |     ❌     |     |
+| Key condition and begins_with                       |     ✅     |     |
+| Key condition, begins_with, scanned count           |     ✅     |     |
+| Key condition and equals                            |     ✅     |     |
