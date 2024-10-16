@@ -48,6 +48,8 @@
 | UpdateTable On-Demand                               |     ✅     |     |
 | UpdateTable Provisioned                             |     ✅     |     |
 | Query with pagination                               |     ❌     |     |
-| Key condition and begins_with                       |     ✅     |     |
-| Key condition, begins_with, scanned count           |     ✅     |     |
-| Key condition and equals                            |     ✅     |     |
+| Key Condition and Begins_with                       |     ✅     |     |
+| Key Condition, Begins_with, Scanned count           |     ✅     |     |
+| Key Condition and Equals                            |     ✅     |     |
+| Add Global Secondary Index                          |     ✅     |     |
+| Enable Continuous Backups                           |     ✅     |     |
