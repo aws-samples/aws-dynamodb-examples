@@ -1,0 +1,167 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Recipe API
+
+Globals:
+  Function:
+    Timeout: 30
+    Runtime: nodejs20.x
+    MemorySize: 128
+    Architectures:
+      - x86_64
+    Environment:
+      Variables:
+        TABLE_NAME: !Ref recipe_table
+        DYNAMODB_ENDPOINT: ""
+    LoggingConfig:
+      LogFormat: JSON
+
+Resources:
+  RecipeAPI:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: v1
+      Cors:
+        AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS'"
+        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+        AllowOrigin: "'*'"
+
+  # User functions
+  CreateUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: users/create/index.handler
+      Events:
+        CreateUser:
+          Type: Api
+          Properties:
+            RestApiId: !Ref RecipeAPI
+            Path: /users
+            Method: POST
+
+  GetUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: users/get/index.handler
+      Events:
+        GetUser:
+          Type: Api
+          Properties:
+            RestApiId: !Ref RecipeAPI
+            Path: /users/{userId}
+            Method: GET
+
+  UpdateUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: users/update/index.handler
+      Events:
+        UpdateUser:
+          Type: Api
+          Properties:
+            RestApiId: !Ref RecipeAPI
+            Path: /users/{userId}
+            Method: PUT
+
+  DeleteUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: users/create/index.handler
+      Events:
+        DeleteUser:
+          Type: Api
+          Properties:
+            RestApiId: !Ref RecipeAPI
+            Path: /users/{userId}
+            Method: DELETE
+
+  # Recipe functions
+  CreateRecipeFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: recipes/create/index.handler
+      Events:
+        CreateRecipe:
+          Type: Api
+          Properties:
+            RestApiId: !Ref RecipeAPI
+            Path: /users/{userId}/recipes
+            Method: POST
+
+  GetRecipeFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: recipes/get/index.handler
+      Events:
+        GetRecipe:
+          Type: Api
+          Properties:
+            RestApiId: !Ref RecipeAPI
+            Path: /recipes/{recipeId}
+            Method: GET
+
+  UpdateRecipeFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: recipes/update/index.handler
+      Events:
+        UpdateRecipe:
+          Type: Api
+          Properties:
+            RestApiId: !Ref RecipeAPI
+            Path: /recipes/{recipeId}
+            Method: PUT
+
+  DeleteRecipeFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: recipes/delete/index.handler
+      Events:
+        DeleteRecipe:
+          Type: Api
+          Properties:
+            RestApiId: !Ref RecipeAPI
+            Path: /users/{userId}/recipes/{recipeId}
+            Method: DELETE
+
+  ListRecipesFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: recipes/list/index.handler
+      Events:
+        ListRecipes:
+          Type: Api
+          Properties:
+            RestApiId: !Ref RecipeAPI
+            Path: /users/{userId}/recipes
+            Method: GET
+
+  # DynamoDB table for storing recipes and users
+  recipe_table:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+
+Outputs:
+  RecipeApi:
+    Description: "API Gateway endpoint URL for Prod stage for Recipe API"
+    Value: !Sub "https://${RecipeAPI}.execute-api.${AWS::Region}.amazonaws.com/v1/"
