@@ -22,7 +22,7 @@ Learn how to efficiently query your DynamoDB tables, with examples covering sort
 
 Discover how to leverage secondary indexes to optimize your data access patterns.
 
-[Check out the Index examples »](./data_plane/WorkingWithIndexes)
+[Check out the Index examples »](./control_plane/WorkingWithIndexes)
 
 ## 🔍 Working with Scans
 
