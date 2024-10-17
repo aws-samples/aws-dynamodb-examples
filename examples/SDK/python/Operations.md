@@ -47,9 +47,9 @@
 | UpdateGlobalTable and UpdateGlobalTableSettings     |     ❌     |     |
 | UpdateTable On-Demand                               |     ✅     |     |
 | UpdateTable Provisioned                             |     ✅     |     |
-| Query with pagination                               |     ❌     |     |
-| Key Condition and Begins_with                       |     ✅     |     |
-| Key Condition, Begins_with, Scanned count           |     ✅     |     |
-| Key Condition and Equals                            |     ✅     |     |
-| Add Global Secondary Index                          |     ✅     |     |
+| Pagination                                          |     ❌     |     |
+| Query Begins With                                   |     ✅     |     |
+| Query Scan Count                                    |     ✅     |     |
+| Query Equals                                        |     ✅     |     |
+| Add GSI                                             |     ✅     |     |
 | Enable Continuous Backups                           |     ✅     |     |
