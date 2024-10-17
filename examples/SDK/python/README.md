@@ -42,6 +42,12 @@ From creating and deleting tables to managing global tables and auto-scaling, th
 
 [Discover the Table examples »](./control_plane/WorkingWithTables)
 
+## 🗃️ Working with Custom Backoff Retry
+
+Learn how to implement custom backoff retry logic.
+
+[Discover the Table examples »](./data_plane/WorkingWithCustomBackoffRetry)
+
 # 🚀 Get Started
 
 Each example in this folder comes with a README file that provides detailed instructions on setup, usage, and relevant context. Feel free to browse the examples and adapt the code to your specific DynamoDB-powered applications.
