@@ -53,3 +53,5 @@
 | Query Equals                                        |     ✅     |     |
 | Add GSI                                             |     ✅     |     |
 | Enable Continuous Backups                           |     ✅     |     |
+| PartiQL QueryBatchExecuteStatement                  |     ✅     |     |
+| PartiQL PaginatedSelectStatement                    |     ✅     |     |
