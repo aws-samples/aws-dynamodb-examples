@@ -18,7 +18,6 @@
 | PartiQL ExecuteTransaction                          |     ✅     |     |
 | PartiQL BatchExecuteStatement                       |     ✅     |     |
 | ConsistentRead                                      |     ✅     |     |
-| Count                                               |     ✅     |     |
 | FilterExpression                                    |     ✅     |     |
 | ProjectionExpression                                |     ✅     |     |
 | ReturnConsumedCapacity                              |     ✅     |     |
