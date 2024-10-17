@@ -42,7 +42,7 @@ From creating and deleting tables to managing global tables and auto-scaling, th
 
 [Discover the Table examples »](./control_plane/WorkingWithTables)
 
-## ![image](https://github.com/user-attachments/assets/6e98f1f2-6bdb-4efd-b2f6-cd1f9c555690) Working with Custom Backoff Retry
+## 🔁 Working with Custom Backoff Retry
 
 Learn how to implement custom backoff retry logic.
 
