@@ -22,7 +22,7 @@ Learn how to efficiently query your DynamoDB tables, with examples covering sort
 
 Discover how to leverage secondary indexes to optimize your data access patterns.
 
-[Check out the Index examples »](./data_plane/WorkingWithIndexes)
+[Check out the Index examples »](./control_plane/WorkingWithIndexes)
 
 ## 🔍 Working with Scans
 
@@ -41,6 +41,12 @@ Dive into the world of DynamoDB Streams and learn how to read and process real-t
 From creating and deleting tables to managing global tables and auto-scaling, this section has you covered for all your table management needs.
 
 [Discover the Table examples »](./control_plane/WorkingWithTables)
+
+## 🔁 Working with Custom Backoff Retry
+
+Learn how to implement custom backoff retry logic.
+
+[Discover the Custom Backoff Retry examples »](./data_plane/WorkingWithCustomBackoffRetry)
 
 # 🚀 Get Started
 
