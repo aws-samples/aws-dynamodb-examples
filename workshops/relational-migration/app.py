@@ -61,7 +61,9 @@ def get_record(table):
 
 @app.route("/new_record/{table}", methods=['POST'], cors=True, content_types=['application/json'])
 def new_record(table):
-    return db.new_record(table, app.current_request.json_body)
+    print(json.dumps(app.current_request.json_body, indent=2))
+    result = db.new_record(table, app.current_request.json_body)
+    return result
 
 @app.route("/update_record/{table}", methods=['POST'], cors=True, content_types=['application/json'])
 def update_record(table):
@@ -69,7 +71,9 @@ def update_record(table):
 
 @app.route("/delete_record/{table}", methods=['POST'], cors=True, content_types=['application/json'])
 def delete_record(table):
-    return db.delete_record(table, app.current_request.json_body)
+    print(json.dumps(app.current_request.json_body, indent=2))
+    result = db.delete_record(table, app.current_request.json_body)
+    return result
 
 @app.route('/query/{table}', methods=['POST'], cors=True, content_types=['application/json'])
 def query(table):

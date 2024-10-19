@@ -292,6 +292,8 @@ input {
 .PK {
     background-color:SkyBlue;
     padding:4px;
+    font-size:larger;
+    padding-left:4px;
 }
 .PKheader {
     background-color:SkyBlue;
@@ -400,7 +402,7 @@ input {
     border-radius:3px;
     color:#333;
     width: 90%;
-    height: 150px;
+    height: 200px;
     padding:10px;
     margin:10px;
     border:none;
@@ -420,7 +422,7 @@ input {
     font-weight:bold;
     font-size:larger;
 }
-.sqlButtonClear {
+.sqlButtonClear, .sqlButtonCreateView {
     color:dimgray;
     background-color:whitesmoke;
 }
@@ -518,4 +520,30 @@ input {
 }
 #leftNavTable td {
     float:left;
+}
+
+#foreignKey {
+    display:none;
+}
+.formAddAttributeCell {
+    background-color:lightgrey;
+    border:1px solid lightgrey !important;
+    padding-top:6px;
+
+}
+.formAddAttributeCell button {
+    color:dimgray;
+    border:1px solid grey;
+}
+#sqlSampleTable {
+    margin:5px;
+    margin-left:10px;
+}
+#sqlSampleTable td {
+    color:dimgray;
+    font-size:smaller;
+    padding:5px;
+}
+#viewListDiv {
+    padding:5px;
 }

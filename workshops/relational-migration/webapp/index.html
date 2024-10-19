@@ -43,6 +43,7 @@
     <div id="bodycontent">
 
         <input type="hidden" name="tableName" id="tableName"  />
+        <input type="hidden" name="indexName" id="indexName"  />
         <input type="hidden" name="tableMetadata" id="tableMetadata"  />
         <input type="hidden" name="dataset" id="dataset"  />
         <input type="hidden" name="engine" id="engine" value="MySQL" />
@@ -57,7 +58,7 @@
                         Access pattern:
                         <button class="tabActive" onclick="openTab('CRUD')">CRUD</button>
                         <button class="tabInactive" onclick="openTab('Querying')">Querying</button>
-                        <button class="tabInactive" onclick="openTab('Multi-step')">Multi-step</button>
+<!--                        <button class="tabInactive" onclick="openTab('Multi-step')">Multi-step</button>-->
                     </div>
                 </div>
             </div>
@@ -130,45 +131,54 @@
                                         <textarea id="textGenIndex" ></textarea>
                                     </div>
                                 </div>
+
+                                <div class="sqlPanel" id="sqlPanel" >
+
+                                    <button class="sqlButton" onClick="runsql()">RUN SQL</button>
+                                    <button class="sqlButtonCreateView" onClick="createview()">CREATE VIEW</button>
+                                    <button class="sqlButtonClear" onClick="clearsql()">CLEAR</button>
+
+                                    <textarea id="sqlText" class="sqlText" >SELECT ...</textarea>
+
+                                    <table id="sqlSampleTable">
+                                        <tr><td>SQL Samples :</td>
+                                            <td><span id="sampleButtons"></span></td>
+                                        </tr>
+                                        <tr><td>VIEWs :</td>
+                                            <td><div id="viewListDiv"></div></td>
+                                        </tr>
+                                    </table>
+
+                                </div>
+
                                 <div id="foreignKey">
                                     <div id="FKs">
                                         <button id="btnFKs" onclick="showFKs()">Foreign Key relationships </button>
                                         <div id="fkGrid"></div>
                                     </div>
                                 </div>
-
-                                <div class="sqlPanel" >
-
-                                    <button class="sqlButton" onClick="runsql()">RUN SQL</button>
-                                    <button class="sqlButtonClear" onClick="clearsql()">CLEAR</button>
-
-                                    <div id="log2" class="log">log2</div>
-
-                                    <textarea id="sqlText" class="sqlText" >SELECT ...</textarea>
-                                    <br/>
-                                    <span id="sampleButtons"></span>
-                                    <br/><br/>
-                                </div>
+                                <div id="log2" class="log">log2</div>
+                                <table id="grid_queryresult" ></table>
                             </form>
                         </div>
                         <table id="sqlGrid" class="gridDiv"></table>
 
                     </div>
 
-                    <div id="Multi-step" class="tab" style="display:none">
-                        Multi-step
-                        <ul>
-                            <li>
-                                <p>Multi-step actions involving reading & writing, such as:
-                                <pre> UPDATE/DELETE MyTable<br/> WHERE <br/>&nbsp;&nbsp;&nbsp;(subquery is true) </pre>
-                                </p>
-                            </li>
-                            <li>SQL text expressions</li>
-                            <li>Business logic in stored procedures</li>
-                        </ul>
-                        These can be implemented as a custom job running outside of DynamoDB, that performs operations in a loop.
+<!--                    <div id="Multi-step" class="tab" style="display:none">-->
+<!--                        Multi-step-->
+<!--                        <ul>-->
+<!--                            <li>-->
+<!--                                <p>Multi-step actions involving reading & writing, such as:-->
+<!--                                <pre> UPDATE/DELETE MyTable<br/> WHERE <br/>&nbsp;&nbsp;&nbsp;(subquery is true) </pre>-->
+<!--                                </p>-->
+<!--                            </li>-->
+<!--                            <li>SQL text expressions</li>-->
+<!--                            <li>Business logic in stored procedures</li>-->
+<!--                        </ul>-->
+<!--                        These can be implemented as a custom job running outside of DynamoDB, that performs operations in a loop.-->
 
-                    </div>
+<!--                    </div>-->
 
                 </div>
             </div>

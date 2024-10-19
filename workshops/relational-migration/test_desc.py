@@ -3,15 +3,15 @@ from app import app
 import json
 import os
 
-testpath = '/scan_table/Customers'
+table_name = 'OrdersDenormalized'
+testpath = '/desc_table/' + table_name
 
 
 def test_index():
     with Client(app) as client:
 
         response = client.http.get(testpath)
-#         headers = {"Content-Type": "application/json"})
-        print()
+
         print(json.dumps(response.json_body, indent=2))
 
 

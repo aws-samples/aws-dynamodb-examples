@@ -5,22 +5,13 @@ import time
 
 testpath = '/'
 
+testpath = '/get_record/Customers'
 
-testpath = '/update_record/Customers'
-
-cust_id = 'c111'
+cust_id = '0003'
 
 post_data = {
-    'recordKey': {
+    'Key': {
         'cust_id': cust_id
-    },
-    'updateAttributes' : {
-        'name': 'Union',
-        'email': 'admin@bc.edu',
-        'phone': '555-1234',
-        'region': 'Northeast',
-        'credit_rating': 789,
-        'last_updated': '2024-06-18'
     }
 }
 

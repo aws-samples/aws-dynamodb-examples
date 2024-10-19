@@ -78,26 +78,41 @@ CREATE TABLE OrderLines (
     
     CONSTRAINT idx_ord_line_pk PRIMARY KEY (ord_id , ord_line_id),
 
+    INDEX idx_prod_price (prod_id, item_price),
+
     CONSTRAINT ord_FK FOREIGN KEY (ord_id) REFERENCES Orders (ord_id),
     CONSTRAINT prod_FK FOREIGN KEY (prod_id) REFERENCES Products (prod_id)
 );
 SELECT 'created table OrderLines' as '';
 
 
-CREATE TABLE Ledger (
-  cust_id varchar(20) NOT NULL,
-  event_id varchar(20) NOT NULL,
-  event_date datetime NOT NULL,
-  account varchar(20) NOT NULL,
-  prod_id varchar(20) NULL,
-  credit INT(10) NOT NULL,
-  INDEX idx_ledger_account (account),
+-- CREATE TABLE Ledger (
+--   cust_id varchar(20) NOT NULL,
+--   event_id varchar(20) NOT NULL,
+--   event_date datetime NOT NULL,
+--   account varchar(20) NOT NULL,
+--   prod_id varchar(20) NULL,
+--   credit INT(10) NOT NULL,
+--   INDEX idx_ledger_account (account),
+--
+--   CONSTRAINT idx_ledger_pk PRIMARY KEY (cust_id, event_id),
+--
+--   CONSTRAINT cust_ledger_FK FOREIGN KEY (cust_id) REFERENCES Customers(cust_id)
+-- --  CONSTRAINT prod_ledger_FK FOREIGN KEY (prod_id) REFERENCES Products(prod_id)
+-- );
+-- SELECT 'created table Ledger' as '';
 
-  CONSTRAINT idx_ledger_pk PRIMARY KEY (cust_id, event_id),
 
-  CONSTRAINT cust_ledger_FK FOREIGN KEY (cust_id) REFERENCES Customers(cust_id)
---  CONSTRAINT prod_ledger_FK FOREIGN KEY (prod_id) REFERENCES Products(prod_id)
-);
-SELECT 'created table Ledger' as '';
 
-SELECT 'created database and tables' as '';
+-- DROP ALL CUSTOM VIEWS on app_db
+SET @views = NULL;
+SELECT GROUP_CONCAT(table_schema, '.', table_name) INTO @views
+FROM information_schema.views
+WHERE table_schema = 'app_db'; -- Your DB name here
+
+SET @views = IFNULL(CONCAT('DROP VIEW ', @views), 'SELECT "No VIEWs to drop" as ""');
+PREPARE stmt FROM @views;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+SELECT 'Created database app_db and tables' as '';
