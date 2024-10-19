@@ -1,26 +1,7 @@
-TABLE="Customers"
+TABLE="Reps"
+SQLFILE=""
 
-if [ $# -gt 0 ]
-  then
-    TABLE=$1
-fi
-
-KEYS_NEEDED=2
-
-if [ $# -gt 1 ]
-  then
-    KEYS_NEEDED=$2
-fi
-
-if [ "dynamodb" == $MIGRATION_STAGE ]
-  then
-    echo
-    echo Error: run this in a shell with MIGRATION_STAGE="relational"
-    echo
-    exit 1
-fi
-
-python3 mysql_desc_ddb.py $TABLE $KEYS_NEEDED > target-tables/$TABLE.json
+python3 mysql_desc_ddb.py $TABLE > target-tables/$TABLE.json
 
 BUCKET="s3-import-demo"
 FOLDER="migrations/$TABLE/"
@@ -31,7 +12,7 @@ aws s3 rm s3://$BUCKET/$FOLDER --recursive
 
 printf "\n"
 
-python3 mysql_s3.py $TABLE
+python3 mysql_s3.py $TABLE $SQLFILE
 
 aws dynamodb import-table \
     --s3-bucket-source S3Bucket=$BUCKET,S3KeyPrefix=$FOLDER \

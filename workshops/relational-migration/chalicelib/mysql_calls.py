@@ -2,6 +2,8 @@
 import os
 import time, datetime
 import mysql.connector
+import json
+import re
 
 mysql_host = ""
 mysql_db = "app_db"
@@ -43,30 +45,49 @@ def engine():
 
 
 def list_tables():
-    request = "SELECT TABLE_NAME FROM information_schema.tables "
-    request += "WHERE table_schema = '" + mysql_db + "' AND table_type = 'BASE TABLE'"
+    request = "SELECT TABLE_NAME, TABLE_TYPE FROM information_schema.tables "
+    request += "WHERE table_schema = '" + mysql_db + "' "
     mysql_cur.execute(request)
     result = mysql_cur.fetchall()
-    # print(result)
 
     tables = []
+    views = []
     for t in result:
-        tables.append(t['TABLE_NAME'])
+        if t['TABLE_TYPE'] == 'BASE TABLE':
+            tables.append(t['TABLE_NAME'])
+        if t['TABLE_TYPE'] == 'VIEW':
+            views.append(t['TABLE_NAME'])
 
-    return tables
+    return {'Tables': tables, 'Views': views}
 
 
 def runsql(sql):
-    dataset = []
-    try:
-        mysql_cur.execute(sql['sql'])
-        result = mysql_cur.fetchall()
-        dataset = format_sql_dataset(result)
+    stmt = remove_comments(sql['sql'])
+    first_word = stmt.strip().split()[0].upper()
 
-    except Exception as e:
-        return({"status": "Error " + str(e)})
+    if first_word == 'SELECT':
+        dataset = []
+        try:
+            mysql_cur.execute(sql['sql'])
+            result = mysql_cur.fetchall()
+            dataset = format_sql_dataset(result)
 
-    return dataset
+        except Exception as e:
+            return({"status": "Error " + str(e)})
+
+        return dataset
+
+    else:
+        try:
+            mysql_cur.execute(sql['sql'])
+            rows = mysql_cur.rowcount
+            if rows > 0:
+                return({"status": str(rows) + " row(s) written"})
+            else:
+                return({"status": "done"})
+
+        except Exception as e:
+            return({"status": "Error " + str(e)})
 
 
 def desc_table(table):
@@ -163,13 +184,13 @@ def new_record(table, record):
 
 def update_record(table, request):
 
-    keyList = list(request['recordKey'].keys())
+    keyList = list(request['Key'].keys())
     delete_condition = keyList[0] + ' = %s'
 
     if len(keyList) > 1:
         delete_condition += ' AND ' + keyList[1] + ' = %s'
 
-    key_vals = list(request['recordKey'].values())
+    key_vals = list(request['Key'].values())
 
     update_attributes = list(request['updateAttributes'])
     ua_keys = list(request['updateAttributes'].keys())
@@ -185,12 +206,17 @@ def update_record(table, request):
 
     update_stmt += 'WHERE ' + delete_condition
 
+    print(update_stmt)
+    print(vals)
+
     mysql_cur.execute(update_stmt, vals)
 
     return({"status": mysql_cur.rowcount})
 
 
-def delete_record(table, recordKey):
+def delete_record(table, request):
+    recordKey = request['Key']
+
     keyList = list(recordKey.keys())
     deleteCondition = keyList[0] + ' = %s'
 
@@ -200,12 +226,16 @@ def delete_record(table, recordKey):
     key_vals = list(recordKey.values())
 
     delete_stmt = 'DELETE FROM ' + table + ' '
-
     delete_stmt += 'WHERE ' + deleteCondition
 
-    mysql_cur.execute(delete_stmt, key_vals)
+    try:
+        mysql_cur.execute(delete_stmt, key_vals)
 
-    return({"status":mysql_cur.rowcount})
+    except Exception as e:
+        return({"status": "Error " + str(e)})
+
+    else:
+        return({"status":mysql_cur.rowcount})
 
 def format_sql_dataset(dataset):
 
@@ -220,3 +250,10 @@ def format_sql_dataset(dataset):
         formatted_dataset.append(formatted_row)
     return(formatted_dataset)
 
+
+def remove_comments(sql):
+    # Remove single-line comments
+    sql = re.sub(r'--.*', '', sql)
+    # Remove multi-line comments
+    sql = re.sub(r'/\*.*?\*/', '', sql, flags=re.DOTALL)
+    return sql

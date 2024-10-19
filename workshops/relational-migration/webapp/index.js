@@ -51,11 +51,15 @@ async function renderNav() {
     document.getElementById('engine').value = engine;
     document.getElementById('stage').value = stage;
     document.getElementById('pageTitle').innerHTML = engine + ' App';
-    // document.getElementById('tablesButton').innerText = engine + ' tables';
+    if(stage !== 'dynamodb') {
+        document.getElementById('pageTitle').style.color = 'darkred';
+    }
+
 }
 
 function openTab(tabName) {
     clear('grid1');
+    clear('grid_queryresult');
     document.getElementById('tableCrudButtons').innerHTML = '';
     document.getElementById('tab').value = tabName;
     document.getElementById('fkGrid').style.display = 'none';
@@ -82,11 +86,16 @@ function openTab(tabName) {
     }
     if(tabName === 'Querying') {
         descIndexesClick(document.getElementById('tableName').value);
+        if(document.getElementById('stage').value === 'dynamodb') {
+            document.getElementById('sqlPanel').style.display = 'none';
+        }
     }
+
 }
 
 async function listTables() {
     clear('grid1');
+    clear('grid_queryresult');
     clear('tblForm');
 
     document.getElementById('tableCrudButtons').innerHTML = '';
@@ -99,16 +108,16 @@ async function listTables() {
 
     tableListTable.innerHTML = null;
 
-    const list = await callApi('/list_tables');
+    const listResult = await callApi('/list_tables');
+    const tables = listResult['Tables'];
 
-    if(list.length === 0) {
+    if(tables.length === 0) {
         const row = tableListTable.insertRow(-1);
         const cell1 = row.insertCell();
         cell1.innerHTML = 'no tables found';
     }
 
-    list.forEach((item, index) => {
-
+    tables.forEach((item, index) => {
         const row = tableListTable.insertRow(-1);
         const cell1 = row.insertCell();
 
@@ -119,21 +128,24 @@ async function listTables() {
         newButton.className = "tableButton";
         newButton.onclick = () => tableClickHandler(item);
 
-        let dotPosition = item.indexOf('.');
-        if(dotPosition === -1) {
-            newButton.textContent = item;
-            newButton.className = "tableButton";
-        } else {
-            newButton.textContent = item.substring(dotPosition+1);
-            newButton.className = "tableButtonIndex";
-        }
+        // let dotPosition = item.indexOf('.');
+        // if(dotPosition === -1) {
+        newButton.textContent = item;
+        newButton.className = "tableButton";
+        // } else {
+        //     newButton.textContent = item.substring(dotPosition+1);
+        //     newButton.className = "tableButtonIndex";
+        // }
+
         cell1.appendChild(newButton);
 
     });
 }
 async function tableClickHandler(table) {
-    document.getElementById('tablePanel').className = 'tablePanel';
+    clear('grid1');
+    clear('grid_queryresult');
 
+    document.getElementById('tablePanel').className = 'tablePanel';
     document.getElementById('fkGrid').style.display = 'none';
 
     setTableTitle(table);
@@ -166,18 +178,25 @@ async function tableClickHandler(table) {
 }
 
 async function descTableClick(table) {
+
     let indexName = null;
+    let tableName = null;
+    let currentIndex = null;
     let dotPosition = table.indexOf('.');
 
     if(dotPosition > -1) {
         indexName = table.substring(dotPosition+1);
+        tableName = table.substring(0, dotPosition);
+    } else {
+        tableName = table;
     }
 
     clear('tblForm');
+
     document.getElementById('dataset').value = null;
     let tableMetadata = null;
 
-    const descTableResult = await callApi('/desc_table/' + table);
+    const descTableResult = await callApi('/desc_table/' + tableName);
 
     if(Array.isArray(descTableResult)) {
         tableMetadata = formatMetadata(descTableResult, table); // Relational SQL
@@ -186,12 +205,26 @@ async function descTableClick(table) {
     }
 
     document.getElementById('tableName').value = table;
+    if(indexName) {
+        document.getElementById('indexName').value = indexName;
+        currentIndex = tableMetadata['Table']['GlobalSecondaryIndexes'].filter((i) => i['IndexName'] === indexName)[0];
+    } else {
+        currentIndex = tableMetadata['Table'];
+    }
     document.getElementById('tableMetadata').value = JSON.stringify(tableMetadata);
+    // console.log('tableMetadata ***');
+    // console.log(JSON.stringify(tableMetadata, null, 2));
 
     const ADs = tableMetadata['Table']['AttributeDefinitions'];
-    const Ks = tableMetadata['Table']['KeySchema'];
+
+    const Ks = currentIndex['KeySchema'];
+    // console.log('currentIndex');
+    // console.log(JSON.stringify(currentIndex, null, 2));
     const FKs = tableMetadata['Table']['ForeignKeys'];
+
     const keyList = Ks.map((key) => key['AttributeName']);
+    // console.log(keyList);
+
     let AdTypes = {};
     ADs.map((ad) => {
         AdTypes[ad['AttributeName']] = ad['AttributeType'];
@@ -278,25 +311,34 @@ async function descIndexesClick(table) {
     clear('indexSummary');
     clear('tblForm');
     clear('indexSummaryList');
-    document.getElementById('generateIndexResults').style = "";
+    document.getElementById('generateIndexResults').style = null;
     document.getElementById('generateIndexResults').className = 'GenHidden';
-
     document.getElementById('dataset').value = null;
+
+    const viewListResult = await callApi('/list_tables');
+    const viewList = viewListResult['Views'];
 
     if(table) {
 
         const descTableResult = await callApi('/desc_table/' + table);
 
         let tableMetadata = formatMetadata(descTableResult, table);
-        const FKs = tableMetadata['Table']['ForeignKeys'];
-        const fkCount = FKs ? FKs.length : 0;
 
-        if(fkCount === 0) {
-            document.getElementById('FKs').style = 'visibility:hidden;';
+        if(document.getElementById('stage').value !== 'dynamodb') {
+            const FKs = tableMetadata['Table']['ForeignKeys'] || null;
+            const fkCount = FKs ? FKs.length : 0;
 
-        } else {
-            document.getElementById('FKs').style = 'visibility:visible';
+            if(fkCount === 0) {
+                document.getElementById('FKs').style = 'visibility:hidden;';
+                document.getElementById('foreignKey').style = 'display:none;';
+
+            } else {
+                document.getElementById('foreignKey').style = 'display:block';
+                document.getElementById('FKs').style = 'visibility:visible';
+            }
         }
+        // console.log('tmd');
+        // console.log(JSON.stringify(tableMetadata, null, 2));
 
         document.getElementById('tableMetadata').value = JSON.stringify(tableMetadata);
 
@@ -319,7 +361,12 @@ async function descIndexesClick(table) {
 
         if (tableMetadata) {
             indexMetadata = JSON.parse(tableMetadata)['Table']['GlobalSecondaryIndexes'];
-            secondaryIndexCount = indexMetadata.length;
+            if(indexMetadata) {
+                secondaryIndexCount = indexMetadata.length;
+            } else {
+                indexMetadata = [];
+            }
+
             indexMetadata.unshift({
                 "IndexName": "PRIMARY",
                 "KeySchema": Ks
@@ -399,6 +446,8 @@ async function descIndexesClick(table) {
                             }
                         });
                         updateSQL(sql);  // update but call runQuery() and not runsql()
+                        // console.log('query on table ' + table);
+                        // console.log(JSON.stringify(qr, null, 2));
 
                         runQuery(table, qr);
                     };
@@ -411,18 +460,25 @@ async function descIndexesClick(table) {
                     }
                 });
             });
-            document.getElementById('generateIndexDiv').className = secondaryIndexCount > 0 ? 'GenVisible' : 'GenHidden';
+
+            if(document.getElementById('stage').value !== 'dynamodb' && secondaryIndexCount > 0) {
+                document.getElementById('generateIndexDiv').className = 'GenVisible';
+            } else {
+                document.getElementById('generateIndexDiv').className = 'GenHidden';
+            }
         }
     }
 
     const sampleButtonsSpan = document.getElementById('sampleButtons');
-    sampleButtonsSpan.innerHTML = 'SQL Examples : ';
+    const viewListDiv = document.getElementById('viewListDiv');
+
     let i = 0;
 
-    sqlSamples.forEach((sample, idx) => {
+    sampleButtonsSpan.innerHTML = null;
+    sqlSamples.forEach((sample) => {
 
         const newButton = document.createElement('button');
-        const br = document.createElement('br');
+
         if(sample.length === 0) {
             sampleButtonsSpan.appendChild(document.createTextNode(" - - - "));
         } else {
@@ -432,6 +488,22 @@ async function descIndexesClick(table) {
             sampleButtonsSpan.appendChild(newButton);
         }
     });
+
+    viewListDiv.innerHTML = null;
+
+    if(document.getElementById('stage').value !== 'dynamodb') {
+        viewList.forEach((view) => {
+            const newButton = document.createElement('button');
+            newButton.textContent = view;
+            // let viewSQL = "SELECT VIEW_DEFINITION FROM INFORMATION_SCHEMA.VIEWS\n";
+            // viewSQL += "WHERE TABLE_NAME = '" + view + "'";
+            let viewSQL = "SELECT * FROM " + view;
+
+            newButton.onclick = () => updateSQL("SELECT * FROM " + view);
+            viewListDiv.appendChild(newButton);
+        });
+    }
+
 }
 
 function updateSQL(sql) {
@@ -444,16 +516,20 @@ async function scanTable(table) {
 
     const scanData = await callApi('/scan_table/' + table);
 
+    console.log(JSON.stringify(scanData, null, 2));
+
     document.getElementById('dataset').value = JSON.stringify(scanData);
 
     const tableMetadata = document.getElementById('tableMetadata').value;
 
     fillGrid(scanData, 'grid1', table, tableMetadata);
+
     document.getElementById('generateType').innerHTML = 'Dataset as DynamoDB JSON';
 
 }
 async function getItem(table, formName) {
     clear('grid1');
+    clear('grid_queryresult');
     clear('tblForm');
 
     const formItem = document.getElementById(formName);
@@ -463,10 +539,13 @@ async function getItem(table, formName) {
     formValues.forEach((field, idx) => {
         formValuesJSON[field.name] = field.value;
     });
-    const request = {"recordKey": formValuesJSON};
+    const request = {"Key": formValuesJSON};
+    // console.log(JSON.stringify(request, null, 2));
 
     const response = await postApi('/get_record/' + table, request);
     const responseJSON = await response.json();
+
+    // console.log(JSON.stringify(responseJSON, null, 2));
 
     if(responseJSON.length === 0) {
         log('item not found');
@@ -475,7 +554,11 @@ async function getItem(table, formName) {
     } else {
         document.getElementById('generateDiv').className = 'GenVisible';
         document.getElementById('dataset').value = JSON.stringify(responseJSON);
-        insertRowForm(table, formValuesJSON, responseJSON[0]);
+        // console.log(formValuesJSON);
+        // console.log(responseJSON[0]);
+        console.log('500 ' + JSON.stringify(formValuesJSON));
+
+        insertRowForm(table, {'Key': formValuesJSON}, responseJSON[0]);
     }
     document.getElementById('generateType').innerHTML = 'Item as DynamoDB JSON';
     return {};
@@ -565,6 +648,8 @@ function showFKs() {
                 tblDiv.appendChild(tbl);
 
             });
+        } else {
+
         }
 
         // fillGrid(FKs, 'fkGrid');

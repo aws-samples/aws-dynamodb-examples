@@ -5,8 +5,13 @@ import os
 import sys
 
 table_name = 'Customers'
+keys_needed = 2 # i.e. both PK & SK in case of a VIEW with no key schema. You can also set to just 1 key.
+
 if len(sys.argv) > 1:
     table_name = sys.argv[1]
+
+if len(sys.argv) > 2:
+    keys_needed = sys.argv[2]
 
 path = '/desc_table/' + table_name
 
@@ -26,17 +31,30 @@ def main():
         ads = []
         gsi_dict = {}
         gsis = []
+        keys_found = 0
 
         response = client.http.get(path)
 
         metadata = response.json_body
+
+        counter = 0
+        col1 = None # to be used if this is a VIEW
+        col2 = None
+
         for row in metadata:
+            counter += 1
+            if counter == 1:
+                col1 = row
+            if counter == 2:
+                col2 = row
+
             if row['INFO_TYPE'] == 'TABLE':
                 columns[row['COLUMN_NAME']] = row['COLUMN_TYPE']
 
             if row['INFO_TYPE'] == 'INDEX':
                 key_list[row['COLUMN_NAME']] = 1
                 if row['INDEX_NAME'] == 'PRIMARY':
+                    keys_found += 1
                     if row['SEQ_IN_INDEX'] == 1:
                         ks.append({"AttributeName":row['COLUMN_NAME'], "KeyType": "HASH"})
                     if row['SEQ_IN_INDEX'] == 2:
@@ -47,18 +65,24 @@ def main():
                     else:
                         gsis[-1]['KeySchema'].append({"AttributeName":row['COLUMN_NAME'],"KeyType":"RANGE"})
 
+
+        if keys_found == 0: # VIEW with no key schema.. yet
+            key_list[col1['COLUMN_NAME']] = 1
+            ks.append({"AttributeName":col1['COLUMN_NAME'], "KeyType": "HASH"})
+            if keys_needed == '2':
+                key_list[col2['COLUMN_NAME']] = 1
+                ks.append({"AttributeName":col2['COLUMN_NAME'], "KeyType": "RANGE"})
+
+
         for key in key_list:
             ads.append({"AttributeName": key, "AttributeType": convert_type(columns[key])})
 
-
         ddb['KeySchema'] = ks
         ddb['AttributeDefinitions'] = ads
-        ddb['GlobalSecondaryIndexes'] = gsis
+        if gsis:
+            ddb['GlobalSecondaryIndexes'] = gsis
 
         print(json.dumps(ddb, indent=2))
-
-        # print(response.json_body)
-        # print(json.dumps(response.json_body, indent=2))
 
 
 def convert_type(sql_type):

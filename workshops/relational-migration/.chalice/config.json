@@ -2,14 +2,28 @@
   "version": "2.0",
   "app_name": "migration",
   "stages": {
-    "dev": {
-      "api_gateway_stage": "api",
+
+    "relational": {
+      "api_gateway_stage": "relational",
       "environment_variables": {
-        "MYSQL_HOST":      "192.168.1.100",
+        "MYSQL_HOST":      "myhost.mynetwork.com",
         "MYSQL_DB":        "app_db",
         "MYSQL_USERNAME":  "dbuser",
-        "MYSQL_PASSWORD":  "m7de4uwt2e"
-      }
+        "MYSQL_PASSWORD":  "mypassword",
+        "MIGRATION_STAGE":  "relational"
+      },
+      "autogen_policy": false,
+      "iam_policy_file": "relational-migration-policy.json"
+    },
+
+    "dynamodb": {
+      "api_gateway_stage": "dynamodb",
+      "environment_variables": {
+        "MIGRATION_STAGE":  "dynamodb"
+      },
+      "autogen_policy": false,
+      "iam_policy_file": "relational-migration-policy.json"
     }
+
   }
 }
