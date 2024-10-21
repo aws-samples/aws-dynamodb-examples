@@ -6,8 +6,5 @@ dynamodb = boto3.resource('dynamodb', region_name='us-west-2')
 table = dynamodb.Table("Music") # Substitute your table name
 
 table.update(
-    ProvisionedThroughput={
-        'ReadCapacityUnits': 10,
-        'WriteCapacityUnits': 10
-    }
+    BillingMode="PAY_PER_REQUEST"
 )
