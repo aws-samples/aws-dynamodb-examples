@@ -1,13 +1,76 @@
-# Export Amazon DynamoDB Tables to NoSQL Workbench
+# 🚀 Export Amazon DynamoDB Tables to NoSQL Workbench
 
-This directory contains a node.js script that when run, will export a table's meta data and the first 1MB worth of data into a format that can be imported into [NoSQL Workbench for Amazon DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/workbench.html).
+This guide will help you export the schema and first 1MB of data from an existing DynamoDB table using the script **create-workbench-import.js**. The script's JSON output can be imported into [NoSQL Workbench for Amazon DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/workbench.html) to create the table and populate the data within NoSQL Workbench. 
 
-You will need to modify the script to add the Amazon Web Services Region you want to export. This script relies on the credentials in ~/.aws to authenticate. The command directs the json output to stdout. You should attempt to run it with a credential that has read only access to the table.
+## 🏃 How to Get Started
 
-`node create-workbench-import.js YourTableNameHere > YourTableNameHere.json`
+1. **Download Script**
+   
+   Copy the `create-workbench-import.js` file to the folder you wish to run it from.
 
-Once you have the JSON file from your table, you can perform a "import data model" in NoSQL Workbench to bring it into the tool.
+2. **Install Node.js**
 
-Initial script by [Rob McCauley](https://github.com/robm26).
+   Make sure you’ve got Node.js installed on your machine.  
+   👉 [Get Node.js here](https://nodejs.org/en)
 
-This script is provided as is and at your own risk. There are no guarantees expressly written or implied.
+3. **Install AWS SDK for JavaScript**
+
+   Make sure you’ve got AWS SDK for JavaScript installed on your machine.  
+   👉 [Get AWS SDK for JavaScript here](https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/installing-jssdk.html)
+
+4. **Modify the Region in the Script**  
+
+   You may need to modify line 13 in the script and update the region name to the appropriate AWS Region for your existing DynamoDB table.  
+   ```
+   AWS.config.region = process.env.AWS_REGION || 'us-east-1';
+   ```
+6. **Credentials**  
+
+   This script relies on the credentials in `~/.aws` to authenticate. You should run it with a credential that has read only access to the table.
+
+8. **Run the Script**  
+
+   Open a terminal, navigate to the script folder, and run the below command, replacing "YourTableNameHere" with your existing DynamoDB table name.  
+   ```
+   node create-workbench-import.js YourTableNameHere > YourTableNameHere.json
+   ```  
+   The command directs the JSON output to `YourTableNameHere.json`. You can see part of a sample JSON output for a table named 'Blog1' below.
+
+   ```
+   {
+    "ModelName": "Blog1",
+    "ModelMetadata": {
+      "Author": "testuser",
+      "DateCreated": "Wed Oct 23 2024 19:31:56 GMT-0700 (Pacific Daylight Time)",
+      "DateLastModified": "Wed Oct 23 2024 19:31:56 GMT-0700 (Pacific Daylight Time)",
+      "Description": "A NoSQL Workbench model generated from table Blog1",
+      "AWSService": "Amazon DynamoDB",
+      "Version": "2.0"
+    },
+    "DataModel": [
+      {
+        "TableName": "Blog1",
+        "KeyAttributes": {
+          "PartitionKey": {
+            "AttributeName": "email",
+            "AttributeType": "S"
+          },
+          "SortKey": {
+            "AttributeName": "State",
+            "AttributeType": "S"
+          }
+   ```
+   If you wish to direct the output to stdout instead of a file, leave off the `> YourTableNameHere.json` in the command.
+
+   ```
+   node create-workbench-import.js YourTableNameHere
+   ```
+
+10. **Use the JSON File to Import into NoSQL Workbench**   
+
+    Once you have the JSON file from your table, you can perform a "import data model" in NoSQL Workbench to bring it into the tool.  
+       \
+       \
+    Initial script by [Rob McCauley](https://github.com/robm26).  
+
+    This script is provided as is and at your own risk. There are no guarantees expressly written or implied.
