@@ -34,8 +34,32 @@ This guide will help you export the schema and first 1MB of data from an existin
    ```
    node create-workbench-import.js YourTableNameHere > YourTableNameHere.json
    ```  
-   The command directs the JSON output to `YourTableNameHere.json`
+   The command directs the JSON output to `YourTableNameHere.json`. You can see part of a sample JSON output for a table named 'Blog1' below.
 
+   ```
+   {
+    "ModelName": "Blog1",
+    "ModelMetadata": {
+      "Author": "testuser",
+      "DateCreated": "Wed Oct 23 2024 19:31:56 GMT-0700 (Pacific Daylight Time)",
+      "DateLastModified": "Wed Oct 23 2024 19:31:56 GMT-0700 (Pacific Daylight Time)",
+      "Description": "A NoSQL Workbench model generated from table Blog1",
+      "AWSService": "Amazon DynamoDB",
+      "Version": "2.0"
+    },
+    "DataModel": [
+      {
+        "TableName": "Blog1",
+        "KeyAttributes": {
+          "PartitionKey": {
+            "AttributeName": "email",
+            "AttributeType": "S"
+          },
+          "SortKey": {
+            "AttributeName": "State",
+            "AttributeType": "S"
+          }
+   ```
    If you wish to direct the output to stdout instead of a file, leave off the `> YourTableNameHere.json` in the command.
 
    ```
@@ -45,7 +69,6 @@ This guide will help you export the schema and first 1MB of data from an existin
 10. **Use the JSON File to Import into NoSQL Workbench**   
 
     Once you have the JSON file from your table, you can perform a "import data model" in NoSQL Workbench to bring it into the tool.  
-       \
        \
        \
     Initial script by [Rob McCauley](https://github.com/robm26).  
