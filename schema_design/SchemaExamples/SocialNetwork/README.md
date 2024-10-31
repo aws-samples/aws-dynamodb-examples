@@ -8,22 +8,23 @@ view other users following them, view the number of likes a post has, view users
 
 ## Key Entities
 
-1. User
-2. Post
+1. user
+2. post
 
 ## Design Approach
 
 We employ a single table design with the following key structure:
 
-- Partition Key (PK): Identifies the entity type (e.g., u# for users, p# for posts,)
-- u#<userID>
-- u#<userID>#follower
-- u#<userID>#following
-- u#<userID>#post
-- u#<userID>timeline
-- p#<postID>#likelist
-- p#<postID>#likecount
-- Sort Key (SK): Organizes data within each entity
+- Partition Key (PK): Identifies the key entity type (u#<userID> for users, p#<postID> for posts) and optionally a second # followed by a descriptor of what is stored in the partition. 
+- u#\<userID\>
+- u#\<userID\>#follower - Given user's followers
+- u#\<userID\>#following - The users that the given user is following
+- u#\<userID\>#post - Given user's posts
+- u#\<userID\>#timeline - Given user's timeline
+- p#\<postID\>#likelist - The users that have liked the given post
+- p#\<postID\>#likecount - The count of the given posts likes
+
+- Sort Key (SK): Contains the ID(s) of related entities (u#<userID> for users, p#<postID> for posts, p#<postID>#u#<userID> for posts by a user)   
 
 ## Access Patterns
 
