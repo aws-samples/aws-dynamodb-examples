@@ -2,9 +2,7 @@
 
 ## Overview
 
-This document outlines a detailed data modeling and schema design approach for a "Social Network" use case using Amazon DynamoDB. The model 
-supports a system where users can interact with a social network where they can create posts, follow other users, like other user's posts, 
-view other users following them, view the number of likes a post has, view users who liked a post, and view their timeline. 
+This document outlines a use case using DynamoDB as a social network. A social network is an online service that lets different users interact with each other. The social network we'll design will let the user see a timeline consisting of their posts, their followers, who they are following, and the posts written by who they are following.
 
 ## Key Entities
 
@@ -24,7 +22,24 @@ We employ a single table design with the following key structure:
   - p#\<postID\>#likelist - The users that have liked the given post
   - p#\<postID\>#likecount - The count of the given posts likes
 
-- Sort Key (SK): Contains the ID(s) of entities related to the Partition Key (u#\<userID\> for user, p#\<postID\> for post, p#\<postID\>#u#\<userID\> for a post by a user) or an attribute descriptor ("count", "info")
+- Sort Key (SK):
+  - Contains ID of an entity in the Partition Key collection (u#\<userID\> for user, p#\<postID\> for post, p#\<postID\>#u#\<userID\> for a post by a user)
+    or 
+  - A descriptor of the attributes ("count", "info") for the primary key of <PK><SK>
+
+    - Examples:  
+
+      | PK | SK |
+      | ----------- | ----------- |
+      | u#12345 | "count" |
+      | u#12345 | "info" |
+      | u#12345#follower | u#34567 |
+      | u#12345#following | u#34567 |
+      | u#12345#post | p#12345 |
+      | u#12345#timeline | p#34567#u#56789 |
+      | p#12345#likelist | u#34567 |
+      | p#12345#likecount | "count" |
+
 
 ## Access Patterns
 
@@ -32,7 +47,7 @@ The document covers 7 access patterns. For each access pattern, we provide:
 - Specific PK and SK used
 - Relevant DynamoDB operations (GetItem, Query)
 
-| Access pattern | Operation | Partition key value | Sort key value }
+| Access pattern | Operation | Partition key value | Sort key value |
 | ----------- | ----------- | ----------- | ----------- |
 | getUserInfoByUserID | Query | PK=\<userID\> |
 | getFollowerListByUserID | Query | PK=\<userID\>#follower |
