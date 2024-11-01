@@ -15,16 +15,16 @@ view other users following them, view the number of likes a post has, view users
 
 We employ a single table design with the following key structure:
 
-- Partition Key (PK): Identifies the key entity type (u#<userID> for users, p#<postID> for posts) and optionally a second # followed by a descriptor of what is stored in the partition. 
-- u#\<userID\>
-- u#\<userID\>#follower - Given user's followers
-- u#\<userID\>#following - The users that the given user is following
-- u#\<userID\>#post - Given user's posts
-- u#\<userID\>#timeline - Given user's timeline
-- p#\<postID\>#likelist - The users that have liked the given post
-- p#\<postID\>#likecount - The count of the given posts likes
+- Partition Key (PK): Identifies the key entity type (u#<userID> for user, p#<postID> for post) and optionally a second # followed by a descriptor of what is stored in the partition. 
+  - u#\<userID\> - Given user
+  - u#\<userID\>#follower - Given user's followers
+  - u#\<userID\>#following - The users that the given user is following
+  - u#\<userID\>#post - Given user's posts
+  - u#\<userID\>#timeline - Given user's timeline
+  - p#\<postID\>#likelist - The users that have liked the given post
+  - p#\<postID\>#likecount - The count of the given posts likes
 
-- Sort Key (SK): Contains the ID(s) of related entities (u#<userID> for users, p#<postID> for posts, p#<postID>#u#<userID> for posts by a user)   
+- Sort Key (SK): Contains the ID(s) of entities related to the Partition Key (u#\<userID\> for user, p#\<postID\> for post, p#\<postID\>#u#\<userID\> for a post by a user)   
 
 ## Access Patterns
 
