@@ -18,27 +18,26 @@ We employ a single table design with the following key structure:
   - u#\<userID\>#follower - Given user's followers
   - u#\<userID\>#following - The users that the given user is following
   - u#\<userID\>#post - Given user's posts
-  - u#\<userID\>#timeline - Given user's timeline
   - p#\<postID\>#likelist - The users that have liked the given post
   - p#\<postID\>#likecount - The count of the given posts likes
+  - u#\<userID\>#timeline - Given user's timeline
 
-- Sort Key (SK):
-  - Contains ID of an entity in the Partition Key collection (u#\<userID\> for user, p#\<postID\> for post, p#\<postID\>#u#\<userID\> for a post by a user)
-    or 
-  - A descriptor of the attributes ("count", "info") for the primary key of <PK><SK>
+- Sort Key (SK): Contains the ID of an entity in the Partition Key collection 
+    **or** 
+  a descriptor of the attributes ("count", "info") for the primary key of \<PK\>\<SK\>
 
     - Examples:  
 
-      | PK | SK |
-      | ----------- | ----------- |
-      | u#12345 | "count" |
-      | u#12345 | "info" |
+      | PK | SK | Attributes |
+      | ----------- | ----------- | ----------- |
+      | u#12345 | "count" | follower# |
+      | u#12345 | "info" | name |
       | u#12345#follower | u#34567 |
       | u#12345#following | u#34567 |
-      | u#12345#post | p#12345 |
-      | u#12345#timeline | p#34567#u#56789 |
+      | u#12345#post | p#12345 | content |
       | p#12345#likelist | u#34567 |
       | p#12345#likecount | "count" |
+      | u#12345#timeline | p#34567#u#56789 |
 
 
 ## Access Patterns
