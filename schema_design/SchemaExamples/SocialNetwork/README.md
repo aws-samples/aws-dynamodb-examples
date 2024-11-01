@@ -15,7 +15,7 @@ view other users following them, view the number of likes a post has, view users
 
 We employ a single table design with the following key structure:
 
-- Partition Key (PK): Identifies the key entity type (u#<userID> for user, p#<postID> for post) and optionally a second # followed by a descriptor of what is stored in the partition. 
+- Partition Key (PK): Identifies the key entity type (u#<userID> for user, p#<postID> for post) and optionally, a second # followed by a descriptor of what is stored in the partition. 
   - u#\<userID\> - Given user
   - u#\<userID\>#follower - Given user's followers
   - u#\<userID\>#following - The users that the given user is following
@@ -24,23 +24,23 @@ We employ a single table design with the following key structure:
   - p#\<postID\>#likelist - The users that have liked the given post
   - p#\<postID\>#likecount - The count of the given posts likes
 
-- Sort Key (SK): Contains the ID(s) of entities related to the Partition Key (u#\<userID\> for user, p#\<postID\> for post, p#\<postID\>#u#\<userID\> for a post by a user)   
+- Sort Key (SK): Contains the ID(s) of entities related to the Partition Key (u#\<userID\> for user, p#\<postID\> for post, p#\<postID\>#u#\<userID\> for a post by a user) or an attribute descriptor ("count", "info")
 
 ## Access Patterns
 
-The document covers 7 access patterns:
-
-- Get user information for a given userID
-- Get follower list for a given userID
-- Get following list for a given userID
-- Get post list for a given userID
-- Get user list who likes the post for a given postID
-- Get the like count for a given postID
-- Get the timeline for a given userID
-
-For each access pattern, we provide:
+The document covers 7 access patterns. For each access pattern, we provide:
 - Specific PK and SK used
-- Relevant DynamoDB operations (PutItem, Query, UpdateItem, DeleteItem, BatchWriteItem)
+- Relevant DynamoDB operations (GetItem, Query)
+
+| Access pattern | Operation | Partition key value | Sort key value }
+| ----------- | ----------- | ----------- | ----------- |
+| getUserInfoByUserID | Query | PK=\<userID\> |
+| getFollowerListByUserID | Query | PK=\<userID\>#follower |
+| getFollowingListByUserID | Query | PK=\<userID\>#following | 
+| getPostListByUserID | Query | PK=\<userID\>#post |
+| getUserLikesByPostID | Query | PK=\<postID\>#likelist |
+| getLikeCountByPostID | GetItem | PK=\<postID\>#likecount |
+| getTimelineByUserID | Query | PK=\<userID\>#timeline |
 
 ## Goals
 
