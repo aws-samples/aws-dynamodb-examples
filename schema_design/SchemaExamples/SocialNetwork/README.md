@@ -19,7 +19,7 @@ We employ a single table design with the following key structure:
   - u#\<userID\>#following - The users that the given user is following
   - u#\<userID\>#post - Given user's posts
   - p#\<postID\>#likelist - The users that have liked the given post
-  - p#\<postID\>#likecount - The count of the given posts likes
+  - p#\<postID\>#likecount - The count of the given post's likes
   - u#\<userID\>#timeline - Given user's timeline
 
 - Sort Key (SK): Contains the ID of an entity in the Partition Key collection 
@@ -28,23 +28,23 @@ We employ a single table design with the following key structure:
 
     - Examples:  
 
-      | PK | SK | Attributes |
+      | PK | SK | Sample Attributes |
       | ----------- | ----------- | ----------- |
-      | u#12345 | "count" | follower# |
-      | u#12345 | "info" | name |
-      | u#12345#follower | u#34567 |
-      | u#12345#following | u#34567 |
-      | u#12345#post | p#12345 | content |
-      | p#12345#likelist | u#34567 |
-      | p#12345#likecount | "count" |
-      | u#12345#timeline | p#34567#u#56789 |
+      | u#12345 | "count" | follower#, following#, post# |
+      | u#12345 | "info" | name, content, imageUrl |
+      | u#12345#follower | u#34567 ||
+      | u#12345#following | u#34567 ||
+      | u#12345#post | p#12345 | content, imageUrl, timestamp |
+      | p#12345#likelist | u#34567 ||
+      | p#12345#likecount | "count" | etc |
+      | u#12345#timeline | p#34567#u#56789 | ttl |
 
 
 ## Access Patterns
 
 The document covers 7 access patterns. For each access pattern, we provide:
 - Specific PK and SK used
-- Relevant DynamoDB operations (GetItem, Query)
+- Relevant DynamoDB operation (GetItem, Query)
 
 | Access pattern | Operation | Partition key value | Sort key value |
 | ----------- | ----------- | ----------- | ----------- |
@@ -64,3 +64,6 @@ The document covers 7 access patterns. For each access pattern, we provide:
 ## Schema Design
 
 A comprehensive schema design is included, demonstrating how different entities and access patterns map to the DynamoDB table structure.
+
+## Additional Information
+![Social network schema design in DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/data-modeling-schema-social-network.html)
