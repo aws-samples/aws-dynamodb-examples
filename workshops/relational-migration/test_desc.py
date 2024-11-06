@@ -3,7 +3,7 @@ from app import app
 import json
 import os
 
-table_name = 'OrdersDenormalized'
+table_name = 'Orders'
 testpath = '/desc_table/' + table_name
 
 

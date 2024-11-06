@@ -22,27 +22,34 @@ function setCookie(value) {
             expires = "; expires=" + date.toUTCString();
         }
         document.cookie = "API1" + "=" + (value || "")  + expires + "; path=/";
-
     }
+    document.getElementById('clearCookie').style.visibility = 'visible';
     renderNav();
+}
+function clearCookie() {
+    setCookie('');
+    document.getElementById('clearCookie').style.visibility = 'hidden';
 }
 
 async function renderNav() {
 
     const apiTitle = document.getElementById('apiTitle');
     const bodycontent = document.getElementById('bodycontent');
+    const clearCookie = document.getElementById('clearCookie');
 
     if(document.cookie) {
         apiTitle.style.visibility = 'visible';
         cookieVal = document.cookie.split('=')[1]
 
         apiTitle.innerHTML = cookieVal;
-
         bodycontent.style.visibility = 'visible';
+        clearCookie.style.visibility = 'visible';
 
     } else {
         apiTitle.style.visibility = 'hidden';
         bodycontent.style.visibility = 'hidden';
+        clearCookie.style.visibility = 'hidden';
+        return;
     }
 
     const rootTest = await callApi('/'); // smoke test to ensure API responds with {"engine":"xyz"}
@@ -493,14 +500,36 @@ async function descIndexesClick(table) {
 
     if(document.getElementById('stage').value !== 'dynamodb') {
         viewList.forEach((view) => {
-            const newButton = document.createElement('button');
-            newButton.textContent = view;
+            const newButtonCode = document.createElement('button');
+            const newButtonTest = document.createElement('button');
+            newButtonCode.textContent = 'SQL';
+            newButtonTest.textContent = 'Test';
             // let viewSQL = "SELECT VIEW_DEFINITION FROM INFORMATION_SCHEMA.VIEWS\n";
             // viewSQL += "WHERE TABLE_NAME = '" + view + "'";
             let viewSQL = "SELECT * FROM " + view;
 
-            newButton.onclick = () => updateSQL("SELECT * FROM " + view);
-            viewListDiv.appendChild(newButton);
+            // newButton.onclick = () => updateSQL("SELECT * FROM " + view);
+
+            newButtonCode.onclick = async () => {
+                const viewCode = await callApi('/desc_view/' + view);
+                const viewCodeFormatted = viewCode['VIEW_DEFINITION'];
+
+                updateSQL('CREATE OR REPLACE VIEW ' + view + ' AS\n\n' + viewCodeFormatted);
+            }
+            newButtonTest.onclick = async () => {
+
+                updateSQL('SELECT *\nFROM ' + view);
+                runsql()
+            }
+            const viewButtonDiv = document.createElement("span");
+
+            viewButtonDiv.appendChild(newButtonCode);
+            viewButtonDiv.appendChild(newButtonTest);
+            viewButtonDiv.appendChild(document.createTextNode(view));
+
+            viewListDiv.appendChild(viewButtonDiv);
+
+            viewListDiv.appendChild(document.createElement("br"));
         });
     }
 
@@ -516,13 +545,15 @@ async function scanTable(table) {
 
     const scanData = await callApi('/scan_table/' + table);
 
-    console.log(JSON.stringify(scanData, null, 2));
+    // console.log(JSON.stringify(scanData, null, 2));
 
     document.getElementById('dataset').value = JSON.stringify(scanData);
 
     const tableMetadata = document.getElementById('tableMetadata').value;
 
-    fillGrid(scanData, 'grid1', table, tableMetadata);
+    if(scanData) {
+        fillGrid(scanData, 'grid1', table, tableMetadata);
+    }
 
     document.getElementById('generateType').innerHTML = 'Dataset as DynamoDB JSON';
 
@@ -692,4 +723,3 @@ function log(msg, status) {
     }
     logDiv.innerHTML = msg;
 }
-

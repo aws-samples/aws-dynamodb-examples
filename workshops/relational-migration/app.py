@@ -7,7 +7,7 @@ import json
 import mysql.connector
 
 
-migration_stage = 'dynamodb'
+migration_stage = 'relational'
 # 'relational', 'dual-write', 'dynamodb']
 
 if "MIGRATION_STAGE" in os.environ:
@@ -40,16 +40,16 @@ def ping():
 @app.route('/list_tables', methods=['GET'], cors=True)
 def list_tables():
     request = app.current_request
-#     print('*****')
-#     print(json.dumps(request.to_dict(), indent=2))
-
     return db.list_tables()
-
 
 @app.route('/desc_table/{table}', methods=['GET'], cors=True)
 def desc_table(table):
     return db.desc_table(table)
 
+@app.route('/desc_view/{view}', methods=['GET'], cors=True)
+def desc_view(view):
+    result = db.desc_view(view)
+    return result
 
 @app.route('/scan_table/{table}', methods=['GET'], cors=True)
 def desc_table(table):
@@ -61,7 +61,7 @@ def get_record(table):
 
 @app.route("/new_record/{table}", methods=['POST'], cors=True, content_types=['application/json'])
 def new_record(table):
-    print(json.dumps(app.current_request.json_body, indent=2))
+#     print(json.dumps(app.current_request.json_body, indent=2))
     result = db.new_record(table, app.current_request.json_body)
     return result
 
