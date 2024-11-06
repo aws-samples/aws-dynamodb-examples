@@ -1,11 +1,29 @@
-# tip: run "source ./setenv.sh" to make these changes stick
+# tip: run "source ./setenv.sh" to apply these environment variables for the rest of this session
+
+# tip: to see all env vars sorted, you can run:  env -0 | sort -z | tr '\0' '\n'
 
 export AWS_DEFAULT_REGION="us-east-2"
 
-export MYSQL_HOST="myhost.mynetwork.com"
 export MYSQL_DB="app_db"
 export MYSQL_USERNAME="dbuser"
-export MYSQL_PASSWORD="mypassword"
+export MYSQL_PASSWORD="m7de4uwt2eG#"
 export MIGRATION_STAGE="relational"
+# export MYSQL_HOST="192.168.1.100"
+
+MIGRATION_BUCKET=$(aws s3api list-buckets --prefix 'relational-migration-env-setup-s3bucket-' --query 'Buckets[0].Name')
+export MIGRATION_BUCKET=$(echo $MIGRATION_BUCKET | xargs)
+
+MYSQL_HOST=$(aws ec2 describe-instances  --query 'Reservations[0].Instances[0].PublicIpAddress' --filters Name=tag:Name,Values=MySQL-Instance)
+export MYSQL_HOST=$(echo $MYSQL_HOST | xargs)
 
 echo Environment variables set
+
+tmp=$(mktemp)
+
+jq_update='.stages.relational.environment_variables.MYSQL_HOST="'
+jq_update+=$MYSQL_HOST
+jq_update+='"'
+
+jq $jq_update .chalice/config.json > "$tmp" && mv "$tmp" .chalice/config.json
+
+echo Chalice configuration file updated with MYSQL_HOST=$MYSQL_HOST

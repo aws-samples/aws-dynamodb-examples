@@ -12,7 +12,7 @@ if [ $# -gt 1 ]
     KEYS_NEEDED=$2
 fi
 
-if [ "dynamodb" == $MIGRATION_STAGE ]
+if [[ "dynamodb" = $MIGRATION_STAGE ]]
   then
     echo
     echo Error: run this in a shell with MIGRATION_STAGE="relational"
@@ -22,7 +22,7 @@ fi
 
 python3 mysql_desc_ddb.py $TABLE $KEYS_NEEDED > target-tables/$TABLE.json
 
-BUCKET="s3-import-demo"
+BUCKET=$MIGRATION_BUCKET
 FOLDER="migrations/$TABLE/"
 
 echo Migrating into table $TABLE using S3 $BUCKET/$FOLDER
