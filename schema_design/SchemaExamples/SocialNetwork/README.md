@@ -30,13 +30,13 @@ We employ a single table design with the following key structure:
 
       | PK | SK | Sample Attributes |
       | ----------- | ----------- | ----------- |
-      | u#12345 | "count" | follower#, following#, post# |
-      | u#12345 | "info" | name, content, imageUrl |
+      | u#12345 | `count` | follower#, following#, post# |
+      | u#12345 | `info` | name, content, imageUrl |
       | u#12345#follower | u#34567 ||
       | u#12345#following | u#34567 ||
       | u#12345#post | p#12345 | content, imageUrl, timestamp |
       | p#12345#likelist | u#34567 ||
-      | p#12345#likecount | "count" | etc |
+      | p#12345#likecount | `count` | etc |
       | u#12345#timeline | p#34567#u#56789 | ttl |
 
 
@@ -46,15 +46,15 @@ The document covers 7 access patterns. For each access pattern, we provide:
 - Specific PK and SK used
 - Relevant DynamoDB operation (GetItem, Query)
 
-| Access pattern | Operation | Partition key value | Sort key value |
-| ----------- | ----------- | ----------- | ----------- |
-| getUserInfoByUserID | Query | PK=\<userID\> |
-| getFollowerListByUserID | Query | PK=\<userID\>#follower |
-| getFollowingListByUserID | Query | PK=\<userID\>#following | 
-| getPostListByUserID | Query | PK=\<userID\>#post |
-| getUserLikesByPostID | Query | PK=\<postID\>#likelist |
-| getLikeCountByPostID | GetItem | PK=\<postID\>#likecount |
-| getTimelineByUserID | Query | PK=\<userID\>#timeline |
+  | Access pattern | Operation | Partition key value | Sort key value |
+  | ----------- | ----------- | ----------- | ----------- |
+  | getUserInfoByUserID | Query | PK=\<userID\> |
+  | getFollowerListByUserID | Query | PK=\<userID\>#follower |
+  | getFollowingListByUserID | Query | PK=\<userID\>#following | 
+  | getPostListByUserID | Query | PK=\<userID\>#post |
+  | getUserLikesByPostID | Query | PK=\<postID\>#likelist |
+  | getLikeCountByPostID | GetItem | PK=\<postID\>#likecount |
+  | getTimelineByUserID | Query | PK=\<userID\>#timeline |
 
 ## Goals
 
@@ -63,7 +63,7 @@ The document covers 7 access patterns. For each access pattern, we provide:
 
 ## Schema Design
 
-A comprehensive schema design is included, demonstrating how different entities and access patterns map to the DynamoDB table structure.
+A comprehensive schema design is included, demonstrating how different entities and access patterns map to the DynamoDB table structure. [SocialNetworkSchema.json](https://github.com/aws-samples/aws-dynamodb-examples/blob/master/schema_design/SchemaExamples/SocialNetwork/SocialNetworkSchema.json)
 
 ## Additional Information
-![Social network schema design in DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/data-modeling-schema-social-network.html)
+[Social network schema design in DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/data-modeling-schema-social-network.html)
