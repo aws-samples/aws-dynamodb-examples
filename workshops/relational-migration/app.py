@@ -20,7 +20,7 @@ else:
 
 app = Chalice(app_name='migration')
 
-region = "us-east-2"
+region = "us-west-2"
 
 if "AWS_DEFAULT_REGION" in os.environ:
     region = os.environ['AWS_DEFAULT_REGION']

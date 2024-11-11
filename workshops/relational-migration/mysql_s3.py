@@ -34,7 +34,7 @@ if len(sys.argv) > 2:
 s3_path = 'migrations/' + table_name + '/'
 
 s3_bucket = 's3-import-demo'
-region = 'us-east-2'
+region = 'us-west-2'
 items_per_file = 5
 
 mysql_host = ""
