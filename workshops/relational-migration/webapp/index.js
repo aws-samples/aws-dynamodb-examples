@@ -58,6 +58,7 @@ async function renderNav() {
     document.getElementById('engine').value = engine;
     document.getElementById('stage').value = stage;
     document.getElementById('pageTitle').innerHTML = engine + ' App';
+    document.title = engine + ' App';
     if(stage !== 'dynamodb') {
         document.getElementById('pageTitle').style.color = 'darkred';
     }
@@ -500,36 +501,36 @@ async function descIndexesClick(table) {
 
     if(document.getElementById('stage').value !== 'dynamodb') {
         viewList.forEach((view) => {
-            const newButtonCode = document.createElement('button');
+            // const newButtonCode = document.createElement('button');
             const newButtonTest = document.createElement('button');
-            newButtonCode.textContent = 'SQL';
-            newButtonTest.textContent = 'Test';
+            // newButtonCode.textContent = 'SQL';
+            newButtonTest.textContent = view;
             // let viewSQL = "SELECT VIEW_DEFINITION FROM INFORMATION_SCHEMA.VIEWS\n";
             // viewSQL += "WHERE TABLE_NAME = '" + view + "'";
             let viewSQL = "SELECT * FROM " + view;
 
             // newButton.onclick = () => updateSQL("SELECT * FROM " + view);
 
-            newButtonCode.onclick = async () => {
-                const viewCode = await callApi('/desc_view/' + view);
-                const viewCodeFormatted = viewCode['VIEW_DEFINITION'];
-
-                updateSQL('CREATE OR REPLACE VIEW ' + view + ' AS\n\n' + viewCodeFormatted);
-            }
+            // newButtonCode.onclick = async () => {
+            //     const viewCode = await callApi('/desc_view/' + view);
+            //     const viewCodeFormatted = viewCode['VIEW_DEFINITION'];
+            //
+            //     updateSQL('CREATE OR REPLACE VIEW ' + view + ' AS\n\n' + viewCodeFormatted);
+            // }
             newButtonTest.onclick = async () => {
 
                 updateSQL('SELECT *\nFROM ' + view);
                 runsql()
             }
-            const viewButtonDiv = document.createElement("span");
+            // const viewButtonDiv = document.createElement("span");
 
-            viewButtonDiv.appendChild(newButtonCode);
-            viewButtonDiv.appendChild(newButtonTest);
-            viewButtonDiv.appendChild(document.createTextNode(view));
+            // viewButtonDiv.appendChild(newButtonCode);
+            viewListDiv.appendChild(newButtonTest);
+            // viewButtonDiv.appendChild(document.createTextNode(view));
 
-            viewListDiv.appendChild(viewButtonDiv);
+            // viewListDiv.appendChild(viewButtonDiv);
 
-            viewListDiv.appendChild(document.createElement("br"));
+            // viewListDiv.appendChild(document.createElement("br"));
         });
     }
 
