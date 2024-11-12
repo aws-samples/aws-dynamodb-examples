@@ -45,14 +45,10 @@ SELECT 'created table Products' as '';
 CREATE TABLE Reps (
     rep_id VARCHAR(20) NOT NULL,
     rep_name VARCHAR(20) NOT NULL,
-    `town name` VARCHAR(20) NULL,
 	last_updated DATETIME NOT NULL,
     CONSTRAINT idx_rep_pk PRIMARY KEY (rep_id)
 );
 SELECT 'created table Reps' as '';
-
-INSERT INTO Reps(rep_id, rep_name, `town name`, last_updated) VALUES ('LUN', 'LUNA', 'Wakefield', '2024-12-13');
-INSERT INTO Reps(rep_id, rep_name, `town name`, last_updated) VALUES ('WAL', 'WALLY', 'Marblehead', '2024-12-02');
 
 
 CREATE TABLE Orders (

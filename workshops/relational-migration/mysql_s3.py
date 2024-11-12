@@ -50,6 +50,9 @@ if "MYSQL_USERNAME" in os.environ:
     mysql_username = os.environ['MYSQL_USERNAME']
 if "MYSQL_PASSWORD" in os.environ:
     mysql_password = os.environ['MYSQL_PASSWORD']
+if "MIGRATION_BUCKET" in os.environ:
+    s3_bucket = os.environ['MIGRATION_BUCKET']
+
 
 
 def main():
