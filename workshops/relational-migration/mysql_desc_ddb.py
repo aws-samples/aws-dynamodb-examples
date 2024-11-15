@@ -11,7 +11,9 @@ if len(sys.argv) > 1:
     table_name = sys.argv[1]
 
 if len(sys.argv) > 2:
-    keys_needed = sys.argv[2]
+    keys_needed = sys.argv[2] # Note"
+    # keys_needed is only used when describing a VIEW. You can set this to one or two,
+    # depending on whether you want a definition with a single key (partition key) or a two-part key (partition and sort key)
 
 path = '/desc_table/' + table_name
 

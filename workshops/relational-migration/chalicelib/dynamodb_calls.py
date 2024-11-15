@@ -145,6 +145,8 @@ def query(table, request):
 def get_record(table, request):
     get_request = {'TableName': table}
 
+    get_request['ConsistentRead'] = False
+
     keyList = list(request['Key'].keys())
     pk_name = keyList[0]
     pk_value = request['Key'][keyList[0]]

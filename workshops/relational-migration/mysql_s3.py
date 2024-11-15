@@ -10,26 +10,22 @@ import boto3
 import os, sys
 import json
 
-
-# customize sql here or pass in as arg 2
-sqlfile = None    # sql = 'SELECT * FROM Products LIMIT 3'
 sql = None
 
 table_name = None
 s3_path = None
+write_mode = 'S3' # or stdout
 
 if len(sys.argv) > 1:
     table_name = sys.argv[1]
     sql = "SELECT * FROM " + table_name
 
+    if len(sys.argv) > 2:
+        write_mode = sys.argv[2]
+
 else:
     print('pass in table_name as command line arg 1')
     exit()
-
-if len(sys.argv) > 2:
-    sqlfile = sys.argv[2]
-    s = open(sqlfile, "r")
-    sql = s.read()
 
 s3_path = 'migrations/' + table_name + '/'
 
@@ -54,7 +50,6 @@ if "MIGRATION_BUCKET" in os.environ:
     s3_bucket = os.environ['MIGRATION_BUCKET']
 
 
-
 def main():
     mydb = mysql.connector.connect(
       host=mysql_host,
@@ -72,12 +67,20 @@ def main():
 
     res = cur.fetchall()
 
-    print('Converting query results to DynamoDB JSON & Writing to S3\n')
+    print('Query complete, converting dataset to DynamoDB JSON')
+    if write_mode == 'S3':
+        print('Writing to S3\n')
+    else:
+        print('Writing to stdout\n')
+
     rowcount = 0
     filetext = ''
     for row in res:
         if rowcount % items_per_file == 0 and rowcount > 0:
-            write_s3(s3_bucket, s3_path, f'data_upto_{rowcount}.json', filetext)
+            if write_mode == 'S3':
+                write_s3(s3_bucket, s3_path, f'data_upto_{rowcount}.json', filetext)
+            else:
+                print(filetext)
             filetext = ''
         rowcount += 1
         rowtext = '{"Item":{'
@@ -88,7 +91,10 @@ def main():
 
         filetext += rowtext + '\n'
 
-    write_s3(s3_bucket, s3_path, f'data_upto_{rowcount}.json', filetext)
+    if write_mode == 'S3':
+        write_s3(s3_bucket, s3_path, f'data_upto_{rowcount}.json', filetext)
+    else:
+        print(filetext)
 
 
 def write_s3(bucket, path, objname, obj):

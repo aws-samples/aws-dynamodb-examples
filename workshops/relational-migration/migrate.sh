@@ -28,7 +28,7 @@ FOLDER="migrations/$TABLE/"
 
 echo Migrating into table $TABLE using S3 $BUCKET/$FOLDER
 
-aws s3 rm s3://$BUCKET/$FOLDER --recursive
+# aws s3 rm s3://$BUCKET/$FOLDER --recursive
 
 printf "\n"
 

@@ -24,7 +24,7 @@
     <div class="title">
         &nbsp;&nbsp;<a href="" target=_blank class="titlelink" id="pageTitle">Database Application</a>
         <button id="setApiButton"
-                onClick="setCookie(prompt('Chalice API', ''))">
+                onClick="setCookiePrompt()">
             Target API</button>
         <span id="apiTitle"></span>
         &nbsp;&nbsp;&nbsp;
@@ -58,7 +58,7 @@
                         Access pattern:
                         <button class="tabActive" onclick="openTab('CRUD')">CRUD</button>
                         <button class="tabInactive" onclick="openTab('Querying')">Querying</button>
-<!--                        <button class="tabInactive" onclick="openTab('Multi-step')">Multi-step</button>-->
+                        <!--                        <button class="tabInactive" onclick="openTab('Multi-step')">Multi-step</button>-->
                     </div>
                 </div>
             </div>
@@ -165,20 +165,20 @@
 
                     </div>
 
-<!--                    <div id="Multi-step" class="tab" style="display:none">-->
-<!--                        Multi-step-->
-<!--                        <ul>-->
-<!--                            <li>-->
-<!--                                <p>Multi-step actions involving reading & writing, such as:-->
-<!--                                <pre> UPDATE/DELETE MyTable<br/> WHERE <br/>&nbsp;&nbsp;&nbsp;(subquery is true) </pre>-->
-<!--                                </p>-->
-<!--                            </li>-->
-<!--                            <li>SQL text expressions</li>-->
-<!--                            <li>Business logic in stored procedures</li>-->
-<!--                        </ul>-->
-<!--                        These can be implemented as a custom job running outside of DynamoDB, that performs operations in a loop.-->
+                    <!--                    <div id="Multi-step" class="tab" style="display:none">-->
+                    <!--                        Multi-step-->
+                    <!--                        <ul>-->
+                    <!--                            <li>-->
+                    <!--                                <p>Multi-step actions involving reading & writing, such as:-->
+                    <!--                                <pre> UPDATE/DELETE MyTable<br/> WHERE <br/>&nbsp;&nbsp;&nbsp;(subquery is true) </pre>-->
+                    <!--                                </p>-->
+                    <!--                            </li>-->
+                    <!--                            <li>SQL text expressions</li>-->
+                    <!--                            <li>Business logic in stored procedures</li>-->
+                    <!--                        </ul>-->
+                    <!--                        These can be implemented as a custom job running outside of DynamoDB, that performs operations in a loop.-->
 
-<!--                    </div>-->
+                    <!--                    </div>-->
 
                 </div>
             </div>

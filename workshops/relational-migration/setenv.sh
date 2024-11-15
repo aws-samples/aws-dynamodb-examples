@@ -43,7 +43,6 @@ if [[ "workshop" == $DEPLOYMENT ]]
 
     jq $jq_update .chalice/config.json > "$tmp" && mv "$tmp" .chalice/config.json
 
-
   else
     MIGRATION_BUCKET="s3-export-import"
     export MIGRATION_BUCKET=$(echo $MIGRATION_BUCKET | xargs)
