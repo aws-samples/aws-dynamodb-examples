@@ -1,4 +1,4 @@
-name: PushToProd
+name: PushLSQLWebApp
 
 permissions:
   id-token: write
