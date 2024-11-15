@@ -13,8 +13,8 @@ DEALLOCATE PREPARE stmt;
 
 CREATE OR REPLACE VIEW vCustOrders AS
     SELECT
-      c.cust_id, c.name, c.email, c.region, c.state,
-      o.ord_id, o.rep_id, o.ord_date, o.ship_date
+      c.cust_id, o.ord_id, c.name, c.email, c.region, c.state,
+       o.rep_id, o.ord_date, o.ship_date
     FROM Customers c
         JOIN Orders o on c.cust_id = o.cust_id
         JOIN Reps r on o.rep_id = r.rep_id;

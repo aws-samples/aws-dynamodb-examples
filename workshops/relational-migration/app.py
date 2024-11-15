@@ -8,12 +8,11 @@ import mysql.connector
 
 
 migration_stage = 'relational'
-# 'relational', 'dual-write', 'dynamodb']
 
 if "MIGRATION_STAGE" in os.environ:
     migration_stage = os.environ['MIGRATION_STAGE']
 
-if migration_stage == 'relational' or migration_stage == 'dual-write':
+if migration_stage == 'relational':
     from chalicelib import mysql_calls as db
 else:
     from chalicelib import dynamodb_calls as db
@@ -35,7 +34,6 @@ def ping():
         return_status['stage'] = context['stage']
 
     return return_status
-
 
 @app.route('/list_tables', methods=['GET'], cors=True)
 def list_tables():
@@ -61,7 +59,6 @@ def get_record(table):
 
 @app.route("/new_record/{table}", methods=['POST'], cors=True, content_types=['application/json'])
 def new_record(table):
-#     print(json.dumps(app.current_request.json_body, indent=2))
     result = db.new_record(table, app.current_request.json_body)
     return result
 
@@ -71,9 +68,7 @@ def update_record(table):
 
 @app.route("/delete_record/{table}", methods=['POST'], cors=True, content_types=['application/json'])
 def delete_record(table):
-    print(json.dumps(app.current_request.json_body, indent=2))
-    result = db.delete_record(table, app.current_request.json_body)
-    return result
+    return db.delete_record(table, app.current_request.json_body)
 
 @app.route('/query/{table}', methods=['POST'], cors=True, content_types=['application/json'])
 def query(table):

@@ -31,6 +31,10 @@ function clearCookie() {
     document.getElementById('clearCookie').style.visibility = 'hidden';
 }
 
+function setCookiePrompt() {
+    const apiTitle = document.getElementById('apiTitle').innerText;
+    setCookie(prompt('Chalice API', apiTitle) || apiTitle);
+}
 async function renderNav() {
 
     const apiTitle = document.getElementById('apiTitle');
@@ -492,13 +496,17 @@ async function descIndexesClick(table) {
         } else {
             i += 1;
             newButton.textContent = 'S ' + i;
-            newButton.onclick = () => updateSQL(sample);
+            newButton.onclick = () => {
+                updateSQL(sample);
+                runsql();
+            };
             sampleButtonsSpan.appendChild(newButton);
         }
     });
 
     viewListDiv.innerHTML = null;
 
+    // VIEW BUTTONS:
     if(document.getElementById('stage').value !== 'dynamodb') {
         viewList.forEach((view) => {
             // const newButtonCode = document.createElement('button');

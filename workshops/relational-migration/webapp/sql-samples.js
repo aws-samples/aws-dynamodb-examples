@@ -1,19 +1,19 @@
 function getSqlSamples() {
 
     const sqlSamples = [
-        "SELECT * FROM Customers",
 
         "-- Item collection\n\nSELECT *\nFROM\n   OrderLines\nWHERE\n   ord_id = '0003'",
         "-- Item collection with range expression\n\nSELECT *\nFROM\n   OrderLines\nWHERE\n   ord_id = '0003' AND ord_line_id > '0002'",
         "-- Item collection with filter condition\n\nSELECT *\nFROM\n   OrderLines\nWHERE\n   ord_id = '0003' AND item_price < '5500'",
 
         "",
-        "-- one year future date, used by the TTL delete service\n\nSELECT\n  NOW() as 'Now',\n" +
+        "-- One year future date, used by the TTL delete service\n\nSELECT\n  NOW() as 'Now',\n" +
         "  DATE_ADD(NOW(),INTERVAL 1 YEAR) as 'One Year Out',\n  UNIX_TIMESTAMP(DATE_ADD(NOW(),INTERVAL 1 YEAR)) as 'TTL'",
-
+        "-- Add source region metadata (useful when reading Global Tables streams)\n-- Set the last_updated date to now\n\n"
+            + "SELECT\n   prod_id, name, category, list_price,\n   'us-west-2' as 'source_region',\n   Now() as 'last_updated'\nFROM\n  Products",
         "-- Sparse pattern via CASE statement with NULLs\n\nSELECT\n   name as 'customer', credit_rating,\n" +
         "   CASE\n      WHEN credit_rating > 700 THEN 'GOLD'\n      WHEN credit_rating > 600 THEN 'SILVER'\n   ELSE NULL\n   END AS 'Tier'\n\nFROM Customers\nLIMIT 6",
-        "-- Concatenated columns for hierarchical sort key\n\nSELECT\n   prod_id,\n   CONCAT(category, '#', name) as categoryname,\n   list_price \n\nFROM Products",
+        "-- Decorated key values\n-- Concatenated columns for hierarchical sort key\n\nSELECT\n   CONCAT('prod#', prod_id) as 'PK',\n   CONCAT(category, '#', name) as 'SK',\n   list_price \n\nFROM Products",
         "",
 
         "-- OrdersDenormalized\n--   Four Tables denormalized with JOIN\n\nSELECT\n   c.name AS Customer,                                          -- Partition (HASH) Key\n   CONCAT('ord-', o.ord_id, '#', ol.ord_line_id) AS OrderLine,  -- Sort (RANGE) Key\n\n"
