@@ -15,33 +15,14 @@ export MYSQL_PASSWORD="m7de4uwt2eG#"
 export MIGRATION_STAGE="relational"
 export MYSQL_HOST=$DEPLOYMENT
 
-
 if [[ "workshop" == $DEPLOYMENT ]]
   then
 
-    MIGRATION_BUCKET=$(aws s3api list-buckets --prefix 'ddb-migrations3bucket' --query 'Buckets[0].Name')
+    MIGRATION_BUCKET=$(aws s3api list-buckets --prefix 'ddb-migrations3bucket-' --query 'Buckets[0].Name')
     export MIGRATION_BUCKET=$(echo $MIGRATION_BUCKET | xargs)
 
     MYSQL_HOST=$(aws ec2 describe-instances  --query 'Reservations[0].Instances[0].PrivateIpAddress' --filters Name=tag:Name,Values=MySQL-Instance)
     export MYSQL_HOST=$(echo $MYSQL_HOST | xargs)
-
-    SUBNET_ID=$(aws ec2 describe-instances  --query 'Reservations[0].Instances[0].SubnetId' --filters Name=tag:Name,Values=MySQL-Instance)
-    export SUBNET_ID=$(echo $SUBNET_ID | xargs)
-
-    SECURITY_GROUP=$(aws ec2 describe-instances  --query 'Reservations[0].Instances[0].SecurityGroups[0].GroupId' --filters Name=tag:Name,Values=MySQL-Instance)
-    export SECURITY_GROUP=$(echo $SECURITY_GROUP | xargs)
-
-    jq_update='.stages.relational.subnet_ids=["'
-    jq_update+=$SUBNET_ID
-    jq_update+='"]'
-
-    jq $jq_update .chalice/config.json > "$tmp" && mv "$tmp" .chalice/config.json
-
-    jq_update='.stages.relational.security_group_ids=["'
-    jq_update+=$SECURITY_GROUP
-    jq_update+='"]'
-
-    jq $jq_update .chalice/config.json > "$tmp" && mv "$tmp" .chalice/config.json
 
   else
     MIGRATION_BUCKET="s3-export-import"
