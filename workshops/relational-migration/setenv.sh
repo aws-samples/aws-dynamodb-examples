@@ -7,14 +7,14 @@ if [ $# -gt 0 ]
     DEPLOYMENT=$1
 fi
 
-export AWS_DEFAULT_REGION="us-west-2"
+# export AWS_DEFAULT_REGION="us-west-2"
 
 export MYSQL_DB="app_db"
-export MYSQL_USERNAME="dbuser"
-export MYSQL_PASSWORD="m7de4uwt2eG#"
 export MIGRATION_STAGE="relational"
 export MYSQL_HOST=$DEPLOYMENT
 
+# export MYSQL_USERNAME="username"
+# export MYSQL_PASSWORD="password"
 
 if [[ "workshop" == $DEPLOYMENT ]]
   then

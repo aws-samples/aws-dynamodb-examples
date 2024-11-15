@@ -1,5 +1,5 @@
 TABLE="Customers"
-REGION="us-west-2"
+REGION=$AWS_DEFAULT_REGION
 
 if [ $# -gt 0 ]
   then
