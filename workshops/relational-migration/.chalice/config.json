@@ -6,16 +6,16 @@
     "relational": {
       "api_gateway_stage": "relational",
       "environment_variables": {
-        "MYSQL_HOST":        "myhost.mynetwork.com",
+        "MYSQL_HOST":        "##DBHOST##",
         "MYSQL_DB":          "app_db",
-        "MYSQL_USERNAME":    "dbuser",
-        "MYSQL_PASSWORD":    "m7de4uwt2eG#",
+        "MYSQL_USERNAME":    "##DBUSERNAME##",
+        "MYSQL_PASSWORD":    "##DBPASSWORD##",
         "MIGRATION_STAGE":   "relational"
       },
       "autogen_policy": false,
       "iam_policy_file": "relational-migration-policy.json",
-      "subnet_ids": [""],
-      "security_group_ids": [""]
+      "subnet_ids": ["##SUBNETID##"],
+      "security_group_ids": ["##SECURITYGROUPID##"]
     },
     "dynamodb": {
       "api_gateway_stage": "dynamodb",
