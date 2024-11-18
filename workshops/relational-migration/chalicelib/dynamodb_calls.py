@@ -13,7 +13,7 @@ deserializer = boto3.dynamodb.types.TypeDeserializer()
 serializer = boto3.dynamodb.types.TypeSerializer()
 
 return_limit = 20
-region = 'us-east-2'
+region = 'us-west-2'
 
 ddb = boto3.client('dynamodb', region_name=region)
 ddbr = boto3.resource('dynamodb', region_name=region)
@@ -144,6 +144,8 @@ def query(table, request):
 
 def get_record(table, request):
     get_request = {'TableName': table}
+
+    get_request['ConsistentRead'] = False
 
     keyList = list(request['Key'].keys())
     pk_name = keyList[0]

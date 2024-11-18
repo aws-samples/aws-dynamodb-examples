@@ -15,7 +15,7 @@ def row_maker(tick):
     row = {
         'ord_id': str(pk),
         'cust_id': str(random.randrange(1, 8)).rjust(4, '0'),
-        'rep': random.choice(reps),
+        'rep_id': random.choice(reps),
         'ord_date': ord_date,
         'ship_date': ship_date,
         'last_updated': last_updated

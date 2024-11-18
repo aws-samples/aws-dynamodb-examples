@@ -1,4 +1,4 @@
-REGION=us-east-2
+REGION=us-west-2
 
 ENDPOINTURL=https://dynamodb.$REGION.amazonaws.com
 # ENDPOINTURL=http://localhost:8000

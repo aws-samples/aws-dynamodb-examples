@@ -50,20 +50,21 @@ CREATE TABLE Reps (
 );
 SELECT 'created table Reps' as '';
 
+
 CREATE TABLE Orders (
   ord_id varchar(20) NOT NULL,
   cust_id varchar(20) NOT NULL,
-  rep varchar(20) NULL,
+  rep_id varchar(20) NULL,
   ord_date datetime NOT NULL,
   ship_date datetime NOT NULL,
   last_updated datetime NOT NULL,
 
-  INDEX idx_rep (rep),
+  INDEX idx_rep (rep_id),
 
   CONSTRAINT idx_ord_pk PRIMARY KEY (ord_id),
 
   CONSTRAINT cust_FK FOREIGN KEY (cust_id) REFERENCES Customers(cust_id),
-  CONSTRAINT rep_FK FOREIGN KEY (rep) REFERENCES Reps(rep_id)
+  CONSTRAINT rep_FK FOREIGN KEY (rep_id) REFERENCES Reps(rep_id)
 
 );
 SELECT 'created table Orders' as '';
@@ -85,34 +86,5 @@ CREATE TABLE OrderLines (
 );
 SELECT 'created table OrderLines' as '';
 
-
--- CREATE TABLE Ledger (
---   cust_id varchar(20) NOT NULL,
---   event_id varchar(20) NOT NULL,
---   event_date datetime NOT NULL,
---   account varchar(20) NOT NULL,
---   prod_id varchar(20) NULL,
---   credit INT(10) NOT NULL,
---   INDEX idx_ledger_account (account),
---
---   CONSTRAINT idx_ledger_pk PRIMARY KEY (cust_id, event_id),
---
---   CONSTRAINT cust_ledger_FK FOREIGN KEY (cust_id) REFERENCES Customers(cust_id)
--- --  CONSTRAINT prod_ledger_FK FOREIGN KEY (prod_id) REFERENCES Products(prod_id)
--- );
--- SELECT 'created table Ledger' as '';
-
-
-
--- DROP ALL CUSTOM VIEWS on app_db
-SET @views = NULL;
-SELECT GROUP_CONCAT(table_schema, '.', table_name) INTO @views
-FROM information_schema.views
-WHERE table_schema = 'app_db'; -- Your DB name here
-
-SET @views = IFNULL(CONCAT('DROP VIEW ', @views), 'SELECT "No VIEWs to drop" as ""');
-PREPARE stmt FROM @views;
-EXECUTE stmt;
-DEALLOCATE PREPARE stmt;
 
 SELECT 'Created database app_db and tables' as '';
