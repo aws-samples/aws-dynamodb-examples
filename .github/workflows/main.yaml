@@ -1,0 +1,32 @@
+name: PushLSQLWebApp
+
+permissions:
+  id-token: write
+on:
+  push: 
+    branches:
+       - master
+
+jobs:
+  buildAndDeploy:
+    runs-on: ubuntu-latest
+    env:
+      STEP_S3_BUCKET: amazon-dynamodb-labs.com
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        submodules: 'recursive'
+        fetch-depth: '0'
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-region: us-east-1
+        role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+    - name: S3SyncStaticWeb
+      run: aws s3 sync ./workshops/relational-migration/webapp/ s3://amazon-dynamodb-labs-static/static/relational-migration/web/
+    

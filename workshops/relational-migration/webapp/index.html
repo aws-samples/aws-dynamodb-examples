@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,19 +19,20 @@
     <script src="./generate.js" defer></script>
 
 </head>
-<body class="indexbody" onLoad="renderNav()">
+<body class="indexbody" onLoad="renderNav()" >
 <div class="main">
     <div class="title">
         &nbsp;&nbsp;<a href="" target=_blank class="titlelink" id="pageTitle">Database Application</a>
         <button id="setApiButton"
-                onClick="setCookie(prompt('Chalice API', 'https://6yecyncte3.execute-api.us-east-2.amazonaws.com/relational/'))">
+                onClick="setCookiePrompt()">
             Target API</button>
-        <span id="apiTitle">
-
-        </span>
+        <span id="apiTitle"></span>
         &nbsp;&nbsp;&nbsp;
-        <a href="https://github.com/aws-samples/aws-dynamodb-examples/tree/master/relational-migration/"
-           onclick="alert('This webapp is a test harness that performs GET & POST calls against an API. \n\nYou would first create the API using the relational-migration AWS Chalice project\n\nChalice creates a Lambda function and API Gateway endpoint. You then click \'Target API\' button to store the API URL as a cookie\n\nA working API URL is provided here, just accept the default URL and click OK.')"
+        <a id="clearCookie" onclick="clearCookie()"
+           class="about" >clear</a>
+        &nbsp;&nbsp;
+        <a href="https://github.com/aws-samples/aws-dynamodb-examples/tree/master/workshops/relational-migration/"
+           onclick="alert('This webapp performs GET & POST calls against a Target API URL that you provide. \n\nYou can create an API using the relational-migration AWS Chalice project\n\nChalice creates an AWS API Gateway endpoint, and Lambda function that makes calls to a database. Once you have created the API, click \'Target API\' button to store the API URL as a cookie.\n\nClick OK to visit the workshop project page.')"
            class="about"
            target="_blank">about</a>
         <!--        <button id="sampleAPI2" onClick="setCookie(prompt('Sample API Ireland', 'https://mjr9wyamog.execute-api.eu-west-1.amazonaws.com/api/'))">Ireland</button>-->
@@ -58,7 +58,7 @@
                         Access pattern:
                         <button class="tabActive" onclick="openTab('CRUD')">CRUD</button>
                         <button class="tabInactive" onclick="openTab('Querying')">Querying</button>
-<!--                        <button class="tabInactive" onclick="openTab('Multi-step')">Multi-step</button>-->
+                        <!--                        <button class="tabInactive" onclick="openTab('Multi-step')">Multi-step</button>-->
                     </div>
                 </div>
             </div>
@@ -165,20 +165,20 @@
 
                     </div>
 
-<!--                    <div id="Multi-step" class="tab" style="display:none">-->
-<!--                        Multi-step-->
-<!--                        <ul>-->
-<!--                            <li>-->
-<!--                                <p>Multi-step actions involving reading & writing, such as:-->
-<!--                                <pre> UPDATE/DELETE MyTable<br/> WHERE <br/>&nbsp;&nbsp;&nbsp;(subquery is true) </pre>-->
-<!--                                </p>-->
-<!--                            </li>-->
-<!--                            <li>SQL text expressions</li>-->
-<!--                            <li>Business logic in stored procedures</li>-->
-<!--                        </ul>-->
-<!--                        These can be implemented as a custom job running outside of DynamoDB, that performs operations in a loop.-->
+                    <!--                    <div id="Multi-step" class="tab" style="display:none">-->
+                    <!--                        Multi-step-->
+                    <!--                        <ul>-->
+                    <!--                            <li>-->
+                    <!--                                <p>Multi-step actions involving reading & writing, such as:-->
+                    <!--                                <pre> UPDATE/DELETE MyTable<br/> WHERE <br/>&nbsp;&nbsp;&nbsp;(subquery is true) </pre>-->
+                    <!--                                </p>-->
+                    <!--                            </li>-->
+                    <!--                            <li>SQL text expressions</li>-->
+                    <!--                            <li>Business logic in stored procedures</li>-->
+                    <!--                        </ul>-->
+                    <!--                        These can be implemented as a custom job running outside of DynamoDB, that performs operations in a loop.-->
 
-<!--                    </div>-->
+                    <!--                    </div>-->
 
                 </div>
             </div>
