@@ -6,8 +6,8 @@ This document outlines a use case using DynamoDB
 
 ## Key Entities
 
-1. user
-2. post
+1. customer
+2. session
 
 ## Design Approach
 
@@ -42,19 +42,22 @@ We employ a single table design with the following key structure:
 
 ## Access Patterns
 
-The document covers 7 access patterns. For each access pattern, we provide:
-- Specific PK and SK used
-- Relevant DynamoDB operation (GetItem, Query)
+The document covers 8 access patterns. For each access pattern, we provide:
+- Usage of Base table or GSI
+- Relevant DynamoDB operation (PutItem, GetItem, DeleteItem, Query)
+- Partition and Sort key values
+- Other conditions or filters
 
-  | Access pattern | Operation | Partition key value | Sort key value |
-  | ----------- | ----------- | ----------- | ----------- |
-  | getUserInfoByUserID | Query | PK=\<userID\> |
-  | getFollowerListByUserID | Query | PK=\<userID\>#follower |
-  | getFollowingListByUserID | Query | PK=\<userID\>#following | 
-  | getPostListByUserID | Query | PK=\<userID\>#post |
-  | getUserLikesByPostID | Query | PK=\<postID\>#likelist |
-  | getLikeCountByPostID | GetItem | PK=\<postID\>#likecount |
-  | getTimelineByUserID | Query | PK=\<userID\>#timeline |
+  | Access pattern | Base table/GSI | Operation | Partition key value | Sort key value | Other conditions/Filters |
+  | ----------- | ----------- | ----------- | ----------- | ----------- | ----------- |
+  | createSession | Base table | PutItem | PK=\<session_id\> | SK=customer_id | |
+  | getSessionBySessionId | Base table | GetItem | PK=\<session_id\> | SK=customer_id | |
+  | expireSession | Base table | DeleteItem | PK=\<session_id\> | SK=customer_id | |
+  | getChildSessionsBySessionId | Base table | Query | PK=\<session_id\> | SK=customer_id | |
+  | getSessionByChildSessionId | GSI | Query | SK=\<child_session_id\> | SK begins_with “child#” | |
+  | getLastLoginTimeByCustomerId | GSI | Query | SK=\<customer_id\> | | |
+  | getSessionIdByCustomerId | GSI | Query | SK=\<customer_id\> | PK=session_id | |
+  | getSessionsByCustomerId | GSI | Query | SK=\<customer_id\> | | |
 
 ## Goals
 
