@@ -2,42 +2,46 @@
 
 ## Overview
 
-This document outlines a use case using DynamoDB 
+This document outlines a use case using DynamoDB as a session store. DynamoDB allows for distributed session management in a fast and scalable way. It is easy to setup and can be shared for single-sign-on platforms rather than maintaining separate stores locally. The most typical access patterns for a session store are to create an entry for customer-initiated session, look up sessions initiated by a customer, list all child sessions for a session and get the last login time for a customer.
 
 ## Key Entities
 
 1. customer
-2. session
+2. session (A session may have child sessions.)
 
 ## Design Approach
 
-We employ a single table design with the following key structure:
+We employ a single table design coupled with a global secondary index (GSI). 
+The following key structures are used:
 
-- Partition Key (PK): Identifies the key entity type (u#<userID> for user, p#<postID> for post) and optionally, a second # followed by a descriptor of what is stored in the partition. 
-  - u#\<userID\> - Given user
-  - u#\<userID\>#follower - Given user's followers
-  - u#\<userID\>#following - The users that the given user is following
-  - u#\<userID\>#post - Given user's posts
-  - p#\<postID\>#likelist - The users that have liked the given post
-  - p#\<postID\>#likecount - The count of the given post's likes
-  - u#\<userID\>#timeline - Given user's timeline
+  - Base table 
+    - Partition key (PK)
+      - suuid#\<session UUID\> - Given session
+    - Sort key (SK)
+      - c#\<customerId\> - Given customer
+      - child#suuid\<session UUID\> - Given child session
+    - Examples:  
 
-- Sort Key (SK): Contains the ID of an entity in the Partition Key collection 
-    **or** 
-  a descriptor of the attributes ("count", "info") for the primary key of \<PK\>\<SK\>
+      | PK | SK | Sample Attributes |
+      | ----------- | ----------- | ----------- |
+      | suuid#c342etj3 | c#ABC | last_login_time, access_token, session_state |
+      | suuid#c342etj3 | child#suuid#ert54fbgn | access_token, session_state |
+      | suuid#c342etj3 | child#suuid#kljhfyf23 | access_token, session_state |
+
+  - GSI (Keys are inverse of base table.)
+    - Partition key (PK)
+      - c#\<customerId\> - Given customer
+      - child#suuid\<session UUID\> - Given child session
+    - Sort key (SK)
+      - suuid#\<session UUID\> - Given session
 
     - Examples:  
 
       | PK | SK | Sample Attributes |
       | ----------- | ----------- | ----------- |
-      | u#12345 | `count` | follower#, following#, post# |
-      | u#12345 | `info` | name, content, imageUrl |
-      | u#12345#follower | u#34567 ||
-      | u#12345#following | u#34567 ||
-      | u#12345#post | p#12345 | content, imageUrl, timestamp |
-      | p#12345#likelist | u#34567 ||
-      | p#12345#likecount | `count` | etc |
-      | u#12345#timeline | p#34567#u#56789 | ttl |
+      | child#suuid#ert54fbgn | suuid#c342etj3 | access _token, session_state |
+      | child#suuid#kljhfyf23 | suuid#c342etj3 | access _token, session_state |
+      | c#ABC | suuid#c342etj3 | last_login_time, access_token, session_state |
 
 
 ## Access Patterns
@@ -55,9 +59,11 @@ The document covers 8 access patterns. For each access pattern, we provide:
   | expireSession | Base table | DeleteItem | PK=\<session_id\> | SK=customer_id | |
   | getChildSessionsBySessionId | Base table | Query | PK=\<session_id\> | SK=customer_id | |
   | getSessionByChildSessionId | GSI | Query | SK=\<child_session_id\> | SK begins_with “child#” | |
-  | getLastLoginTimeByCustomerId | GSI | Query | SK=\<customer_id\> | | |
+  | getLastLoginTimeByCustomerId | GSI | Query | SK=\<customer_id\> | | Limit 1 |
   | getSessionIdByCustomerId | GSI | Query | SK=\<customer_id\> | PK=session_id | |
   | getSessionsByCustomerId | GSI | Query | SK=\<customer_id\> | | |
+  
+Please note: We add “Limit 1” for getLastLoginTimeByCustomerId since GSIs can have duplicate values. GSIs do not enforce uniqueness on key attribute values like the base table does.
 
 ## Goals
 
