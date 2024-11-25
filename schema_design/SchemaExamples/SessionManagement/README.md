@@ -16,10 +16,10 @@ The following key structures are used:
 
   - Base table 
     - Partition key (PK)
-      - suuid#\<session UUID\> - Given session
+      - suuid#\<session UUID\> - Given session UUID
     - Sort key (SK)
-      - c#\<customerId\> - Given customer
-      - child#suuid\<session UUID\> - Given child session
+      - c#\<customerId\> - Given customer Id
+      - child#suuid\<session UUID\> - Given child session UUID
     - Examples:  
 
       | PK | SK | Sample Attributes |
@@ -30,10 +30,10 @@ The following key structures are used:
 
   - GSI (Keys are inverse of base table.)
     - Partition key (PK)
-      - c#\<customerId\> - Given customer
-      - child#suuid\<session UUID\> - Given child session
+      - c#\<customerId\> - Given customer Id
+      - child#suuid\<session UUID\> - Given child session UUID
     - Sort key (SK)
-      - suuid#\<session UUID\> - Given session
+      - suuid#\<session UUID\> - Given session UUID
 
     - Examples:  
 
@@ -57,7 +57,7 @@ The document covers 8 access patterns. For each access pattern, we provide:
   | createSession | Base table | PutItem | PK=\<session_id\> | SK=customer_id | |
   | getSessionBySessionId | Base table | GetItem | PK=\<session_id\> | SK=customer_id | |
   | expireSession | Base table | DeleteItem | PK=\<session_id\> | SK=customer_id | |
-  | getChildSessionsBySessionId | Base table | Query | PK=\<session_id\> | SK=customer_id | |
+  | getChildSessionsBySessionId | Base table | Query | PK=\<session_id\> | SK begins_with “child#”| |
   | getSessionByChildSessionId | GSI | Query | SK=\<child_session_id\> | SK begins_with “child#” | |
   | getLastLoginTimeByCustomerId | GSI | Query | SK=\<customer_id\> | | Limit 1 |
   | getSessionIdByCustomerId | GSI | Query | SK=\<customer_id\> | PK=session_id | |
@@ -72,7 +72,4 @@ Please note: We add “Limit 1” for getLastLoginTimeByCustomerId since GSIs ca
 
 ## Schema Design
 
-A comprehensive schema design is included, demonstrating how different entities and access patterns map to the DynamoDB table structure. [SocialNetworkSchema.json](https://github.com/aws-samples/aws-dynamodb-examples/blob/master/schema_design/SchemaExamples/SocialNetwork/SocialNetworkSchema.json)
-
-## Additional Information
-[Social network schema design in DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/data-modeling-schema-social-network.html)
+A comprehensive schema design is included, demonstrating how different entities and access patterns map to the DynamoDB table structure. [SessionManagementSchema.json](https://github.com/aws-samples/aws-dynamodb-examples/blob/master/schema_design/SchemaExamples/SessionManagement/SessionManagementSchema.json)
