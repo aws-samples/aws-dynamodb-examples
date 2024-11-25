@@ -16,10 +16,10 @@ The following key structures are used:
 
   - Base table 
     - Partition key (PK)
-      - suuid#\<session UUID\> - Given session UUID
+      - suuid#\<session UUID\> - Given session
     - Sort key (SK)
-      - c#\<customerId\> - Given customer Id
-      - child#suuid\<session UUID\> - Given child session UUID
+      - c#\<customerId\> - Customer of partition key session
+      - child#suuid\<session UUID\> - Child session of partition key session
     - Examples:  
 
       | PK | SK | Sample Attributes |
@@ -30,10 +30,10 @@ The following key structures are used:
 
   - GSI (Keys are inverse of base table.)
     - Partition key (PK)
-      - c#\<customerId\> - Given customer Id
-      - child#suuid\<session UUID\> - Given child session UUID
+      - c#\<customerId\> - Given customer
+      - child#suuid\<session UUID\> - Given child session
     - Sort key (SK)
-      - suuid#\<session UUID\> - Given session UUID
+      - suuid#\<session UUID\> - Given session of partition key (customer or child session)
 
     - Examples:  
 
