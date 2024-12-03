@@ -30,10 +30,9 @@ The following key structures are used:
       | Room:Art | meta | CreatedBy |
 
   - GSI
-    - Partition key (PK)
+    - Partition key (RoomID)
       - c#\<customerId\> - Given customer
-      - child#suuid\<session UUID\> - Given child session
-    - Sort key (SK)
+    - Sort key (CreatedAt)
       - RoomID#\<session UUID\> - Given session of partition key (customer or child session)
 
     - Examples:  
