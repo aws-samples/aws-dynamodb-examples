@@ -2,12 +2,13 @@
 
 ## Overview
 
-This document outlines a use case using DynamoDB .
+This document outlines a use case using DynamoDB as a datastore for a chat system. For example, it is intended to be used within a team of several people in a game, or in a live video streaming situation where comments are added to the video. The flow of the system is as follows: create a room, join a room, speak in a room, leave a room, and delete a room.
 
 ## Key Entities
 
 1. user
 2. room
+3. comment
 
 ## Design Approach
 
@@ -46,7 +47,7 @@ The following key structures are used:
 
 ## Access Patterns
 
-The document covers 8 access patterns. For each access pattern, we provide:
+The document covers 9 access patterns. For each access pattern, we provide:
 - Usage of Base table or GSI
 - Relevant DynamoDB operation (PutItem, GetItem, DeleteItem, Query)
 - Partition and Sort key values
@@ -54,14 +55,16 @@ The document covers 8 access patterns. For each access pattern, we provide:
 
   | Access pattern | Base table/GSI | Operation | Partition key value | Sort key value | Other conditions/Filters |
   | ----------- | ----------- | ----------- | ----------- | ----------- | ----------- |
-  | createSession | Base table | PutItem | PK=\<session_id\> | SK=customer_id | |
-  | getSessionBySessionId | Base table | GetItem | PK=\<session_id\> | SK=customer_id | |
-  | expireSession | Base table | DeleteItem | PK=\<session_id\> | SK=customer_id | |
-  | getChildSessionsBySessionId | Base table | Query | PK=\<session_id\> | SK begins_with “child#”| |
-  | getSessionByChildSessionId | GSI | Query | SK=\<child_session_id\> | SK begins_with “child#” | |
-  | getLastLoginTimeByCustomerId | GSI | Query | SK=\<customer_id\> | | Limit 1 |
-  | getSessionIdByCustomerId | GSI | Query | SK=\<customer_id\> | PK=session_id | |
-  | getSessionsByCustomerId | GSI | Query | SK=\<customer_id\> | | |
+  | createChatRoom | Base table | PutItem | PK=\<RoomID\> | SK="Meta" | if not exists |
+  | deleteChatRoom | Base table | DeleteItem | PK=\<RoomID\> | SK="Meta" | createdBy=UserID |
+  | joinChatRoom | Base table | PutItem | PK=\<UserID\> | SK="Join" + RoomID | |
+  | leaveChatRoom | Base table | DeleteItem | PK=\<UserID\> | SK="Join" + RoomID | |
+  | addComments | Base table | PutItem | PK=\<UserID\> | SK=timestammp | |
+  | getAllComments | GSI | Query | PK=\<RoomID\> | | Limit 1 |
+  | getLatestComments | GSI | Query | PK=\<RoomID\> | | Limit 10 & ScanIndexForward = false |
+  | getFromLatestToSpecifiedPositionComments | GSI | Query | PK=\<RoomID\> | SK > FromPosition | |
+  | getFromPositionToPositionComments | GSI | Query | PK=\<RoomID\>  | SK between FromPosition and ToPosition | |
+
   
 Please note: We add “Limit 1” for getLastLoginTimeByCustomerId since GSIs can have duplicate values. GSIs do not enforce uniqueness on key attribute values like the base table does.
 
@@ -72,4 +75,4 @@ Please note: We add “Limit 1” for getLastLoginTimeByCustomerId since GSIs ca
 
 ## Schema Design
 
-A comprehensive schema design is included, demonstrating how different entities and access patterns map to the DynamoDB table structure. [SessionManagementSchema.json](https://github.com/aws-samples/aws-dynamodb-examples/blob/master/schema_design/SchemaExamples/SessionManagement/SessionManagementSchema.json)
+A comprehensive schema design is included, demonstrating how different entities and access patterns map to the DynamoDB table structure. [ChatSystemSchema.json](https://github.com/aws-samples/aws-dynamodb-examples/blob/master/schema_design/SchemaExamples/ChatSystem/ChatSystemSchema.json)
