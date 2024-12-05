@@ -16,12 +16,16 @@ We employ a single table design coupled with a global secondary index (GSI).
 The following key structures are used:
 
   - Base table 
-    - Partition key (PK)
-      - User:\<userID\> - Given User
-      - Room:\<roomID\> - Given Room
-    - Sort key (SK)
-      - <\timestamp\> -
-      - "meta" - 
+    - For a user item:
+      - Partition key (PK)
+        - User:\<UserID\>
+      - Sort key (SK)
+        - \<timestamp\>
+    - For a room item:
+      - Partition key (PK)
+        - Room:\<RoomID\>
+      - Sort key (SK)
+        - "meta"
 
     - Examples:  
 
@@ -32,24 +36,22 @@ The following key structures are used:
 
   - GSI
     - Partition key (RoomID)
-      - c#\<customerId\> - Given customer
+      - \<RoomID\>
     - Sort key (CreatedAt)
-      - RoomID#\<session UUID\> - Given session of partition key (customer or child session)
+      - \<timestamp\>
 
     - Examples:  
 
       | PK | SK | Sample Attributes |
       | ----------- | ----------- | ----------- |
-      | child#suuid#ert54fbgn | suuid#c342etj3 | access _token, session_state |
-      | child#suuid#kljhfyf23 | suuid#c342etj3 | access _token, session_state |
-      | c#ABC | suuid#c342etj3 | last_login_time, access_token, session_state |
+      | Music | 2023-04-01T12:00:00.001Z | PK, SK, Comment |
 
 
 ## Access Patterns
 
 The document covers 9 access patterns. For each access pattern, we provide:
 - Usage of Base table or GSI
-- Relevant DynamoDB operation (PutItem, GetItem, DeleteItem, Query)
+- Relevant DynamoDB operation (PutItem, DeleteItem, Query)
 - Partition and Sort key values
 - Other conditions or filters
 
@@ -57,13 +59,13 @@ The document covers 9 access patterns. For each access pattern, we provide:
   | ----------- | ----------- | ----------- | ----------- | ----------- | ----------- |
   | createChatRoom | Base table | PutItem | PK=\<RoomID\> | SK="Meta" | if not exists |
   | deleteChatRoom | Base table | DeleteItem | PK=\<RoomID\> | SK="Meta" | createdBy=UserID |
-  | joinChatRoom | Base table | PutItem | PK=\<UserID\> | SK="Join" + RoomID | |
-  | leaveChatRoom | Base table | DeleteItem | PK=\<UserID\> | SK="Join" + RoomID | |
-  | addComments | Base table | PutItem | PK=\<UserID\> | SK=timestammp | |
+  | joinChatRoom | Base table | PutItem | PK=\<UserID\> | SK="Join"\<roomID\>  | |
+  | leaveChatRoom | Base table | DeleteItem | PK=\<UserID\> | SK="Join"\<roomID\>  | |
+  | addComments | Base table | PutItem | PK=\<UserID\> | SK=\<timestamp\> | |
   | getAllComments | GSI | Query | PK=\<RoomID\> | | Limit 1 |
   | getLatestComments | GSI | Query | PK=\<RoomID\> | | Limit 10 & ScanIndexForward = false |
-  | getFromLatestToSpecifiedPositionComments | GSI | Query | PK=\<RoomID\> | SK > FromPosition | |
-  | getFromPositionToPositionComments | GSI | Query | PK=\<RoomID\>  | SK between FromPosition and ToPosition | |
+  | getFromLatestToSpecifiedPositionComments | GSI | Query | PK=\<roomID\> | SK > FromPosition | |
+  | getFromPositionToPositionComments | GSI | Query | PK=\<roomID\>  | SK between FromPosition and ToPosition | |
 
   
 Please note: We add “Limit 1” for getLastLoginTimeByCustomerId since GSIs can have duplicate values. GSIs do not enforce uniqueness on key attribute values like the base table does.
