@@ -32,7 +32,7 @@ The following key structures are used:
       | PK | SK | Sample Attributes |
       | ----------- | ----------- | ----------- |
       | User:UserA | 2023-04-01T14:00:00.001Z | RoomID, Comment, CreatedAt |
-      | Room:Art | meta | CreatedBy |
+      | Room:Art | `meta` | CreatedBy |
 
   - GSI
     - Partition key (RoomID)
@@ -40,7 +40,7 @@ The following key structures are used:
     - Sort key (CreatedAt)
       - \<timestamp\>
 
-    - Examples:  
+    - Example:  
 
       | PK | SK | Sample Attributes |
       | ----------- | ----------- | ----------- |
@@ -57,18 +57,18 @@ The document covers 9 access patterns. For each access pattern, we provide:
 
   | Access pattern | Base table/GSI | Operation | Partition key value | Sort key value | Other conditions/Filters |
   | ----------- | ----------- | ----------- | ----------- | ----------- | ----------- |
-  | createChatRoom | Base table | PutItem | PK=\<RoomID\> | SK="Meta" | if not exists |
-  | deleteChatRoom | Base table | DeleteItem | PK=\<RoomID\> | SK="Meta" | createdBy=UserID |
-  | joinChatRoom | Base table | PutItem | PK=\<UserID\> | SK="Join"\<roomID\>  | |
-  | leaveChatRoom | Base table | DeleteItem | PK=\<UserID\> | SK="Join"\<roomID\>  | |
+  | createChatRoom | Base table | PutItem | PK=\<RoomID\> | SK="meta" | if not exists |
+  | deleteChatRoom | Base table | DeleteItem | PK=\<RoomID\> | SK="meta" | CreatedBy=\<UserID\> |
+  | joinChatRoom | Base table | PutItem | PK=\<UserID\> | SK="Join:"\<roomID\>  | |
+  | leaveChatRoom | Base table | DeleteItem | PK=\<UserID\> | SK="Join:"\<roomID\>  | |
   | addComments | Base table | PutItem | PK=\<UserID\> | SK=\<timestamp\> | |
   | getAllComments | GSI | Query | PK=\<RoomID\> | | Limit 1 |
   | getLatestComments | GSI | Query | PK=\<RoomID\> | | Limit 10 & ScanIndexForward = false |
-  | getFromLatestToSpecifiedPositionComments | GSI | Query | PK=\<roomID\> | SK > FromPosition | |
-  | getFromPositionToPositionComments | GSI | Query | PK=\<roomID\>  | SK between FromPosition and ToPosition | |
+  | getFromLatestToSpecifiedPositionComments | GSI | Query | PK=\<RoomID\> | SK > \<FromPosition\> | |
+  | getFromPositionToPositionComments | GSI | Query | PK=\<RoomID\>  | SK between \<FromPosition\> and \<ToPosition\> | |
 
   
-Please note: We add “Limit 1” for getLastLoginTimeByCustomerId since GSIs can have duplicate values. GSIs do not enforce uniqueness on key attribute values like the base table does.
+Please note: We add “Limit 1” for getAllComments since GSIs can have duplicate values. GSIs do not enforce uniqueness on key attribute values like the base table does.
 
 ## Goals
 
