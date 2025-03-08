@@ -31,6 +31,24 @@
                     <argLine>-XX:+EnableDynamicAgentLoading</argLine>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.5.0</version>
+                <configuration>
+                    <mainClass>com.example.dynamodbhedging.DynamoDBHedgedQuery</mainClass>
+                    <arguments>
+                        <!-- DynamoDB table name -->
+                        <argument>hedging-demo-102</argument>
+                        <!-- Name of the Partition Key -->
+                        <argument>PK</argument>
+                        <!-- Partition Key value for the items to retrieve -->
+                        <argument>7343-K7Ws6YE0MTfJwQn</argument>
+                        <!-- Number of iterations for the code to run -->
+                        <argument>100</argument>
+                    </arguments>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
     <dependencyManagement>

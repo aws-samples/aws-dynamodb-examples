@@ -57,7 +57,6 @@ public class DynamoDBHedgedQuery {
         String key = args[1];
         String keyVal = args[2];
         int numOfIterations =  Integer.parseInt(args[3]);
-        System.out.println("numOfIterations: " + numOfIterations);
 
         DynamoDBHedgedQuery hedgedQuery = new DynamoDBHedgedQuery();
 

@@ -22,87 +22,75 @@ Request hedging is a reliability pattern where multiple identical requests are s
 ```
 src/
 ├── main/
-│   ├── java/
-│   │   └── com/example/dynamodbhedging/
-│   │       ├── DDBHedgingRequestHandler.java  // Generic hedging request handler implementation
-│   │       ├── DynamoDBHedgedQuery.java       // Main class demoestrating the use of hedging
-│   │       └── DynamoDBOperations.java        // DynamoDB operations with hedging
-│   └── resources/
-│           ├── congig.properties
-│           └── log4j.properties 
+│    └── java/
+│          └── com/example/dynamodbhedging/
+│               ├── DDBHedgingRequestHandler.java  // Generic hedging request handler implementation
+│               ├── DynamoDBHedgedQuery.java       // Main class demoestrating the use of hedging
+│               └── DynamoDBOperations.java        // DynamoDB operations with hedging
 └── test/
     └── java/
         └── com/example/dynamodbhedging/
-            └── DynamoDBHedgingTest.java      // Test cases
+            └── DynamoDBHedgedQueryTest.java      // Test cases
 
 ```
-### Getting Started
-#### Prerequisites
+## Getting Started
+### Prerequisites
 
-* Java 8 or later
+* Java 21 or later
 
-* Maven or Gradle
+* Maven 
 
-* AWS credentials configured
+* DynamoDB table created with a partitioned key and sample data loaded
 
-* DynamoDB table created
-
-#### Configuration
-Upddate the config.properties file in src/main/resources:
-```
-tableName = Your DynamoDB table name
-key = Partition Key name
-keyVal = Partition Key value
-```
-
-
-### Usage Example
+### How to use the DDBHedgingRequestHandler class
 ```java
-    // Create expression attribute values
+    DDBHedgingRequestHandler<QueryResponse> hedgingHandler =  new DDBHedgingRequestHandler();
+
+    // create the DynamoDB operation 
     Map<String, AttributeValue> expressionAttributeValues = new HashMap<>();
     expressionAttributeValues.put(":pkValue", AttributeValue.builder().s(partitionKeyValue).build());
     
     // Create the query request
     QueryRequest queryRequest = QueryRequest.builder().tableName(tableName).keyConditionExpression(partitionKeyName + " = :pkValue").expressionAttributeValues(expressionAttributeValues).build();
     
-        // Create the supplier that will execute the query
-        return hedgingHandler.hedgeRequests(() -> asyncClient.query(queryRequest), List.of(50) // Delays in milliseconds for hedge requests
+        // Create the supplier that will execute the query and pass to the hedgeRequests() method of the DDBHedgingRequestHandler class
+        return hedgingHandler.hedgeRequests(() -> asyncClient.query(queryRequest), List.of(50) // Delays in milliseconds for hedge requests, you can pass multiple values if you wish to do multiple hedging calls
     );
 ```
-Running Tests
-The project includes comprehensive tests demonstrating hedging behavior:
 
-mvn test
+### Running the sample: 
 
-Test scenarios include:
+Maven plugin configuration is provided for running the sample class DynamoDBHedgedQuery.
+To run this class update the following configurations to suite your environment.
 
-Basic hedging functionality
+```xml
+     <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <configuration>
+            <mainClass>com.example.dynamodbhedging.DynamoDBHedgedQuery</mainClass>
+            <arguments>
+               
+                <argument><!-- DynamoDB table name --></argument>
+                
+                <argument><!-- Name of the Partition Key --></argument>
+                
+                <argument><!-- Partition Key value for the items to retrieve --></argument>
+                
+                <argument><!-- Number of iterations for the code to run --></argument>
+            </arguments>
+        </configuration>
+    </plugin>
+```
+After adding this configuration, you can run your main class using:
 
-Latency improvement verification
+```bash
+mvn exec:java
+```
 
-Error handling
+If you need to pass different arguments at runtime, you can override the configured arguments using the command line:
 
-Resource cleanup
-
-Test Configuration
-Before running tests, configure these values in src/test/resources/test-config.properties:
-
-tableName - DynamoDB table name
-
-partitionKey - Primary key name
-
-sortKey - Sort key name (if applicable)
-
-hedgingDelay - Initial delay before hedging (milliseconds)
-
-maxHedgedRequests - Maximum number of hedged requests
-
-### License
-This project is licensed under the Apache License 2.0
-
-
-This revised README provides a clearer explanation of the hedging pattern and its implementation with DynamoDB, including practical code examples and configuration guidance. It focuses on the key concepts and practical usage while maintaining important information about testing and setup.
-
-The hedging pattern is particularly useful for read-heavy workloads where consistent low latency is critical. The implementation allows developers to make informed de
-
+```bash
+mvn exec:java -Dexec.args="DynamoBDTableName Partition_Key Key_value number_of_iterations"
+```
 
