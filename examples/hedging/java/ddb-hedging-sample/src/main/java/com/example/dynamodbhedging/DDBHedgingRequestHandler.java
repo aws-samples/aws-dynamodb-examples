@@ -5,196 +5,117 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 /**
- * A handler class that implements request hedging pattern for DynamoDB operations.
- * Request hedging is a reliability pattern where multiple identical requests are sent
- * after specified delays if the initial request hasn't completed, taking the first
- * successful response.
+ * A generic request handler that implements hedging pattern for DynamoDB requests.
+ * Hedging helps improve tail latency by sending multiple identical requests after specified delays
+ * and using the first successful response.
  *
- * @param <T> The type of response expected from the hedged requests
+ * @param <T> The type of response expected from the requests
  */
 public class DDBHedgingRequestHandler<T> {
 
+    // Logger instance for tracking request execution and debugging
     private static final Logger logger = LoggerFactory.getLogger(DDBHedgingRequestHandler.class);
 
     /**
-     * Thread pool for executing hedged requests
-     */
-    private final Executor hedgingThreadPool;
-
-    /**
-     * Scheduler for managing delayed hedged requests
-     */
-    private final ScheduledExecutorService hedgingScheduler;
-
-    /**
-     * Flag indicating if the handler has been shut down
-     */
-    private volatile boolean isShutdown = false;
-
-    /**
-     * List to track scheduled tasks for potential cancellation
-     */
-    private final List<ScheduledFuture<?>> scheduledTasks = new CopyOnWriteArrayList<>();
-
-    /**
-     * Creates a new hedging request handler with default thread pool configurations.
-     * Uses ForkJoinPool.commonPool() for request execution and a dedicated scheduled
-     * thread pool with 5 threads for managing delays.
-     */
-    public DDBHedgingRequestHandler() {
-        this(ForkJoinPool.commonPool(), Executors.newScheduledThreadPool(5));
-    }
-
-    /**
-     * Creates a new hedging request handler with custom thread pool configurations.
+     * Executes a request with hedging strategy. This method sends an initial request and then
+     * sends additional identical requests (hedged requests) after specified delays if the initial
+     * request hasn't completed.
      *
-     * @param hedgingThreadPool The executor for running hedged requests
-     * @param hedgingScheduler  The scheduler for managing delayed requests
-     */
-    public DDBHedgingRequestHandler(Executor hedgingThreadPool, ScheduledExecutorService hedgingScheduler) {
-        this.hedgingThreadPool = hedgingThreadPool;
-        this.hedgingScheduler = hedgingScheduler;
-    }
-
-    /**
-     * Executes a request with hedging strategy. The first request is executed immediately,
-     * and subsequent requests are scheduled according to the specified delays.
-     *
-     * @param supplier       A supplier that provides the request to be executed
-     * @param delaysInMillis List of delays (in milliseconds) for subsequent hedged requests
-     * @return A CompletableFuture that completes with the first successful response
+     * @param supplier       A supplier that produces the CompletableFuture for the request to be hedged
+     * @param delaysInMillis A list of delays (in milliseconds) for when to send subsequent hedged requests.
+     *                      Each delay represents the time to wait before sending the next request.
+     *                      If null or empty, only the initial request will be sent.
+     * @return A CompletableFuture that completes with the first successful response from any of the requests
      */
     public CompletableFuture<T> hedgeRequests(
             Supplier<CompletableFuture<T>> supplier,
             List<Integer> delaysInMillis) {
 
-        if (isShutdown) {
-            CompletableFuture<T> future = new CompletableFuture<>();
-            future.completeExceptionally(new IllegalStateException("Handler is shutdown"));
-            return future;
+        // If no delays are specified, just execute a single request without hedging
+        if (delaysInMillis == null || delaysInMillis.isEmpty()) {
+            return supplier.get();
         }
-        logger.info("Initiating initial request #1");
-        CompletableFuture<T> firstRequest = supplier.get();
 
+        // Execute the initial request immediately
+        logger.info("Initiating initial request");
+        CompletableFuture<T> firstRequest = supplier.get()
+                .thenApply(response -> response);
+
+        // Keep track of all requests (initial + hedged) for management
         List<CompletableFuture<T>> allRequests = new ArrayList<>();
         allRequests.add(firstRequest);
 
-        CompletableFuture<T> finalResult = new CompletableFuture<>();
-        final AtomicInteger completedRequestNumber = new AtomicInteger(-1);
-
-        firstRequest.whenCompleteAsync((response, throwable) -> {
-            logger.info("Got response for request #{}", 1);
-            if (throwable == null && !finalResult.isDone() &&
-                    completedRequestNumber.compareAndSet(-1, 1)) {
-                finalResult.complete(response);
-
-                cancelPendingRequests(allRequests);
-                cancelScheduledTasks();
-            } else if (throwable != null && !finalResult.isDone()) {
-                logger.warn("First request failed: {}", throwable.getMessage());
-            }
-        }, hedgingThreadPool);
-
-        // Schedule hedged requests
+        // Create hedged requests for each delay
         for (int i = 0; i < delaysInMillis.size(); i++) {
+            // Calculate request number for logging (2 onwards, as 1 is the initial request)
             final int requestNumber = i + 2;
-            final float delayMillis = delaysInMillis.get(i);
 
-            CompletableFuture<T> hedgedRequest = new CompletableFuture<>();
-            allRequests.add(hedgedRequest);
+            long delay = delaysInMillis.get(i);
 
-            ScheduledFuture<?> scheduledTask = hedgingScheduler.schedule(() -> {
-                logger.info("Initiating hedged request #{}", requestNumber);
-                if (!finalResult.isDone() && !isShutdown) {
-                    try {
-                        supplier.get().whenComplete((response, error) -> {
-                            logger.info("Got response for hedged request #{}", requestNumber);
-                            if (error == null && !finalResult.isDone() &&
-                                    completedRequestNumber.compareAndSet(-1, requestNumber)) {
-                                finalResult.complete(response);
+            // Create a new hedged request with specified delay
+            CompletableFuture<T> hedgedRequest = CompletableFuture.supplyAsync(() -> {
+                logger.info("Check: Before hedged request#{} can be initiated", requestNumber);
 
-                                cancelPendingRequests(allRequests);
-                                cancelScheduledTasks();
-                            } else if (error != null && !isShutdown) {
-                                logger.warn("Hedged request #{} failed: {}",
-                                        requestNumber, error.getMessage());
-                                hedgedRequest.completeExceptionally(error);
-                            }
-                        });
-                    } catch (Exception e) {
-                        if (!isShutdown) {
-                            logger.warn("Failed to initiate hedged request #{}: {}",
-                                    requestNumber, e.getMessage());
-                        }
-                        hedgedRequest.completeExceptionally(e);
-                    }
+                // Before executing a new hedged request, check if any previous request has completed
+                CompletableFuture<T> completedFuture = allRequests.stream()
+                        .filter(CompletableFuture::isDone)
+                        .findFirst()
+                        .orElse(null);
+
+                // If a previous request has completed, use its result instead of making a new request
+                if (completedFuture != null) {
+                    logger.info("Previous request already completed, skipping hedge request#{}", requestNumber);
+                    return completedFuture.join();
                 }
-            }, (long) delayMillis, TimeUnit.MILLISECONDS);
 
-            // Store the scheduled task for potential cancellation
-            scheduledTasks.add(scheduledTask);
+                // Execute the hedged request if no previous request has completed
+                logger.info("Initiating hedge request#{}", requestNumber);
+                return supplier.get()
+                        .thenApply(response -> {
+                            // Pass through the successful response
+                            return response;
+                        })
+                        .exceptionally(throwable -> {
+                            // If this hedged request fails, fall back to the result of the first request
+                            logger.warn("Hedged request#{} failed: {}", requestNumber, throwable.getMessage());
+                            return firstRequest.join();
+                        })
+                        .join();
+            }, CompletableFuture.delayedExecutor(delay, TimeUnit.MILLISECONDS));
+
+            // Add the hedged request to the list of all requests
+            allRequests.add(hedgedRequest);
         }
 
-        // Clean up scheduled tasks when the final result completes
-        finalResult.whenComplete((result, ex) -> cancelScheduledTasks());
-
-        return finalResult;
-    }
-
-    /**
-     * Cancels all scheduled tasks that haven't been executed yet.
-     * This is called when a successful response is received or during shutdown.
-     */
-    private void cancelScheduledTasks() {
-        scheduledTasks.forEach(task -> {
-            if (!task.isDone() && !task.isCancelled()) {
-                logger.info("Cancelling scheduled task");
-                task.cancel(false); // false means don't interrupt if running
-            }
-        });
-        scheduledTasks.clear();
+        // Return a future that completes when any of the request completes successfully
+        return CompletableFuture.anyOf(allRequests.toArray(new CompletableFuture[0]))
+                .thenApply(result -> {
+                    // Cast the result to the expected type
+                    T response = (T) result;
+                    // Clean up by cancelling any remaining pending requests
+                    cancelPendingRequests(allRequests);
+                    return response;
+                });
     }
 
     /**
      * Cancels all pending requests that haven't completed yet.
-     * This is called when a successful response is received.
+     * This is called after receiving the first successful response to avoid unnecessary processing.
      *
-     * @param allRequests List of all requests (including the original and hedged requests)
+     * @param allRequests List of all CompletableFuture requests that were initiated
      */
     private void cancelPendingRequests(List<CompletableFuture<T>> allRequests) {
+        logger.info("Cancelling pending requests");
+        // Iterate through all requests and cancel those that haven't completed
         allRequests.forEach(request -> {
             if (!request.isDone()) {
-                logger.info("Cancelling pending request");
                 request.cancel(true);
             }
         });
-    }
-
-    /**
-     * Initiates a graceful shutdown of the handler with a timeout.
-     * Attempts to complete all currently executing tasks before shutting down.
-     *
-     * @param timeout The duration to wait for termination
-     * @param unit    The time unit of the timeout parameter
-     */
-    public void shutdownAndAwaitTermination(long timeout, TimeUnit unit) {
-        isShutdown = true;
-        try {
-            hedgingScheduler.shutdown();
-            if (!hedgingScheduler.awaitTermination(timeout, unit)) {
-                hedgingScheduler.shutdownNow();
-                if (!hedgingScheduler.awaitTermination(timeout, unit)) {
-                    logger.warn("Scheduler did not terminate");
-                }
-            }
-        } catch (InterruptedException ie) {
-            hedgingScheduler.shutdownNow();
-            Thread.currentThread().interrupt();
-        }
     }
 }
