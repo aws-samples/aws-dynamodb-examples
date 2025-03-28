@@ -95,9 +95,6 @@ public class DynamoDBHedgedQuery {
     // Clean up resources
     public void close() {
         try {
-            // First shutdown the hedging handler
-            hedgingHandler.shutdownAndAwaitTermination(5, TimeUnit.SECONDS);
-
             // Then close the DynamoDB client
             asyncClient.close();
         } catch (Exception e) {
