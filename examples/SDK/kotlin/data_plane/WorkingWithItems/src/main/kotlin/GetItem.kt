@@ -21,7 +21,7 @@ suspend fun getItem(
 
 suspend fun main() {
     val tableName = "YourTableName"
-    val key = mapOf("PrimaryKey" to AttributeValue.S("YourPrimaryKeyValue"))
+    val key = mapOf("id" to AttributeValue.S("1234"))
 
     getItem(tableName, key)
 }
