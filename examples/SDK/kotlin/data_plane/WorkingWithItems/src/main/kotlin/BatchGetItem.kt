@@ -39,8 +39,8 @@ suspend fun main() {
     val tableName = "YourTableName"
     val keys =
         listOf(
-            mapOf("PrimaryKey" to AttributeValue.S("YourPrimaryKeyValue1")),
-            mapOf("PrimaryKey" to AttributeValue.S("YourPrimaryKeyValue2")),
+            mapOf("id" to AttributeValue.S("12345")),
+            mapOf("id" to AttributeValue.S("1234")),
         )
 
     batchGetItem(tableName, keys)

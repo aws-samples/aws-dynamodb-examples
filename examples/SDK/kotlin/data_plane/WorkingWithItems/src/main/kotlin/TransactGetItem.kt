@@ -31,8 +31,8 @@ suspend fun main() {
     val tableName2 = "YourTableName2"
     val requests =
         mapOf(
-            tableName1 to mapOf("PrimaryKey1" to AttributeValue.S("YourPrimaryKeyValue1")),
-            tableName2 to mapOf("PrimaryKey2" to AttributeValue.S("YourPrimaryKeyValue2")),
+            tableName1 to mapOf("id" to AttributeValue.S("12345")),
+            tableName2 to mapOf("id" to AttributeValue.S("1234")),
         )
     transactGetItem(requests)
 }
