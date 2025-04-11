@@ -5,15 +5,17 @@ import time
 
 testpath = '/'
 
-testpath = '/query/Customers'
+testpath = '/query/Products'
+category = 'Street'
+# last_updated = '2024*'
+index = 'idx_category'
 
-region = 'North'
 
 post_data = {
     'queryRequest': {
-        'index': 'abc',
+        'index': index,
         'queryConditions': {
-            'region': region
+            'category': category
         }
     }
 }

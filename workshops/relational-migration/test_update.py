@@ -3,26 +3,21 @@ from app import app
 import json
 import time
 
-testpath = '/'
+testpath = '/update_record/Customers'
 
-# testpath = '/scan'
-# testpath = '/list_customers'
-testpath = '/new_record/Customers'
-
-epoch_time = int(time.time())
-cust_id = 'cust-' + str(epoch_time)
-cust_id = 'c225'
+cust_id = 'c223'
 
 post_data = {
-    'cust_id': cust_id,
-    'name': 'Standard',
-    'email': 'admin@bc.edu',
-    'phone': '555-1234',
-    'region': 'West',
-    'credit_rating': 554,
-    'last_updated': '2024-06-15'
+    'Key': {
+        'cust_id': cust_id
+    },
+    'updateAttributes' : {
+        'email': 'admin@bcect.edu',
+        'region': 'Northerneey',
+        'credit_rating': 122.3,
+        'last_updated': '2024-06-18'
+    }
 }
-
 
 def test_index():
     with Client(app) as client:

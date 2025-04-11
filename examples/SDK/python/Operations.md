@@ -18,7 +18,6 @@
 | PartiQL ExecuteTransaction                          |     ✅     |     |
 | PartiQL BatchExecuteStatement                       |     ✅     |     |
 | ConsistentRead                                      |     ✅     |     |
-| Count                                               |     ✅     |     |
 | FilterExpression                                    |     ✅     |     |
 | ProjectionExpression                                |     ✅     |     |
 | ReturnConsumedCapacity                              |     ✅     |     |
@@ -47,3 +46,11 @@
 | UpdateGlobalTable and UpdateGlobalTableSettings     |     ❌     |     |
 | UpdateTable On-Demand                               |     ✅     |     |
 | UpdateTable Provisioned                             |     ✅     |     |
+| Pagination                                          |     ❌     |     |
+| Query Begins With                                   |     ✅     |     |
+| Query Scan Count                                    |     ✅     |     |
+| Query Equals                                        |     ✅     |     |
+| Add GSI                                             |     ✅     |     |
+| Enable Continuous Backups                           |     ✅     |     |
+| PartiQL QueryBatchExecuteStatement                  |     ✅     |     |
+| PartiQL PaginatedSelectStatement                    |     ✅     |     |

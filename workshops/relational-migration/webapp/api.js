@@ -40,7 +40,8 @@ async function postApi(action, body) {
             "Content-Type": "application/json"
         },
     };
-
+    // console.log('*** request body');
+    // console.log(JSON.stringify(body, null, 2));
     const response = await fetch(fullApiPath, fetchRequest);
     return response;
 }
@@ -48,6 +49,8 @@ async function postApi(action, body) {
 function fillGrid(data, grid, table, tableMetadata) {
     if(!grid) return;
     clear(grid);
+    clear('grid_queryresult');
+    clear('sqlGrid');
 
     let all_cols = {};
     let cols_ordered = [];
@@ -55,7 +58,6 @@ function fillGrid(data, grid, table, tableMetadata) {
     let ks = JSON.parse(tableMetadata)['Table']['KeySchema'];
     let pkName = ks[0]['AttributeName'];
     let skName = ks.length > 1 ? ks[1]['AttributeName'] : null;
-
 
     data.forEach((item, index) => {
         const cols = Object.keys(item);
@@ -72,6 +74,7 @@ function fillGrid(data, grid, table, tableMetadata) {
     if(skName) {
         cols_ordered.push(skName);
     }
+
     Object.keys(all_cols).forEach((col) => {
         if(!cols_ordered.includes(col)) {
             cols_ordered.push(col);
@@ -80,39 +83,44 @@ function fillGrid(data, grid, table, tableMetadata) {
 
     log(null);
     let myGrid = document.getElementById(grid) || grid;
-    // myGrid.className = grid;
+
     if(data.length === 0) { log('0 records'); }
 
     data.forEach((item, index) => {
-        // const cols = Object.keys(item);
+        let itemKey = {'Key': {}};
 
-        let itemKey = {};
-
-        itemKey[pkName] =  item[pkName];
+        itemKey['Key'][pkName] =  item[pkName];
         if(skName) {
-            itemKey[skName] =  item[skName];
+            itemKey['Key'][skName] =  item[skName];
         }
-        // console.log(JSON.stringify(item, null, 2));
 
-        if(index === 1) { // show column names
+        if(index === 0) { // show column names
 
             const gridHeader = myGrid.createTHead();
             const row0 = gridHeader.insertRow(0);
             cols_ordered.forEach((col) => {
                 const cell0 = row0.insertCell(-1);
+                cell0.style.backgroundColor = '#aaa';
                 if(col === pkName) {
                     cell0.className = "PKheader";
+                    cell0.style.backgroundColor = '#7BD';
                 } else if (col === skName) {
                     cell0.className = "SKheader";
+                    cell0.style.backgroundColor = '#7D7';
                 } else {
                     cell0.className = "gridHeader";
                 }
+
                 cell0.innerHTML = col ;
             });
 
             const cellDH = row0.insertCell(-1);
+
             cellDH.className = "gridData";
-            cellDH.innerHTML = '';
+            cellDH.style.textAlign = "end";
+            cellDH.innerHTML = 'records: ' + data.length;
+            cellDH.style.backgroundColor = '#aaa';
+
         }
         const row = myGrid.insertRow(-1);
         cols_ordered.forEach((col) => {
@@ -128,6 +136,7 @@ function fillGrid(data, grid, table, tableMetadata) {
             cell1.innerHTML = item[col] || '';
         });
 
+
         const cellD = row.insertCell(-1);
         cellD.className = "gridData";
 
@@ -140,13 +149,15 @@ function fillGrid(data, grid, table, tableMetadata) {
         button.appendChild(document.createTextNode(buttonLabel));
         cellD.appendChild(button);
 
-        const button2 = document.createElement("button");
-        button2.className = "formSubmitButton";
+        if(document.getElementById('tab').value === 'CRUD') {
+            const button2 = document.createElement("button");
+            button2.className = "formSubmitButton";
 
-        button2.onclick = () => insertRowForm(table, itemKey, item);
+            button2.onclick = () => insertRowForm(table, itemKey, item);
 
-        button2.appendChild(document.createTextNode("update"));
-        cellD.appendChild(button2);
+            button2.appendChild(document.createTextNode("update"));
+            cellD.appendChild(button2);
+        }
     });
 }
 
@@ -234,7 +245,7 @@ function formatMetadata (mdata, table) {
     let foreignKeys = [];
 
     if(databaseEngine === 'DDB') {
-        return mdata;
+        return {'Table': mdata};
     } else {
         // console.log(JSON.stringify(mdata, null, 2));
         let tableMdata = mdata.filter((attr) => {
@@ -319,4 +330,31 @@ function clear(element) {
     if(myElement) {
         myElement.innerHTML = '';
     }
+}
+
+function orderResponseItem(item, tableMetadata,) {
+    let orderedItem = {};
+    // const tableMetadata = document.getElementById('tableMetadata').value;
+    let ks = tableMetadata['Table']['KeySchema'];
+    let pkName = ks[0]['AttributeName'];
+    let skName = ks.length > 1 ? ks[1]['AttributeName'] : null;
+    let all_cols = {};
+    let cols_ordered = [];
+
+    cols_ordered.push(pkName);
+    if(skName) {
+        cols_ordered.push(skName);
+    }
+
+    Object.keys(item).forEach((col) => {
+        if(!cols_ordered.includes(col)) {
+            cols_ordered.push(col);
+        }
+    });
+
+    cols_ordered.forEach((col) => {
+        orderedItem[col] = item[col];
+    });
+    console.log(typeof orderedItem);
+    return orderedItem;
 }

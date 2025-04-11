@@ -26,7 +26,7 @@ if "MYSQL_PASSWORD" in os.environ:
 
 job_file = 'job1.py'
 ddb_local = False
-ddb_region = 'us-east-2'
+ddb_region = 'us-west-2'
 
 if preview_only:
     print('Preview item data without writing to the table')
