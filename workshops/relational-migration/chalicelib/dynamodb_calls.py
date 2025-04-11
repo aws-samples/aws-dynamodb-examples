@@ -7,12 +7,13 @@ from botocore.exceptions import ClientError
 import os
 import time, datetime
 import json
+from decimal import Decimal
 
 deserializer = boto3.dynamodb.types.TypeDeserializer()
 serializer = boto3.dynamodb.types.TypeSerializer()
 
 return_limit = 20
-region = 'us-east-2'
+region = 'us-west-2'
 
 ddb = boto3.client('dynamodb', region_name=region)
 ddbr = boto3.resource('dynamodb', region_name=region)
@@ -40,15 +41,15 @@ def list_tables():
             response_dt = ddb.describe_table(TableName=table)
             table_metadata = json.loads(json.dumps(response_dt['Table'], default=serialize_datetime))
 
-            if 'GlobalSecondaryIndexes' in table_metadata:
-                gsis = table_metadata['GlobalSecondaryIndexes']
-                for gsi in gsis:
-                    table_names.append(table + '.' + gsi['IndexName'])
+#             if 'GlobalSecondaryIndexes' in table_metadata:
+#                 gsis = table_metadata['GlobalSecondaryIndexes']
+#                 for gsi in gsis:
+#                     table_names.append(table + '.' + gsi['IndexName'])
 
     except Exception as err:
         return {'Error': str(err)}
 
-    return table_names
+    return {'Tables': table_names}
 
 
 def desc_table(table):
@@ -85,27 +86,67 @@ def scan_table(table):
 
 
 def query(table, request):
+    # print(request)
+    query_request = {
+        'TableName': table,
+        'ScanIndexForward': True
+    }
+    if request['queryRequest']['index'] and request['queryRequest']['index'] != 'PRIMARY':
+        query_request['IndexName'] = request['queryRequest']['index']
 
-    keyList = list(request['queryRequest']['queryConditions'].keys())
-    sql_condition = keyList[0] + ' = %s'
-
-    if len(keyList) > 1:
-        sql_condition += ' AND ' + keyList[1] + ' = %s'
-
+    key_list = list(request['queryRequest']['queryConditions'].keys())
     key_vals = list(request['queryRequest']['queryConditions'].values())
+    key_conditions = ''
+    expression_attribute_names = {}
+    expression_attribute_values = {}
 
-    query_stmt = 'SELECT * FROM ' + table + ' WHERE ' + sql_condition
+    for i, attr_name in enumerate(key_list):
+        attr_val = key_vals[i]
+        if attr_val[0] in ['<', '>']:
+            key_conditions += "#K" + str(i) + ' ' +  attr_val[0] + ' :V' + str(i) + ' and '
+            expression_attribute_values[':V' + str(i)] = {'S': attr_val[1:]}
+        else:
+            if attr_val[-1] == '*':
+                key_conditions += "begins_with(#K" + str(i) + ', :V' + str(i) + ') and '
+                expression_attribute_values[':V' + str(i)] = {'S': attr_val[:-1]}
 
+            else:
+                key_conditions += "#K" + str(i) + ' = :V' + str(i) + ' and '
+                expression_attribute_values[':V' + str(i)] = {'S': attr_val}
 
-#     mysql_cur.execute(query_stmt, key_vals)
-#     result = mysql_cur.fetchall()
-#     dataset = format_sql_dataset(result)
+        expression_attribute_names["#K" + str(i)] = attr_name
 
-    return dataset
+    query_request['KeyConditionExpression'] = key_conditions[:-5]
+    query_request['ExpressionAttributeNames'] = expression_attribute_names
+    query_request['ExpressionAttributeValues'] = expression_attribute_values
+
+    print(json.dumps(query_request, indent=2))
+
+    response = None
+
+    try:
+#         table = ddb.Table(table)
+        response = ddb.query(**query_request)
+
+    except Exception as err:
+        return {'Error': json.dumps(err, indent=2)}
+
+    ddb_items = response['Items']
+    items = []
+
+    for item in ddb_items:
+        new_item = deserialize_ddb(item) # convert DynamoDB JSON to plain JSON
+        items.append(new_item)
+
+    return items
+    # return response['Items']
 
 
 def get_record(table, request):
     get_request = {'TableName': table}
+
+    get_request['ConsistentRead'] = False
+
     keyList = list(request['Key'].keys())
     pk_name = keyList[0]
     pk_value = request['Key'][keyList[0]]
@@ -122,34 +163,88 @@ def get_record(table, request):
     try:
         table = ddbr.Table(table)
         response = table.get_item(**get_request)
-        # print('response: ')
-        # print(response['Item'])
+        if 'Item' in response:
 
-        return response['Item']
+            return [response['Item']]
+        else:
+            return []
+
     except Exception as err:
-        return {'Error': str(err)}
+        return {'Error': json.dumps(err, indent=2)}
 
     items = []
 
 #     ddb_items = response['Items']
 #     print(ddb_items)
 
-    return response['Item']
+    return []
 
 
 def new_record(table, record):
+    try:
+        table = ddbr.Table(table)
+        request = {
+            "Item": record
+        }
+        response = table.put_item(**request)
+
+    except Exception as err:
+        return {'Error': json.dumps(err, indent=2)}
 
     return({"status":1})
 
 
 def update_record(table, request):
+    update_request = {}
+    update_request['Key'] = request['Key']
+    attrs = request['updateAttributes']
+    update_expression = 'set '
+    attr_names = {}
+    attr_values = {}
 
-    return({"status": 1})
+    for i, attrName in enumerate(attrs.keys()):
+        update_expression += '#K' + str(i) + ' = :V' + str(i) + ', '
+        attr_names['#K' + str(i)] = attrName
+        val = None
+        if isinstance(attrs[attrName], float):
+            val = Decimal(str(attrs[attrName]))
+        else:
+            val = attrs[attrName]
+
+        attr_values[':V' + str(i)] = val
+
+    update_expression = update_expression[:-2]
+
+    update_request['UpdateExpression'] = update_expression
+    update_request['ExpressionAttributeNames'] = attr_names
+    update_request['ExpressionAttributeValues'] = attr_values
+
+    try:
+        table = ddbr.Table(table)
+        response = table.update_item(**update_request)
+
+    except Exception as err:
+
+        return {'Error': json.dumps(err, indent=2)}
+
+    return {"status": 1}
 
 
-def delete_record(table, recordKey):
+def delete_record(table, request):
+    # request['ReturnConsumedCapacity'] = 'TOTAL'
+    request['ReturnValues'] = 'ALL_OLD'
+    delete_count = 0
 
-    return({"status":1})
+    try:
+        table = ddbr.Table(table)
+        response = table.delete_item(**request)
+        if 'Attributes' in response:
+            delete_count = 1
+
+    except Exception as err:
+        return {'Error': json.dumps(err, indent=2)}
+
+    return({"status":delete_count})
 
 
 def serialize_datetime(obj):
@@ -192,9 +287,18 @@ def dynamo_to_python(dynamo_object: dict) -> dict:
         for k, v in dynamo_object.items()
     }
 
+
 def python_to_dynamo(python_object: dict) -> dict:
     serializer = TypeSerializer()
     return {
         k: serializer.serialize(v)
         for k, v in python_object.items()
     }
+
+
+def is_number(s):
+    try:
+        float(s)
+        return True
+    except ValueError:
+        return False

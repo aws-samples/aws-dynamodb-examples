@@ -28,3 +28,4 @@ workshops/relational-migration/setenvd.sh
 workshops/relational-migration/source-tables/app_db.*
 
 **/.aws-sam/
+**.db

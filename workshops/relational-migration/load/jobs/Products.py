@@ -1,17 +1,23 @@
 import string
 import random
+from datetime import datetime
+from datetime import timedelta
 random.seed(9)
 
 def row_maker(tick):
 
     pk = str(tick).rjust(4, '0')
 
+    date_default = datetime(2025, 1, 1)
+    date_offset = random.randrange(0, 100) - 50
+    event_date = date_default + timedelta(days=date_offset)
+
     row = {
         'prod_id': pk,
         'name': products[tick-1],
         'category': categories[tick-1],
         'list_price': random.randrange(500, 8000, 100)-1,
-        'last_updated': '2024-06-02'
+        'last_updated': event_date.isoformat()
     }
 
     return row

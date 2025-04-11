@@ -5,14 +5,22 @@ import time
 
 testpath = '/'
 
-testpath = '/get_record/Products'
+# testpath = '/scan'
+# testpath = '/list_customers'
+testpath = '/new_record/Customers'
 
-prod_id = '0009'
+epoch_time = int(time.time())
+cust_id = 'cust-' + str(epoch_time)
+cust_id = 'c198'
 
 post_data = {
-    'Key': {
-        'prod_id': prod_id
-    }
+    'cust_id': cust_id,
+    'name': 'Standard',
+    'email': 'admin@bc.edu',
+    'phone': '555-1234',
+    'region': 'West',
+    'credit_rating': 198,
+    'last_updated': '2024-10-19'
 }
 
 

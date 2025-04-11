@@ -7,20 +7,19 @@ import json
 import mysql.connector
 
 
-migration_stage = 'dynamodb'
-# 'relational', 'dual-write', 'dynamodb']
+migration_stage = 'relational'
 
 if "MIGRATION_STAGE" in os.environ:
     migration_stage = os.environ['MIGRATION_STAGE']
 
-if migration_stage == 'relational' or migration_stage == 'dual-write':
+if migration_stage == 'relational':
     from chalicelib import mysql_calls as db
 else:
     from chalicelib import dynamodb_calls as db
 
 app = Chalice(app_name='migration')
 
-region = "us-east-2"
+region = "us-west-2"
 
 if "AWS_DEFAULT_REGION" in os.environ:
     region = os.environ['AWS_DEFAULT_REGION']
@@ -36,20 +35,19 @@ def ping():
 
     return return_status
 
-
 @app.route('/list_tables', methods=['GET'], cors=True)
 def list_tables():
     request = app.current_request
-#     print('*****')
-#     print(json.dumps(request.to_dict(), indent=2))
-
     return db.list_tables()
-
 
 @app.route('/desc_table/{table}', methods=['GET'], cors=True)
 def desc_table(table):
     return db.desc_table(table)
 
+@app.route('/desc_view/{view}', methods=['GET'], cors=True)
+def desc_view(view):
+    result = db.desc_view(view)
+    return result
 
 @app.route('/scan_table/{table}', methods=['GET'], cors=True)
 def desc_table(table):
@@ -61,7 +59,8 @@ def get_record(table):
 
 @app.route("/new_record/{table}", methods=['POST'], cors=True, content_types=['application/json'])
 def new_record(table):
-    return db.new_record(table, app.current_request.json_body)
+    result = db.new_record(table, app.current_request.json_body)
+    return result
 
 @app.route("/update_record/{table}", methods=['POST'], cors=True, content_types=['application/json'])
 def update_record(table):
