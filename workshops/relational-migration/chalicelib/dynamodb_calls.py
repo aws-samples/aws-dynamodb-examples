@@ -13,9 +13,10 @@ deserializer = boto3.dynamodb.types.TypeDeserializer()
 serializer = boto3.dynamodb.types.TypeSerializer()
 
 return_limit = 20
+region = os.getenv('AWS_DEFAULT_REGION','us-west-2')
 
-ddb = boto3.client('dynamodb')
-ddbr = boto3.resource('dynamodb')
+ddb = boto3.client('dynamodb', region_name=region)
+ddbr = boto3.resource('dynamodb', region_name=region)
 # resource vs client: https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/programming-with-python.html#programming-with-python-client-resource
 
 serializer = TypeSerializer()
