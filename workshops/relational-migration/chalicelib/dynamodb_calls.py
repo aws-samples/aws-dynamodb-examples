@@ -13,7 +13,7 @@ deserializer = boto3.dynamodb.types.TypeDeserializer()
 serializer = boto3.dynamodb.types.TypeSerializer()
 
 return_limit = 20
-region = 'us-west-2'
+region = os.getenv('AWS_DEFAULT_REGION','us-west-2')
 
 ddb = boto3.client('dynamodb', region_name=region)
 ddbr = boto3.resource('dynamodb', region_name=region)
