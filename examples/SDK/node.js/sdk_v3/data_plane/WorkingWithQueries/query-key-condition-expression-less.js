@@ -1,49 +1,42 @@
-const AWS = require('aws-sdk');
+import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import { DynamoDBDocumentClient, QueryCommand } from "@aws-sdk/lib-dynamodb";
 
-AWS.config.update({ region: "us-west-2" });
-
-const documentClient = new AWS.DynamoDB.DocumentClient();
+const client = new DynamoDBClient({ region: "us-west-2" });
+const docClient = DynamoDBDocumentClient.from(client);
 
 const query = async () => {
-	try {
-		const q = {
-			TableName: 'Thread',
-			IndexName: 'ForumName_Views-index',
-			KeyConditionExpression: '#fn = :name AND #views < :views',
-			ExpressionAttributeNames: {
-				'#fn': 'ForumName',
-				'#views': 'Views',
-			},
-			ExpressionAttributeValues: {
-				':name': "Amazon DynamoDB",
-				':views': 10
-			},
-		};
+  const params = {
+    TableName: "Thread",
+    IndexName: "ForumName_Views-index",
+    KeyConditionExpression: "#fn = :name AND #views < :views",
+    ExpressionAttributeNames: {
+      "#fn": "ForumName",
+      "#views": "Views",
+    },
+    ExpressionAttributeValues: {
+      ":name": "Amazon DynamoDB",
+      ":views": 10
+    },
+  };
 
-		const response = await documentClient.query(q).promise();
+  try {
+    // Send the query command
+    const response = await docClient.send(new QueryCommand(params));
 
-		if (response.LastEvaluatedKey) {
-			const message = `
-				Not all items have been retrieved by this query.
-				At least one another request is required to get all available items.
-				The last evaluated key corresponds to:
-				${JSON.stringify(response.LastEvaluatedKey)}.
-			`.replace(/\s+/gm, ' ');
+    // Check if there are more results to retrieve
+    if (response.LastEvaluatedKey) {
+      console.log(
+        `Not all items have been retrieved by this query. At least one another request is required to get all available items. The last evaluated key corresponds to ${JSON.stringify(response.LastEvaluatedKey)}.`
+      );
+    }
 
-			console.log(message);
-		}
-
-		return response;
-	} catch (error) {
-		throw new Error(JSON.stringify(error, null, 2));
-	}
+    return response;
+  } catch (error) {
+    console.error("Error querying DynamoDB:", error);
+    throw error;
+  }
 };
 
-(async () => {
-	try {
-		const data = await query();
-		console.log("Query succeeded:", JSON.stringify(data, null, 2));
-	} catch (error) {
-		console.error(error);
-	}
-})();
+query()
+  .then((response) => console.log(`Query response: ${JSON.stringify(response, null, 2)}`))
+  .catch((error) => console.error(JSON.stringify(error, null, 2)));
