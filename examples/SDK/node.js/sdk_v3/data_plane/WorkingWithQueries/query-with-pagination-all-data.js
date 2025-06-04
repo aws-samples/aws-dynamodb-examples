@@ -1,21 +1,19 @@
-/**
- * This example uses an extended version of the ProductCatalog data set
- * https://gist.github.com/jprivillaso/7063b5e082ed2f553b697d40c60c473e
- */
-const AWS = require("aws-sdk");
+// This example uses an extended version of the ProductCatalog data set
+// https://gist.github.com/jprivillaso/7063b5e082ed2f553b697d40c60c473e
 
-AWS.config.update({ region: "us-west-2" });
+import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import { DynamoDBDocumentClient, QueryCommand } from "@aws-sdk/lib-dynamodb";
 
-const documentClient = new AWS.DynamoDB.DocumentClient();
+const client = new DynamoDBClient({ region: "us-west-2" });
+const docClient = DynamoDBDocumentClient.from(client);
 
 async function* getDataIterator() {
-  let done = false;
+  let isComplete = false;
 
-  /**
-   * In this example, the pageSize is not needed. If you have so much data,
-   * DynamoDB will return the LastEvaluatedKey and then you should continue
-   * query again until the LastEvaluatedKey returned is null
-   */
+  // In this example, the pageSize is not needed. If you have so much data,
+  // DynamoDB will return the LastEvaluatedKey and then you should continue
+  // query again until the LastEvaluatedKey returned is null
+
   const params = {
     TableName: "Thread",
     KeyConditionExpression: "#forumName = :forumName",
@@ -28,13 +26,11 @@ async function* getDataIterator() {
     ScanIndexForward: true, // Default value is true
   };
 
-  while (!done) {
-    const { Items, LastEvaluatedKey } = await documentClient
-      .query(params)
-      .promise();
+  while (!isComplete) {
+    const { Items, LastEvaluatedKey } = await docClient.send(new QueryCommand(params));
 
     if (!LastEvaluatedKey) {
-      done = true;
+      isComplete = true;
     } else {
       params.ExclusiveStartKey = LastEvaluatedKey;
     }
@@ -54,20 +50,11 @@ const queryAllData = async () => {
     }
     return allData;
   } catch (error) {
-    throw new Error(JSON.stringify(error, null, 2));
+    console.error("Error querying DynamoDB:", error);
+    throw error;
   }
 };
 
-(async () => {
-  try {
-    /**
-     * If you need to query all the data for any reason, you will need to continue
-     * querying until the LastEvaluatedKey returned is null
-     */
-    const allData = await queryAllData();
-    console.log("Should contain all the data ---");
-    console.log("Query succeeded:", JSON.stringify(allData, null, 2));
-  } catch (error) {
-    console.error(error);
-  }
-})();
+queryAllData()
+  .then((response) => console.log(`All data: ${JSON.stringify(response, null, 2)}`))
+  .catch((error) => console.error(JSON.stringify(error, null, 2)));

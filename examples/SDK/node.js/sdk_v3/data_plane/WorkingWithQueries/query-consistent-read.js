@@ -1,31 +1,41 @@
-const AWS = require("aws-sdk");
+import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import { DynamoDBDocumentClient, QueryCommand } from "@aws-sdk/lib-dynamodb";
 
-const documentClient = new AWS.DynamoDB.DocumentClient({ region: "us-west-2" });
+const client = new DynamoDBClient({ region: "us-west-2" });
+const docClient = DynamoDBDocumentClient.from(client);
 
 const query = async () => {
-  const response = await documentClient
-    .query({
-      TableName: "Music",
-      KeyConditionExpression: "#pk = :pk",
-      ExpressionAttributeNames: {
-        "#pk": "Artist",
-      },
-      ExpressionAttributeValues: {
-        ":pk": "Michael Jackson",
-      },
-      ConsistentRead: true,
-    })
-    .promise();
+  // Define query parameters
+  const params = {
+    TableName: "Music",
+    KeyConditionExpression: "#pk = :pk",
+    ExpressionAttributeNames: {
+      "#pk": "Artist",
+    },
+    ExpressionAttributeValues: {
+      ":pk": "Michael Jackson", // No need for { S: "Michael Jackson" }
+    },
+    ConsistentRead: true,
+  };
 
-  if (response.LastEvaluatedKey) {
-    console.log(
-      `Not all items have been retrieved by this query. At least one another request is required to get all available items. The last evaluated key corresponds to ${JSON.stringify(
-        response.LastEvaluatedKey
-      )}.`
-    );
+  try {
+    // Send the query command
+    const response = await docClient.send(new QueryCommand(params));
+
+    // Check if there are more results to retrieve
+    if (response.LastEvaluatedKey) {
+      console.log(
+        `Not all items have been retrieved by this query. At least one another request is required to get all available items. The last evaluated key corresponds to ${JSON.stringify(response.LastEvaluatedKey)}.`
+      );
+    }
+
+    return response;
+  } catch (error) {
+    console.error("Error querying DynamoDB:", error);
+    throw error;
   }
-
-  console.log(`Query response: ${JSON.stringify(response, null, 2)}`);
 };
 
-query().catch((error) => console.error(JSON.stringify(error, null, 2)));
+query()
+  .then((response) => console.log(`Query response: ${JSON.stringify(response, null, 2)}`))
+  .catch((error) => console.error(JSON.stringify(error, null, 2)));
