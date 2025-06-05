@@ -7,6 +7,7 @@ import software.amazon.awssdk.core.exception.SdkException;
 import software.amazon.awssdk.services.sts.StsClient;
 import software.amazon.awssdk.services.sts.model.GetCallerIdentityRequest;
 import software.amazon.awssdk.services.sts.model.GetCallerIdentityResponse;
+import software.amazon.awssdk.regions.Region;
 
 
 import java.util.Arrays;
@@ -22,13 +23,14 @@ public class LoadMaxValues {
     private static AttributeValue MAX_SORT_KEY_VALUE_B;
 
     private static DynamoDbClient dynamoDb;
+    private static Region awsRegion;
 
     public static void main(String[] args) {
 
         String tableName;
         String region;
 
-        if (args.length != 2 || !args[2].equals("--region")) {
+        if (args.length != 2 || !args[0].equals("--region")) {
             System.out.println("Error: --region param not passed, checking AWS_DEFAULT_REGION environment variable.");
 
             // If they didn't pass the table name and region on the command line, see if they
@@ -38,32 +40,31 @@ public class LoadMaxValues {
             if (region == null || region.isEmpty()) {
                 System.out.println("Error: AWS_DEFAULT_REGION environment variable is not set.");
                 System.exit(1);
-            } else {
-                software.amazon.awssdk.regions.Region awsRegion = null;
-    
-                try {
-                    awsRegion = software.amazon.awssdk.regions.Region.of(region);
-                } catch (IllegalArgumentException e) {
-                    System.out.println("Error: Invalid AWS region specified in AWS_DEFAULT_REGION.");
-                    System.exit(1);
-                }
-    
-                dynamoDb = DynamoDbClient.builder().region(awsRegion).build();
-    
-                // Validate region by making an API call to AWS STS service
-                try {
-                    StsClient stsClient = StsClient.builder().region(awsRegion).build();
-                    GetCallerIdentityRequest request = GetCallerIdentityRequest.builder().build();
-                    GetCallerIdentityResponse response = stsClient.getCallerIdentity(request);
-                    System.out.println("Region is valid. Account ID: " + response.account());
-                } catch (SdkException e) {
-                    System.out.println("Error: Unable to validate region. Check your AWS credentials and region.");
-                    System.exit(1);
-                }
             } 
         } else {
-            region = args[1];
+            region = args[1];    
         }
+
+        try {
+            awsRegion = Region.of(region);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Error: Invalid AWS region specified in AWS_DEFAULT_REGION.");
+            System.exit(1);
+        }
+
+        // Validate region by making an API call to AWS STS service
+        try {
+            StsClient stsClient = StsClient.builder().region(awsRegion).build();
+            GetCallerIdentityRequest request = GetCallerIdentityRequest.builder().build();
+            GetCallerIdentityResponse response = stsClient.getCallerIdentity(request);
+            System.out.println("Region is valid. Account ID: " + response.account());
+        } catch (SdkException e) {
+            System.out.println("Error: Unable to validate region. Check your AWS credentials and region.");
+            System.exit(1);
+        }
+
+        Initialize DynamoDB client.
+        dynamoDb = DynamoDbClient.builder().region(awsRegion).build();
     
         // We need to create a string that is encoded in UTF-8 to 1024 bytes of the highest
         // code point.  This is 256 code points.  Each code point is a 4 byte value in UTF-8.

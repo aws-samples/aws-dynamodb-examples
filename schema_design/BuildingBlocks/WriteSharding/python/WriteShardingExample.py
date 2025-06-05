@@ -2,16 +2,25 @@
 
 from __future__ import print_function # Python 2/3 compatibility
 import boto3, random, json
+import argparse
 
 from boto3.dynamodb.conditions import Key
 
 from botocore.exceptions import ClientError
 
-dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+# Parse command line arguments
+parser = argparse.ArgumentParser(description='Write sharding example')
+parser.add_argument('--region', type=str, default='us-east-1', help='AWS region name (default: us-east-1)')
+parser.add_argument('--shard-count', type=int, default=2, help='Number of write shards to use (default: 2)')
+args = parser.parse_args()
+
+# Initialize DynamoDB with the provided region
+dynamodb = boto3.resource('dynamodb', region_name=args.region)
 
 table = dynamodb.Table('ExampleTable')
 
-write_shard_count = 2
+# Use the provided shard count
+write_shard_count = args.shard_count
 
 items = [
     {
