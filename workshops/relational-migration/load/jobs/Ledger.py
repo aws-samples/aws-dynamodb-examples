@@ -23,7 +23,7 @@ def row_maker(tick):
     row = {
         'cust_id': str(ord_id),
         'event_id': ord_line_id,
-        'event_date': event_date
+        'event_date': event_date,
         'account': '1000',
         'prod_id': prod_id,
         'credit': random.randrange(-50,100),
