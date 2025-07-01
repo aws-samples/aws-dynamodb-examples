@@ -1,0 +1,19 @@
+{
+  "name": "ddb-global-mrsc-example",
+  "version": "1.0.0",
+  "description": "DynamoDB Global Table with Multi-Region Strong Consistency",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "tsc",
+    "deploy": "cdk deploy",
+    "synth": "cdk synth"
+  },
+  "dependencies": {
+    "aws-cdk-lib": "2.188.0",
+    "constructs": "^10.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "typescript": "^4.9.0"
+  }
+}
