@@ -1,0 +1,17 @@
+{
+  "tableName": "us-global-table",
+  "regions": [
+    {
+      "region": "us-east-1",
+      "witness": false
+    },
+    {
+      "region": "us-east-2", 
+      "witness": false
+    },
+    {
+      "region": "us-west-2",
+      "witness": true
+    }
+  ]
+}
