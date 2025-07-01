@@ -1,0 +1,17 @@
+{
+  "tableName": "ap-global-table",
+  "regions": [
+    {
+      "region": "ap-northeast-1",
+      "witness": false
+    },
+    {
+      "region": "ap-northeast-2", 
+      "witness": false
+    },
+    {
+      "region": "ap-northeast-3",
+      "witness": true
+    }
+  ]
+}
