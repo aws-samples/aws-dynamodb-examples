@@ -19,6 +19,7 @@
     "test": "jest --config=src/test-configs/jest.unit.config.js",
     "test:unit": "jest --config=src/test-configs/jest.unit.config.js",
     "test:integration": "jest --config=src/test-configs/jest.integration.config.js",
+    "pretest:e2e": "npm run build",
     "test:e2e": "jest --config=src/test-configs/jest.e2e.config.js",
     "test:all": "npm run test:unit && npm run test:integration && npm run test:e2e && npm run test:report",
     "test:watch": "jest --config=src/test-configs/jest.unit.config.js --watch",
@@ -32,8 +33,9 @@
     "db:reset": "ts-node src/database/cli.ts reset",
     "db:clear": "ts-node src/database/cli.ts clear",
     "db:test": "ts-node src/database/cli.ts test",
-    "load-test": "ts-node src/load-testing/cli.ts",
-    "load-test:build": "tsc && node dist/load-testing/cli.js"
+    "preload-test": "npm run build",
+    "load-test": "node dist/load-testing/cli.js",
+    "load-test:dev": "ts-node src/load-testing/cli.ts"
   },
   "keywords": [
     "ecommerce",
