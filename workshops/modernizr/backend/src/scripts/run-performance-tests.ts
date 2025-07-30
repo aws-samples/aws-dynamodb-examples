@@ -1,6 +1,6 @@
 #!/usr/bin/env ts-node
 
-import { runAPILoadTests } from '../tests/load/load-test';
+import { quickStart } from '../load-testing';
 import { performanceMonitor } from '../utils/performanceMonitor';
 
 async function runPerformanceTestSuite(): Promise<void> {
@@ -36,7 +36,8 @@ async function runPerformanceTestSuite(): Promise<void> {
     console.log('\n🌐 2. API Load Tests');
     console.log('-'.repeat(40));
     
-    await runAPILoadTests();
+    console.log('Load testing system available - use `npm run load-test` for detailed load testing');
+    await quickStart({ userCount: 5, duration: 1 });
 
     // 3. Memory and Performance Analysis
     console.log('\n💾 3. Memory and Performance Analysis');
