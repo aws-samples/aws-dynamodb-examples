@@ -1,5 +1,5 @@
 import { CategoryRepository } from '../../../repositories/CategoryRepository';
-import { pool } from '../../../config/database';
+import { pool, executeWithTracking } from '../../../config/database';
 import { CreateCategoryRequest, UpdateCategoryRequest } from '../../../models/Category';
 
 // Mock the database pool
@@ -7,9 +7,11 @@ jest.mock('../../../config/database', () => ({
   pool: {
     execute: jest.fn(),
   },
+  executeWithTracking: jest.fn(),
 }));
 
 const mockPool = pool as jest.Mocked<typeof pool>;
+const mockExecuteWithTracking = executeWithTracking as jest.MockedFunction<typeof executeWithTracking>;
 
 describe('CategoryRepository', () => {
   let categoryRepository: CategoryRepository;
@@ -17,6 +19,12 @@ describe('CategoryRepository', () => {
   beforeEach(() => {
     categoryRepository = new CategoryRepository();
     jest.clearAllMocks();
+    
+    // Default mock for executeWithTracking
+    mockExecuteWithTracking.mockResolvedValue({
+      results: [],
+      executionTime: 10
+    });
   });
 
   describe('findAll', () => {
@@ -36,7 +44,10 @@ describe('CategoryRepository', () => {
         },
       ];
 
-      mockPool.execute.mockResolvedValueOnce([mockCategories as any, []]);
+      mockExecuteWithTracking.mockResolvedValueOnce({
+        results: mockCategories as any,
+        executionTime: 10
+      });
 
       const result = await categoryRepository.findAll();
 
@@ -56,7 +67,10 @@ describe('CategoryRepository', () => {
     });
 
     it('should return empty array when no categories exist', async () => {
-      mockPool.execute.mockResolvedValueOnce([[], []]);
+      mockExecuteWithTracking.mockResolvedValueOnce({
+        results: [],
+        executionTime: 5
+      });
 
       const result = await categoryRepository.findAll();
 
@@ -73,7 +87,10 @@ describe('CategoryRepository', () => {
         created_at: new Date(),
       };
 
-      mockPool.execute.mockResolvedValueOnce([[mockCategory] as any, []]);
+      mockExecuteWithTracking.mockResolvedValueOnce({
+        results: [mockCategory],
+        executionTime: 10
+      });
 
       const result = await categoryRepository.findById(1);
 
@@ -86,7 +103,10 @@ describe('CategoryRepository', () => {
     });
 
     it('should return null when category not found', async () => {
-      mockPool.execute.mockResolvedValueOnce([[], []]);
+      mockExecuteWithTracking.mockResolvedValueOnce({
+        results: [],
+        executionTime: 10
+      });
 
       const result = await categoryRepository.findById(999);
 
@@ -147,9 +167,14 @@ describe('CategoryRepository', () => {
         created_at: new Date(),
       };
 
-      mockPool.execute
-        .mockResolvedValueOnce([mockResult as any, []]) // INSERT query
-        .mockResolvedValueOnce([[mockCreatedCategory] as any, []]); // SELECT query
+      // Mock the INSERT query (pool.execute)
+      mockPool.execute.mockResolvedValueOnce([mockResult as any, []]);
+      
+      // Mock the findById call (executeWithTracking)
+      mockExecuteWithTracking.mockResolvedValueOnce({
+        results: [mockCreatedCategory],
+        executionTime: 10
+      });
 
       const result = await categoryRepository.create(categoryData);
 
@@ -175,9 +200,14 @@ describe('CategoryRepository', () => {
         created_at: new Date(),
       };
 
-      mockPool.execute
-        .mockResolvedValueOnce([mockResult as any, []])
-        .mockResolvedValueOnce([[mockCreatedCategory] as any, []]);
+      // Mock the INSERT query (pool.execute)
+      mockPool.execute.mockResolvedValueOnce([mockResult as any, []]);
+      
+      // Mock the findById call (executeWithTracking)
+      mockExecuteWithTracking.mockResolvedValueOnce({
+        results: [mockCreatedCategory],
+        executionTime: 10
+      });
 
       const result = await categoryRepository.create(categoryData);
 
@@ -198,9 +228,14 @@ describe('CategoryRepository', () => {
         created_at: new Date(),
       };
 
-      mockPool.execute
-        .mockResolvedValueOnce([{ affectedRows: 1 } as any, []]) // UPDATE query
-        .mockResolvedValueOnce([[mockUpdatedCategory] as any, []]); // SELECT query
+      // Mock the UPDATE query (pool.execute)
+      mockPool.execute.mockResolvedValueOnce([{ affectedRows: 1 } as any, []]);
+      
+      // Mock the findById call (executeWithTracking)
+      mockExecuteWithTracking.mockResolvedValueOnce({
+        results: [mockUpdatedCategory],
+        executionTime: 10
+      });
 
       const result = await categoryRepository.update(1, updateData);
 
@@ -220,7 +255,10 @@ describe('CategoryRepository', () => {
         created_at: new Date(),
       };
 
-      mockPool.execute.mockResolvedValueOnce([[mockCategory] as any, []]);
+      mockExecuteWithTracking.mockResolvedValueOnce({
+        results: [mockCategory],
+        executionTime: 10
+      });
 
       const result = await categoryRepository.update(1, {});
 
@@ -360,9 +398,16 @@ describe('CategoryRepository', () => {
         created_at: new Date(),
       };
 
-      mockPool.execute
-        .mockResolvedValueOnce([[mockChildCategory] as any, []]) // Child category
-        .mockResolvedValueOnce([[mockRootCategory] as any, []]); // Root category
+      // Mock the findById calls in sequence (child first, then parent)
+      mockExecuteWithTracking
+        .mockResolvedValueOnce({
+          results: [mockChildCategory],
+          executionTime: 10
+        }) // First call: findById(2) - child category
+        .mockResolvedValueOnce({
+          results: [mockRootCategory],
+          executionTime: 10
+        }); // Second call: findById(1) - root category
 
       const result = await categoryRepository.getCategoryPath(2);
 
@@ -379,7 +424,10 @@ describe('CategoryRepository', () => {
         created_at: new Date(),
       };
 
-      mockPool.execute.mockResolvedValueOnce([[mockRootCategory] as any, []]);
+      mockExecuteWithTracking.mockResolvedValueOnce({
+        results: [mockRootCategory],
+        executionTime: 10
+      });
 
       const result = await categoryRepository.getCategoryPath(1);
 

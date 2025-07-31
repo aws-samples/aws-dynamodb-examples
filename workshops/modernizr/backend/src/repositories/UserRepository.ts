@@ -61,7 +61,7 @@ export class UserRepository {
   async create(userData: CreateUserRequest & { password_hash: string }): Promise<User> {
     try {
       const [result] = await pool.execute<ResultSetHeader>(
-        `INSERT INTO users (username, email, password_hash, first_name, last_name, role) 
+        `INSERT INTO users (username, email, password_hash, first_name, last_name, is_seller) 
          VALUES (?, ?, ?, ?, ?, ?)`,
         [
           userData.username,
@@ -69,7 +69,7 @@ export class UserRepository {
           userData.password_hash,
           userData.first_name || '',
           userData.last_name || '',
-          'customer' // Default to customer role
+          0 // Default to not seller (0 = false)
         ]
       );
       
@@ -129,8 +129,8 @@ export class UserRepository {
   async upgradeToSeller(id: number): Promise<User | null> {
     try {
       await pool.execute(
-        'UPDATE users SET role = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
-        ['seller', id]
+        'UPDATE users SET is_seller = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+        [1, id] // Set is_seller to 1 (true)
       );
       
       return this.findById(id);
@@ -142,7 +142,7 @@ export class UserRepository {
 
   /**
    * Map database row to User model
-   * Converts 'role' field to 'is_seller' boolean
+   * Converts 'is_seller' tinyint to boolean
    */
   private mapDbRowToUser(row: any): User {
     return {
@@ -152,7 +152,7 @@ export class UserRepository {
       password_hash: row.password_hash,
       first_name: row.first_name,
       last_name: row.last_name,
-      is_seller: row.role === 'seller',
+      is_seller: Boolean(row.is_seller), // Convert tinyint to boolean
       created_at: row.created_at,
       updated_at: row.updated_at
     };

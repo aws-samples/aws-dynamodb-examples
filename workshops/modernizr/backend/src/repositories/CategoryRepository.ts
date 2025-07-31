@@ -1,4 +1,4 @@
-import { pool } from '../config/database';
+import { pool, executeWithTracking } from '../config/database';
 import { Category, CreateCategoryRequest, UpdateCategoryRequest } from '../models/Category';
 import { RowDataPacket, ResultSetHeader } from 'mysql2';
 
@@ -7,11 +7,11 @@ export class CategoryRepository {
    * Get all categories from the database
    */
   async findAll(): Promise<Category[]> {
-    const [rows] = await pool.execute<RowDataPacket[]>(
+    const { results: rows } = await executeWithTracking(
       'SELECT id, name, parent_id, created_at FROM categories ORDER BY name'
     );
     
-    return rows.map(row => ({
+    return (rows as any[]).map(row => ({
       id: row.id,
       name: row.name,
       parent_id: row.parent_id || undefined,
@@ -23,16 +23,16 @@ export class CategoryRepository {
    * Get a category by ID
    */
   async findById(id: number): Promise<Category | null> {
-    const [rows] = await pool.execute<RowDataPacket[]>(
+    const { results: rows } = await executeWithTracking(
       'SELECT id, name, parent_id, created_at FROM categories WHERE id = ?',
       [id]
     );
 
-    if (rows.length === 0) {
+    if ((rows as any[]).length === 0) {
       return null;
     }
 
-    const row = rows[0];
+    const row = (rows as any[])[0];
     return {
       id: row.id,
       name: row.name,

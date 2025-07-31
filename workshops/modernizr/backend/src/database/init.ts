@@ -15,7 +15,7 @@ export async function initializeDatabase(): Promise<void> {
       password: databaseConfig.password,
     });
     
-    await initConnection.execute('CREATE DATABASE IF NOT EXISTS online_shopping_store');
+    await initConnection.execute(`CREATE DATABASE IF NOT EXISTS \`${databaseConfig.database}\``);
     await initConnection.end();
     
     // Now use the regular pool to create tables
@@ -38,7 +38,7 @@ export async function initializeDatabase(): Promise<void> {
       .filter(statement => {
         if (statement.length === 0) return false;
         if (statement.startsWith('CREATE DATABASE')) return false;
-        if (statement.trim() === 'USE online_shopping_store') return false;
+        if (statement.trim().startsWith('USE ')) return false;
         return true;
       });
     
@@ -74,7 +74,7 @@ export async function dropDatabase(): Promise<void> {
       password: databaseConfig.password,
     });
     
-    await dropConnection.execute('DROP DATABASE IF EXISTS online_shopping_store');
+    await dropConnection.execute(`DROP DATABASE IF EXISTS \`${databaseConfig.database}\``);
     await dropConnection.end();
     
     console.log('Database dropped successfully');

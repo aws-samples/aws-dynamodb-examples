@@ -132,7 +132,7 @@ export class DatabaseTestHelper {
     
     // Create tables in dependency order
     
-    // Users table (with role column as expected by code)
+    // Users table (with is_seller column to match actual schema)
     await pool.execute(`
       CREATE TABLE users (
         id INT PRIMARY KEY AUTO_INCREMENT,
@@ -141,13 +141,13 @@ export class DatabaseTestHelper {
         password_hash VARCHAR(255) NOT NULL,
         first_name VARCHAR(50) NOT NULL DEFAULT '',
         last_name VARCHAR(50) NOT NULL DEFAULT '',
-        role ENUM('customer', 'seller') DEFAULT 'customer',
+        is_seller BOOLEAN DEFAULT FALSE,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
         
         INDEX idx_username (username),
         INDEX idx_email (email),
-        INDEX idx_role (role)
+        INDEX idx_is_seller (is_seller)
       )
     `);
 
@@ -282,7 +282,7 @@ export class DatabaseTestHelper {
     };
 
     const [result] = await pool.execute(
-      `INSERT INTO users (username, email, password_hash, first_name, last_name, role) 
+      `INSERT INTO users (username, email, password_hash, first_name, last_name, is_seller) 
        VALUES (?, ?, ?, ?, ?, ?)`,
       [
         defaultUser.username,
@@ -290,7 +290,7 @@ export class DatabaseTestHelper {
         defaultUser.password_hash,
         defaultUser.first_name,
         defaultUser.last_name,
-        defaultUser.is_seller ? 'seller' : 'customer'
+        defaultUser.is_seller ? 1 : 0
       ]
     );
 

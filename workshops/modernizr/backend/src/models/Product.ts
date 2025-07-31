@@ -74,7 +74,7 @@ export interface ProductListApiResponse {
 }
 
 // Helper function to convert database row to Product response
-export function toProductResponse(product: ProductWithDetails): ProductWithDetails {
+export function toProductResponse(product: ProductWithDetails): any {
   return {
     id: product.id,
     seller_id: product.seller_id,
@@ -83,7 +83,10 @@ export function toProductResponse(product: ProductWithDetails): ProductWithDetai
     description: product.description,
     price: Number(product.price),
     inventory_quantity: product.inventory_quantity,
-    category_name: product.category_name,
+    category: product.category_name ? {
+      id: product.category_id,
+      name: product.category_name
+    } : undefined,
     seller_username: product.seller_username,
     seller_email: product.seller_email,
     created_at: product.created_at,

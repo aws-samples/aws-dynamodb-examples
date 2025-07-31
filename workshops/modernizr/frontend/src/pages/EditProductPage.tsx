@@ -15,10 +15,10 @@ interface Product {
   name: string;
   description: string;
   price: number;
-  stock: number;
+  inventory_quantity: number;
   imageUrl?: string;
-  categoryId: number;
-  sellerId: number;
+  category_id: number;
+  seller_id: number;
 }
 
 interface ProductFormData {
@@ -79,7 +79,7 @@ const EditProductPage: React.FC = () => {
         const productData = response.data.data.product;
         
         // Check if current user owns this product
-        if (productData.sellerId !== user?.id) {
+        if (productData.seller_id !== user?.id) {
           setError('You can only edit your own products');
           return;
         }
@@ -89,8 +89,8 @@ const EditProductPage: React.FC = () => {
           name: productData.name,
           description: productData.description,
           price: productData.price.toString(),
-          stock: productData.stock.toString(),
-          categoryId: productData.categoryId.toString(),
+          stock: productData.inventory_quantity.toString(),
+          categoryId: productData.category_id.toString(),
           imageUrl: productData.imageUrl || ''
         });
       }
@@ -196,8 +196,8 @@ const EditProductPage: React.FC = () => {
         name: formData.name.trim(),
         description: formData.description.trim(),
         price: parseFloat(formData.price),
-        stock: parseInt(formData.stock),
-        categoryId: parseInt(formData.categoryId),
+        inventory_quantity: parseInt(formData.stock),
+        category_id: parseInt(formData.categoryId),
         imageUrl: formData.imageUrl.trim() || undefined
       };
 

@@ -147,8 +147,8 @@ const CreateProductPage: React.FC = () => {
         name: formData.name.trim(),
         description: formData.description.trim(),
         price: parseFloat(formData.price),
-        stock: parseInt(formData.stock),
-        categoryId: parseInt(formData.categoryId),
+        inventory_quantity: parseInt(formData.stock),
+        category_id: parseInt(formData.categoryId),
         imageUrl: formData.imageUrl.trim() || undefined
       };
 
