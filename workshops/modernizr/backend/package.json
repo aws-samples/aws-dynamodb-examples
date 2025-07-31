@@ -18,8 +18,9 @@
     "lint:fix": "eslint src/**/*.ts --fix",
     "test": "jest --config=src/test-configs/jest.unit.config.js",
     "test:unit": "jest --config=src/test-configs/jest.unit.config.js",
+    "pretest:integration": "npm run db:setup-integration",
     "test:integration": "jest --config=src/test-configs/jest.integration.config.js",
-    "pretest:e2e": "npm run build",
+    "pretest:e2e": "npm run build && npm run db:setup-e2e",
     "test:e2e": "jest --config=src/test-configs/jest.e2e.config.js",
     "test:all": "npm run test:unit && npm run test:integration && npm run test:e2e && npm run test:report",
     "test:watch": "jest --config=src/test-configs/jest.unit.config.js --watch",
@@ -28,14 +29,12 @@
     "test:report": "node src/test-configs/test-helpers/combined-test-reporter.js",
     "test:report:open": "npm run test:report && open test-results/combined/dashboard.html",
     "db:init": "ts-node src/database/cli.ts init",
-    "db:setup-e2e": "node scripts/setup-e2e-database.js",
+    "db:setup-integration": "DB_NAME=online_shopping_store_test_integration npm run db:init",
+    "db:setup-e2e": "DB_NAME=online_shopping_store_test_e2e npm run db:init",
     "db:seed": "ts-node src/database/cli.ts seed",
     "db:reset": "ts-node src/database/cli.ts reset",
     "db:clear": "ts-node src/database/cli.ts clear",
-    "db:test": "ts-node src/database/cli.ts test",
-    "preload-test": "npm run build",
-    "load-test": "node dist/load-testing/cli.js",
-    "load-test:dev": "ts-node src/load-testing/cli.ts"
+    "db:test": "ts-node src/database/cli.ts test"
   },
   "keywords": [
     "ecommerce",

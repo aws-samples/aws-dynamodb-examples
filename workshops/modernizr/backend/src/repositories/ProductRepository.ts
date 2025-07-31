@@ -1,4 +1,4 @@
-import { pool } from '../config/database';
+import { pool, executeWithTracking } from '../config/database';
 import { 
   Product, 
   ProductWithDetails, 
@@ -60,10 +60,8 @@ export class ProductRepository {
    * Get product by ID
    */
   async getProductById(productId: number): Promise<Product | null> {
-    const connection = await pool.getConnection();
-    
     try {
-      const [rows] = await connection.execute(
+      const { results: rows } = await executeWithTracking(
         `SELECT 
            id,
            seller_id,
@@ -81,8 +79,9 @@ export class ProductRepository {
       const products = rows as Product[];
       return products.length > 0 ? products[0] : null;
       
-    } finally {
-      connection.release();
+    } catch (error) {
+      console.error('Error getting product by ID:', error);
+      throw error;
     }
   }
   
@@ -233,16 +232,15 @@ export class ProductRepository {
     page: number = 1,
     limit: number = 20
   ): Promise<ProductListResponse> {
-    const connection = await pool.getConnection();
-    
     try {
       // Build WHERE conditions and parameters
       const whereConditions: string[] = [];
       const queryParams: any[] = [];
       
       if (filters.category_id) {
-        whereConditions.push('p.category_id = ?');
-        queryParams.push(filters.category_id);
+        // Include products from the category and all its subcategories
+        whereConditions.push('(p.category_id = ? OR p.category_id IN (SELECT id FROM categories WHERE parent_id = ?))');
+        queryParams.push(filters.category_id, filters.category_id);
       }
       
       if (filters.seller_id) {
@@ -276,7 +274,7 @@ export class ProductRepository {
       
       // Get total count
       const countQuery = `SELECT COUNT(*) as total FROM products p${whereClause}`;
-      const [countRows] = await connection.execute(countQuery, queryParams);
+      const { results: countRows } = await executeWithTracking(countQuery, queryParams);
       const total = (countRows as any[])[0].total;
       
       // Calculate pagination
@@ -306,7 +304,7 @@ export class ProductRepository {
         LIMIT ${limit} OFFSET ${offset}
       `;
       
-      const [productRows] = await connection.execute(productsQuery, queryParams);
+      const { results: productRows } = await executeWithTracking(productsQuery, queryParams);
       const products = productRows as ProductWithDetails[];
       
       return {
@@ -317,8 +315,9 @@ export class ProductRepository {
         total_pages: totalPages,
       };
       
-    } finally {
-      connection.release();
+    } catch (error) {
+      console.error('Error getting products:', error);
+      throw error;
     }
   }
   

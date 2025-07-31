@@ -1,0 +1,1 @@
+Error: The file path 'mysql-query.log' does not exist.

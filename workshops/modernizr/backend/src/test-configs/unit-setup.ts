@@ -34,6 +34,8 @@ jest.mock('../config/database', () => ({
     getConnection: jest.fn(),
     end: jest.fn()
   },
+  executeWithTracking: jest.fn(),
+  executeQuery: jest.fn(),
   testConnection: jest.fn().mockResolvedValue(true),
   closePool: jest.fn().mockResolvedValue(undefined),
   getPoolStats: jest.fn().mockReturnValue({
@@ -41,6 +43,14 @@ jest.mock('../config/database', () => ({
     activeConnections: 0,
     idleConnections: 0,
     queuedRequests: 0
+  }),
+  healthCheck: jest.fn().mockResolvedValue({
+    healthy: true,
+    details: { database: 'connected' }
+  }),
+  testDatabaseQuery: jest.fn().mockResolvedValue({
+    success: true,
+    details: {}
   })
 }));
 

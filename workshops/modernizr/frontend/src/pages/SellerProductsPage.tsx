@@ -8,16 +8,16 @@ interface Product {
   name: string;
   description: string;
   price: number;
-  stock: number;
+  inventory_quantity: number;
   imageUrl?: string;
-  categoryId: number;
+  category_id: number;
   category?: {
     id: number;
     name: string;
   };
-  sellerId: number;
-  createdAt: string;
-  updatedAt: string;
+  seller_id: number;
+  created_at: string;
+  updated_at: string;
 }
 
 const SellerProductsPage: React.FC = () => {
@@ -138,8 +138,8 @@ const SellerProductsPage: React.FC = () => {
               <option value="name">Name A-Z</option>
               <option value="price_asc">Price: Low to High</option>
               <option value="price_desc">Price: High to Low</option>
-              <option value="stock_asc">Stock: Low to High</option>
-              <option value="stock_desc">Stock: High to Low</option>
+              <option value="inventory_quantity_asc">Stock: Low to High</option>
+              <option value="inventory_quantity_desc">Stock: High to Low</option>
             </select>
           </div>
           <button
@@ -228,26 +228,26 @@ const SellerProductsPage: React.FC = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                        product.stock < 10 
+                        product.inventory_quantity < 10 
                           ? 'bg-red-100 text-red-800' 
-                          : product.stock < 50 
+                          : product.inventory_quantity < 50 
                           ? 'bg-yellow-100 text-yellow-800' 
                           : 'bg-green-100 text-green-800'
                       }`}>
-                        {product.stock} units
+                        {product.inventory_quantity} units
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                        product.stock > 0 
+                        product.inventory_quantity > 0 
                           ? 'bg-green-100 text-green-800' 
                           : 'bg-red-100 text-red-800'
                       }`}>
-                        {product.stock > 0 ? 'In Stock' : 'Out of Stock'}
+                        {product.inventory_quantity > 0 ? 'In Stock' : 'Out of Stock'}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {new Date(product.createdAt).toLocaleDateString()}
+                      {new Date(product.created_at).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex justify-end space-x-2">

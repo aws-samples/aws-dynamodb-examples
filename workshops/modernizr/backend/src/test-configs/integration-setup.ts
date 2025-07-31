@@ -8,12 +8,16 @@ config({
   debug: process.env.DEBUG_ENV === 'true'
 });
 
+// Ensure we're using the integration test database
+process.env.DB_NAME = 'online_shopping_store_test_integration';
+
 // Global test setup for integration tests
-let databaseAvailable = false;
+// Since we run db:setup-integration before tests, assume database is available
+let databaseAvailable = true;
 
 export async function setupIntegrationTests(): Promise<void> {
   try {
-    // Try to connect to database
+    // Try to connect to database to verify it's working
     const { pool } = await import('../config/database');
     await pool.execute('SELECT 1');
     databaseAvailable = true;
@@ -24,6 +28,25 @@ export async function setupIntegrationTests(): Promise<void> {
     databaseAvailable = false;
   }
 }
+
+export function isDatabaseAvailable(): boolean {
+  return databaseAvailable;
+}
+
+export function skipIfNoDB(testName: string): void {
+  if (!isDatabaseAvailable()) {
+    console.log(`⏭️  Skipping ${testName} - database not available`);
+  }
+}
+
+// Helper to conditionally skip tests based on database availability
+export const skipIfNoDatabase = () => {
+  if (!isDatabaseAvailable()) {
+    console.log('⏭️  Skipping database-dependent test - database not available');
+    return true;
+  }
+  return false;
+};
 
 export async function teardownIntegrationTests(): Promise<void> {
   if (databaseAvailable) {
@@ -36,22 +59,3 @@ export async function teardownIntegrationTests(): Promise<void> {
     }
   }
 }
-
-export function isDatabaseAvailable(): boolean {
-  return databaseAvailable;
-}
-
-export function skipIfNoDB(testName: string): void {
-  if (!databaseAvailable) {
-    console.log(`⏭️  Skipping ${testName} - database not available`);
-  }
-}
-
-// Helper to conditionally skip tests based on database availability
-export const skipIfNoDatabase = () => {
-  if (!databaseAvailable) {
-    console.log('⏭️  Skipping database-dependent test - database not available');
-    return true;
-  }
-  return false;
-};

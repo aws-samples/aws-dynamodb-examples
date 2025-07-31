@@ -1,3 +1,6 @@
+import { config as dotenvConfig } from 'dotenv';
+dotenvConfig();
+
 import { AppError, ErrorTypes } from '../middleware/errorHandler';
 
 interface EnvironmentConfig {
