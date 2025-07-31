@@ -1,6 +1,11 @@
 import { pool } from '../../../config/database';
 import { RowDataPacket } from 'mysql2';
-import { isDatabaseAvailable } from '../../../test-configs/integration-setup';
+import { isDatabaseAvailable, setupIntegrationTests } from '../../../test-configs/integration-setup';
+
+// Setup database connection before running tests
+beforeAll(async () => {
+  await setupIntegrationTests();
+}, 30000);
 
 const describeIfDB = isDatabaseAvailable() ? describe : describe.skip;
 

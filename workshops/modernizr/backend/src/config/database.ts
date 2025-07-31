@@ -23,7 +23,7 @@ export const databaseConfig: DatabaseConfig = {
 };
 
 // Create connection pool with optimized settings
-export const pool = mysql.createPool({
+const rawPool = mysql.createPool({
   host: databaseConfig.host,
   port: databaseConfig.port,
   user: databaseConfig.user,
@@ -44,6 +44,113 @@ export const pool = mysql.createPool({
   bigNumberStrings: false,
   charset: 'utf8mb4'
 });
+
+// Wrap the pool to automatically track all queries
+const originalExecute = rawPool.execute.bind(rawPool);
+rawPool.execute = function(sql: any, values?: any) {
+  connectionStats.activeConnections++;
+  connectionStats.totalQueries++;
+  
+  const startTime = Date.now();
+  
+  // Call the original execute method
+  const result = originalExecute(sql, values);
+  
+  // Handle the promise to track completion
+  if (result && typeof result.then === 'function') {
+    return result
+      .then((res: any) => {
+        connectionStats.successfulQueries++;
+        connectionStats.activeConnections = Math.max(0, connectionStats.activeConnections - 1);
+        
+        const executionTime = Date.now() - startTime;
+        if (executionTime > 1000) {
+          console.warn(`Slow query detected (${executionTime}ms):`, {
+            query: typeof sql === 'string' ? sql.substring(0, 100) + '...' : 'Prepared statement',
+            executionTime,
+            timestamp: new Date().toISOString()
+          });
+        }
+        
+        return res;
+      })
+      .catch((error: any) => {
+        connectionStats.failedQueries++;
+        connectionStats.activeConnections = Math.max(0, connectionStats.activeConnections - 1);
+        
+        const executionTime = Date.now() - startTime;
+        console.error(`Query failed (${executionTime}ms):`, {
+          query: typeof sql === 'string' ? sql.substring(0, 100) + '...' : 'Prepared statement',
+          error: error instanceof Error ? error.message : 'Unknown error',
+          executionTime,
+          timestamp: new Date().toISOString()
+        });
+        
+        throw error;
+      });
+  }
+  
+  return result;
+};
+
+// Also wrap getConnection to track queries from individual connections
+const originalGetConnection = rawPool.getConnection.bind(rawPool);
+rawPool.getConnection = async function() {
+  const connection = await originalGetConnection();
+  
+  // Wrap the connection's execute method
+  const originalConnectionExecute = connection.execute.bind(connection);
+  connection.execute = function(sql: any, values?: any) {
+    connectionStats.activeConnections++;
+    connectionStats.totalQueries++;
+    
+    const startTime = Date.now();
+    
+    // Call the original execute method
+    const result = originalConnectionExecute(sql, values);
+    
+    // Handle the promise to track completion
+    if (result && typeof result.then === 'function') {
+      return result
+        .then((res: any) => {
+          connectionStats.successfulQueries++;
+          connectionStats.activeConnections = Math.max(0, connectionStats.activeConnections - 1);
+          
+          const executionTime = Date.now() - startTime;
+          if (executionTime > 1000) {
+            console.warn(`Slow query detected (${executionTime}ms):`, {
+              query: typeof sql === 'string' ? sql.substring(0, 100) + '...' : 'Prepared statement',
+              executionTime,
+              timestamp: new Date().toISOString()
+            });
+          }
+          
+          return res;
+        })
+        .catch((error: any) => {
+          connectionStats.failedQueries++;
+          connectionStats.activeConnections = Math.max(0, connectionStats.activeConnections - 1);
+          
+          const executionTime = Date.now() - startTime;
+          console.error(`Query failed (${executionTime}ms):`, {
+            query: typeof sql === 'string' ? sql.substring(0, 100) + '...' : 'Prepared statement',
+            error: error instanceof Error ? error.message : 'Unknown error',
+            executionTime,
+            timestamp: new Date().toISOString()
+          });
+          
+          throw error;
+        });
+    }
+    
+    return result;
+  };
+  
+  return connection;
+};
+
+// Export the wrapped pool
+export const pool = rawPool;
 
 // Test database connection
 export async function testConnection(): Promise<boolean> {
@@ -71,16 +178,155 @@ export async function testConnection(): Promise<boolean> {
 }
 
 // Database monitoring and health utilities
+let connectionStats = {
+  activeConnections: 0,
+  totalQueries: 0,
+  successfulQueries: 0,
+  failedQueries: 0
+};
+
 export function getPoolStats() {
   return {
     totalConnections: databaseConfig.connectionLimit,
-    // Note: mysql2 doesn't expose internal connection stats in TypeScript
-    // These would need to be tracked manually or use a monitoring solution
-    activeConnections: 0, // Placeholder - would need custom tracking
-    idleConnections: 0, // Placeholder - would need custom tracking
-    queuedRequests: 0, // Placeholder - would need custom tracking
-    acquiringConnections: 0 // Placeholder - would need custom tracking
+    activeConnections: connectionStats.activeConnections,
+    idleConnections: Math.max(0, databaseConfig.connectionLimit - connectionStats.activeConnections),
+    queuedRequests: 0, // mysql2 doesn't expose this easily
+    totalQueries: connectionStats.totalQueries,
+    successfulQueries: connectionStats.successfulQueries,
+    failedQueries: connectionStats.failedQueries
   };
+}
+
+// Track connection usage
+export async function executeWithTracking<T = any>(
+  query: string, 
+  params: any[] = []
+): Promise<{ results: T; executionTime: number }> {
+  const timestamp = new Date().toISOString();
+  console.log(`🔍 [${timestamp}] EXECUTING SQL QUERY:`, {
+    fullQuery: query,
+    parameters: params,
+    queryId: Math.random().toString(36).substr(2, 9)
+  });
+  
+  const startTime = Date.now();
+  connectionStats.activeConnections++;
+  connectionStats.totalQueries++;
+  console.log('📊 Updated connectionStats:', connectionStats);
+  
+  try {
+    console.log(`🚀 [${timestamp}] Calling pool.execute() - Query will hit MySQL now`);
+    const [results] = await pool.execute(query, params);
+    const executionTime = Date.now() - startTime;
+    console.log(`✅ [${timestamp}] MySQL query completed in ${executionTime}ms, rows affected: ${Array.isArray(results) ? results.length : 'N/A'}`);
+    
+    connectionStats.successfulQueries++;
+    
+    // Log slow queries (> 1000ms)
+    if (executionTime > 1000) {
+      console.warn(`Slow query detected (${executionTime}ms):`, {
+        query: query.substring(0, 100) + '...',
+        executionTime,
+        timestamp: new Date().toISOString()
+      });
+    }
+    
+    return { results: results as T, executionTime };
+  } catch (error) {
+    const executionTime = Date.now() - startTime;
+    connectionStats.failedQueries++;
+    
+    console.error(`Query failed (${executionTime}ms):`, {
+      query: query.substring(0, 100) + '...',
+      error: error instanceof Error ? error.message : 'Unknown error',
+      executionTime,
+      timestamp: new Date().toISOString()
+    });
+    throw error;
+  } finally {
+    connectionStats.activeConnections = Math.max(0, connectionStats.activeConnections - 1);
+  }
+}
+
+// Enable MySQL query logging for debugging
+export async function enableMySQLQueryLogging(): Promise<void> {
+  try {
+    const connection = await pool.getConnection();
+    
+    // Enable general query log
+    await connection.execute('SET GLOBAL general_log = "ON"');
+    await connection.execute('SET GLOBAL log_output = "TABLE"');
+    
+    // Test if logging is working by executing a simple query
+    await connection.execute('SELECT "MYSQL_LOGGING_TEST" as test_query');
+    
+    console.log('✅ MySQL query logging enabled - queries will be logged to mysql.general_log table');
+    connection.release();
+  } catch (error) {
+    console.error('❌ Failed to enable MySQL query logging:', error);
+  }
+}
+
+// Test function to verify database connectivity and query execution
+export async function testDatabaseQuery(): Promise<{ success: boolean; details: any }> {
+  try {
+    const connection = await pool.getConnection();
+    
+    console.log('🧪 Testing direct database query...');
+    const [testResult] = await connection.execute('SELECT "DIRECT_TEST_QUERY" as test, NOW() as timestamp');
+    console.log('🧪 Direct query result:', testResult);
+    
+    connection.release();
+    
+    console.log('🧪 Testing executeWithTracking...');
+    const trackingResult = await executeWithTracking('SELECT "TRACKING_TEST_QUERY" as test, NOW() as timestamp');
+    console.log('🧪 Tracking query result:', trackingResult);
+    
+    return {
+      success: true,
+      details: {
+        directQuery: testResult,
+        trackingQuery: trackingResult,
+        connectionStats: connectionStats
+      }
+    };
+  } catch (error) {
+    console.error('❌ Database test failed:', error);
+    return {
+      success: false,
+      details: { error: error instanceof Error ? error.message : 'Unknown error' }
+    };
+  }
+}
+
+// Check recent MySQL queries from the general log
+export async function getRecentMySQLQueries(limit: number = 10): Promise<any[]> {
+  try {
+    const connection = await pool.getConnection();
+    
+    // First check if general_log table exists and has data
+    console.log('🔍 Checking MySQL general_log table...');
+    
+    // Check if general logging is enabled
+    const [logStatus] = await connection.execute('SHOW VARIABLES LIKE "general_log"');
+    console.log('📊 General log status:', logStatus);
+    
+    // Check if we can access the general_log table
+    const [tableCheck] = await connection.execute('SELECT COUNT(*) as count FROM mysql.general_log');
+    console.log('📊 General log table count:', tableCheck);
+    
+    const [rows] = await connection.execute(
+      'SELECT event_time, user_host, thread_id, server_id, command_type, argument FROM mysql.general_log WHERE command_type = "Query" ORDER BY event_time DESC LIMIT ?',
+      [limit]
+    );
+    
+    console.log('📊 Retrieved queries from general_log:', rows);
+    connection.release();
+    return rows as any[];
+  } catch (error) {
+    console.error('❌ Failed to get MySQL query log:', error);
+    return [];
+  }
 }
 
 // Health check with connection validation
