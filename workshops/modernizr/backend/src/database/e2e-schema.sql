@@ -1,21 +1,21 @@
 -- E2E Test Database Schema
 -- MySQL 8.0 compatible - Matches actual code expectations
 
--- Users table (with role column as expected by code)
+-- Users table (with is_seller column to match actual schema)
 CREATE TABLE IF NOT EXISTS users (
     id INT PRIMARY KEY AUTO_INCREMENT,
     username VARCHAR(50) UNIQUE NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
-    first_name VARCHAR(50) NOT NULL DEFAULT '',
-    last_name VARCHAR(50) NOT NULL DEFAULT '',
-    role ENUM('customer', 'seller') DEFAULT 'customer',
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    is_seller BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     
     INDEX idx_username (username),
     INDEX idx_email (email),
-    INDEX idx_role (role)
+    INDEX idx_is_seller (is_seller)
 );
 
 -- Categories table (hierarchical structure)

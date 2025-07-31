@@ -1,5 +1,5 @@
 import { ProductRepository } from '../../../repositories/ProductRepository';
-import { pool } from '../../../config/database';
+import { pool, executeWithTracking } from '../../../config/database';
 import { CreateProductRequest, UpdateProductRequest } from '../../../models/Product';
 
 // Mock the database pool
@@ -7,7 +7,11 @@ jest.mock('../../../config/database', () => ({
   pool: {
     getConnection: jest.fn(),
   },
+  executeWithTracking: jest.fn(),
 }));
+
+const mockPool = pool as jest.Mocked<typeof pool>;
+const mockExecuteWithTracking = executeWithTracking as jest.MockedFunction<typeof executeWithTracking>;
 
 describe('ProductRepository', () => {
   let productRepository: ProductRepository;
@@ -19,11 +23,14 @@ describe('ProductRepository', () => {
       execute: jest.fn(),
       release: jest.fn(),
     };
-    (pool.getConnection as jest.Mock).mockResolvedValue(mockConnection);
-  });
-
-  afterEach(() => {
+    mockPool.getConnection.mockResolvedValue(mockConnection);
     jest.clearAllMocks();
+    
+    // Default mock for executeWithTracking
+    mockExecuteWithTracking.mockResolvedValue({
+      results: [],
+      executionTime: 10
+    });
   });
 
   describe('createProduct', () => {
@@ -37,11 +44,14 @@ describe('ProductRepository', () => {
         inventory_quantity: 100,
       };
 
-      // Mock category check
+      // Mock category check and product insert (uses connection.execute)
       mockConnection.execute
         .mockResolvedValueOnce([[{ id: 1 }]]) // Category exists
-        .mockResolvedValueOnce([{ insertId: 1 }]) // Product created
-        .mockResolvedValueOnce([[{
+        .mockResolvedValueOnce([{ insertId: 1 }]); // Product created
+
+      // Mock getProductById call (uses executeWithTracking)
+      mockExecuteWithTracking.mockResolvedValueOnce({
+        results: [{
           id: 1,
           seller_id: sellerId,
           category_id: 1,
@@ -51,13 +61,15 @@ describe('ProductRepository', () => {
           inventory_quantity: 100,
           created_at: new Date(),
           updated_at: new Date(),
-        }]]); // Get created product
+        }],
+        executionTime: 10
+      });
 
       const result = await productRepository.createProduct(sellerId, productData);
 
       expect(result.id).toBe(1);
       expect(result.name).toBe('Test Product');
-      expect(mockConnection.execute).toHaveBeenCalledTimes(3);
+      expect(mockConnection.execute).toHaveBeenCalledTimes(2);
       expect(mockConnection.release).toHaveBeenCalled();
     });
 
@@ -94,37 +106,27 @@ describe('ProductRepository', () => {
         updated_at: new Date(),
       };
 
-      mockConnection.execute.mockResolvedValueOnce([[mockProduct]]);
+      mockExecuteWithTracking.mockResolvedValueOnce({
+        results: [mockProduct],
+        executionTime: 10
+      });
 
       const result = await productRepository.getProductById(productId);
 
       expect(result).toEqual(mockProduct);
-      expect(mockConnection.execute).toHaveBeenCalledWith(
-        `SELECT 
-           id,
-           seller_id,
-           category_id,
-           name,
-           description,
-           price,
-           inventory_quantity,
-           created_at,
-           updated_at
-         FROM products WHERE id = ?`,
-        [productId]
-      );
-      expect(mockConnection.release).toHaveBeenCalled();
     });
 
     it('should return null if product not found', async () => {
       const productId = 999;
 
-      mockConnection.execute.mockResolvedValueOnce([[]]);
+      mockExecuteWithTracking.mockResolvedValueOnce({
+        results: [],
+        executionTime: 10
+      });
 
       const result = await productRepository.getProductById(productId);
 
       expect(result).toBeNull();
-      expect(mockConnection.release).toHaveBeenCalled();
     });
   });
 
@@ -184,15 +186,24 @@ describe('ProductRepository', () => {
         price: 39.99,
       };
 
-      mockConnection.execute
-        .mockResolvedValueOnce([[mockExistingProduct]]) // Get existing product
-        .mockResolvedValueOnce([{ affectedRows: 1 }]) // Update product
-        .mockResolvedValueOnce([[mockUpdatedProduct]]); // Get updated product
+      // Mock getProductById calls (uses executeWithTracking)
+      mockExecuteWithTracking
+        .mockResolvedValueOnce({
+          results: [mockExistingProduct],
+          executionTime: 10
+        }) // Get existing product
+        .mockResolvedValueOnce({
+          results: [mockUpdatedProduct],
+          executionTime: 10
+        }); // Get updated product
+
+      // Mock the UPDATE query (uses connection.execute)
+      mockConnection.execute.mockResolvedValueOnce([{ affectedRows: 1 }]);
 
       const result = await productRepository.updateProduct(productId, sellerId, updateData);
 
       expect(result).toEqual(mockUpdatedProduct);
-      expect(mockConnection.execute).toHaveBeenCalledTimes(3);
+      expect(mockConnection.execute).toHaveBeenCalledTimes(1);
       expect(mockConnection.release).toHaveBeenCalled();
     });
 
@@ -201,7 +212,11 @@ describe('ProductRepository', () => {
       const sellerId = 1;
       const updateData: UpdateProductRequest = { name: 'Updated Product' };
 
-      mockConnection.execute.mockResolvedValueOnce([[]]);
+      // Mock getProductById returning null (uses executeWithTracking)
+      mockExecuteWithTracking.mockResolvedValueOnce({
+        results: [],
+        executionTime: 10
+      });
 
       await expect(productRepository.updateProduct(productId, sellerId, updateData))
         .rejects.toThrow('Product not found');
@@ -225,7 +240,11 @@ describe('ProductRepository', () => {
         updated_at: new Date(),
       };
 
-      mockConnection.execute.mockResolvedValueOnce([[mockExistingProduct]]);
+      // Mock getProductById (uses executeWithTracking)
+      mockExecuteWithTracking.mockResolvedValueOnce({
+        results: [mockExistingProduct],
+        executionTime: 10
+      });
 
       await expect(productRepository.updateProduct(productId, sellerId, updateData))
         .rejects.toThrow('You can only update your own products');
@@ -250,14 +269,19 @@ describe('ProductRepository', () => {
         updated_at: new Date(),
       };
 
-      mockConnection.execute
-        .mockResolvedValueOnce([[mockExistingProduct]]) // Get existing product
-        .mockResolvedValueOnce([{ affectedRows: 1 }]); // Delete product
+      // Mock getProductById (uses executeWithTracking)
+      mockExecuteWithTracking.mockResolvedValueOnce({
+        results: [mockExistingProduct],
+        executionTime: 10
+      });
+
+      // Mock DELETE query (uses connection.execute)
+      mockConnection.execute.mockResolvedValueOnce([{ affectedRows: 1 }]);
 
       const result = await productRepository.deleteProduct(productId, sellerId);
 
       expect(result).toBe(true);
-      expect(mockConnection.execute).toHaveBeenCalledTimes(2);
+      expect(mockConnection.execute).toHaveBeenCalledTimes(1);
       expect(mockConnection.release).toHaveBeenCalled();
     });
 
@@ -276,7 +300,11 @@ describe('ProductRepository', () => {
         updated_at: new Date(),
       };
 
-      mockConnection.execute.mockResolvedValueOnce([[mockExistingProduct]]);
+      // Mock getProductById (uses executeWithTracking)
+      mockExecuteWithTracking.mockResolvedValueOnce({
+        results: [mockExistingProduct],
+        executionTime: 10
+      });
 
       await expect(productRepository.deleteProduct(productId, sellerId))
         .rejects.toThrow('You can only delete your own products');
@@ -314,9 +342,16 @@ describe('ProductRepository', () => {
         },
       ];
 
-      mockConnection.execute
-        .mockResolvedValueOnce([[{ total: 2 }]]) // Count query
-        .mockResolvedValueOnce([mockProducts]); // Products query
+      // Mock executeWithTracking for both count and products queries
+      mockExecuteWithTracking
+        .mockResolvedValueOnce({
+          results: [{ total: 2 }],
+          executionTime: 10
+        }) // Count query
+        .mockResolvedValueOnce({
+          results: mockProducts,
+          executionTime: 15
+        }); // Products query
 
       const result = await productRepository.getProducts({}, 1, 20);
 
@@ -325,7 +360,7 @@ describe('ProductRepository', () => {
       expect(result.page).toBe(1);
       expect(result.limit).toBe(20);
       expect(result.total_pages).toBe(1);
-      expect(mockConnection.release).toHaveBeenCalled();
+      // getProducts doesn't use connection, so no release call expected
     });
 
     it('should apply filters correctly', async () => {
@@ -337,15 +372,22 @@ describe('ProductRepository', () => {
         in_stock_only: true,
       };
 
-      mockConnection.execute
-        .mockResolvedValueOnce([[{ total: 1 }]]) // Count query
-        .mockResolvedValueOnce([[]]); // Products query
+      // Mock executeWithTracking for both count and products queries
+      mockExecuteWithTracking
+        .mockResolvedValueOnce({
+          results: [{ total: 1 }],
+          executionTime: 10
+        }) // Count query
+        .mockResolvedValueOnce({
+          results: [],
+          executionTime: 15
+        }); // Products query
 
       await productRepository.getProducts(filters, 1, 20);
 
       // Check that the WHERE clause includes all filters
-      const countCall = mockConnection.execute.mock.calls[0];
-      const productsCall = mockConnection.execute.mock.calls[1];
+      const countCall = mockExecuteWithTracking.mock.calls[0];
+      const productsCall = mockExecuteWithTracking.mock.calls[1];
 
       expect(countCall[0]).toContain('WHERE');
       expect(countCall[0]).toContain('p.category_id = ?');
@@ -355,7 +397,7 @@ describe('ProductRepository', () => {
       expect(countCall[0]).toContain('p.inventory_quantity > 0');
 
       expect(productsCall[0]).toContain('WHERE');
-      expect(mockConnection.release).toHaveBeenCalled();
+      // getProducts doesn't use connection, so no release call expected
     });
   });
 

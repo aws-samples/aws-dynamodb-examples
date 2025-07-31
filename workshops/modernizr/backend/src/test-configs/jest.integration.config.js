@@ -5,9 +5,11 @@ module.exports = {
   },
   testMatch: ['<rootDir>/../__tests__/integration/**/*.test.ts'],
   setupFilesAfterEnv: ['<rootDir>/integration-setup.ts'],
+  globalTeardown: '<rootDir>/integration-teardown.js',
   testEnvironment: 'node',
   testTimeout: 30000,
   maxWorkers: 1, // Sequential execution for database tests
+  forceExit: true, // Force Jest to exit after tests complete
   // Performance optimizations
   cache: true,
   cacheDirectory: '<rootDir>/../node_modules/.cache/jest-integration',

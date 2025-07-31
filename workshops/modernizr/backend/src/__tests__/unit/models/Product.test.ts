@@ -269,7 +269,10 @@ describe('Product Model', () => {
         description: 'Test description',
         price: 29.99,
         inventory_quantity: 100,
-        category_name: 'Electronics',
+        category: {
+          id: 3,
+          name: 'Electronics'
+        },
         seller_username: 'testseller',
         seller_email: 'seller@test.com',
         created_at: new Date('2023-01-01'),
@@ -292,7 +295,7 @@ describe('Product Model', () => {
       const result = toProductResponse(product);
 
       expect(result.description).toBeUndefined();
-      expect(result.category_name).toBeUndefined();
+      expect(result.category).toBeUndefined();
       expect(result.seller_username).toBeUndefined();
       expect(result.seller_email).toBeUndefined();
     });

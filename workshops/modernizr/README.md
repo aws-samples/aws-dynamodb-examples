@@ -1,6 +1,6 @@
 # Online Shopping Store 🛍️
 
-A production-ready, full-stack e-commerce application built with Node.js/TypeScript backend and React/TypeScript frontend. Features comprehensive user authentication, product management, order processing, and advanced testing infrastructure.
+A full-stack e-commerce application built with Node.js/TypeScript backend and React/TypeScript frontend. Features comprehensive user authentication, product management, order processing, and advanced testing infrastructure.
 
 ## 🚀 Features
 
@@ -52,8 +52,8 @@ A production-ready, full-stack e-commerce application built with Node.js/TypeScr
 │   │   └── utils/          # Utility functions
 │   └── build/              # Production build files
 ├── integration-tests/      # Full-stack integration tests
-├── scripts/                # Deployment and utility scripts
-└── .kiro/                  # Development specifications
+└── scripts/                # Deployment and utility scripts
+
 ```
 
 ## 🛠️ Getting Started
@@ -104,6 +104,8 @@ A production-ready, full-stack e-commerce application built with Node.js/TypeScr
 - `npm run dev` - Start development server with hot reload
 - `npm run build` - Build TypeScript to JavaScript
 - `npm start` - Start production server
+- `npm run clean` - Clean build artifacts, coverage, and cache
+- `npm run clean:all` - Clean everything including node_modules
 - `npm run lint` - Run ESLint code analysis
 - `npm run lint:fix` - Auto-fix ESLint issues
 
@@ -113,12 +115,14 @@ A production-ready, full-stack e-commerce application built with Node.js/TypeScr
 - `npm run db:seed` - Seed database with sample data
 - `npm run db:reset` - Reset database (drop, init, seed)
 - `npm run db:clear` - Clear all seed data
+- `npm run db:setup-integration` - Setup integration test database (auto-run before integration tests)
+- `npm run db:setup-e2e` - Setup e2e test database (auto-run before e2e tests)
 
 #### Testing & Quality Assurance
 - `npm test` - Run unit tests (default)
 - `npm run test:unit` - Run unit tests with reporting
-- `npm run test:integration` - Run integration tests
-- `npm run test:e2e` - Run end-to-end tests
+- `npm run test:integration` - Run integration tests (auto-sets up test database)
+- `npm run test:e2e` - Run end-to-end tests (auto-builds and sets up test database)
 - `npm run test:all` - Run all tests with combined reporting
 - `npm run test:watch` - Run tests in watch mode
 - `npm run test:coverage` - Generate coverage reports
@@ -135,7 +139,8 @@ A production-ready, full-stack e-commerce application built with Node.js/TypeScr
 - `npm start` - Start development server
 - `npm run build` - Build for production
 - `npm test` - Run tests
-- `npm run lint` - Run ESLint
+- `npm run clean` - Clean build artifacts and cache
+- `npm run clean:all` - Clean everything including node_modules
 - `npm run eject` - Eject from Create React App (not recommended)
 
 ## 🏗️ Technology Stack
@@ -165,35 +170,65 @@ A production-ready, full-stack e-commerce application built with Node.js/TypeScr
 - **Performance Monitoring**: Built-in performance metrics
 - **Documentation**: Markdown with comprehensive guides
 
-## 🧪 Testing Architecture
+## 🧪 Testing
 
-This project features a comprehensive testing architecture with:
+This project features a comprehensive testing architecture with unit, integration, and end-to-end tests.
 
-### Test Types
-- **Unit Tests** (284 tests) - Fast, isolated component testing
-- **Integration Tests** - Component interaction testing
-- **End-to-End Tests** - Complete user workflow testing
+### Running Tests
+
+All tests include automatic database setup - just run the commands and everything will be configured for you:
+
+#### Unit Tests
+```bash
+cd backend
+npm run test:unit
+```
+- Fast, isolated component testing
+- No database setup required
+- Tests business logic, utilities, and individual components
+
+#### Integration Tests  
+```bash
+cd backend
+npm run test:integration
+```
+- Tests component interactions with real database
+- Automatically sets up `online_shopping_store_test_integration` database
+- Tests API endpoints, services, and database operations
+
+#### End-to-End Tests
+```bash
+cd backend
+npm run test:e2e
+```
+- Complete user workflow testing
+- Automatically builds the application and sets up `online_shopping_store_test_e2e` database
+- Tests full application flows from frontend to database
+
+#### Run All Tests
+```bash
+cd backend
+npm run test:all
+```
+- Runs unit, integration, and e2e tests in sequence
+- Generates comprehensive test reports and coverage
+- Creates HTML dashboard with results
+
+#### Test Reports
+```bash
+cd backend
+npm run test:report:open
+```
+- Generates and opens interactive test dashboard
+- Shows test results, coverage, and performance metrics
+- Available at `backend/test-results/combined/dashboard.html`
 
 ### Test Features
+- **Automatic Setup** - All database setup handled automatically
+- **Isolated Environments** - Each test type uses separate databases
 - **Advanced Reporting** - HTML dashboards with performance metrics
 - **Coverage Analysis** - Detailed coverage reports for all test types
 - **Performance Monitoring** - Automatic detection of slow tests
-- **Reliability Improvements** - Retry mechanisms and flaky test detection
-- **CI/CD Integration** - JUnit XML reports for automated pipelines
-
-### Test Commands
-```bash
-# Run all tests with comprehensive reporting
-npm run test:all
-
-# View test dashboard
-npm run test:report:open
-
-# Run specific test types
-npm run test:unit
-npm run test:integration
-npm run test:e2e
-```
 
 ## 🔒 Security Features
 
@@ -213,15 +248,15 @@ npm run test:e2e
 - **Database Optimization**: Connection pooling and query optimization
 - **Memory Management**: Optimized memory usage and garbage collection
 
-## 🚀 Deployment Ready
+## 🚀 Deployment
 
-This application is production-ready with:
+This application includes:
 
-- **Environment Configuration**: Separate configs for dev/staging/production
-- **Security Hardening**: Production-ready security configurations
-- **Performance Optimization**: Optimized for production workloads
+- **Environment Configuration**: Separate configs for different environments
+- **Security Features**: Security configurations and best practices
+- **Performance Optimization**: Optimized for better performance
 - **Monitoring**: Built-in health checks and performance metrics
-- **Documentation**: Comprehensive deployment guides
+- **Documentation**: Comprehensive setup and deployment guides
 
 ## 📚 Documentation
 
@@ -256,9 +291,8 @@ This application is production-ready with:
 - Security hardening and performance optimization
 - Load testing and monitoring capabilities
 
-🚀 **Ready for Deployment:**
-- Production-ready configuration
-- Comprehensive test coverage
+🚀 **Development Status:**
+- Comprehensive test coverage with automated setup
 - Security best practices implemented
 - Performance optimized
 - Documentation complete

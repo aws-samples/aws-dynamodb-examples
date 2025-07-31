@@ -1,7 +1,12 @@
 import { AuthService } from '../../../services/AuthService';
 import { pool } from '../../../config/database';
 import { RowDataPacket } from 'mysql2';
-import { isDatabaseAvailable } from '../../../test-configs/integration-setup';
+import { isDatabaseAvailable, setupIntegrationTests } from '../../../test-configs/integration-setup';
+
+// Setup database connection before running tests
+beforeAll(async () => {
+  await setupIntegrationTests();
+}, 30000);
 
 const describeIfDB = isDatabaseAvailable() ? describe : describe.skip;
 
@@ -33,6 +38,16 @@ describeIfDB('AuthService Integration Tests', () => {
   });
 
   describe('User Registration Integration', () => {
+    afterEach(async () => {
+      // Clean up test users after each test
+      if (testUserId) {
+        await pool.execute('DELETE FROM users WHERE id = ?', [testUserId]);
+        testUserId = null;
+      }
+      // Also clean up by username patterns
+      await pool.execute('DELETE FROM users WHERE username IN (?, ?)', ['test_integration_user', 'test_duplicate_user']);
+    });
+
     it('should register a new user and store in database', async () => {
       const userData = {
         username: 'test_integration_user',
@@ -94,6 +109,9 @@ describeIfDB('AuthService Integration Tests', () => {
 
   describe('User Login Integration', () => {
     beforeEach(async () => {
+      // Clean up any existing test users first
+      await pool.execute('DELETE FROM users WHERE username = ? OR email = ?', ['test_login_user', 'test_login@example.com']);
+      
       // Create a test user for login tests
       const userData = {
         username: 'test_login_user',
@@ -102,6 +120,14 @@ describeIfDB('AuthService Integration Tests', () => {
       };
       const result = await authService.register(userData);
       testUserId = result.user.id;
+    });
+
+    afterEach(async () => {
+      // Clean up test user after each test
+      if (testUserId) {
+        await pool.execute('DELETE FROM users WHERE id = ?', [testUserId]);
+        testUserId = null;
+      }
     });
 
     it('should login with valid credentials', async () => {

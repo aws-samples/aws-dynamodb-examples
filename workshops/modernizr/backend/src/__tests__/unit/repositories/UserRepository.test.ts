@@ -1,15 +1,17 @@
 import { UserRepository } from '../../../repositories/UserRepository';
-import { pool } from '../../../config/database';
+import { pool, executeWithTracking } from '../../../config/database';
 import { RowDataPacket, ResultSetHeader } from 'mysql2';
 
 // Mock the database pool
 jest.mock('../../../config/database', () => ({
   pool: {
     execute: jest.fn()
-  }
+  },
+  executeWithTracking: jest.fn(),
 }));
 
 const mockedPool = pool as jest.Mocked<typeof pool>;
+const mockExecuteWithTracking = executeWithTracking as jest.MockedFunction<typeof executeWithTracking>;
 
 describe('UserRepository', () => {
   let userRepository: UserRepository;
@@ -154,9 +156,9 @@ describe('UserRepository', () => {
 
       // Assert
       expect(mockedPool.execute).toHaveBeenCalledWith(
-        `INSERT INTO users (username, email, password_hash, first_name, last_name, role) 
+        `INSERT INTO users (username, email, password_hash, first_name, last_name, is_seller) 
          VALUES (?, ?, ?, ?, ?, ?)`,
-        ['newuser', 'new@example.com', 'hashed_password', 'New', 'User', 'customer']
+        ['newuser', 'new@example.com', 'hashed_password', 'New', 'User', 0]
       );
       expect(mockedPool.execute).toHaveBeenCalledWith(
         'SELECT * FROM users WHERE id = ?',
@@ -186,7 +188,7 @@ describe('UserRepository', () => {
       // Assert
       expect(mockedPool.execute).toHaveBeenCalledWith(
         expect.any(String),
-        ['newuser', 'new@example.com', 'hashed_password', '', '', 'customer']
+        ['newuser', 'new@example.com', 'hashed_password', '', '', 0]
       );
       expect(result).toBeDefined();
     });
@@ -273,7 +275,7 @@ describe('UserRepository', () => {
   describe('upgradeToSeller', () => {
     it('should upgrade user to seller successfully', async () => {
       // Arrange
-      const sellerDbRow = { ...mockUser, role: 'seller' };
+      const sellerDbRow = { ...mockUser, is_seller: 1 }; // Database returns 1 for true
       const expectedSellerUser = { ...mockUser, is_seller: true };
       const mockRows = [sellerDbRow] as RowDataPacket[];
       
@@ -286,8 +288,8 @@ describe('UserRepository', () => {
 
       // Assert
       expect(mockedPool.execute).toHaveBeenCalledWith(
-        'UPDATE users SET role = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
-        ['seller', 1]
+        'UPDATE users SET is_seller = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+        [1, 1]
       );
       expect(result).toEqual(expectedSellerUser);
     });

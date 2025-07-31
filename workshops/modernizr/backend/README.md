@@ -82,11 +82,12 @@ The API will be available at `http://localhost:8100`
 ### Testing
 - `npm test` - Run unit tests (fast feedback)
 - `npm run test:unit` - Run unit tests only
-- `npm run test:integration` - Run integration tests
-- `npm run test:e2e` - Run end-to-end tests
-- `npm run test:all` - Run all test types in sequence
+- `npm run test:integration` - Run integration tests (auto-sets up test database)
+- `npm run test:e2e` - Run end-to-end tests (auto-builds and sets up test database)
+- `npm run test:all` - Run all test types in sequence with comprehensive reporting
 - `npm run test:watch` - Run tests in watch mode
 - `npm run test:coverage` - Run tests with coverage report
+- `npm run test:report:open` - Generate and open interactive test dashboard
 
 ### Database Management
 - `npm run db:test` - Test database connection
@@ -94,6 +95,8 @@ The API will be available at `http://localhost:8100`
 - `npm run db:seed` - Seed database with sample data
 - `npm run db:reset` - Reset database (drop, init, seed)
 - `npm run db:clear` - Clear all seed data
+- `npm run db:setup-integration` - Setup integration test database (auto-run before integration tests)
+- `npm run db:setup-e2e` - Setup e2e test database (auto-run before e2e tests)
 
 ### Load Testing
 - `npm run load-test` - Run load testing suite
@@ -157,10 +160,20 @@ backend/
 | `DB_USER` | Database username | root |
 | `DB_PASSWORD` | Database password | - |
 | `DB_NAME` | Database name | online_shopping_store |
+| `DB_CONNECTION_LIMIT` | Max database connections | 10 |
+| `DB_ACQUIRE_TIMEOUT` | Connection acquire timeout (ms) | 60000 |
+| `DB_TIMEOUT` | Query timeout (ms) | 60000 |
 | `PORT` | Server port | 8100 |
 | `JWT_SECRET` | JWT signing secret | - |
 | `JWT_EXPIRES_IN` | JWT expiration time | 24h |
 | `NODE_ENV` | Environment | development |
+| `BCRYPT_SALT_ROUNDS` | Password hashing salt rounds | 12 |
+| `MEMORY_WARNING_THRESHOLD` | Memory warning threshold (%) | 85 |
+| `MEMORY_CRITICAL_THRESHOLD` | Memory critical threshold (%) | 95 |
+| `RATE_LIMIT_MAX_REQUESTS` | Global rate limit max requests | 10000 |
+| `RATE_LIMIT_WINDOW_MS` | Global rate limit window (ms) | 60000 |
+| `RATE_LIMIT_AUTH_MAX` | Auth rate limit max requests | 1000 |
+| `RATE_LIMIT_AUTH_WINDOW_MS` | Auth rate limit window (ms) | 60000 |
 
 ## Database Schema
 
@@ -193,32 +206,41 @@ npm run load-test -- --users 100 --duration 60s --endpoint /api/products
 
 ### Testing
 
-Our testing architecture follows the testing pyramid with three distinct test types:
+Our testing architecture follows the testing pyramid with automatic database setup:
 
-**Unit Tests** (`npm test` or `npm run test:unit`)
+**Unit Tests** (`npm run test:unit`)
 - Fast execution (< 10 seconds)
 - Test individual functions/classes in isolation
 - All external dependencies mocked
+- No database setup required
 - Located in `src/__tests__/unit/`
 
 **Integration Tests** (`npm run test:integration`)
 - Medium execution speed (< 60 seconds)
 - Test component interactions with real database
+- Automatically sets up `online_shopping_store_test_integration` database
 - External services mocked
 - Located in `src/__tests__/integration/`
 
 **End-to-End Tests** (`npm run test:e2e`)
 - Comprehensive testing (< 120 seconds)
 - Test complete user workflows
+- Automatically builds application and sets up `online_shopping_store_test_e2e` database
 - Real server + database + HTTP requests
 - Located in `src/__tests__/e2e/`
 
+**Test Reports** (`npm run test:report:open`)
+- Interactive HTML dashboard with test results
+- Coverage analysis and performance metrics
+- Available at `test-results/combined/dashboard.html`
+
 **Guidelines:**
+- All database setup is automatic - just run the test commands
+- Each test type uses isolated databases to prevent interference
 - Write unit tests for business logic
 - Write integration tests for component interactions
 - Write E2E tests for critical user workflows
 - Maintain test coverage above 80%
-- See [Testing Guide](docs/TESTING.md) for detailed documentation
 
 ### Security
 - Always validate input data

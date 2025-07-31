@@ -1,12 +1,15 @@
 import { ShoppingCartRepository } from '../../../repositories/ShoppingCartRepository';
-import { pool } from '../../../config/database';
+import { pool, executeWithTracking } from '../../../config/database';
 
 // Mock the database pool
 jest.mock('../../../config/database', () => ({
   pool: {
     getConnection: jest.fn()
-  }
+  },
+  executeWithTracking: jest.fn(),
 }));
+
+const mockExecuteWithTracking = executeWithTracking as jest.MockedFunction<typeof executeWithTracking>;
 
 describe('ShoppingCartRepository', () => {
   let repository: ShoppingCartRepository;
