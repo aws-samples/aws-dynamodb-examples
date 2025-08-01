@@ -76,28 +76,28 @@ export const apiDelete = (url: string, config?: any, retries?: number) =>
 // API endpoint constants
 export const API_ENDPOINTS = {
   // Auth endpoints
-  LOGIN: '/api/auth/login',
-  REGISTER: '/api/auth/register',
-  UPGRADE_TO_SELLER: '/api/auth/upgrade-seller',
+  LOGIN: '/auth/login',
+  REGISTER: '/auth/register',
+  UPGRADE_TO_SELLER: '/auth/upgrade-seller',
   
   // Product endpoints
-  PRODUCTS: '/api/products',
-  PRODUCT_BY_ID: (id: number) => `/api/products/${id}`,
-  SELLER_PRODUCTS: '/api/products/seller',
+  PRODUCTS: '/products',
+  PRODUCT_BY_ID: (id: number) => `/products/${id}`,
+  SELLER_PRODUCTS: '/products/seller',
   
   // Category endpoints
-  CATEGORIES: '/api/categories',
-  CATEGORY_BY_ID: (id: number) => `/api/categories/${id}`,
+  CATEGORIES: '/categories',
+  CATEGORY_BY_ID: (id: number) => `/categories/${id}`,
   
   // Cart endpoints
-  CART: '/api/cart',
-  CART_ADD: '/api/cart/add',
-  CART_UPDATE: '/api/cart/update',
-  CART_REMOVE: (productId: number) => `/api/cart/remove/${productId}`,
-  CART_CLEAR: '/api/cart/clear',
+  CART: '/cart',
+  CART_ADD: '/cart/add',
+  CART_UPDATE: '/cart/update',
+  CART_REMOVE: (productId: number) => `/cart/remove/${productId}`,
+  CART_CLEAR: '/cart/clear',
   
   // Order endpoints
-  ORDERS: '/api/orders',
-  ORDER_BY_ID: (id: number) => `/api/orders/${id}`,
-  CHECKOUT: '/api/orders/checkout',
+  ORDERS: '/orders',
+  ORDER_BY_ID: (id: number) => `/orders/${id}`,
+  CHECKOUT: '/orders/checkout',
 };

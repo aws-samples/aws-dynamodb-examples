@@ -68,7 +68,7 @@ const OrderHistoryPage: React.FC = () => {
       setLoading(true);
       setError('');
       
-      const response = await api.get(`/api/orders?page=${currentPage}&limit=10`);
+      const response = await api.get(`/orders?page=${currentPage}&limit=10`);
       
       if (response.data.success) {
         setOrders(response.data.data.orders);
@@ -94,7 +94,7 @@ const OrderHistoryPage: React.FC = () => {
       setSearching(true);
       setError('');
       
-      const response = await api.get(`/api/orders/user/search?q=${encodeURIComponent(searchTerm.trim())}`);
+      const response = await api.get(`/orders/user/search?q=${encodeURIComponent(searchTerm.trim())}`);
       
       if (response.data.success) {
         setOrders(response.data.data.orders);
