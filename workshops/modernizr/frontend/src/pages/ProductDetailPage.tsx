@@ -81,7 +81,7 @@ const ProductDetailPage: React.FC = () => {
 
       try {
         setLoading(true);
-        const response = await api.get(`/api/products/${id}`);
+        const response = await api.get(`/products/${id}`);
         
         if (response.data.success) {
           const apiProduct: ApiProduct = response.data.data.product;

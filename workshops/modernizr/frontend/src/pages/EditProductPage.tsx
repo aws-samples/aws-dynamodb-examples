@@ -74,7 +74,7 @@ const EditProductPage: React.FC = () => {
       setLoading(true);
       setError('');
 
-      const response = await api.get(`/api/products/${id}`);
+      const response = await api.get(`/products/${id}`);
       if (response.data.success) {
         const productData = response.data.data.product;
         
@@ -103,7 +103,7 @@ const EditProductPage: React.FC = () => {
 
   const loadCategories = async () => {
     try {
-      const response = await api.get('/api/categories');
+      const response = await api.get('/categories');
       if (response.data.success) {
         setCategories(response.data.data.categories || []);
       }
@@ -201,7 +201,7 @@ const EditProductPage: React.FC = () => {
         imageUrl: formData.imageUrl.trim() || undefined
       };
 
-      const response = await api.put(`/api/products/${id}`, productData);
+      const response = await api.put(`/products/${id}`, productData);
       
       if (response.data.success) {
         setSuccess('Product updated successfully!');
