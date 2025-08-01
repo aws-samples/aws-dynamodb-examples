@@ -62,7 +62,7 @@ const OrderDetailPage: React.FC = () => {
       setLoading(true);
       setError('');
       
-      const response = await api.get(`/api/orders/${orderId}`);
+      const response = await api.get(`/orders/${orderId}`);
       
       if (response.data.success) {
         setOrder(response.data.data.order);
@@ -100,7 +100,7 @@ const OrderDetailPage: React.FC = () => {
     if (!window.confirm('Are you sure you want to cancel this order?')) return;
 
     try {
-      const response = await api.put(`/api/orders/${order.id}/cancel`);
+      const response = await api.put(`/orders/${order.id}/cancel`);
       
       if (response.data.success) {
         setToast({ message: 'Order cancelled successfully', type: 'success' });

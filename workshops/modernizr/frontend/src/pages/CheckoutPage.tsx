@@ -49,7 +49,7 @@ const CheckoutPage: React.FC = () => {
 
       try {
         setValidating(true);
-        const response = await api.get('/api/orders/checkout/validate');
+        const response = await api.get('/orders/checkout/validate');
         if (response.data.success) {
           setValidation(response.data.data.validation);
         }
@@ -140,7 +140,7 @@ const CheckoutPage: React.FC = () => {
         };
       }
 
-      const response = await api.post('/api/orders/checkout', checkoutData);
+      const response = await api.post('/orders/checkout', checkoutData);
       
       if (response.data.success) {
         // Clear cart after successful checkout

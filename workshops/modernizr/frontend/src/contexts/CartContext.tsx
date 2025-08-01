@@ -67,7 +67,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     
     try {
       setLoading(true);
-      const response = await api.get('/api/cart');
+      const response = await api.get('/cart');
       setItems(response.data.data?.cart?.items || []);
     } catch (error) {
       console.error('Error fetching cart:', error);
@@ -84,7 +84,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
 
     try {
       setLoading(true);
-      await api.post('/api/cart/items', {
+      await api.post('/cart/items', {
         productId,
         quantity
       });
@@ -105,7 +105,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
 
     try {
       setLoading(true);
-      await api.put(`/api/cart/items/${productId}`, {
+      await api.put(`/cart/items/${productId}`, {
         quantity
       });
       
@@ -125,7 +125,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
 
     try {
       setLoading(true);
-      await api.delete(`/api/cart/items/${productId}`);
+      await api.delete(`/cart/items/${productId}`);
       
       // Refresh cart to get updated data
       await refreshCart();
@@ -143,7 +143,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
 
     try {
       setLoading(true);
-      await api.delete('/api/cart');
+      await api.delete('/cart');
       setItems([]);
     } catch (error) {
       throw error;

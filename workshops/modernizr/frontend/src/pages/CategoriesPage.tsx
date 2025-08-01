@@ -24,7 +24,7 @@ const CategoriesPage: React.FC = () => {
     try {
       setLoading(true);
       setError('');
-      const response = await api.get('/api/categories');
+      const response = await api.get('/categories');
       if (response.data.success) {
         setCategories(response.data.data.categories || []);
       }

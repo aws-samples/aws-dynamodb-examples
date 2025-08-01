@@ -20,7 +20,7 @@ const UpgradeSellerPage: React.FC = () => {
     setLoading(true);
 
     try {
-      const response = await api.post('/api/seller/upgrade');
+      const response = await api.post('/seller/upgrade');
       
       // Update user state with seller status from backend response
       if (response.data.success && response.data.data.user && user) {
