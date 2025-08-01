@@ -1,7 +1,7 @@
 {
   "name": "online-shopping-store-frontend",
   "version": "0.1.0",
-  "description": "Frontend React application for online shopping store",
+  "description": "React TypeScript frontend for the online shopping store e-commerce platform",
   "license": "MIT",
   "private": true,
   "dependencies": {
@@ -24,6 +24,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "build:prod": "NODE_ENV=production react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "clean": "rm -rf build node_modules/.cache && npm cache clean --force",
