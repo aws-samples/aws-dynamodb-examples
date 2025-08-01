@@ -54,7 +54,7 @@ const CreateProductPage: React.FC = () => {
 
   const loadCategories = async () => {
     try {
-      const response = await api.get('/api/categories');
+      const response = await api.get('/categories');
       if (response.data.success) {
         setCategories(response.data.data.categories || []);
       }
@@ -152,7 +152,7 @@ const CreateProductPage: React.FC = () => {
         imageUrl: formData.imageUrl.trim() || undefined
       };
 
-      const response = await api.post('/api/products', productData);
+      const response = await api.post('/products', productData);
       
       if (response.data.success) {
         setSuccess('Product created successfully!');

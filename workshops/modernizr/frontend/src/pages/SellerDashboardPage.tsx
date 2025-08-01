@@ -60,7 +60,7 @@ const SellerDashboardPage: React.FC = () => {
       setError('');
 
       // Load seller's products
-      const productsResponse = await api.get('/api/products/seller/my-products');
+      const productsResponse = await api.get('/products/seller/my-products');
       if (productsResponse.data.success) {
         const sellerProducts = productsResponse.data.data.products || [];
         setProducts(sellerProducts);
@@ -89,7 +89,7 @@ const SellerDashboardPage: React.FC = () => {
     }
 
     try {
-      await api.delete(`/api/products/${productId}`);
+      await api.delete(`/products/${productId}`);
       setProducts(products.filter(p => p.id !== productId));
       // Update stats
       setStats(prev => ({

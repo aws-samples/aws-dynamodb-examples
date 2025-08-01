@@ -54,7 +54,7 @@ const SellerProductsPage: React.FC = () => {
         params.set('search', searchQuery);
       }
 
-      const response = await api.get(`/api/products/seller/my-products?${params.toString()}`);
+      const response = await api.get(`/products/seller/my-products?${params.toString()}`);
       if (response.data.success) {
         setProducts(response.data.data.products || []);
       }
@@ -76,7 +76,7 @@ const SellerProductsPage: React.FC = () => {
     }
 
     try {
-      await api.delete(`/api/products/${productId}`);
+      await api.delete(`/products/${productId}`);
       setProducts(products.filter(p => p.id !== productId));
     } catch (err: any) {
       alert(err.message || 'Failed to delete product');

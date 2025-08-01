@@ -92,7 +92,7 @@ const ProductsPage: React.FC = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await api.get('/api/categories');
+        const response = await api.get('/categories');
         if (response.data.success) {
           setCategories(response.data.data.categories);
         }
@@ -123,7 +123,7 @@ const ProductsPage: React.FC = () => {
           params.append('category_id', selectedCategory.toString());
         }
 
-        const url = `/api/products?${params.toString()}`;
+        const url = `/products?${params.toString()}`;
         const response = await api.get(url);
         
         if (response.data.success) {

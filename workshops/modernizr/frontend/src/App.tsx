@@ -25,22 +25,16 @@ import OrderConfirmationPage from './pages/OrderConfirmationPage';
 import OrderHistoryPage from './pages/OrderHistoryPage';
 import OrderDetailPage from './pages/OrderDetailPage';
 
-// Configure axios defaults
-import axios from 'axios';
-
-// Environment-aware API URL configuration
-// Development: Use full localhost URL for direct backend connection
-// Production: Use relative /api path for nginx proxy
-const apiUrl = process.env.NODE_ENV === 'production' 
-  ? '/api'  // Relative path for nginx proxy in production
-  : (process.env.REACT_APP_API_URL || 'http://localhost:8100'); // Full URL for development
-
-console.log('API URL configured as:', apiUrl);
-axios.defaults.baseURL = apiUrl;
+// API configuration is handled in services/api.ts
 
 function App() {
   // Configure basename for production deployment behind nginx at /store
   const basename = process.env.NODE_ENV === 'production' ? '/store' : undefined;
+  console.log('Environment variables:', {
+    NODE_ENV: process.env.NODE_ENV,
+    PUBLIC_URL: process.env.PUBLIC_URL,
+    REACT_APP_API_URL: process.env.REACT_APP_API_URL
+  });
   console.log('Router basename configured as:', basename);
 
   return (

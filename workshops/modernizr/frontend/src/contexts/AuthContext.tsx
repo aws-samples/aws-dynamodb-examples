@@ -63,7 +63,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (username: string, password: string): Promise<void> => {
     try {
       console.log('Login attempt for:', username);
-      const response = await api.post('/api/auth/login', {
+      const response = await api.post('/auth/login', {
         username,
         password
       });
@@ -93,7 +93,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const register = async (username: string, email: string, password: string): Promise<void> => {
     try {
-      const response = await api.post('/api/auth/register', {
+      const response = await api.post('/auth/register', {
         username,
         email,
         password
