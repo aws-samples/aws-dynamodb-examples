@@ -2,7 +2,13 @@ import axios, { AxiosError, AxiosResponse } from 'axios';
 import { ErrorService, ErrorType } from './errorService';
 
 // Create axios instance with base configuration
-const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:8100';
+// Environment-aware API URL configuration
+// Development: Use full localhost URL for direct backend connection
+// Production: Use relative /api path for nginx proxy
+const apiUrl = process.env.NODE_ENV === 'production' 
+  ? '/api'  // Relative path for nginx proxy in production
+  : (process.env.REACT_APP_API_URL || 'http://localhost:8100'); // Full URL for development
+
 console.log('API service configured with URL:', apiUrl);
 const api = axios.create({
   baseURL: apiUrl,

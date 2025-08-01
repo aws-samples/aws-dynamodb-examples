@@ -1,6 +1,6 @@
 # Online Shopping Store - Frontend
 
-A modern React/TypeScript frontend application for the online shopping store, featuring user authentication, product browsing, shopping cart, order management, and seller dashboard functionality.
+A modern React/TypeScript frontend application for an e-commerce platform, featuring user authentication, product browsing, shopping cart, order management, and seller dashboard functionality.
 
 ## Features
 
@@ -21,7 +21,6 @@ A modern React/TypeScript frontend application for the online shopping store, fe
 
 - Node.js (v16 or higher)
 - npm or yarn
-- Backend API running on port 8100
 
 ### Installation
 
@@ -35,28 +34,26 @@ A modern React/TypeScript frontend application for the online shopping store, fe
    npm install
    ```
 
-3. **Set up environment variables:**
-   ```bash
-   # Create .env file (already exists with defaults)
-   # Verify these settings match your backend:
-   REACT_APP_API_URL=http://localhost:8100
-   PORT=3000
-   ```
-
-4. **Start the development server:**
+3. **Start the development server:**
    ```bash
    npm start
    ```
 
 The application will be available at `http://localhost:3000`
 
+**Note:** This frontend application is designed to work with a backend API. If you want to see it in action, you'll need to have the backend running (see backend README for setup instructions).
+
 ## Available Scripts
 
 ### Development
 - `npm start` - Start development server with hot reload
 - `npm run build` - Build for production
-- `npm test` - Run test suite
+- `npm test` - Run test suite in watch mode
 - `npm run eject` - Eject from Create React App (⚠️ irreversible)
+
+### Maintenance
+- `npm run clean` - Clean build artifacts and cache
+- `npm run clean:all` - Clean everything including node_modules
 
 ## Project Structure
 
@@ -205,37 +202,50 @@ const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8100';
 
 ## Testing
 
-The application includes comprehensive testing:
+The application includes comprehensive testing with React Testing Library and Jest:
 
 ### Test Setup
 - **React Testing Library** for component testing
 - **Jest** as the test runner
 - **@testing-library/user-event** for user interaction testing
+- **@testing-library/jest-dom** for additional matchers
 
 ### Running Tests
 ```bash
-# Run all tests
+# Run tests in interactive watch mode (default)
 npm test
 
-# Run tests in watch mode
-npm run test -- --watch
+# Run tests with coverage report
+npm test -- --coverage --watchAll=false
 
-# Run tests with coverage
-npm run test -- --coverage
+# Run all tests once (useful for CI/CD)
+npm test -- --watchAll=false
 ```
 
 ### Test Structure
-- Component unit tests
-- Integration tests for user flows
-- Context provider tests
-- Utility function tests
+- **Component Tests** - Located in `src/tests/components/`
+- **Service Tests** - Located in `src/tests/services/`
+- **Performance Tests** - Located in `src/tests/performance/`
+- **Integration Tests** - Test user workflows and component interactions
+- **Context Provider Tests** - Test AuthContext and CartContext
+
+### Testing Guidelines
+- Test user interactions, not implementation details
+- Use semantic queries (getByRole, getByLabelText, getByText)
+- Mock external API calls and dependencies
+- Test error states and loading states
+- Ensure accessibility in tests
 
 ## Environment Variables
+
+The application uses environment variables for configuration. Create a `.env` file in the frontend directory:
 
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `REACT_APP_API_URL` | Backend API base URL | http://localhost:8100 |
 | `PORT` | Development server port | 3000 |
+
+**Note:** Only environment variables prefixed with `REACT_APP_` are available in the React application.
 
 ## Build and Deployment
 
@@ -309,9 +319,9 @@ export default Component;
 ### Common Issues
 
 **API Connection Failed:**
-- Verify backend is running on port 8100
-- Check `REACT_APP_API_URL` in `.env`
-- Ensure CORS is configured on backend
+- Verify backend API is running (see backend README for setup)
+- Check `REACT_APP_API_URL` in `.env` file
+- Ensure CORS is configured on the backend API
 
 **Build Errors:**
 - Clear node_modules: `rm -rf node_modules && npm install`
