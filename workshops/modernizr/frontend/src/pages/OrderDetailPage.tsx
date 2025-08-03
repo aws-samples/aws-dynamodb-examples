@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import api from '../services/api';
@@ -57,7 +57,7 @@ const OrderDetailPage: React.FC = () => {
     }
   }, [isAuthenticated, orderId]);
 
-  const fetchOrder = async () => {
+  const fetchOrder = useCallback(async () => {
     try {
       setLoading(true);
       setError('');
@@ -77,7 +77,7 @@ const OrderDetailPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [orderId]);
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {

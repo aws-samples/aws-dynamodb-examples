@@ -1,4 +1,4 @@
-import React from 'react';
+// React import not needed with new JSX transform
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import LoadingSpinner, { LoadingButton, SkeletonLoader } from '../../components/LoadingSpinner';

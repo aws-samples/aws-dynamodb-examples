@@ -1,4 +1,4 @@
-import React from 'react';
+// React import not needed with new JSX transform
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { CartProvider } from './contexts/CartContext';
@@ -26,20 +26,21 @@ import OrderHistoryPage from './pages/OrderHistoryPage';
 import OrderDetailPage from './pages/OrderDetailPage';
 
 // API configuration is handled in services/api.ts
+import { logger } from './services/logger';
 
 function App() {
   // Configure basename for production deployment behind nginx at /store
-  const basename = process.env.NODE_ENV === 'production' ? '/store' : undefined;
-  console.log('Environment variables:', {
+  const basename: string | undefined = process.env.NODE_ENV === 'production' ? '/store' : undefined;
+  logger.debug('Environment configuration', {
     NODE_ENV: process.env.NODE_ENV,
     PUBLIC_URL: process.env.PUBLIC_URL,
     REACT_APP_API_URL: process.env.REACT_APP_API_URL
   });
-  console.log('Router basename configured as:', basename);
+  logger.info('Router basename configured', { basename });
 
   return (
     <ErrorBoundary>
-      <Router basename={basename}>
+      <Router {...(basename ? { basename } : {})}>
         <AuthProvider>
           <CartProvider>
             <Layout>

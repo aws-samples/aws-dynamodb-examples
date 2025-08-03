@@ -49,8 +49,10 @@ const LoginPage: React.FC = () => {
     if (validationErrors.length > 0) {
       const errorMap: Record<string, string> = {};
       validationErrors.forEach(error => {
-        const field = error.split(' ')[0].toLowerCase();
-        errorMap[field] = error;
+        const field = error.split(' ')[0]?.toLowerCase();
+        if (field) {
+          errorMap[field] = error;
+        }
       });
       setErrors(errorMap);
       return false;
