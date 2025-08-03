@@ -19,7 +19,7 @@ interface CheckoutValidation {
 
 const CheckoutPage: React.FC = () => {
   const { items, totalItems, totalPrice, clearCart } = useCart();
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
   const [paymentMethod, setPaymentMethod] = useState<'credit_card' | 'paypal'>('credit_card');

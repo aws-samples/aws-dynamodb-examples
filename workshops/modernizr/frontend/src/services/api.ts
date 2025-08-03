@@ -1,15 +1,17 @@
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import { ErrorService, ErrorType } from './errorService';
+import { logger } from './logger';
+import { secureStorage } from './secureStorage';
 
 // Create axios instance with base configuration
 // Environment-aware API URL configuration
-// Development: Use full localhost URL for direct backend connection
+// Development: Use full localhost URL with /api prefix for direct backend connection
 // Production: Use relative /api path for nginx proxy
 const apiUrl = process.env.NODE_ENV === 'production' 
   ? '/api'  // Relative path for nginx proxy in production
-  : (process.env.REACT_APP_API_URL || 'http://localhost:8100'); // Full URL for development
+  : (process.env.REACT_APP_API_URL || 'http://localhost:8100/api'); // Full URL with /api prefix for development
 
-console.log('API service configured with URL:', apiUrl);
+logger.info('API service configured with URL:', { apiUrl });
 const api = axios.create({
   baseURL: apiUrl,
   timeout: 10000,
@@ -18,10 +20,10 @@ const api = axios.create({
   },
 });
 
-// Request interceptor to add auth token
+// Request interceptor to add auth token from secure storage
 api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token');
+  async (config) => {
+    const token = secureStorage.getToken();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -46,6 +48,8 @@ api.interceptors.response.use(
     
     // Handle authentication errors
     if (parsedError.type === ErrorType.AUTHENTICATION_ERROR) {
+      // Clear secure storage on authentication errors
+      secureStorage.removeToken();
       ErrorService.handleAuthenticationError();
     }
     

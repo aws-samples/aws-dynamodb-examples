@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import api from '../services/api';
@@ -69,7 +69,7 @@ const EditProductPage: React.FC = () => {
     }
   }, [isAuthenticated, user, navigate, id]);
 
-  const loadProduct = async () => {
+  const loadProduct = useCallback(async () => {
     try {
       setLoading(true);
       setError('');
@@ -99,7 +99,7 @@ const EditProductPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, user?.id]);
 
   const loadCategories = async () => {
     try {

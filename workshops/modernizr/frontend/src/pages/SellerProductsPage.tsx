@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import api from '../services/api';
@@ -43,7 +43,7 @@ const SellerProductsPage: React.FC = () => {
     loadProducts();
   }, [isAuthenticated, user, navigate, sortBy]);
 
-  const loadProducts = async () => {
+  const loadProducts = useCallback(async () => {
     try {
       setLoading(true);
       setError('');
@@ -63,7 +63,7 @@ const SellerProductsPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [sortBy, searchQuery]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();

@@ -97,17 +97,17 @@ describe('ErrorService', () => {
       consoleSpy.mockRestore();
     });
 
-    test('should log error with context', () => {
+    test('should log error with context using production logger', () => {
       const error = { type: ErrorType.NETWORK_ERROR, message: 'Test error', timestamp: new Date().toISOString() };
       const context = 'test-context';
 
       ErrorService.logError(error, context);
 
-      expect(consoleSpy).toHaveBeenCalledWith('Application Error:', expect.objectContaining({
-        type: ErrorType.NETWORK_ERROR,
-        message: 'Test error',
-        context: 'test-context'
-      }));
+      // The new implementation uses the production logger with formatted output
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.stringContaining('ERROR: Application Error'),
+        expect.any(Error)
+      );
     });
   });
 });
