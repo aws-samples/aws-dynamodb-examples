@@ -1,4 +1,6 @@
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import { Component, ErrorInfo, ReactNode } from 'react';
+import { ErrorService, SecurityEventType } from '../services/errorService';
+import { logger, logSecurityEvent, logError } from '../services/logger';
 
 interface Props {
   children: ReactNode;
@@ -8,8 +10,10 @@ interface Props {
 
 interface State {
   hasError: boolean;
-  error?: Error;
-  errorInfo?: ErrorInfo;
+  error?: Error | undefined;
+  errorInfo?: ErrorInfo | undefined;
+  isSecurityRelated?: boolean | undefined;
+  errorId?: string | undefined;
 }
 
 class ErrorBoundary extends Component<Props, State> {
@@ -19,32 +23,87 @@ class ErrorBoundary extends Component<Props, State> {
   }
 
   static getDerivedStateFromError(error: Error): State {
+    // Generate unique error ID for tracking
+    const errorId = `err_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    // Check if error might be security-related
+    const isSecurityRelated = ErrorService.isErrorSecurityRelated(error);
+    
     // Update state so the next render will show the fallback UI
-    return { hasError: true, error };
+    return { 
+      hasError: true, 
+      error, 
+      isSecurityRelated,
+      errorId
+    };
   }
 
-  componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
-    // Log error to console in development
-    console.error('ErrorBoundary caught an error:', error, errorInfo);
+  override componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
+    const errorId = this.state.errorId || `err_${Date.now()}`;
+    const isSecurityRelated = this.state.isSecurityRelated;
+    
+    // Enhanced error logging with security awareness
+    const errorContext = {
+      errorId,
+      componentStack: errorInfo.componentStack,
+      errorBoundary: 'ErrorBoundary',
+      url: window.location.href,
+      userAgent: navigator.userAgent,
+      timestamp: new Date().toISOString(),
+      isSecurityRelated
+    };
+
+    // Use production logger instead of console.error
+    if (isSecurityRelated) {
+      // Log as security event if potentially security-related
+      logSecurityEvent('Security-related error caught by ErrorBoundary', {
+        error: {
+          name: error.name,
+          message: error.message,
+          stack: error.stack
+        },
+        ...errorContext
+      });
+      
+      // Also handle as security event
+      ErrorService.handleSecurityEvent({
+        type: SecurityEventType.SUSPICIOUS_INPUT,
+        message: 'Potential security-related error in React component',
+        details: errorContext,
+        userAgent: navigator.userAgent,
+        url: window.location.href,
+        timestamp: new Date().toISOString()
+      });
+    } else {
+      // Log as regular error
+      logError('ErrorBoundary caught an error', error, errorContext);
+    }
     
     // Call custom error handler if provided
     if (this.props.onError) {
       this.props.onError(error, errorInfo);
     }
 
-    // In production, you might want to log to an error reporting service
-    if (process.env.NODE_ENV === 'production') {
-      // Example: logErrorToService(error, errorInfo);
-    }
-
     this.setState({ errorInfo });
   }
 
   handleRetry = (): void => {
-    this.setState({ hasError: false, error: undefined, errorInfo: undefined });
+    // Log retry attempt
+    logger.info('User attempting to retry after error', { 
+      errorId: this.state.errorId,
+      wasSecurityRelated: this.state.isSecurityRelated 
+    });
+    
+    this.setState({ 
+      hasError: false, 
+      error: undefined, 
+      errorInfo: undefined,
+      isSecurityRelated: undefined,
+      errorId: undefined
+    });
   };
 
-  render(): ReactNode {
+  override render(): ReactNode {
     if (this.state.hasError) {
       // Custom fallback UI
       if (this.props.fallback) {
@@ -73,26 +132,46 @@ class ErrorBoundary extends Component<Props, State> {
             
             <div className="text-center">
               <h1 className="text-xl font-semibold text-gray-900 mb-2">
-                Something went wrong
+                {this.state.isSecurityRelated ? 'Security Issue Detected' : 'Something went wrong'}
               </h1>
               <p className="text-gray-600 mb-6">
-                We're sorry, but something unexpected happened. Please try refreshing the page.
+                {this.state.isSecurityRelated 
+                  ? 'A security issue was detected. Please refresh the page or contact support if this continues.'
+                  : 'We\'re sorry, but something unexpected happened. Please try refreshing the page.'
+                }
               </p>
               
               <div className="space-y-3">
-                <button
-                  onClick={this.handleRetry}
-                  className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors"
-                >
-                  Try Again
-                </button>
+                {!this.state.isSecurityRelated && (
+                  <button
+                    onClick={this.handleRetry}
+                    className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors"
+                  >
+                    Try Again
+                  </button>
+                )}
                 
                 <button
-                  onClick={() => window.location.reload()}
+                  onClick={() => {
+                    logger.info('User refreshing page after error', { 
+                      errorId: this.state.errorId,
+                      wasSecurityRelated: this.state.isSecurityRelated 
+                    });
+                    window.location.reload();
+                  }}
                   className="w-full bg-gray-100 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-200 transition-colors"
                 >
                   Refresh Page
                 </button>
+                
+                {this.state.isSecurityRelated && (
+                  <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
+                    <p className="text-sm text-yellow-800">
+                      <strong>Security Notice:</strong> This error may be related to a security issue. 
+                      If you continue to see this message, please contact support with error ID: {this.state.errorId}
+                    </p>
+                  </div>
+                )}
               </div>
 
               {/* Show error details in development */}

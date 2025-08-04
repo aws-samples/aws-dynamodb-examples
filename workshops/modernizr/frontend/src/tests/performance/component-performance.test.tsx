@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { performance } from 'perf_hooks';
 import FormField from '../../components/FormField';
@@ -196,7 +196,7 @@ describe('Component Performance Tests', () => {
 
   describe('Animation Performance', () => {
     test('should maintain smooth animations', async () => {
-      const { rerender } = render(<LoadingSpinner />);
+      render(<LoadingSpinner />);
       
       const spinner = document.querySelector('.animate-spin');
       expect(spinner).toBeInTheDocument();

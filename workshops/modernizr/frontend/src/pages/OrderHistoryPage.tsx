@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import api from '../services/api';
@@ -63,7 +63,7 @@ const OrderHistoryPage: React.FC = () => {
     }
   }, [isAuthenticated, currentPage]);
 
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async () => {
     try {
       setLoading(true);
       setError('');
@@ -80,7 +80,7 @@ const OrderHistoryPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentPage]);
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();

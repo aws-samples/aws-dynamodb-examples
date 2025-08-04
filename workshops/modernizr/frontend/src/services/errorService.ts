@@ -1,3 +1,5 @@
+import { logger, logSecurityEvent, logError, logWarn } from './logger';
+
 // Error types for better categorization
 export enum ErrorType {
   NETWORK_ERROR = 'NETWORK_ERROR',
@@ -7,7 +9,32 @@ export enum ErrorType {
   NOT_FOUND_ERROR = 'NOT_FOUND_ERROR',
   SERVER_ERROR = 'SERVER_ERROR',
   TIMEOUT_ERROR = 'TIMEOUT_ERROR',
-  UNKNOWN_ERROR = 'UNKNOWN_ERROR'
+  UNKNOWN_ERROR = 'UNKNOWN_ERROR',
+  SECURITY_ERROR = 'SECURITY_ERROR',
+  XSS_ATTEMPT = 'XSS_ATTEMPT',
+  INJECTION_ATTEMPT = 'INJECTION_ATTEMPT'
+}
+
+// Security event types
+export enum SecurityEventType {
+  XSS_ATTEMPT = 'XSS_ATTEMPT',
+  INJECTION_ATTEMPT = 'INJECTION_ATTEMPT',
+  SUSPICIOUS_INPUT = 'SUSPICIOUS_INPUT',
+  RATE_LIMIT_EXCEEDED = 'RATE_LIMIT_EXCEEDED',
+  UNAUTHORIZED_ACCESS = 'UNAUTHORIZED_ACCESS',
+  TOKEN_MANIPULATION = 'TOKEN_MANIPULATION',
+  CSRF_ATTEMPT = 'CSRF_ATTEMPT'
+}
+
+export interface SecurityEvent {
+  type: SecurityEventType;
+  message: string;
+  details?: any;
+  userAgent?: string;
+  url?: string;
+  timestamp: string;
+  userId?: string;
+  sessionId?: string;
 }
 
 export interface AppError {
@@ -16,10 +43,18 @@ export interface AppError {
   statusCode?: number;
   details?: any;
   timestamp: string;
+  sanitizedMessage?: string;
+  isSecurityRelated?: boolean;
+}
+
+export interface UserFriendlyError {
+  message: string;
+  canRetry: boolean;
+  actionRequired?: string | undefined;
 }
 
 export class ErrorService {
-  // Parse API error responses
+  // Parse API error responses with security awareness
   static parseApiError(error: any): AppError {
     const timestamp = new Date().toISOString();
 
@@ -29,20 +64,25 @@ export class ErrorService {
         return {
           type: ErrorType.TIMEOUT_ERROR,
           message: 'Request timed out. Please check your connection and try again.',
-          timestamp
+          timestamp,
+          sanitizedMessage: 'Request timed out. Please try again.'
         };
       }
       
       return {
         type: ErrorType.NETWORK_ERROR,
         message: 'Network error. Please check your internet connection.',
-        timestamp
+        timestamp,
+        sanitizedMessage: 'Network connection issue. Please try again.'
       };
     }
 
     const { status, data } = error.response;
     const errorMessage = data?.error?.message || data?.message || 'An error occurred';
     const errorDetails = data?.error?.details || data?.details;
+
+    // Check if this might be a security-related error
+    const isSecurityRelated = this.isSecurityRelatedError(status, errorMessage, errorDetails);
 
     // Categorize by status code
     switch (status) {
@@ -52,23 +92,35 @@ export class ErrorService {
           message: errorMessage,
           statusCode: status,
           details: errorDetails,
-          timestamp
+          timestamp,
+          isSecurityRelated,
+          sanitizedMessage: isSecurityRelated 
+            ? 'Invalid request. Please check your input.' 
+            : errorMessage
         };
 
       case 401:
+        // Log authentication failure
+        logWarn('Authentication failure', { status, url: window.location.href });
         return {
           type: ErrorType.AUTHENTICATION_ERROR,
           message: 'Please log in to continue.',
           statusCode: status,
-          timestamp
+          timestamp,
+          isSecurityRelated: true,
+          sanitizedMessage: 'Authentication required. Please log in.'
         };
 
       case 403:
+        // Log authorization failure
+        logWarn('Authorization failure', { status, url: window.location.href });
         return {
           type: ErrorType.AUTHORIZATION_ERROR,
           message: 'You do not have permission to perform this action.',
           statusCode: status,
-          timestamp
+          timestamp,
+          isSecurityRelated: true,
+          sanitizedMessage: 'Access denied. You do not have permission.'
         };
 
       case 404:
@@ -76,15 +128,24 @@ export class ErrorService {
           type: ErrorType.NOT_FOUND_ERROR,
           message: 'The requested resource was not found.',
           statusCode: status,
-          timestamp
+          timestamp,
+          sanitizedMessage: 'Resource not found.'
         };
 
       case 429:
+        // Log rate limiting event
+        logSecurityEvent('Rate limit exceeded', { 
+          status, 
+          url: window.location.href,
+          userAgent: navigator.userAgent 
+        });
         return {
           type: ErrorType.NETWORK_ERROR,
           message: 'Too many requests. Please wait a moment and try again.',
           statusCode: status,
-          timestamp
+          timestamp,
+          isSecurityRelated: true,
+          sanitizedMessage: 'Too many requests. Please wait and try again.'
         };
 
       case 500:
@@ -95,7 +156,8 @@ export class ErrorService {
           type: ErrorType.SERVER_ERROR,
           message: 'Server error. Please try again later.',
           statusCode: status,
-          timestamp
+          timestamp,
+          sanitizedMessage: 'Server temporarily unavailable. Please try again later.'
         };
 
       default:
@@ -104,9 +166,36 @@ export class ErrorService {
           message: errorMessage,
           statusCode: status,
           details: errorDetails,
-          timestamp
+          timestamp,
+          isSecurityRelated,
+          sanitizedMessage: isSecurityRelated 
+            ? 'An error occurred. Please try again or contact support.' 
+            : errorMessage
         };
     }
+  }
+
+  // Check if an error is security-related
+  private static isSecurityRelatedError(status: number, message: string, details: any): boolean {
+    // Security-related status codes
+    const securityStatusCodes = [401, 403, 429];
+    if (securityStatusCodes.includes(status)) {
+      return true;
+    }
+
+    // Security-related keywords in error messages
+    const securityKeywords = [
+      'unauthorized', 'forbidden', 'token', 'authentication', 
+      'authorization', 'permission', 'access denied', 'security',
+      'blocked', 'suspicious', 'violation', 'threat'
+    ];
+
+    const messageText = (message || '').toLowerCase();
+    const detailsText = details ? JSON.stringify(details).toLowerCase() : '';
+
+    return securityKeywords.some(keyword => 
+      messageText.includes(keyword) || detailsText.includes(keyword)
+    );
   }
 
   // Get user-friendly error messages
@@ -141,7 +230,7 @@ export class ErrorService {
     }
   }
 
-  // Log errors for debugging
+  // Log errors for debugging using production logger
   static logError(error: AppError, context?: string): void {
     const logData = {
       ...error,
@@ -150,19 +239,235 @@ export class ErrorService {
       url: window.location.href
     };
 
-    console.error('Application Error:', logData);
-
-    // In production, send to error tracking service
-    if (process.env.NODE_ENV === 'production') {
-      // Example: sendToErrorTrackingService(logData);
+    // Use production logger instead of console.error
+    if (error.isSecurityRelated) {
+      logSecurityEvent(`Security-related error: ${error.type}`, logData);
+    } else {
+      logError('Application Error', new Error(error.message), logData);
     }
+  }
+
+  // Handle security events
+  static handleSecurityEvent(event: SecurityEvent): void {
+    // Log security event using logger instance
+    logger.securityEvent(`${event.type}: ${event.message}`, {
+      details: event.details,
+      userAgent: event.userAgent,
+      url: event.url,
+      userId: event.userId,
+      sessionId: event.sessionId,
+      timestamp: event.timestamp
+    });
+
+    // In production, immediately report to security monitoring
+    if (process.env.NODE_ENV === 'production') {
+      // Send to security monitoring service
+      this.reportSecurityIncident(event);
+    }
+  }
+
+  // Report security incidents to monitoring service
+  private static reportSecurityIncident(event: SecurityEvent): void {
+    try {
+      // TODO: Implement security monitoring service integration
+      // This could be a SIEM, security dashboard, or alert system
+      // securityMonitoringService.reportIncident(event);
+      
+      // For now, use high-priority logging
+      logger.error(`SECURITY INCIDENT: ${event.type}`, undefined, event);
+    } catch (error) {
+      // Fallback logging if security service fails
+      logger.error('Failed to report security incident', error as Error, event);
+    }
+  }
+
+  // Sanitize error messages for user display
+  static sanitizeErrorForUser(error: AppError): UserFriendlyError {
+    // Never expose sensitive information to users
+    const sensitivePatterns = [
+      /password/i,
+      /token/i,
+      /key/i,
+      /secret/i,
+      /database/i,
+      /sql/i,
+      /query/i,
+      /internal/i,
+      /system/i,
+      /server/i,
+      /stack trace/i,
+      /file path/i
+    ];
+
+    let sanitizedMessage = error.message;
+    let canRetry = true;
+    let actionRequired: string | undefined;
+
+    // Check if message contains sensitive information
+    const containsSensitiveInfo = sensitivePatterns.some(pattern => 
+      pattern.test(error.message) || 
+      (error.details && pattern.test(JSON.stringify(error.details)))
+    );
+
+    if (containsSensitiveInfo || error.isSecurityRelated) {
+      // Use generic message for security-related or sensitive errors
+      sanitizedMessage = this.getGenericErrorMessage(error.type);
+      canRetry = false;
+      actionRequired = 'Please contact support if this issue persists';
+    } else {
+      // Use the user-friendly message for non-sensitive errors
+      sanitizedMessage = this.getUserFriendlyMessage(error);
+    }
+
+    // Determine retry capability based on error type
+    switch (error.type) {
+      case ErrorType.AUTHENTICATION_ERROR:
+      case ErrorType.AUTHORIZATION_ERROR:
+      case ErrorType.SECURITY_ERROR:
+      case ErrorType.XSS_ATTEMPT:
+      case ErrorType.INJECTION_ATTEMPT:
+        canRetry = false;
+        actionRequired = error.type === ErrorType.AUTHENTICATION_ERROR 
+          ? 'Please log in again' 
+          : 'Please contact support if this issue persists';
+        break;
+      
+      case ErrorType.VALIDATION_ERROR:
+        canRetry = true;
+        actionRequired = 'Please check your input and try again';
+        break;
+      
+      case ErrorType.NETWORK_ERROR:
+      case ErrorType.TIMEOUT_ERROR:
+        canRetry = true;
+        actionRequired = 'Please check your connection and try again';
+        break;
+    }
+
+    return {
+      message: sanitizedMessage,
+      canRetry,
+      actionRequired
+    };
+  }
+
+  // Get generic error messages that don't expose system details
+  private static getGenericErrorMessage(errorType: ErrorType): string {
+    switch (errorType) {
+      case ErrorType.SECURITY_ERROR:
+      case ErrorType.XSS_ATTEMPT:
+      case ErrorType.INJECTION_ATTEMPT:
+        return 'A security issue was detected. Please try again or contact support.';
+      
+      case ErrorType.AUTHENTICATION_ERROR:
+        return 'Authentication failed. Please log in again.';
+      
+      case ErrorType.AUTHORIZATION_ERROR:
+        return 'You do not have permission to perform this action.';
+      
+      case ErrorType.SERVER_ERROR:
+        return 'A server error occurred. Please try again later.';
+      
+      case ErrorType.NETWORK_ERROR:
+        return 'Network connection issue. Please check your connection.';
+      
+      case ErrorType.VALIDATION_ERROR:
+        return 'Please check your input and try again.';
+      
+      default:
+        return 'An unexpected error occurred. Please try again.';
+    }
+  }
+
+  // Detect potential security threats in input
+  static detectSecurityThreats(input: string, context?: string): SecurityEvent | null {
+    const xssPatterns = [
+      /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
+      /javascript:/gi,
+      /on\w+\s*=/gi,
+      /<iframe/gi,
+      /<object/gi,
+      /<embed/gi,
+      /eval\s*\(/gi,
+      /expression\s*\(/gi
+    ];
+
+    const injectionPatterns = [
+      /(\b(SELECT|INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|EXEC|UNION)\b)/gi,
+      /(\b(OR|AND)\s+\d+\s*=\s*\d+)/gi,
+      /(';|";|--|\*\/)/g,
+      /(<script|<iframe|<object|<embed)/gi
+    ];
+
+    // Check for XSS attempts
+    for (const pattern of xssPatterns) {
+      if (pattern.test(input)) {
+        return {
+          type: SecurityEventType.XSS_ATTEMPT,
+          message: 'Potential XSS attempt detected in user input',
+          details: {
+            input: input.substring(0, 100), // Limit logged input
+            context,
+            pattern: pattern.source
+          },
+          userAgent: navigator.userAgent,
+          url: window.location.href,
+          timestamp: new Date().toISOString()
+        };
+      }
+    }
+
+    // Check for injection attempts
+    for (const pattern of injectionPatterns) {
+      if (pattern.test(input)) {
+        return {
+          type: SecurityEventType.INJECTION_ATTEMPT,
+          message: 'Potential injection attempt detected in user input',
+          details: {
+            input: input.substring(0, 100), // Limit logged input
+            context,
+            pattern: pattern.source
+          },
+          userAgent: navigator.userAgent,
+          url: window.location.href,
+          timestamp: new Date().toISOString()
+        };
+      }
+    }
+
+    return null;
+  }
+
+  // Check if a JavaScript error might be security-related
+  static isErrorSecurityRelated(error: Error): boolean {
+    const securityIndicators = [
+      'unauthorized', 'forbidden', 'access denied',
+      'security', 'xss', 'injection', 'csrf',
+      'eval', 'document.write', 'innerHTML',
+      'insertAdjacentHTML', 'createContextualFragment',
+      'postMessage'
+    ];
+
+    const errorMessage = error.message.toLowerCase();
+    const errorStack = (error.stack || '').toLowerCase();
+
+    return securityIndicators.some(indicator => 
+      errorMessage.includes(indicator) || errorStack.includes(indicator)
+    );
   }
 
   // Handle specific error scenarios
   static handleAuthenticationError(): void {
-    // Clear auth data
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    // Log authentication error handling
+    logWarn('Handling authentication error - clearing session and redirecting');
+    
+    // Clear auth data (should use secure storage service)
+    try {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+    } catch (error) {
+      logError('Failed to clear authentication data', error as Error);
+    }
     
     // Redirect to login
     window.location.href = '/login';

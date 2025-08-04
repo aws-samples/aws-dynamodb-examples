@@ -1,5 +1,7 @@
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import { Component, ErrorInfo, ReactNode } from 'react';
 import { Link } from 'react-router-dom';
+import { ErrorService, SecurityEventType } from '../services/errorService';
+import { logger, logSecurityEvent, logError } from '../services/logger';
 
 interface Props {
   children: ReactNode;
@@ -8,7 +10,9 @@ interface Props {
 
 interface State {
   hasError: boolean;
-  error?: Error;
+  error?: Error | undefined;
+  isSecurityRelated?: boolean | undefined;
+  errorId?: string | undefined;
 }
 
 class PageErrorBoundary extends Component<Props, State> {
@@ -18,18 +22,73 @@ class PageErrorBoundary extends Component<Props, State> {
   }
 
   static getDerivedStateFromError(error: Error): State {
-    return { hasError: true, error };
+    const errorId = `page_err_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const isSecurityRelated = ErrorService.isErrorSecurityRelated(error);
+    
+    return { 
+      hasError: true, 
+      error, 
+      isSecurityRelated,
+      errorId
+    };
   }
 
-  componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
-    console.error(`PageErrorBoundary caught an error in ${this.props.pageName || 'page'}:`, error, errorInfo);
+  override componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
+    const errorId = this.state.errorId || `page_err_${Date.now()}`;
+    const isSecurityRelated = this.state.isSecurityRelated;
+    const pageName = this.props.pageName || 'page';
+    
+    const errorContext = {
+      errorId,
+      pageName,
+      componentStack: errorInfo.componentStack,
+      errorBoundary: 'PageErrorBoundary',
+      url: window.location.href,
+      userAgent: navigator.userAgent,
+      timestamp: new Date().toISOString(),
+      isSecurityRelated
+    };
+
+    // Use production logger instead of console.error
+    if (isSecurityRelated) {
+      logSecurityEvent(`Security-related page error in ${pageName}`, {
+        error: {
+          name: error.name,
+          message: error.message,
+          stack: error.stack
+        },
+        ...errorContext
+      });
+      
+      ErrorService.handleSecurityEvent({
+        type: SecurityEventType.SUSPICIOUS_INPUT,
+        message: `Potential security-related error in ${pageName} page`,
+        details: errorContext,
+        userAgent: navigator.userAgent,
+        url: window.location.href,
+        timestamp: new Date().toISOString()
+      });
+    } else {
+      logError(`PageErrorBoundary caught an error in ${pageName}`, error, errorContext);
+    }
   }
 
   handleRetry = (): void => {
-    this.setState({ hasError: false, error: undefined });
+    logger.info('User retrying after page error', { 
+      errorId: this.state.errorId,
+      pageName: this.props.pageName,
+      wasSecurityRelated: this.state.isSecurityRelated 
+    });
+    
+    this.setState({ 
+      hasError: false, 
+      error: undefined,
+      isSecurityRelated: undefined,
+      errorId: undefined
+    });
   };
 
-  render(): ReactNode {
+  override render(): ReactNode {
     if (this.state.hasError) {
       return (
         <div className="min-h-96 flex items-center justify-center">
@@ -46,29 +105,50 @@ class PageErrorBoundary extends Component<Props, State> {
             </div>
             
             <h2 className="text-xl font-semibold text-gray-900 mb-2">
-              Page Error
+              {this.state.isSecurityRelated ? 'Security Issue Detected' : 'Page Error'}
             </h2>
             <p className="text-gray-600 mb-6">
-              {this.props.pageName 
-                ? `There was an error loading the ${this.props.pageName} page.`
-                : 'There was an error loading this page.'
+              {this.state.isSecurityRelated 
+                ? 'A security issue was detected while loading this page. Please try again or contact support.'
+                : (this.props.pageName 
+                    ? `There was an error loading the ${this.props.pageName} page.`
+                    : 'There was an error loading this page.'
+                  )
               }
             </p>
             
             <div className="space-y-3">
-              <button
-                onClick={this.handleRetry}
-                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors mr-3"
-              >
-                Try Again
-              </button>
+              {!this.state.isSecurityRelated && (
+                <button
+                  onClick={this.handleRetry}
+                  className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors mr-3"
+                >
+                  Try Again
+                </button>
+              )}
               
               <Link
                 to="/"
                 className="bg-gray-100 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-200 transition-colors"
+                onClick={() => {
+                  logger.info('User navigating home after page error', { 
+                    errorId: this.state.errorId,
+                    pageName: this.props.pageName,
+                    wasSecurityRelated: this.state.isSecurityRelated 
+                  });
+                }}
               >
                 Go Home
               </Link>
+              
+              {this.state.isSecurityRelated && (
+                <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md text-left">
+                  <p className="text-sm text-yellow-800">
+                    <strong>Security Notice:</strong> This error may be security-related. 
+                    Error ID: {this.state.errorId}
+                  </p>
+                </div>
+              )}
             </div>
 
             {/* Development error details */}
