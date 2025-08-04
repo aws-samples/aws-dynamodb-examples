@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import api from '../services/api';
+import { logger } from '../services/logger';
 
 interface Category {
   id: number;
@@ -59,7 +60,7 @@ const CreateProductPage: React.FC = () => {
         setCategories(response.data.data.categories || []);
       }
     } catch (err) {
-      console.error('Error loading categories:', err);
+      logger.error('Error loading categories', err as Error);
     }
   };
 

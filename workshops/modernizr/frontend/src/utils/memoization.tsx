@@ -13,6 +13,7 @@ export function useMemoizedValue<T>(
   factory: () => T,
   deps: React.DependencyList
 ): T {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   return useMemo(factory, deps);
 }
 
@@ -21,16 +22,19 @@ export function useMemoizedCallback<T extends (...args: any[]) => any>(
   callback: T,
   deps: React.DependencyList
 ): T {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   return useCallback(callback, deps);
 }
 
 // Custom hook for memoizing object props to prevent unnecessary re-renders
 export function useMemoizedObject<T extends Record<string, any>>(obj: T): T {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   return useMemo(() => obj, Object.values(obj));
 }
 
 // Custom hook for memoizing arrays
 export function useMemoizedArray<T>(array: T[]): T[] {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   return useMemo(() => array, array);
 }
 
@@ -65,7 +69,8 @@ export function useThrottled<T extends (...args: any[]) => any>(
         lastRun.current = Date.now();
       }
     }) as T,
-    [callback, delay]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [delay]
   );
 }
 
@@ -132,9 +137,11 @@ export function useIntersectionObserver(
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        setIsIntersecting(entry.isIntersecting);
-        if (entry.isIntersecting && !hasIntersected) {
-          setHasIntersected(true);
+        if (entry) {
+          setIsIntersecting(entry.isIntersecting);
+          if (entry.isIntersecting && !hasIntersected) {
+            setHasIntersected(true);
+          }
         }
       },
       options
