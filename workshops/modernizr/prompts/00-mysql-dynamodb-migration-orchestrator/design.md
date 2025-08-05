@@ -41,12 +41,12 @@ Each stage is implemented as a complete spec with:
 **Output**: `Stage3_DataModel.md`, `migrationContract.json`
 **Key Methodology**: Two-file system, RPS documentation, denormalization framework
 
-### Stage 3: DAL Abstraction
-**Spec**: `03-dal-abstraction`
-**Purpose**: Create abstraction layer for multiple database implementations
+### Stage 3: Dual-Database Abstraction
+**Spec**: `03-dual-database-abstraction`
+**Purpose**: Create dual-database abstraction layer with feature flag control for simultaneous MySQL and DynamoDB operations
 **Input**: Application codebase
-**Output**: Refactored codebase with DAL abstraction
-**Key Methodology**: 9-step process with factory pattern implementation
+**Output**: Refactored backend codebase with dual-database abstraction and global feature flags
+**Key Methodology**: Discovery-driven approach with dual-database repository pattern and feature flag implementation
 
 ### Stage 4: DynamoDB Implementation
 **Spec**: `04-dynamodb-implementation`
@@ -83,7 +83,7 @@ Each stage is implemented as a complete spec with:
 1. **Stage-01 Modular Artifacts**: Complete database analysis in focused artifacts (`artifacts/stage-01/01_1_API_access_patterns.md`, `01_2_schema_extraction.md`, `01_3_entity_relationships.md`, `01_4_table_structures.md`, `01_5_performance_analysis.md`, `01_6_access_patterns.md`)
 2. **Stage-02 Modular Artifacts**: dynamodb_data_model.md and dynamodb_requirement.md
 3. **migrationContract.json**: MySQL-to-DynamoDB mapping (CRITICAL FORMAT)
-4. **Refactored Codebase**: Application with DAL abstraction
+4. **Refactored Backend**: Backend with dual-database abstraction and feature flags
 5. **Feature Flag System**: Web interface for migration control
 6. **CloudFormation Templates**: Infrastructure deployment
 7. **Migration Reports**: Validation and completion documentation
