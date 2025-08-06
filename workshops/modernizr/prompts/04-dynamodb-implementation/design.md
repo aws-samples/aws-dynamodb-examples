@@ -404,20 +404,142 @@ class CircuitBreaker {
 
 ## Testing Strategy
 
+### Dual Testing Approach: Unit + Integration
+
+**Why Both Testing Approaches**:
+- **Unit Tests**: Fast feedback, isolated business logic testing, comprehensive edge case coverage
+- **Integration Tests**: Real DynamoDB validation, migration contract verification, end-to-end correctness
+
+### Unit Testing Strategy
+```typescript
+// Example unit test with mocked DynamoDB client
+describe('DynamoDBUserRepository Unit Tests', () => {
+    let repository: DynamoDBUserRepository;
+    let mockDynamoClient: jest.Mocked<DynamoDBClient>;
+    
+    beforeEach(() => {
+        mockDynamoClient = {
+            send: jest.fn()
+        } as any;
+        repository = new DynamoDBUserRepository(mockDynamoClient, migrationContract, logger);
+    });
+    
+    it('should transform user data correctly according to migration contract', async () => {
+        // Test data transformation logic without DynamoDB dependency
+        const mockDynamoResponse = {
+            Item: {
+                UserId: { N: '123' },
+                Email: { S: 'test@example.com' },
+                Username: { S: 'testuser' }
+            }
+        };
+        
+        mockDynamoClient.send.mockResolvedValue(mockDynamoResponse);
+        
+        const result = await repository.findById(123);
+        
+        expect(result).toEqual({
+            id: 123,
+            email: 'test@example.com',
+            username: 'testuser'
+        });
+    });
+    
+    it('should handle DynamoDB errors correctly', async () => {
+        mockDynamoClient.send.mockRejectedValue(new Error('ProvisionedThroughputExceededException'));
+        
+        await expect(repository.findById(123)).rejects.toThrow('Throughput exceeded');
+    });
+});
+```
+
 ### Integration Testing with DynamoDB Local
-- Use real DynamoDB Local instance for all tests
-- Test all CRUD operations for each entity
-- Validate error handling scenarios
-- Test performance under load conditions
+```typescript
+// Example integration test with real DynamoDB Local
+describe('DynamoDBUserRepository Integration Tests', () => {
+    let repository: DynamoDBUserRepository;
+    let dynamoClient: DynamoDBClient;
+    
+    beforeAll(async () => {
+        // Connect to DynamoDB Local
+        dynamoClient = new DynamoDBClient({
+            endpoint: 'http://localhost:8000',
+            region: 'us-west-2',
+            credentials: {
+                accessKeyId: 'dummy',
+                secretAccessKey: 'dummy'
+            }
+        });
+        
+        repository = new DynamoDBUserRepository(dynamoClient, migrationContract, logger);
+        
+        // Create test tables based on migration contract
+        await createTestTables(dynamoClient, migrationContract);
+    });
+    
+    it('should create and retrieve user following migration contract', async () => {
+        const userData = {
+            id: 123,
+            email: 'test@example.com',
+            username: 'testuser'
+        };
+        
+        // Test actual DynamoDB operations
+        await repository.create(userData);
+        const retrieved = await repository.findById(123);
+        
+        expect(retrieved).toEqual(userData);
+        
+        // Verify data is stored correctly in DynamoDB format
+        const rawItem = await getRawDynamoItem(dynamoClient, 'Users', { UserId: { N: '123' } });
+        expect(rawItem.Email.S).toBe('test@example.com');
+    });
+    
+    it('should handle real DynamoDB throughput limits', async () => {
+        // Test with actual DynamoDB Local throttling
+        const promises = Array(100).fill(0).map((_, i) => 
+            repository.create({ id: i, email: `user${i}@example.com`, username: `user${i}` })
+        );
+        
+        // Should handle throttling gracefully with retries
+        await expect(Promise.all(promises)).resolves.not.toThrow();
+    });
+});
+```
+
+### Test File Organization
+```
+tests/
+├── unit/
+│   ├── UserRepository.unit.test.js          # Fast business logic tests
+│   ├── ProductRepository.unit.test.js       # Mocked DynamoDB client
+│   └── OrderRepository.unit.test.js         # Data transformation validation
+├── integration/
+│   ├── UserRepository.integration.test.js   # Real DynamoDB Local tests
+│   ├── ProductRepository.integration.test.js # Migration contract validation
+│   └── OrderRepository.integration.test.js  # End-to-end operation tests
+└── helpers/
+    ├── dynamodb-local-setup.js              # DynamoDB Local test utilities
+    ├── test-data-factory.js                 # Test data generation
+    └── migration-contract-loader.js         # Contract loading utilities
+```
+
+### TDD Workflow with Dual Testing
+1. **Write failing unit test** for business logic (fast feedback)
+2. **Implement minimum code** to pass unit test
+3. **Write failing integration test** with real DynamoDB Local
+4. **Implement DynamoDB operations** to pass integration test
+5. **Refactor** while keeping both test suites passing
+6. **Run all tests** (existing + unit + integration) after each change
 
 ### Test Data Management
-- Create test data that matches production patterns
-- Use realistic item sizes and access patterns
-- Test edge cases and boundary conditions
-- Validate data consistency and integrity
+- **Unit Tests**: Use simple mock data for fast execution
+- **Integration Tests**: Use realistic data that matches production patterns
+- **Migration Contract Validation**: Verify actual table structures and data formats
+- **Edge Cases**: Test boundary conditions in both unit and integration contexts
 
 ### Performance Testing
-- Measure operation latency under various conditions
-- Test throughput limits and throttling behavior
-- Validate retry mechanisms and backoff strategies
-- Monitor resource consumption and optimization opportunities
+- **Unit Tests**: Test business logic performance without I/O overhead
+- **Integration Tests**: Measure actual DynamoDB operation latency
+- **Load Testing**: Test throughput limits and throttling with real DynamoDB Local
+- **Resource Monitoring**: Validate memory usage and connection management
