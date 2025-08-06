@@ -77,24 +77,36 @@
 
   - [ ] 3.2 Replace first stub repository with real DynamoDB implementation
     - **FOLLOW PLAN**: Use the detailed implementation plan from step 2.2 for exact specifications
-    - **CRITICAL**: Use test-driven development approach (write failing test → implement minimum code → run tests → refactor)
-    - **CRITICAL**: Run tests before ANY changes and after EVERY substantive change
-    - **CRITICAL**: Use real DynamoDB Local, no mock tests or mock data
+    - **CREATE DUAL TEST STRATEGY**: Create both unit tests and integration tests for comprehensive coverage
+      - **Unit Tests**: Create `UserRepository.unit.test.js` for fast business logic validation with mocked DynamoDB client
+      - **Integration Tests**: Create `UserRepository.integration.test.js` for real DynamoDB Local testing
+    - **TDD WORKFLOW**: 
+      1. Write failing unit test for business logic
+      2. Implement minimum code to pass unit test
+      3. Write failing integration test with real DynamoDB Local
+      4. Implement DynamoDB operations to pass integration test
+      5. Refactor while keeping both test suites passing
+    - **CRITICAL**: Run both unit and integration tests before ANY changes and after EVERY substantive change
+    - **CRITICAL**: Integration tests must use real DynamoDB Local, no mock data
     - Replace the first stub DynamoDB repository (from stage 03) with real implementation following migrationContract.json
     - Preserve MySQL-generated IDs in same format, casting to match DynamoDB data type as specified in contract
     - Document implementation progress in `artifacts/stage-04/04_2_implementation_log.md`
-    - **COMMIT**: Commit first repository implementation with message "Implement first DynamoDB repository replacing stage 03 stub"
+    - **COMMIT**: Commit first repository implementation with message "Implement first DynamoDB repository with unit and integration tests"
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
     - _Requirements: 2.1, 2.2, 2.3, 2.4_
 
   - [ ] 3.3 Replace remaining stub repositories incrementally
     - **FOLLOW PLAN**: Continue using the detailed implementation plan for each remaining repository
+    - **CONTINUE DUAL TEST STRATEGY**: Create both unit and integration test files for each remaining repository
+      - **Unit Tests**: `EntityRepository.unit.test.js` for business logic and data transformation testing
+      - **Integration Tests**: `EntityRepository.integration.test.js` for real DynamoDB operations
+    - **MAINTAIN TDD WORKFLOW**: Continue the unit test → integration test → implementation cycle for each repository
     - Replace each remaining stub DynamoDB repository with real implementation, testing after each
     - **CRITICAL**: Follow the migrationContract.json specifications exactly for table names, attribute mappings, data transformations, and query patterns
     - Maintain the exact interface contracts established in stage 03 - no changes to method signatures
     - Handle DynamoDB-specific limitations (400KB item size, throughput limits) as specified in the implementation plan
     - Update implementation log with progress and any issues encountered
-    - **COMMIT**: Commit remaining repository implementations with message "Complete all DynamoDB repository implementations"
+    - **COMMIT**: Commit remaining repository implementations with message "Complete all DynamoDB repository implementations with comprehensive test coverage"
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
     - _Requirements: 2.1, 2.2, 2.4, 2.5_
 
@@ -207,7 +219,7 @@ Before marking this stage complete, verify:
 - [ ] **Stub Replacement**: All stub DynamoDB repositories from stage 03 have been replaced with real implementations
 - [ ] **Interface Compliance**: All implementations follow the exact interface contracts defined in stage 03
 - [ ] **Migration Contract Compliance**: DynamoDB implementation follows migrationContract.json specifications exactly
-- [ ] **Testing**: DynamoDB Local is properly set up and all existing tests pass
+- [ ] **Testing**: DynamoDB Local is properly set up, all existing tests pass, and new DynamoDB-specific test files have been created
 - [ ] **Data Preservation**: MySQL-generated IDs are preserved in correct format as specified in migration contract
 - [ ] **Error Handling**: Comprehensive error handling is implemented with exponential backoff
 - [ ] **Monitoring**: Monitoring and logging are implemented for all operations
@@ -218,10 +230,13 @@ Before marking this stage complete, verify:
 ## Critical Execution Guidelines
 
 **⚠️ CRITICAL TEST EXECUTION GATES**:
-- **NEVER** make changes to existing test cases
-- **NEVER** create Mock tests or use Mock data
-- **ALWAYS** run tests before making any code changes
-- **ALWAYS** run tests after each substantive change
+- **NEVER** modify existing test cases or test files
+- **ALWAYS** create NEW test files for DynamoDB-specific functionality
+- **DUAL TEST STRATEGY**: Create both unit tests (with mocked DynamoDB client) and integration tests (with real DynamoDB Local)
+- **UNIT TESTS**: Use mocks for fast business logic validation and edge case testing
+- **INTEGRATION TESTS**: Use real DynamoDB Local for end-to-end validation - NEVER use mocks for integration tests
+- **ALWAYS** run existing tests before making any code changes
+- **ALWAYS** run all tests (existing + unit + integration) after each substantive change
 - **NEVER** proceed with implementation if tests cannot be run
 - **NEVER** proceed if tests are failing unless failures are explicitly documented and understood
 
@@ -229,6 +244,8 @@ Before marking this stage complete, verify:
 - Use exact same programming language version as existing repository
 - Write code that matches existing repository conventions
 - Follow test-driven development: failing test → minimum code → tests pass → refactor
+- **Create NEW test files** for DynamoDB repositories (e.g., `UserRepository.dynamodb.test.js`)
+- **DO NOT modify existing test files** - only create new ones
 - Implement one entity at a time, testing after each
 - Read files before attempting to change them
 
