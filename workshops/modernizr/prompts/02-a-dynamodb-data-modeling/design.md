@@ -51,21 +51,27 @@ graph TD
 - **Scale Requirements**: [from 01_5_performance_analysis.md]
 
 ## Access Patterns Summary
-[Extracted from 01_1_API_access_patterns.md and 01_6_access_patterns.md]
+[Extracted from 01_1_API_access_patterns.md and 01_2_mysql_log_analysis.md]
 | Pattern | Description | RPS (Peak/Avg) | Type | Entities | Requirements |
 |---------|-------------|-----------------|------|----------|--------------|
 | 1 | Get user by ID | [USER PROVIDED] | Read | User | <50ms latency |
 
 ## Entity Relationships
-[From 01_3_entity_relationships.md]
+[From 01_3_table_structure_analysis.md]
 - User → Orders: 1:Many (cardinality from analysis)
 - Order → OrderItems: 1:Many (cardinality from analysis)
 
 ## Current MySQL Schema
-[From 01_2_schema_extraction.md and 01_4_table_structures.md]
+[From 01_3_table_structure_analysis.md]
 - Tables, columns, indexes, constraints
 - Current performance characteristics
 - Known bottlenecks and issues
+
+## Performance Data
+[From 01_2_mysql_log_analysis.md]
+- Query frequency and patterns from log analysis
+- Performance bottlenecks and slow queries
+- RPS estimates based on actual usage
 
 ## Design Constraints and Preferences
 - Multi-table first approach (not single-table)
@@ -102,6 +108,7 @@ interface MCPDynamoDBDesignRequest {
 }
 
 interface MCPDynamoDBDesignResponse {
+    data_model_document: string; // Complete dynamodb_data_model.md content
     recommended_design: {
         tables: TableDesign[];
         gsis: GSIDesign[];
@@ -116,10 +123,11 @@ interface MCPDynamoDBDesignResponse {
 
 **MCP Server Usage Workflow**:
 1. **Design Request**: Send comprehensive context to MCP server
-2. **Design Analysis**: Receive multiple design options with trade-offs
-3. **Cost Analysis**: Get detailed cost breakdown and optimization suggestions
-4. **Risk Assessment**: Obtain hot partition and scaling risk analysis
-5. **Contract Generation**: Generate migration contract with MCP assistance
+2. **Data Model Generation**: MCP server creates `dynamodb_data_model.md` with complete design documentation
+3. **Design Analysis**: Receive multiple design options with trade-offs
+4. **Cost Analysis**: Get detailed cost breakdown and optimization suggestions
+5. **Risk Assessment**: Obtain hot partition and scaling risk analysis
+6. **Contract Generation**: Generate migration contract with MCP assistance
 
 ### 3. Design Validation and Enhancement System
 **Purpose**: Validate MCP server outputs and ensure completeness

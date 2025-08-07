@@ -8,14 +8,18 @@
 - **Mark tasks as completed** by changing `[ ]` to `[x]` as you finish each task
 - **Commit after each major task completion** with descriptive messages
 - **Update the tasks.md file** itself when marking tasks complete and commit those changes too
+- **DO NOT MODIFY THE CONTENT OF THIS FILE**: Only add a [x] mark to complete the task, for tracking purposes.
 
 - [ ] 1. Analyze stage-01 artifacts and prepare comprehensive context
   - [ ] 1.1 Extract and analyze existing artifacts
     - Make sure you have a clean commit log
-    - Read and analyze all stage-01 modular artifacts (`artifacts/stage-01/01_1_API_access_patterns.md`, `artifacts/stage-01/01_2_schema_extraction.md`, `artifacts/stage-01/01_3_entity_relationships.md`, `artifacts/stage-01/01_4_table_structures.md`, `artifacts/stage-01/01_5_performance_analysis.md`, `artifacts/stage-01/01_6_access_patterns.md`)
+    - Read and analyze the three essential stage-01 artifacts:
+      - `artifacts/stage-01/01_1_API_access_patterns.md` - Backend API endpoints and access patterns
+      - `artifacts/stage-01/01_2_mysql_log_analysis.md` - Performance patterns and query statistics
+      - `artifacts/stage-01/01_3_table_structure_analysis.md` - Complete table structures and relationships
     - Extract key entities, relationships, and initial access patterns from the artifacts
-    - Identify current MySQL schema structure, constraints, and performance characteristics
-    - Document any existing bottlenecks or performance issues from the analysis
+    - Identify current MySQL schema structure, constraints, and performance characteristics from table structure analysis
+    - Document any existing bottlenecks or performance issues from the MySQL log analysis
     - **COMMIT**: Commit artifact analysis with message "Analyze stage-01 artifacts for DynamoDB modeling context"
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
     - _Requirements: 1.1_
@@ -41,46 +45,33 @@
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
     - _Requirements: 1.4, 1.5_
 
-- [ ] 2. Leverage MCP server for DynamoDB design analysis
-  - [ ] 2.1 Request initial design recommendations from MCP server
-    - Use MCP server to analyze the prepared context and generate initial DynamoDB design recommendations
-    - Request multiple design alternatives with trade-off analysis
-    - Ensure MCP server provides comprehensive justifications for each design decision
-    - Request specific analysis of denormalization opportunities and risks
+- [ ] 2. Generate complete DynamoDB design using MCP server
+  - [ ] 2.1 Request comprehensive DynamoDB design and data model from MCP server
+    - Use MCP server to analyze the prepared context and generate complete DynamoDB design
+    - Request MCP server to create `dynamodb_data_model.md` with comprehensive design documentation including:
+      - Design Philosophy & Approach section
+      - Complete table designs with purpose, partition key, sort key, and detailed justifications
+      - GSI designs with purpose, cost analysis, and optimization recommendations
+      - Access pattern mapping showing how each pattern is satisfied
+      - Cost estimates with RCU/WCU calculations based on average RPS
+      - Hot partition analysis and mitigation strategies
+      - Production risk assessment and warnings
+      - Multiple design alternatives with trade-off analysis
     - **CRITICAL**: Ensure MCP server addresses all documented access patterns in the design
-    - **COMMIT**: Commit initial MCP design analysis with message "Obtain initial DynamoDB design recommendations from MCP server"
+    - **CRITICAL**: Request analysis of denormalization opportunities, GSI throttling risks, and schema evolution considerations
+    - **COMMIT**: Commit complete MCP design analysis with message "Generate comprehensive DynamoDB design and data model using MCP server"
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
-    - _Requirements: 2.1, 2.2_
-
-  - [ ] 2.2 Request detailed cost analysis and optimization recommendations
-    - Use MCP server to perform comprehensive cost analysis of recommended designs
-    - Request RCU/WCU estimates based on average RPS (not peak RPS) for realistic cost projections
-    - Obtain analysis of hot partition risks and mitigation strategies
-    - Request write amplification analysis for GSI designs
-    - Get recommendations for cost optimization opportunities (KEYS_ONLY projections, sparse GSIs, etc.)
-    - **COMMIT**: Commit cost analysis with message "Obtain detailed cost analysis and optimization recommendations"
-    - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
-    - _Requirements: 2.3, 2.4_
-
-  - [ ] 2.3 Request production risk assessment and warnings
-    - Use MCP server to identify potential production risks and issues
-    - Request analysis of GSI throttling cascade risks
-    - Obtain hot partition vulnerability assessment with specific mitigation strategies
-    - Get warnings about entity boundary violations and operational complexity
-    - Request schema evolution risk analysis for denormalized designs
-    - Ensure debugging complexity warnings are provided where relevant
-    - **COMMIT**: Commit production risk assessment with message "Obtain comprehensive production risk analysis"
-    - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
-    - _Requirements: 2.5, 3.1_
+    - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 3.1_
 
 - [ ] 3. Validate and finalize design with user approval
-  - [ ] 3.1 Validate MCP server outputs for completeness
-    - Verify that all original access patterns are addressed in the recommended design
-    - Confirm that all MySQL entities are properly mapped to DynamoDB structures
-    - Validate that cost estimates are realistic and well-justified
-    - Check that production warnings are appropriate and comprehensive
+  - [ ] 3.1 Validate that dynamodb_data_model.md file was properly generated
+    - Verify that `dynamodb_data_model.md` file exists and was created by the MCP server
+    - Check that the file contains all required sections: Design Philosophy, Table Designs, Access Pattern Mapping, Cost Estimates, Hot Partition Analysis
+    - Confirm that all original access patterns are addressed in the design
+    - Validate that all MySQL entities are properly mapped to DynamoDB structures
     - Ensure that design follows specified principles (multi-table, natural keys, access pattern driven)
-    - **COMMIT**: Commit design validation with message "Validate MCP server design outputs for completeness"
+    - If any sections are missing or incomplete, request MCP server to regenerate the file
+    - **COMMIT**: Commit design validation with message "Validate MCP-generated dynamodb_data_model.md file completeness"
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
     - _Requirements: 3.2, 3.3_
 
@@ -101,27 +92,28 @@
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
     - _Requirements: 3.4, 3.5_
 
-  - [ ] 3.3 Create final data model document
-    - Create `dynamodb_data_model.md` incorporating MCP server analysis and user validation feedback
-    - Include Design Philosophy & Approach section explaining overall approach and key principles
-    - Document each table design with purpose, partition key, sort key, and detailed justifications from MCP analysis
-    - Include user validation notes and any modifications made during table-by-table review
-    - Include comprehensive cost estimates and performance analysis from MCP server
-    - Document all trade-offs and design decisions with explicit justifications
-    - **USER CONFIRMATION GATE**: Ask user "Does the complete design approach look good after our table-by-table review?"
+  - [ ] 3.3 Review and finalize MCP-generated data model document
+    - Review the `dynamodb_data_model.md` file generated by the MCP server in task 2.1
+    - Validate that the MCP server included all required sections: Design Philosophy, Table Designs, Access Pattern Mapping, Cost Estimates, and Hot Partition Analysis
+    - If any sections are missing or incomplete, request MCP server to enhance the document
+    - Incorporate all user feedback and validation results from the table-by-table review in task 3.2
+    - Make any necessary adjustments to the document based on validation findings and user concerns
+    - **USER CONFIRMATION GATE**: Ask user "After reviewing each table individually, does the complete design approach look good?"
     - Do not proceed until user explicitly approves the overall design approach
-    - **COMMIT**: Commit final data model with message "Create final DynamoDB data model with user validation"
+    - **COMMIT**: Commit finalized data model with message "Finalize MCP-generated DynamoDB data model with table-by-table validation"
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
     - _Requirements: 3.4, 3.5_
 
 - [ ] 4. Generate migration contract with MCP server assistance
-  - [ ] 4.1 Generate migration contract using MCP server
-    - **CRITICAL**: Use MCP server to generate `migrationContract.json` following the EXACT JSON structure specified in design document
+  - [ ] 4.1 Generate migration contract from finalized data model
+    - **CRITICAL**: Create `migrationContract.json` following the EXACT JSON structure specified in design document
+    - Use the finalized `dynamodb_data_model.md` from task 3.2 as the source for contract generation
     - Each table entry MUST include: table, type, source_table, pk, sk (optional), gsis (optional), attributes, satisfies, estimated_item_size_bytes
     - For each attribute: include type (S/N/B), source_table, source_column mappings
     - For denormalized attributes: MUST include denormalized=true, justification, and join object with local_column and source_column
-    - Ensure MCP server generates proper unique constraint handling patterns with lookup tables
-    - **COMMIT**: Commit migration contract generation with message "Generate migration contract with MCP server assistance"
+    - Implement proper unique constraint handling patterns with lookup tables as specified in the data model
+    - Map all table designs and access patterns from the data model document to the JSON contract format
+    - **COMMIT**: Commit migration contract generation with message "Generate migration contract from finalized data model"
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
     - _Requirements: 4.1, 4.2, 4.3_
 
@@ -171,7 +163,7 @@ Before marking this stage complete, verify:
 - [ ] **User understands table consolidation**: User confirms understanding of which MySQL tables are combined and why
 - [ ] **Denormalization decisions explained**: User understands all denormalization trade-offs and justifications
 - [ ] **All tables individually approved**: User has confirmed understanding and approval of each table design
-- [ ] `dynamodb_data_model.md` exists with comprehensive justifications from MCP analysis and user validation notes
+- [ ] `dynamodb_data_model.md` exists with comprehensive justifications from MCP analysis
 - [ ] `migrationContract.json` exists and follows EXACT JSON structure specified in design
 - [ ] All MySQL entities are mapped to DynamoDB structures in the contract
 - [ ] Unique constraint handling is properly implemented with lookup tables
