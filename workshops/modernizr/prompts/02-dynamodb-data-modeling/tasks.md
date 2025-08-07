@@ -1,5 +1,12 @@
 # DynamoDB Data Modeling - Tasks
 
+**IMPORTANT**: 
+- **Commit changes frequently** throughout this stage to maintain a clean Git history
+- **Use `git -P`** to avoid interactive prompts
+- **Mark tasks as completed** by changing `[ ]` to `[x]` as you finish each task
+- **Commit after each major task completion** with descriptive messages
+- **Update the tasks.md file** itself when marking tasks complete and commit those changes too
+- **DO NOT MODIFY THE CONTENT OF THIS FILE**: Only add a [x] mark to complete the task, for tracking purposes.
 - [ ] 1. Gather and document access pattern requirements systematically
   - [ ] 1.1 Initialize requirements documentation system
     - Make sure you have a clean commit log. 
