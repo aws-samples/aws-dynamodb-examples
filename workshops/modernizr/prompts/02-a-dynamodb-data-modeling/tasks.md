@@ -8,16 +8,21 @@
 - **Mark tasks as completed** by changing `[ ]` to `[x]` as you finish each task
 - **Commit after each major task completion** with descriptive messages
 - **Update the tasks.md file** itself when marking tasks complete and commit those changes too
+- **Use single working log**: Use `artifacts/stage-02/02_working_log.md` throughout the entire stage (not individual logs per subtask)
 - **DO NOT MODIFY THE CONTENT OF THIS FILE**: Only add a [x] mark to complete the task, for tracking purposes.
 
 - [ ] 1. Analyze stage-01 artifacts and prepare comprehensive context
   - [ ] 1.1 Extract and analyze existing artifacts
     - Make sure you have a clean commit log
+    - Use a temporary file called `artifacts/stage-02/02_working_log.md` to track your current work and important notes throughout this entire stage
     - Read and analyze the three essential stage-01 artifacts:
-      - `artifacts/stage-01/01_1_API_access_patterns.md` - Backend API endpoints and access patterns
-      - `artifacts/stage-01/01_2_mysql_log_analysis.md` - Performance patterns and query statistics
-      - `artifacts/stage-01/01_3_table_structure_analysis.md` - Complete table structures and relationships
-    - Extract key entities, relationships, and initial access patterns from the artifacts
+      - `artifacts/stage-01/01_1_API_access_patterns.md` - **PRIMARY SOURCE**: Backend API endpoints and access patterns that MUST be supported
+      - `artifacts/stage-01/01_2_mysql_log_analysis.md` - **SUPPLEMENTAL DATA**: Performance patterns and query statistics where available
+      - `artifacts/stage-01/01_3_table_structure_analysis.md` - **COMPLETE DATA MODEL**: All table structures and relationships from source database
+    - **CRITICAL**: API patterns define the authoritative requirements for what must be supported
+    - **IMPORTANT**: Log analysis provides performance context but may not cover all API patterns
+    - **IMPORTANT**: Table structure provides the complete source data model for migration
+    - Extract key entities, relationships, and access patterns from the artifacts without making any design assumptions
     - Identify current MySQL schema structure, constraints, and performance characteristics from table structure analysis
     - Document any existing bottlenecks or performance issues from the MySQL log analysis
     - **COMMIT**: Commit artifact analysis with message "Analyze stage-01 artifacts for DynamoDB modeling context"
@@ -25,41 +30,48 @@
     - _Requirements: 1.1_
 
   - [ ] 1.2 Gather complete access pattern requirements with RPS estimates
-    - **CRITICAL**: For EVERY access pattern, require RPS estimates and never fabricate numbers
-    - Create comprehensive access patterns analysis table with Pattern #, Description, RPS (Peak/Average), Type, Attributes, Key Requirements, and Design Considerations
-    - Work with user to estimate RPS based on business context if not available from performance analysis
-    - Ensure both read and write patterns are documented for every entity
-    - Ask user specific questions about missing patterns: "I see we have a user login access pattern but no pattern to create users. Should we add one?"
+    - **CRITICAL**: BEFORE creating any files, work with user to gather ALL missing information
+    - **STEP 1**: Review API patterns from stage-01 and identify any missing patterns
+    - **STEP 2**: Ask user specific questions about missing patterns: "I see we have a user login access pattern but no pattern to create users. Should we add one?"
+    - **STEP 3**: For EVERY access pattern (existing + new), require RPS estimates and never fabricate numbers
+    - **STEP 4**: Work with user to estimate RPS based on business context if not available from performance analysis
+    - **STEP 5**: ONLY AFTER all information is gathered, create comprehensive access patterns analysis table with Pattern #, Description, RPS (Peak/Average), Type, Attributes, Key Requirements, and Design Considerations
+    - **IMPORTANT**: Do not create any files until user has provided all RPS estimates and confirmed pattern completeness
     - **COMMIT**: Commit access pattern requirements with message "Document complete access patterns with RPS estimates"
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
     - _Requirements: 1.2, 1.3_
 
-  - [ ] 1.3 Prepare comprehensive MCP context document
-    - Create detailed context document with Application Overview, Entity Relationships, Access Patterns, MySQL Schema, and Design Constraints
-    - Include all information needed for MCP server to make informed design decisions
-    - Specify design preferences: multi-table first approach, natural keys, access pattern driven design
-    - Document performance requirements, consistency needs, and cost optimization priorities
+  - [ ] 1.3 Validate requirements completeness with user
+    - Review all documented access patterns for completeness
+    - Confirm that every read pattern has a corresponding write pattern (and vice versa) unless user explicitly declines
+    - **CRITICAL**: Present the three-tier information hierarchy clearly to user:
+      - **API patterns as PRIMARY requirements (authoritative source)** - Complete list with RPS estimates
+      - Table structure as COMPLETE data model (all entities and relationships)
+      - Log analysis as SUPPLEMENTAL performance data (where available)
     - **USER CONFIRMATION GATE**: Ask user "Do these access patterns and requirements look complete? Are there any other patterns we should consider?"
     - Do not proceed until user explicitly confirms all patterns are captured
-    - **COMMIT**: Commit MCP context preparation with message "Prepare comprehensive context for MCP server analysis"
+    - **IMPORTANT**: Do not create any intermediate context document - proceed directly to MCP server interaction in task 2.1
+    - **COMMIT**: Commit requirements validation with message "Validate complete access pattern requirements with user"
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
     - _Requirements: 1.4, 1.5_
 
 - [ ] 2. Generate complete DynamoDB design using MCP server
-  - [ ] 2.1 Request comprehensive DynamoDB design and data model from MCP server
-    - Use MCP server to analyze the prepared context and generate complete DynamoDB design
-    - Request MCP server to create `dynamodb_data_model.md` with comprehensive design documentation including:
-      - Design Philosophy & Approach section
-      - Complete table designs with purpose, partition key, sort key, and detailed justifications
-      - GSI designs with purpose, cost analysis, and optimization recommendations
-      - Access pattern mapping showing how each pattern is satisfied
-      - Cost estimates with RCU/WCU calculations based on average RPS
-      - Hot partition analysis and mitigation strategies
-      - Production risk assessment and warnings
-      - Multiple design alternatives with trade-off analysis
-    - **CRITICAL**: Ensure MCP server addresses all documented access patterns in the design
-    - **CRITICAL**: Request analysis of denormalization opportunities, GSI throttling risks, and schema evolution considerations
-    - **COMMIT**: Commit complete MCP design analysis with message "Generate comprehensive DynamoDB design and data model using MCP server"
+  - [ ] 2.1 Obtain MCP server prompt and merge with prepared context
+    - **STEP 1 - Get MCP Server Prompt**: Call the MCP server to retrieve its specific prompt and requirements for DynamoDB data modeling
+    - **STEP 2 - Prepare Context Package**: Organize all information captured in Task 1 into a comprehensive context package:
+      - **PRIMARY REQUIREMENTS - API Access Patterns**: Complete list with RPS estimates from task 1.2
+      - **SOURCE DATA MODEL - Table Structure**: Complete MySQL schema from stage-01 artifacts  
+      - **PERFORMANCE CONTEXT - Log Analysis**: Performance data where available from stage-01 artifacts
+    - **STEP 3 - Follow MCP Server's Complete Workflow**: Follow the MCP server's prescribed workflow exactly as specified in its prompt, including creating all intermediate files it requires before the final deliverable
+    - **CRITICAL**: Do not just "merge and create output" - follow the MCP server's complete step-by-step process including any intermediate steps, files, or analysis it requests
+    - **CRITICAL CONTEXT HIERARCHY**: When providing context to fulfill MCP server's workflow, emphasize:
+      - **API patterns as PRIMARY requirements (authoritative source)** - These define what must be supported
+      - Table structure as COMPLETE data model (all entities and relationships) - This provides the source schema
+      - Log analysis as SUPPLEMENTAL performance data (where available) - This provides performance context
+    - **IMPORTANT**: Execute each step of the MCP server's workflow in sequence, using the prepared context to fulfill each specific requirement
+    - **IMPORTANT**: Ensure any files created are placed in the `artifacts/stage-02/` folder as specified by MCP server prompt
+    - **EXPECTED OUTCOME**: The MCP server prompt will likely request comprehensive DynamoDB design documentation including table designs, access pattern mapping, cost analysis, and migration considerations
+    - **COMMIT**: Commit complete MCP design analysis with message "Generate comprehensive DynamoDB design using MCP server prompt and prepared context"
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 3.1_
 
@@ -69,7 +81,7 @@
     - Check that the file contains all required sections: Design Philosophy, Table Designs, Access Pattern Mapping, Cost Estimates, Hot Partition Analysis
     - Confirm that all original access patterns are addressed in the design
     - Validate that all MySQL entities are properly mapped to DynamoDB structures
-    - Ensure that design follows specified principles (multi-table, natural keys, access pattern driven)
+    - Verify that the MCP server's design approach is well-justified and addresses all requirements
     - If any sections are missing or incomplete, request MCP server to regenerate the file
     - **COMMIT**: Commit design validation with message "Validate MCP-generated dynamodb_data_model.md file completeness"
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
@@ -106,8 +118,8 @@
 
 - [ ] 4. Generate migration contract with MCP server assistance
   - [ ] 4.1 Generate migration contract from finalized data model
-    - **CRITICAL**: Create `migrationContract.json` following the EXACT JSON structure specified in design document
-    - Use the finalized `dynamodb_data_model.md` from task 3.2 as the source for contract generation
+    - **CRITICAL**: Create `migrationContract.json` in the `artifacts/stage-02/` folder following the EXACT JSON structure specified in design document
+    - Use the finalized `dynamodb_data_model.md` from task 3.3 as the source for contract generation
     - Each table entry MUST include: table, type, source_table, pk, sk (optional), gsis (optional), attributes, satisfies, estimated_item_size_bytes
     - For each attribute: include type (S/N/B), source_table, source_column mappings
     - For denormalized attributes: MUST include denormalized=true, justification, and join object with local_column and source_column
@@ -163,8 +175,8 @@ Before marking this stage complete, verify:
 - [ ] **User understands table consolidation**: User confirms understanding of which MySQL tables are combined and why
 - [ ] **Denormalization decisions explained**: User understands all denormalization trade-offs and justifications
 - [ ] **All tables individually approved**: User has confirmed understanding and approval of each table design
-- [ ] `dynamodb_data_model.md` exists with comprehensive justifications from MCP analysis
-- [ ] `migrationContract.json` exists and follows EXACT JSON structure specified in design
+- [ ] `artifacts/stage-02/dynamodb_data_model.md` exists with comprehensive justifications from MCP analysis
+- [ ] `artifacts/stage-02/migrationContract.json` exists and follows EXACT JSON structure specified in design
 - [ ] All MySQL entities are mapped to DynamoDB structures in the contract
 - [ ] Unique constraint handling is properly implemented with lookup tables
 - [ ] User has explicitly approved the complete design after table-by-table review
@@ -211,10 +223,22 @@ The MCP server used for this stage should provide:
 ## Troubleshooting Guide
 
 **MCP Server Issues:**
+- **File Generation Problems**: If MCP server doesn't create the file in the correct location, explicitly specify the full path `artifacts/stage-02/dynamodb_data_model.md`
+- **Incomplete File Generation**: If only partial content is generated, request MCP server to complete all missing sections
+- **Multiple File Confusion**: Only request ONE file (`dynamodb_data_model.md`) - do not ask for `dynamodb_requirement.md`
+- **API Patterns Missing**: If MCP server ignores API patterns and only focuses on table structure, emphasize: "The API patterns are the PRIMARY requirements that define what must be supported. Please ensure ALL API patterns are addressed in your design."
+- **Table Structure Dominance**: If MCP server focuses too heavily on table structure, clarify: "Use table structure as the source data model, but design should be driven by API access patterns."
 - If MCP server provides incomplete analysis, request specific missing elements
 - If design recommendations don't address all access patterns, provide additional context
 - If cost estimates seem unrealistic, request detailed breakdown and justification
 - If migration contract format is incorrect, provide exact format specification
+
+**Requirements Gathering Issues:**
+- **RPS Missing**: If user hasn't provided RPS estimates, do NOT create any files until all RPS data is collected
+- **Incomplete Patterns**: Always ask user about missing CRUD operations before creating any documentation
+- If user is unsure about RPS estimates, help estimate based on business context and stage-01 performance analysis
+- If access patterns seem incomplete, ask specific questions about missing operations
+- If requirements keep changing, document evolution and get explicit confirmation of final state
 
 **Requirements Gathering Issues:**
 - If user is unsure about RPS estimates, help estimate based on business context and stage-01 performance analysis
