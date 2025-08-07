@@ -74,11 +74,8 @@ graph TD
 - RPS estimates based on actual usage
 
 ## Design Constraints and Preferences
-- Multi-table first approach (not single-table)
-- Natural keys preferred (user_id, order_id vs PK, SK)
-- Access pattern driven design
-- Cost optimization important
-- Hot partition avoidance critical
+- Let MCP server determine optimal approach based on access patterns and data model
+- No predetermined design preferences to avoid biasing the analysis
 ```
 
 ### 2. MCP Server Integration System
@@ -96,9 +93,8 @@ interface MCPDynamoDBDesignRequest {
         mysql_schema: MySQLSchema;
     };
     design_preferences: {
-        approach: "multi-table" | "single-table";
-        key_style: "natural" | "generic";
-        optimization_priority: "cost" | "performance" | "simplicity";
+        // Let MCP server determine optimal approach
+        // No predetermined preferences to avoid bias
     };
     constraints: {
         rps_requirements: Record<string, number>;
