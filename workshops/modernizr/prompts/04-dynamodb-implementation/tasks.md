@@ -8,9 +8,11 @@
 - **Mark tasks as completed** by changing `[ ]` to `[x]` as you finish each task
 - **Commit after each major task completion** with descriptive messages
 - **Update the tasks.md file** itself when marking tasks complete and commit those changes too
+- **Use single working log**: Use `artifacts/stage-04/04_working_log.md` throughout the entire stage (not individual logs per subtask)
 
 - [ ] 1. Set up test environment and establish baseline
   - [ ] 1.1 Discover testing framework and execution procedures
+    - **FIRST**: Create working log file `artifacts/stage-04/04_working_log.md` to track progress and important notes throughout this entire stage
     - Identify the testing framework and commands used in the repository
     - Locate existing test files related to the data access layer
     - Understand how tests are organized and executed in this project
@@ -42,6 +44,11 @@
 - [ ] 2. Review stage 03 artifacts and prepare for implementation
   - [ ] 2.1 Review dual-database abstraction artifacts from stage 03
     - **REUSE ARTIFACTS**: Read and analyze the stage 03 artifacts from `artifacts/stage-03/`
+    - **CRITICAL**: First read `artifacts/stage-03/03_working_log.md` to understand exactly what files were created in stage-03:
+      - Identify all DynamoDB stub files that need real implementation
+      - Understand the file structure and organization created in stage-03
+      - Note which files are MySQL implementations (don't modify) vs DynamoDB stubs (replace)
+      - Document the specific files you need to modify in your stage-04 working log
     - Review `03_1_backend_analysis.md` for programming language, frameworks, and architecture understanding
     - Review `03_2_data_access_analysis.md` for existing repository patterns and test structure
     - Review `03_3_dal_requirements.md` and `03_4_dal_design.md` for the dual-database abstraction design
