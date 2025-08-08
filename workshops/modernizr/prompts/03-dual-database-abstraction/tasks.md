@@ -14,13 +14,20 @@ All tasks, analysis, and modifications should be limited to the backend/ folder 
 
 This stage follows a discovery-driven approach where Q first explores the backend codebase to understand its structure, then generates appropriate requirements and design specifications based on the actual code found.
 
-## COMMIT FREQUENCY
+## COMMIT FREQUENCY AND TASK COMPLETION
 
-**IMPORTANT**: Commit changes frequently throughout this stage to maintain a clean Git history. Each major task completion should include a commit with a descriptive message. Use `git -P` to avoid interactive prompts.
+**IMPORTANT**: 
+- **Commit changes frequently** throughout this stage to maintain a clean Git history
+- **Use `git -P`** to avoid interactive prompts
+- **Mark tasks as completed** by changing `[ ]` to `[x]` as you finish each task
+- **Commit after each major task completion** with descriptive messages
+- **Update the tasks.md file** itself when marking tasks complete and commit those changes too
+- **Use single working log**: Use `artifacts/stage-03/03_working_log.md` throughout the entire stage (not individual logs per subtask)
 
 - [ ] 1. Explore and document backend codebase structure
   - [ ] 1.1 Comprehensive backend codebase exploration
     - **SCOPE**: Focus exclusively on the backend/ folder - do not analyze frontend/ folder
+    - **FIRST**: Create working log file `artifacts/stage-03/03_working_log.md` to track progress and important notes throughout this entire stage
     - Read and analyze backend/README.md to understand the application structure and setup
     - Examine backend/package.json to identify dependencies, scripts, and technologies used
     - Explore backend/src/ directory structure to understand the application architecture
@@ -71,11 +78,35 @@ This stage follows a discovery-driven approach where Q first explores the backen
 
   - [ ] 2.3 Continue with remaining implementation steps
     - Follow the detailed implementation plan created in the generated design document
-    - Implement concrete classes, factory pattern, application integration, test updates, and configuration
+    - Implement concrete classes, factory pattern, application integration, and configuration
     - Use the discovery-based requirements and design as the detailed specification
+    - **CRITICAL**: For EVERY file you create or modify, document it in `artifacts/stage-03/03_working_log.md` with:
+      - File path and name
+      - Purpose of the file (interface, concrete implementation, stub, configuration, etc.)
+      - Whether it's a MySQL implementation, DynamoDB stub, or shared component
+      - Brief description of what the file contains
+    - **IMPORTANT**: Clearly mark which files are DynamoDB stubs that will need real implementation in stage-04
     - Document progress in `artifacts/stage-03/03_5_implementation_log.md`
-    - **COMMIT**: Commit implementation progress regularly with descriptive messages (e.g., "Implement dual-database interfaces", "Add feature flag configuration", "Update tests for dual-database support")
+    - **COMMIT**: Commit implementation progress regularly with descriptive messages (e.g., "Implement dual-database interfaces", "Add feature flag configuration")
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 3.1, 3.2, 3.3, 3.4, 3.5_
+
+  - [ ] 2.4 Create comprehensive unit tests for new abstraction layer components
+    - **CRITICAL**: Follow stage-04 testing principles - NEVER modify existing test files, ALWAYS create NEW test files
+    - **SCOPE**: Create unit tests only for newly created abstraction layer components, not existing backend code
+    - Create NEW test files for all abstraction layer components:
+      - Abstract interfaces: `AbstractRepository.test.js` (or similar based on actual interface names)
+      - Factory pattern implementation: `DatabaseFactory.test.js` 
+      - Configuration management system: `DatabaseConfig.test.js`
+      - Feature flag integration: `FeatureFlag.test.js`
+      - Any new error handling logic: `ErrorHandler.test.js`
+    - **TESTING APPROACH**: Use unit testing with mocks for dependencies, focusing on business logic validation
+    - **CRITICAL**: Run existing backend tests before creating new tests to ensure baseline functionality
+    - **CRITICAL**: Run all tests (existing + new) after creating each new test file
+    - Ensure new tests cover edge cases, error conditions, and configuration scenarios
+    - Document test coverage and any testing considerations in implementation log
+    - **COMMIT**: Commit new test files with message "Add comprehensive unit tests for dual-database abstraction layer components"
+    - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
+    - _Requirements: 2.5, 3.1, 3.4_
 
 - [ ] 3. Final validation and documentation
   - [ ] 3.1 Comprehensive validation of implemented abstraction layer
