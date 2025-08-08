@@ -23,6 +23,7 @@ This stage follows a discovery-driven approach where Q first explores the backen
 - **Commit after each major task completion** with descriptive messages
 - **Update the tasks.md file** itself when marking tasks complete and commit those changes too
 - **Use single working log**: Use `artifacts/stage-03/03_working_log.md` throughout the entire stage (not individual logs per subtask)
+- **DO NOT MODIFY THE CONTENT OF THIS FILE**: Only add a [x] mark to complete the task, for tracking purposes.
 
 - [ ] 1. Explore and document backend codebase structure
   - [ ] 1.1 Comprehensive backend codebase exploration

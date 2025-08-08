@@ -9,6 +9,7 @@
 - **Commit after each major task completion** with descriptive messages
 - **Update the tasks.md file** itself when marking tasks complete and commit those changes too
 - **Use single working log**: Use `artifacts/stage-04/04_working_log.md` throughout the entire stage (not individual logs per subtask)
+- **DO NOT MODIFY THE CONTENT OF THIS FILE**: Only add a [x] mark to complete the task, for tracking purposes.
 
 - [ ] 1. Set up test environment and establish baseline
   - [ ] 1.1 Discover testing framework and execution procedures
@@ -150,33 +151,8 @@
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
     - _Requirements: 3.1, 3.2_
 
-- [ ] 5. Implement monitoring, logging, and performance optimization
-  - [ ] 5.1 Implement comprehensive logging
-    - **CRITICAL**: Run tests to verify current state before adding monitoring
-    - Implement logging for all database operations with correlation IDs
-    - Track operation latency and error rates
-    - Add detailed performance monitoring for all database operations
-    - Implement monitoring for one component, then run tests to verify
-    - _Requirements: 3.4_
-
-  - [ ] 5.2 Configure CloudWatch metrics and monitoring
-    - Configure CloudWatch metrics for DynamoDB tables
-    - Set up alarms for throughput limits and errors
-    - Implement distributed tracing if applicable to the application
-    - Continue with remaining components, testing after each implementation
-    - _Requirements: 3.4_
-
-  - [ ] 5.3 Validate monitoring implementation
-    - **CRITICAL**: Run the repository's test suite after implementing monitoring
-    - Verify that monitoring does not interfere with functionality
-    - Test that metrics are properly collected and reported
-    - Fix any issues before proceeding to final configuration
-    - **COMMIT**: Commit monitoring implementation with message "Implement comprehensive logging and monitoring for DynamoDB operations"
-    - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
-    - _Requirements: 3.4_
-
-- [ ] 6. Finalize SDK configuration and validate complete implementation
-  - [ ] 6.1 Refine SDK configuration for production
+- [ ] 5. Finalize SDK configuration and validate complete implementation
+  - [ ] 5.1 Refine SDK configuration for production
     - Examine current SDK configuration code and assess production readiness
     - Refactor configuration code to use SDK defaults as much as possible in production
     - **CRITICAL**: Ensure that the production configuration does not use DynamoDB Local
@@ -184,14 +160,14 @@
     - Use other methods to populate credentials only if they were already used in the original codebase
     - _Requirements: 3.5_
 
-  - [ ] 6.2 Validate production vs test configuration
+  - [ ] 5.2 Validate production vs test configuration
     - **CRITICAL**: Validate that test setup still works with DynamoDB Local
     - Ensure that production code will use appropriate defaults
     - Provide dummy credentials as environment variables and run tests using production environment
     - Verify that tests fail with credential errors when using production configuration (expected behavior)
     - _Requirements: 3.5_
 
-  - [ ] 6.3 Final comprehensive validation
+  - [ ] 5.3 Final comprehensive validation
     - **CRITICAL**: Run the complete test suite one final time
     - Verify all existing tests pass with the DynamoDB implementation
     - Confirm error handling is robust and consistent
@@ -199,17 +175,17 @@
     - Verify performance meets requirements and expectations
     - **COMMIT**: Commit final validation results with message "Complete DynamoDB implementation with comprehensive validation"
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
-    - _Requirements: 1.3, 2.4, 3.1, 3.4_
+    - _Requirements: 1.3, 2.4, 3.1_
 
-- [ ] 7. Document implementation and prepare for next stage
-  - [ ] 7.1 Document implementation details and differences
+- [ ] 6. Document implementation and prepare for next stage
+  - [ ] 6.1 Document implementation details and differences
     - Document any differences in behavior between MySQL and DynamoDB implementations
     - Provide cost estimates for the DynamoDB implementation based on expected usage
     - Document performance characteristics and optimization recommendations
     - Create troubleshooting guide for common DynamoDB-specific issues
-    - _Requirements: 3.4_
+    - _Requirements: 2.5_
 
-  - [ ] 7.2 Validate readiness for feature flag implementation
+  - [ ] 6.2 Validate readiness for feature flag implementation
     - Ensure that both MySQL and DynamoDB implementations work through the same abstraction layer
     - Verify that switching between implementations is seamless
     - Document any considerations for the upcoming feature flag implementation
@@ -229,7 +205,6 @@ Before marking this stage complete, verify:
 - [ ] **Testing**: DynamoDB Local is properly set up, all existing tests pass, and new DynamoDB-specific test files have been created
 - [ ] **Data Preservation**: MySQL-generated IDs are preserved in correct format as specified in migration contract
 - [ ] **Error Handling**: Comprehensive error handling is implemented with exponential backoff
-- [ ] **Monitoring**: Monitoring and logging are implemented for all operations
 - [ ] **Configuration**: Production SDK configuration uses defaults and proper credential providers
 - [ ] **Performance**: All access patterns from migration contract are properly implemented
 - [ ] **Documentation**: Implementation log and validation results are complete
