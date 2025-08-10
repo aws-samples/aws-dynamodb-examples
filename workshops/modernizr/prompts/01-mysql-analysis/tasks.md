@@ -14,7 +14,7 @@
   - The subfolders have compiled projects, make sure to create a gitignore so you track only what you will be modifying not the compiled version or the node_modules
   - Use a temporary file called `artifacts/stage-01/01_working_log.md` to track your current work and important notes throughout this entire stage
   - Update the file task.md once completed, please let the user know that you have completed this task and summarize what has been done
-  - Commit the latest changes registered in the working log and other artifacts
+  - **COMMIT**: Commit the latest changes with message "stage-01 task 0: Set up Git source control and initialize project structure"
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5_
 
 - [ ] 1. Identify current application access patterns
@@ -30,6 +30,7 @@
     - Detailed explanation on the relationship between the different entities
     - Enumerate the access patterns so it is easier to know how many the application will need to support
     - **Clear statement**: "These patterns represent ALL access patterns that must be supported in the DynamoDB design"
+  - **COMMIT**: Commit API analysis with message "stage-01 task 1: Identify current application access patterns from backend API"
   - Update the file task.md once completed, please let the user know that you have completed this task and summarize what has been done
   - _Requirements: 3.3, 4.2, 4.4_
 
@@ -45,6 +46,7 @@
     - RPS estimates based on log data WHERE AVAILABLE
     - **Explicit statement**: "This log analysis provides performance data for observed queries only. Complete access pattern requirements come from API analysis in task 1."
   - Use the working log file `artifacts/stage-01/01_working_log.md` to track your current work and important notes
+  - **COMMIT**: Commit MySQL log analysis with message "stage-01 task 2: Analyze MySQL database logs for performance data"
   - Update the file task.md once completed, please let the user know that you have completed this task and summarize what has been done
   - DO NOT SUGGEST A DYNAMODB TABLE STRUCTURE - focus only on current MySQL analysis
   - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6_
@@ -62,6 +64,7 @@
     - Current database schema structure showing the complete data model
     - **Clear statement**: "This represents the complete source data model that must be migrated to DynamoDB"
   - Use the working log file `artifacts/stage-01/01_working_log.md` to track your current work and important notes
+  - **COMMIT**: Commit table structure analysis with message "stage-01 task 3: Extract complete table structure using MySQL MCP server"
   - DO NOT SUGGEST A DYNAMODB TABLE STRUCTURE - focus only on current MySQL analysis
   - Update the file task.md once completed, please let the user know that you have completed this task and summarize what has been done
   - _Requirements: 3.1, 3.2, 3.4, 3.5, 4.1, 4.3, 4.5_

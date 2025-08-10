@@ -25,7 +25,7 @@
     - Extract key entities, relationships, and access patterns from the artifacts without making any design assumptions
     - Identify current MySQL schema structure, constraints, and performance characteristics from table structure analysis
     - Document any existing bottlenecks or performance issues from the MySQL log analysis
-    - **COMMIT**: Commit artifact analysis with message "Analyze stage-01 artifacts for DynamoDB modeling context"
+    - **COMMIT**: Commit artifact analysis with message "stage-02-a task 1.1: Analyze stage-01 artifacts for DynamoDB modeling context"
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
     - _Requirements: 1.1_
 
@@ -37,7 +37,7 @@
     - **STEP 4**: Work with user to estimate RPS based on business context if not available from performance analysis
     - **STEP 5**: ONLY AFTER all information is gathered, create comprehensive access patterns analysis table with Pattern #, Description, RPS (Peak/Average), Type, Attributes, Key Requirements, and Design Considerations
     - **IMPORTANT**: Do not create any files until user has provided all RPS estimates and confirmed pattern completeness
-    - **COMMIT**: Commit access pattern requirements with message "Document complete access patterns with RPS estimates"
+    - **COMMIT**: Commit access pattern requirements with message "stage-02-a task 1.2: Document complete access patterns with RPS estimates"
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
     - _Requirements: 1.2, 1.3_
 
@@ -51,7 +51,7 @@
     - **USER CONFIRMATION GATE**: Ask user "Do these access patterns and requirements look complete? Are there any other patterns we should consider?"
     - Do not proceed until user explicitly confirms all patterns are captured
     - **IMPORTANT**: Do not create any intermediate context document - proceed directly to MCP server interaction in task 2.1
-    - **COMMIT**: Commit requirements validation with message "Validate complete access pattern requirements with user"
+    - **COMMIT**: Commit requirements validation with message "stage-02-a task 1.3: Validate complete access pattern requirements with user"
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
     - _Requirements: 1.4, 1.5_
 
@@ -70,8 +70,17 @@
       - Log analysis as SUPPLEMENTAL performance data (where available) - This provides performance context
     - **IMPORTANT**: Execute each step of the MCP server's workflow in sequence, using the prepared context to fulfill each specific requirement
     - **IMPORTANT**: Ensure any files created are placed in the `artifacts/stage-02/` folder as specified by MCP server prompt
+    - **STEP 4 - MANDATORY ACCESS PATTERN VALIDATION**: After completing the MCP server workflow, perform explicit validation:
+      - **CRITICAL**: Read the access patterns file created in task 1.2 (likely named `access_patterns_with_rps.md` or similar)
+      - **CRITICAL**: For EACH access pattern listed in that file, verify it is explicitly addressed in the MCP-generated artifacts
+      - **VALIDATION FORMAT**: Create a checklist showing:
+        - Pattern #1: [Pattern Name] - ✓ Addressed in [Table Name/GSI] OR ✗ MISSING
+        - Pattern #2: [Pattern Name] - ✓ Addressed in [Table Name/GSI] OR ✗ MISSING
+        - Continue for ALL patterns
+      - **CRITICAL**: If ANY patterns are marked as MISSING, immediately update the MCP-generated artifacts to include them
+      - **CRITICAL**: Do not proceed until ALL access patterns from the requirements file are explicitly addressed
     - **EXPECTED OUTCOME**: The MCP server prompt will likely request comprehensive DynamoDB design documentation including table designs, access pattern mapping, cost analysis, and migration considerations
-    - **COMMIT**: Commit complete MCP design analysis with message "Generate comprehensive DynamoDB design using MCP server prompt and prepared context"
+    - **COMMIT**: Commit complete MCP design analysis with message "stage-02-a task 2.1: Generate comprehensive DynamoDB design using MCP server prompt and prepared context"
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 3.1_
 
@@ -83,7 +92,7 @@
     - Validate that all MySQL entities are properly mapped to DynamoDB structures
     - Verify that the MCP server's design approach is well-justified and addresses all requirements
     - If any sections are missing or incomplete, request MCP server to regenerate the file
-    - **COMMIT**: Commit design validation with message "Validate MCP-generated dynamodb_data_model.md file completeness"
+    - **COMMIT**: Commit design validation with message "stage-02-a task 3.1: Validate MCP-generated dynamodb_data_model.md file completeness"
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
     - _Requirements: 3.2, 3.3_
 
@@ -100,7 +109,7 @@
     - **USER VALIDATION PER TABLE**: Ask user "Does this table design make sense? Do you understand why we're combining/splitting these MySQL tables this way?"
     - **CRITICAL**: Do not proceed to next table until user confirms understanding of current table
     - Document any user concerns or requested modifications for each table
-    - **COMMIT**: Commit table-by-table validation with message "Complete table-by-table design validation with user"
+    - **COMMIT**: Commit table-by-table validation with message "stage-02-a task 3.2: Complete table-by-table design validation with user"
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
     - _Requirements: 3.4, 3.5_
 
@@ -112,7 +121,7 @@
     - Make any necessary adjustments to the document based on validation findings and user concerns
     - **USER CONFIRMATION GATE**: Ask user "After reviewing each table individually, does the complete design approach look good?"
     - Do not proceed until user explicitly approves the overall design approach
-    - **COMMIT**: Commit finalized data model with message "Finalize MCP-generated DynamoDB data model with table-by-table validation"
+    - **COMMIT**: Commit finalized data model with message "stage-02-a task 3.3: Finalize MCP-generated DynamoDB data model with table-by-table validation"
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
     - _Requirements: 3.4, 3.5_
 
@@ -125,7 +134,7 @@
     - For denormalized attributes: MUST include denormalized=true, justification, and join object with local_column and source_column
     - Implement proper unique constraint handling patterns with lookup tables as specified in the data model
     - Map all table designs and access patterns from the data model document to the JSON contract format
-    - **COMMIT**: Commit migration contract generation with message "Generate migration contract from finalized data model"
+    - **COMMIT**: Commit migration contract generation with message "stage-02-a task 4.1: Generate migration contract from finalized data model"
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
     - _Requirements: 4.1, 4.2, 4.3_
 
@@ -137,7 +146,7 @@
     - Check that unique constraint handling is properly implemented with TransactWriteItems patterns
     - **USER CONFIRMATION GATE**: Ask user "Does this migration contract look complete and accurate? Are all the mappings correct?"
     - Do not proceed until user explicitly validates the migration contract
-    - **COMMIT**: Commit contract validation with message "Validate migration contract completeness and accuracy"
+    - **COMMIT**: Commit contract validation with message "stage-02-a task 4.2: Validate migration contract completeness and accuracy"
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
     - _Requirements: 4.4, 4.5_
 
@@ -148,7 +157,7 @@
     - Document any deviations from MCP server recommendations and reasons
     - Create troubleshooting guide for common issues identified during analysis
     - Include recommendations for monitoring and operational considerations
-    - **COMMIT**: Commit documentation summary with message "Create comprehensive documentation summary"
+    - **COMMIT**: Commit documentation summary with message "stage-02-a task 5.1: Create comprehensive documentation summary"
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
     - _Requirements: 5.1_
 
@@ -158,7 +167,7 @@
     - Verify that all design decisions are documented with trade-offs and rollback strategies
     - Validate that outputs provide sufficient information for stage 04 DynamoDB implementation
     - Confirm user has approved all major design decisions and migration contract
-    - **COMMIT**: Commit final validation with message "Complete DynamoDB data modeling with MCP server assistance"
+    - **COMMIT**: Commit final validation with message "stage-02-a task 5.2: Complete DynamoDB data modeling with MCP server assistance"
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
     - _Requirements: 5.2_
 
