@@ -35,7 +35,7 @@ This stage follows a discovery-driven approach where Q first explores the backen
     - Identify and document all data access related files (repositories, services, models, database config)
     - Document the programming language (TypeScript/JavaScript), database technology (MySQL), and frameworks used
     - Create a comprehensive analysis document: `artifacts/stage-03/03_1_backend_analysis.md`
-    - **COMMIT**: Commit the analysis artifacts with message "Add backend codebase analysis for DAL abstraction"
+    - **COMMIT**: Commit the analysis artifacts with message "stage-03 task 1.1: Add backend codebase analysis for DAL abstraction"
     - _Requirements: 1.1, 1.2_
 
   - [ ] 1.2 Analyze backend data access patterns and test structure
@@ -46,7 +46,7 @@ This stage follows a discovery-driven approach where Q first explores the backen
     - Identify any existing abstraction layers or patterns that can be leveraged
     - Document current database connection and configuration patterns
     - Create detailed documentation: `artifacts/stage-03/03_2_data_access_analysis.md`
-    - **COMMIT**: Commit the data access analysis with message "Add backend data access pattern analysis"
+    - **COMMIT**: Commit the data access analysis with message "stage-03 task 1.2: Add backend data access pattern analysis"
     - _Requirements: 1.3_
 
   - [ ] 1.3 Generate dual-database abstraction requirements and design based on discovery
@@ -57,7 +57,7 @@ This stage follows a discovery-driven approach where Q first explores the backen
     - Design the dual-database abstraction layer with feature flag support
     - Plan for DynamoDB stub implementations (actual implementation will happen in stage 04)
     - Generate artifacts: `artifacts/stage-03/03_3_dal_requirements.md` and `artifacts/stage-03/03_4_dal_design.md`
-    - **COMMIT**: Commit the generated requirements and design with message "Add tailored dual-database requirements and design with feature flag support"
+    - **COMMIT**: Commit the generated requirements and design with message "stage-03 task 1.3: Add tailored dual-database requirements and design with feature flag support"
     - **CRITICAL**: Only after this step should the actual implementation begin
     - _Requirements: 1.4, 1.5_
 
@@ -88,7 +88,7 @@ This stage follows a discovery-driven approach where Q first explores the backen
       - Brief description of what the file contains
     - **IMPORTANT**: Clearly mark which files are DynamoDB stubs that will need real implementation in stage-04
     - Document progress in `artifacts/stage-03/03_5_implementation_log.md`
-    - **COMMIT**: Commit implementation progress regularly with descriptive messages (e.g., "Implement dual-database interfaces", "Add feature flag configuration")
+    - **COMMIT**: Commit implementation progress regularly with descriptive messages (e.g., "stage-03 task 2.3: Implement dual-database interfaces", "stage-03 task 2.3: Add feature flag configuration")
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 3.1, 3.2, 3.3, 3.4, 3.5_
 
   - [ ] 2.4 Create comprehensive unit tests for new abstraction layer components
@@ -105,7 +105,7 @@ This stage follows a discovery-driven approach where Q first explores the backen
     - **CRITICAL**: Run all tests (existing + new) after creating each new test file
     - Ensure new tests cover edge cases, error conditions, and configuration scenarios
     - Document test coverage and any testing considerations in implementation log
-    - **COMMIT**: Commit new test files with message "Add comprehensive unit tests for dual-database abstraction layer components"
+    - **COMMIT**: Commit new test files with message "stage-03 task 2.4: Add comprehensive unit tests for dual-database abstraction layer components"
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
     - _Requirements: 2.5, 3.1, 3.4_
 
@@ -115,7 +115,7 @@ This stage follows a discovery-driven approach where Q first explores the backen
     - Confirm error handling is consistent across implementations
     - Validate that configuration management works correctly
     - Document final results in `artifacts/stage-03/03_6_validation_results.md`
-    - **COMMIT**: Commit final validation results with message "Complete DAL abstraction implementation with validation results"
+    - **COMMIT**: Commit final validation results with message "stage-03 task 3.1: Complete DAL abstraction implementation with validation results"
     - _Requirements: 2.5, 3.1, 3.4, 3.5_
 
   - [ ] 3.2 Prepare for DynamoDB implementation stage

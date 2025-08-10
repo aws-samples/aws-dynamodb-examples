@@ -10,6 +10,7 @@
 - **Update the tasks.md file** itself when marking tasks complete and commit those changes too
 - **Use single working log**: Use `artifacts/stage-04/04_working_log.md` throughout the entire stage (not individual logs per subtask)
 - **DO NOT MODIFY THE CONTENT OF THIS FILE**: Only add a [x] mark to complete the task, for tracking purposes.
+- **USE Work log to tracking progress**: Use the file `artifacts/stage-04/04_working_log.md` to track progress, but update this file when task are completed.
 
 - [ ] 1. Set up test environment and establish baseline
   - [ ] 1.1 Discover testing framework and execution procedures
@@ -18,7 +19,7 @@
     - Locate existing test files related to the data access layer
     - Understand how tests are organized and executed in this project
     - Document the appropriate commands or procedures to run tests in this specific repository
-    - **COMMIT**: Commit test discovery documentation with message "Document testing framework and procedures for DynamoDB implementation"
+    - **COMMIT**: Commit test discovery documentation with message "stage-04 task 1.1: Document testing framework and procedures for DynamoDB implementation"
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
     - _Requirements: 1.1, 1.4_
 
@@ -29,7 +30,7 @@
     - Ensure test databases are available and accessible
     - Run a sample test to confirm the testing framework is operational
     - Document any special requirements needed for testing the data access layer
-    - **COMMIT**: Commit DynamoDB Local setup with message "Set up DynamoDB Local testing environment"
+    - **COMMIT**: Commit DynamoDB Local setup with message "stage-04 task 1.2: Set up DynamoDB Local testing environment"
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
     - _Requirements: 1.2, 1.5_
 
@@ -38,7 +39,7 @@
     - Document any existing test failures before making changes
     - Ensure nothing was broken during exploration of the codebase
     - Document the test results as a baseline for future comparison
-    - **COMMIT**: Commit baseline test results with message "Establish baseline test results before DynamoDB implementation"
+    - **COMMIT**: Commit baseline test results with message "stage-04 task 1.3: Establish baseline test results before DynamoDB implementation"
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
     - _Requirements: 1.3_
 
@@ -54,7 +55,7 @@
     - Review `03_2_data_access_analysis.md` for existing repository patterns and test structure
     - Review `03_3_dal_requirements.md` and `03_4_dal_design.md` for the dual-database abstraction design
     - Identify the specific interfaces that need DynamoDB implementations (replacing the stubs from stage 03)
-    - **COMMIT**: Commit artifact review with message "Review stage 03 artifacts and identify implementation requirements"
+    - **COMMIT**: Commit artifact review with message "stage-04 task 2.1: Review stage 03 artifacts and identify implementation requirements"
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
     - _Requirements: 2.1_
 
@@ -68,18 +69,19 @@
     - Document the exact transformation logic needed for each entity based on the migration contract
     - Generate artifact: `artifacts/stage-04/04_1_implementation_plan.md` with detailed coding specifications
     - **CRITICAL**: This plan should be detailed enough that implementation can proceed without breaking existing functionality
-    - **COMMIT**: Commit implementation plan with message "Generate detailed DynamoDB implementation plan based on migration contract and stage 03 artifacts"
+    - **COMMIT**: Commit implementation plan with message "stage-04 task 2.2: Generate detailed DynamoDB implementation plan based on migration contract and stage 03 artifacts"
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
     - _Requirements: 2.1_
 
 - [ ] 3. Implement DynamoDB repositories following the detailed plan
   - [ ] 3.1 Set up DynamoDB infrastructure using stage 03 configuration
     - **REUSE CONFIGURATION**: Use the dual-database configuration structure established in stage 03
+    - **REFERENCE**: Keep `migrationContract.json` from `artifacts/stage-02/` as reference documentation for implementation guidance
     - Set up DynamoDB client configuration for testing and production environments
     - **CRITICAL**: Run the test suite to verify the setup doesn't break existing functionality
-    - Implement migration contract parser/loader to read the contract specifications
-    - Create base DynamoDB repository class that handles common contract-based operations
-    - **COMMIT**: Commit DynamoDB infrastructure setup with message "Set up DynamoDB client configuration and base repository class"
+    - Create base DynamoDB repository class with common DynamoDB operations (get, put, query, scan)
+    - **APPROACH**: Use the migration contract as a reference guide for table designs and attribute mappings, but implement repositories directly without parsing
+    - **COMMIT**: Commit DynamoDB infrastructure setup with message "stage-04 task 3.1: Set up DynamoDB client configuration and base repository class"
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
     - _Requirements: 2.1, 2.2_
 
@@ -96,10 +98,12 @@
       5. Refactor while keeping both test suites passing
     - **CRITICAL**: Run both unit and integration tests before ANY changes and after EVERY substantive change
     - **CRITICAL**: Integration tests must use real DynamoDB Local, no mock data
-    - Replace the first stub DynamoDB repository (from stage 03) with real implementation following migrationContract.json
-    - Preserve MySQL-generated IDs in same format, casting to match DynamoDB data type as specified in contract
+    - Replace the first stub DynamoDB repository (from stage 03) with real implementation using migration contract as reference
+    - **DIRECT IMPLEMENTATION**: Write DynamoDB operations directly based on table designs documented in the migration contract
+    - Preserve MySQL-generated IDs in same format, casting to appropriate DynamoDB data types
+    - Focus on implementing the specific access patterns needed by the application
     - Document implementation progress in `artifacts/stage-04/04_2_implementation_log.md`
-    - **COMMIT**: Commit first repository implementation with message "Implement first DynamoDB repository with unit and integration tests"
+    - **COMMIT**: Commit first repository implementation with message "stage-04 task 3.2: Implement first DynamoDB repository with unit and integration tests"
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
     - _Requirements: 2.1, 2.2, 2.3, 2.4_
 
@@ -110,20 +114,13 @@
       - **Integration Tests**: `EntityRepository.integration.test.js` for real DynamoDB operations
     - **MAINTAIN TDD WORKFLOW**: Continue the unit test → integration test → implementation cycle for each repository
     - Replace each remaining stub DynamoDB repository with real implementation, testing after each
-    - **CRITICAL**: Follow the migrationContract.json specifications exactly for table names, attribute mappings, data transformations, and query patterns
+    - **REFERENCE-BASED**: Use the migration contract documentation as a guide for table names, attribute mappings, and query patterns, but implement directly
     - Maintain the exact interface contracts established in stage 03 - no changes to method signatures
     - Handle DynamoDB-specific limitations (400KB item size, throughput limits) as specified in the implementation plan
     - Update implementation log with progress and any issues encountered
-    - **COMMIT**: Commit remaining repository implementations with message "Complete all DynamoDB repository implementations with comprehensive test coverage"
+    - **COMMIT**: Commit remaining repository implementations with message "stage-04 task 3.3: Complete all DynamoDB repository implementations with comprehensive test coverage"
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
     - _Requirements: 2.1, 2.2, 2.4, 2.5_
-
-  - [ ] 3.4 Implement advanced DynamoDB patterns
-    - Implement appropriate transaction handling using DynamoDB transactions where needed
-    - Implement batch operations where appropriate for performance optimization
-    - Include pagination for large result sets following DynamoDB best practices
-    - Consider caching strategies for frequently accessed data
-    - _Requirements: 2.5_
 
 - [ ] 4. Implement comprehensive error handling and retries
   - [ ] 4.1 Implement DynamoDB-specific error handling
@@ -134,12 +131,12 @@
     - Implement error handling for one operation, then run tests to verify
     - _Requirements: 3.1, 3.2_
 
-  - [ ] 4.2 Implement retry mechanisms and idempotent operations
-    - Continue with remaining operations, testing after each implementation
-    - Implement idempotent operations where possible
-    - Implement exponential backoff for retries with proper jitter
-    - Consider circuit breaker patterns for persistent failures
-    - Log detailed error information for troubleshooting and debugging
+  - [ ] 4.2 Configure SDK retry mechanisms and error logging
+    - **CRITICAL**: Use AWS SDK default retry mechanisms with exponential backoff and jitter
+    - Configure SDK retry settings appropriately for the application (don't implement custom retry logic)
+    - Implement proper error logging for troubleshooting and debugging
+    - Test that SDK retry behavior works correctly with throttling scenarios
+    - Document any SDK retry configuration used
     - _Requirements: 3.2, 3.3_
 
   - [ ] 4.3 Validate error handling implementation
@@ -147,7 +144,7 @@
     - Verify that error scenarios are properly handled
     - Test retry mechanisms under various failure conditions
     - Fix any issues before proceeding to the next component
-    - **COMMIT**: Commit error handling implementation with message "Implement comprehensive error handling and retry mechanisms"
+    - **COMMIT**: Commit error handling implementation with message "stage-04 task 4.3: Implement comprehensive error handling and retry mechanisms"
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
     - _Requirements: 3.1, 3.2_
 
@@ -173,7 +170,7 @@
     - Confirm error handling is robust and consistent
     - Validate that all access patterns are supported as designed
     - Verify performance meets requirements and expectations
-    - **COMMIT**: Commit final validation results with message "Complete DynamoDB implementation with comprehensive validation"
+    - **COMMIT**: Commit final validation results with message "stage-04 task 5.3: Complete DynamoDB implementation with comprehensive validation"
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
     - _Requirements: 1.3, 2.4, 3.1_
 
@@ -190,7 +187,7 @@
     - Verify that switching between implementations is seamless
     - Document any considerations for the upcoming feature flag implementation
     - Confirm that all tests pass and the implementation is production-ready
-    - **COMMIT**: Commit final documentation with message "Complete DynamoDB implementation documentation and prepare for next stage"
+    - **COMMIT**: Commit final documentation with message "stage-04 task 6.2: Complete DynamoDB implementation documentation and prepare for next stage"
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
     - _Requirements: 2.4, 3.5_
 
@@ -201,12 +198,12 @@ Before marking this stage complete, verify:
 - [ ] **Implementation Plan**: Detailed implementation plan generated in `artifacts/stage-04/04_1_implementation_plan.md`
 - [ ] **Stub Replacement**: All stub DynamoDB repositories from stage 03 have been replaced with real implementations
 - [ ] **Interface Compliance**: All implementations follow the exact interface contracts defined in stage 03
-- [ ] **Migration Contract Compliance**: DynamoDB implementation follows migrationContract.json specifications exactly
+- [ ] **Migration Contract Reference**: DynamoDB implementation follows the design patterns documented in the migration contract
 - [ ] **Testing**: DynamoDB Local is properly set up, all existing tests pass, and new DynamoDB-specific test files have been created
 - [ ] **Data Preservation**: MySQL-generated IDs are preserved in correct format as specified in migration contract
 - [ ] **Error Handling**: Comprehensive error handling is implemented with exponential backoff
 - [ ] **Configuration**: Production SDK configuration uses defaults and proper credential providers
-- [ ] **Performance**: All access patterns from migration contract are properly implemented
+- [ ] **Performance**: All access patterns documented in migration contract are properly implemented
 - [ ] **Documentation**: Implementation log and validation results are complete
 
 ## Critical Execution Guidelines
@@ -233,10 +230,10 @@ Before marking this stage complete, verify:
 
 **DynamoDB-Specific Requirements**:
 - Use real DynamoDB Local via Docker, never mocks
-- Follow migrationContract.json specifications exactly
-- Preserve MySQL IDs in same format, cast to DynamoDB types
+- Use migration contract as reference guide for table designs and access patterns
+- Preserve MySQL IDs in same format, cast to appropriate DynamoDB types
 - Handle 400KB item size limits and throughput constraints
-- Implement proper error handling with exponential backoff
+- Implement proper error handling with SDK defaults
 
 ## Troubleshooting Guide
 

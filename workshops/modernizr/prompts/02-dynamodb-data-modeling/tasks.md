@@ -27,7 +27,7 @@
     - Extract key entities, relationships, and access patterns from the artifacts without making any design assumptions
     - Identify current MySQL schema structure, constraints, and performance characteristics from table structure analysis
     - Document any existing bottlenecks or performance issues from the MySQL log analysis
-    - **COMMIT**: Commit artifact analysis with message "Analyze stage-01 artifacts for DynamoDB modeling context"
+    - **COMMIT**: Commit artifact analysis with message "stage-02 task 1.1: Analyze stage-01 artifacts for DynamoDB modeling context"
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
     - _Requirements: 1.1_
 
@@ -38,7 +38,7 @@
     - Ensure both read and write patterns are documented for every entity
     - Ask user specific questions about missing patterns: "I see we have a user login access pattern but no pattern to create users. Should we add one?"
     - Create `dynamodb_requirement.md` as working scratchpad file to document all requirements
-    - **COMMIT**: Commit access pattern requirements with message "Document complete access patterns with RPS estimates"
+    - **COMMIT**: Commit access pattern requirements with message "stage-02 task 1.2: Document complete access patterns with RPS estimates"
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
     - _Requirements: 1.2, 1.3_
 
@@ -51,7 +51,7 @@
       - Log analysis as SUPPLEMENTAL performance data (where available)
     - **USER CONFIRMATION GATE**: Ask user "Do these access patterns and requirements look complete? Are there any other patterns we should consider?"
     - Do not proceed until user explicitly confirms all patterns are captured
-    - **COMMIT**: Commit requirements validation with message "Validate complete access pattern requirements with user"
+    - **COMMIT**: Commit requirements validation with message "stage-02 task 1.3: Validate complete access pattern requirements with user"
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
     - _Requirements: 1.4, 1.5_
 
@@ -63,7 +63,7 @@
     - Create initial table designs with purpose, partition key, sort key, and detailed justifications
     - Design GSIs with purpose, cost analysis, and optimization considerations
     - Document design approach and rationale without predetermined biases
-    - **COMMIT**: Commit initial design with message "Create initial DynamoDB design based on access patterns"
+    - **COMMIT**: Commit initial design with message "stage-02 task 2.1: Create initial DynamoDB design based on access patterns"
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
     - _Requirements: 2.1, 2.2_
 
@@ -73,7 +73,7 @@
     - Consider operational complexity, schema evolution risk, and hot partition risk
     - For each potential denormalization, document: alternatives considered, trade-offs, rollback strategy
     - Create multiple design alternatives with comprehensive trade-off analysis
-    - **COMMIT**: Commit denormalization analysis with message "Evaluate denormalization decisions and design alternatives"
+    - **COMMIT**: Commit denormalization analysis with message "stage-02 task 2.2: Evaluate denormalization decisions and design alternatives"
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
     - _Requirements: 2.3, 2.4, 2.5, 3.1_
 
@@ -83,7 +83,7 @@
     - Calculate write amplification factors for GSI designs
     - Identify potential production risks and mitigation strategies
     - Document explicit trade-offs with rollback strategies for each design decision
-    - **COMMIT**: Commit cost and risk analysis with message "Analyze cost implications and production risks"
+    - **COMMIT**: Commit cost and risk analysis with message "stage-02 task 2.3: Analyze cost implications and production risks"
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
     - _Requirements: 3.2, 3.3_
 
@@ -99,7 +99,7 @@
       - Production risk assessment and warnings
       - Multiple design alternatives with trade-off analysis
     - **CRITICAL**: Ensure all API access patterns from task 1.1 are addressed in the design
-    - **COMMIT**: Commit data model document with message "Create comprehensive DynamoDB data model document"
+    - **COMMIT**: Commit data model document with message "stage-02 task 3.1: Create comprehensive DynamoDB data model document"
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
     - _Requirements: 3.4, 3.5_
 
@@ -116,7 +116,7 @@
     - **USER VALIDATION PER TABLE**: Ask user "Does this table design make sense? Do you understand why we're combining/splitting these MySQL tables this way?"
     - **CRITICAL**: Do not proceed to next table until user confirms understanding of current table
     - Document any user concerns or requested modifications for each table
-    - **COMMIT**: Commit table-by-table validation with message "Complete table-by-table design validation with user"
+    - **COMMIT**: Commit table-by-table validation with message "stage-02 task 3.2: Complete table-by-table design validation with user"
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
     - _Requirements: 3.4, 3.5_
 
@@ -126,7 +126,7 @@
     - Ensure all design decisions are documented with trade-offs and rollback strategies
     - **USER CONFIRMATION GATE**: Ask user "After reviewing each table individually, does the complete design approach look good?"
     - Do not proceed until user explicitly approves the overall design approach
-    - **COMMIT**: Commit finalized data model with message "Finalize DynamoDB data model with user validation"
+    - **COMMIT**: Commit finalized data model with message "stage-02 task 3.3: Finalize DynamoDB data model with user validation"
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
     - _Requirements: 3.4, 3.5_
 
@@ -139,7 +139,7 @@
     - For denormalized attributes: MUST include denormalized=true, justification, and join object with local_column and source_column
     - Implement proper unique constraint handling patterns with lookup tables as specified in the data model
     - Map all table designs and access patterns from the data model document to the JSON contract format
-    - **COMMIT**: Commit migration contract generation with message "Generate migration contract from finalized data model"
+    - **COMMIT**: Commit migration contract generation with message "stage-02 task 4.1: Generate migration contract from finalized data model"
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
     - _Requirements: 4.1, 4.2, 4.3_
 
@@ -151,7 +151,7 @@
     - Check that unique constraint handling is properly implemented with TransactWriteItems patterns
     - **USER CONFIRMATION GATE**: Ask user "Does this migration contract look complete and accurate? Are all the mappings correct?"
     - Do not proceed until user explicitly validates the migration contract
-    - **COMMIT**: Commit contract validation with message "Validate migration contract completeness and accuracy"
+    - **COMMIT**: Commit contract validation with message "stage-02 task 4.2: Validate migration contract completeness and accuracy"
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
     - _Requirements: 4.4, 4.5_
 
@@ -167,7 +167,7 @@
       - **GSI Throttling Cascade**: Warn when GSI throttling will affect entire base table
       - **Hot Partition Risk**: Warn when access patterns may create hot partitions
       - **Schema Evolution Trap**: Warn when denormalization will complicate future schema changes
-    - **COMMIT**: Commit documentation summary with message "Create comprehensive documentation summary"
+    - **COMMIT**: Commit documentation summary with message "stage-02 task 5.1: Create comprehensive documentation summary"
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
     - _Requirements: 5.1_
 
@@ -177,7 +177,7 @@
     - Verify that all design decisions are documented with trade-offs and rollback strategies
     - Validate that outputs provide sufficient information for stage 04 DynamoDB implementation
     - Confirm user has approved all major design decisions and migration contract
-    - **COMMIT**: Commit final validation with message "Complete DynamoDB data modeling with manual design process"
+    - **COMMIT**: Commit final validation with message "stage-02 task 5.2: Complete DynamoDB data modeling with manual design process"
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
     - _Requirements: 5.2_
 
