@@ -83,10 +83,10 @@ export function toProductResponse(product: ProductWithDetails): any {
     description: product.description,
     price: Number(product.price),
     inventory_quantity: product.inventory_quantity,
-    category: product.category_name ? {
+    category: {
       id: product.category_id,
-      name: product.category_name
-    } : undefined,
+      name: product.category_name || 'Uncategorized'
+    },
     seller_username: product.seller_username,
     seller_email: product.seller_email,
     created_at: product.created_at,

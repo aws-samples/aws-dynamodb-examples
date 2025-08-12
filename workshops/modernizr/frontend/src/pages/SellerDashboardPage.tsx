@@ -8,16 +8,16 @@ interface Product {
   name: string;
   description: string;
   price: number;
-  stock: number;
+  inventory_quantity: number;
   imageUrl?: string;
-  categoryId: number;
+  category_id: number;
   category?: {
     id: number;
     name: string;
   };
-  sellerId: number;
-  createdAt: string;
-  updatedAt: string;
+  seller_id: number;
+  created_at: string;
+  updated_at: string;
 }
 
 interface DashboardStats {
@@ -61,13 +61,18 @@ const SellerDashboardPage: React.FC = () => {
 
       // Load seller's products
       const productsResponse = await api.get('/products/seller/my-products');
+      console.log('API Response:', productsResponse.data); // Debug log
+      
       if (productsResponse.data.success) {
         const sellerProducts = productsResponse.data.data.products || [];
+        console.log('Seller Products:', sellerProducts); // Debug log
         setProducts(sellerProducts);
 
         // Calculate stats from products
         const totalProducts = sellerProducts.length;
-        const lowStockProducts = sellerProducts.filter((p: Product) => p.stock < 10).length;
+        const lowStockProducts = sellerProducts.filter((p: Product) => p.inventory_quantity < 10).length;
+        
+        console.log('Stats calculation:', { totalProducts, lowStockProducts }); // Debug log
         
         setStats({
           totalProducts,
@@ -77,6 +82,7 @@ const SellerDashboardPage: React.FC = () => {
         });
       }
     } catch (err: any) {
+      console.error('Dashboard load error:', err); // Debug log
       setError(err.message || 'Failed to load dashboard data');
     } finally {
       setLoading(false);
@@ -95,7 +101,7 @@ const SellerDashboardPage: React.FC = () => {
       setStats(prev => ({
         ...prev,
         totalProducts: prev.totalProducts - 1,
-        lowStockProducts: products.filter(p => p.id !== productId && p.stock < 10).length
+        lowStockProducts: products.filter(p => p.id !== productId && p.inventory_quantity < 10).length
       }));
     } catch (err: any) {
       alert(err.message || 'Failed to delete product');
@@ -321,22 +327,22 @@ const SellerDashboardPage: React.FC = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                        product.stock < 10 
+                        product.inventory_quantity < 10 
                           ? 'bg-red-100 text-red-800' 
-                          : product.stock < 50 
+                          : product.inventory_quantity < 50 
                           ? 'bg-yellow-100 text-yellow-800' 
                           : 'bg-green-100 text-green-800'
                       }`}>
-                        {product.stock} units
+                        {product.inventory_quantity} units
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                        product.stock > 0 
+                        product.inventory_quantity > 0 
                           ? 'bg-green-100 text-green-800' 
                           : 'bg-red-100 text-red-800'
                       }`}>
-                        {product.stock > 0 ? 'In Stock' : 'Out of Stock'}
+                        {product.inventory_quantity > 0 ? 'In Stock' : 'Out of Stock'}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">

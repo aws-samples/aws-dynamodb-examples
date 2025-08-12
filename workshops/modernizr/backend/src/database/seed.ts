@@ -183,20 +183,36 @@ async function seedProducts(): Promise<void> {
     return;
   }
 
-  // Get category IDs
-  const [laptopRows] = await pool.execute('SELECT id FROM categories WHERE name = ?', ['Laptops']);
-  const [booksRows] = await pool.execute('SELECT id FROM categories WHERE name = ?', ['Fiction']);
-  const [kitchenRows] = await pool.execute('SELECT id FROM categories WHERE name = ?', ['Kitchen Appliances']);
-  const [clothingRows] = await pool.execute('SELECT id FROM categories WHERE name = ?', ['Men\'s Clothing']);
-  const [sportsRows] = await pool.execute('SELECT id FROM categories WHERE name = ?', ['Fitness Equipment']);
-  const [gardenRows] = await pool.execute('SELECT id FROM categories WHERE name = ?', ['Tools']);
+  // Get category IDs with better error handling
+  const getCategoryId = async (categoryName: string): Promise<number | null> => {
+    try {
+      const [rows] = await pool.execute('SELECT id FROM categories WHERE name = ?', [categoryName]);
+      const id = (rows as any[])[0]?.id;
+      if (!id) {
+        console.warn(`Warning: Category '${categoryName}' not found`);
+      }
+      return id || null;
+    } catch (error) {
+      console.error(`Error finding category '${categoryName}':`, error);
+      return null;
+    }
+  };
 
-  const laptopCategoryId = (laptopRows as any[])[0]?.id;
-  const booksCategoryId = (booksRows as any[])[0]?.id;
-  const kitchenCategoryId = (kitchenRows as any[])[0]?.id;
-  const clothingCategoryId = (clothingRows as any[])[0]?.id;
-  const sportsCategoryId = (sportsRows as any[])[0]?.id;
-  const gardenCategoryId = (gardenRows as any[])[0]?.id;
+  const laptopCategoryId = await getCategoryId('Laptops');
+  const booksCategoryId = await getCategoryId('Fiction');
+  const kitchenCategoryId = await getCategoryId('Kitchen Appliances');
+  const clothingCategoryId = await getCategoryId('Men\'s Clothing');
+  const sportsCategoryId = await getCategoryId('Fitness Equipment');
+  const gardenCategoryId = await getCategoryId('Tools');
+
+  console.log('Category IDs found:', {
+    laptopCategoryId,
+    booksCategoryId,
+    kitchenCategoryId,
+    clothingCategoryId,
+    sportsCategoryId,
+    gardenCategoryId
+  });
 
   const products = [
     {
@@ -265,9 +281,12 @@ async function seedProducts(): Promise<void> {
             product.inventory_quantity
           ]
         );
+        console.log(`✓ Inserted product: ${product.name} (category_id: ${product.category_id})`);
       } catch (error) {
-        console.warn(`Warning: Could not insert product ${product.name}:`, error);
+        console.warn(`✗ Could not insert product ${product.name}:`, error);
       }
+    } else {
+      console.warn(`✗ Skipping product ${product.name} - no category_id`);
     }
   }
 
