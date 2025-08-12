@@ -36,6 +36,8 @@ npm run clean      # Clean build artifacts
 npm run security:check  # Security audit
 ```
 
+For a detailed description of all the features please refer to [NAVIGATION.md](./NAVIGATION.md)
+
 ## 🎯 Key Features
 
 ### 🛒 E-commerce Functionality
