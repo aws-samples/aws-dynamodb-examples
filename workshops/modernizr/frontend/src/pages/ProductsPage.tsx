@@ -34,7 +34,10 @@ interface ApiProduct {
   description: string;
   price: number;
   inventory_quantity: number;
-  category_name: string;
+  category: {
+    id: number;
+    name: string;
+  };
   seller_username: string;
   seller_email: string;
   created_at: string;
@@ -64,8 +67,8 @@ const ProductsPage: React.FC = () => {
       username: apiProduct.seller_username
     },
     category: {
-      id: apiProduct.category_id,
-      name: apiProduct.category_name
+      id: apiProduct.category.id,
+      name: apiProduct.category.name
     }
   });
   

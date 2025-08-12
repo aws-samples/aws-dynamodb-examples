@@ -1,126 +1,123 @@
-# Online Shopping Store - Frontend
+# Frontend Application 🎨
 
-A modern React/TypeScript frontend application for an e-commerce platform, featuring user authentication, product browsing, shopping cart, order management, and seller dashboard functionality.
+Modern React/TypeScript e-commerce frontend with responsive design, comprehensive state management, and robust testing. Built with React 19, Tailwind CSS, and TypeScript for a seamless shopping experience.
 
-## Features
+## 🚀 Quick Start
 
-- **User Authentication**: Login, registration, and profile management
-- **Product Catalog**: Browse products with search, filtering, and pagination
-- **Shopping Cart**: Add/remove items, quantity management
-- **Order Management**: Checkout process, order history, and order tracking
-- **Seller Dashboard**: Product management for sellers
-- **Responsive Design**: Mobile-first design with Tailwind CSS
-- **Type Safety**: Full TypeScript implementation
-- **State Management**: React Context API for global state
-- **Error Handling**: Comprehensive error boundaries and user feedback
-- **Testing**: Unit and integration tests with React Testing Library
-
-## Quick Start
-
-### Prerequisites
-
-- Node.js (v16 or higher)
-- npm or yarn
-
-### Installation
-
-1. **Navigate to frontend directory:**
-   ```bash
-   cd frontend
-   ```
-
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
-
-3. **Start the development server:**
-   ```bash
-   npm start
-   ```
-
-The application will be available at `http://localhost:3000`
-
-**Note:** This frontend application is designed to work with a backend API. If you want to see it in action, you'll need to have the backend running (see backend README for setup instructions).
-
-## Available Scripts
-
-### Development
-- `npm start` - Start development server with hot reload
-- `npm run build` - Build for production
-- `npm test` - Run test suite in watch mode
-- `npm run eject` - Eject from Create React App (⚠️ irreversible)
-
-### Maintenance
-- `npm run clean` - Clean build artifacts and cache
-- `npm run clean:all` - Clean everything including node_modules
-
-## Project Structure
-
-```
-frontend/
-├── public/              # Static assets
-├── src/
-│   ├── components/      # Reusable UI components
-│   │   ├── CategoryFilter.tsx
-│   │   ├── ErrorBoundary.tsx
-│   │   ├── FormField.tsx
-│   │   ├── Layout.tsx
-│   │   ├── LoadingSpinner.tsx
-│   │   ├── Pagination.tsx
-│   │   ├── ProductCard.tsx
-│   │   ├── ProtectedRoute.tsx
-│   │   ├── SearchBar.tsx
-│   │   └── Toast.tsx
-│   ├── contexts/        # React Context providers
-│   │   ├── AuthContext.tsx    # User authentication state
-│   │   └── CartContext.tsx    # Shopping cart state
-│   ├── pages/           # Page components (routes)
-│   │   ├── HomePage.tsx
-│   │   ├── LoginPage.tsx
-│   │   ├── RegisterPage.tsx
-│   │   ├── ProductsPage.tsx
-│   │   ├── ProductDetailPage.tsx
-│   │   ├── CartPage.tsx
-│   │   ├── CheckoutPage.tsx
-│   │   ├── OrderHistoryPage.tsx
-│   │   ├── ProfilePage.tsx
-│   │   ├── SellerDashboardPage.tsx
-│   │   └── ...
-│   ├── services/        # API service functions
-│   ├── utils/           # Utility functions
-│   ├── tests/           # Test files
-│   ├── App.tsx          # Main application component
-│   └── index.tsx        # Application entry point
-├── build/               # Production build files
-├── .env                 # Environment variables
-├── tailwind.config.js   # Tailwind CSS configuration
-└── package.json         # Dependencies and scripts
+```bash
+cd frontend
+npm install
+npm start       # Development server at http://localhost:3000
 ```
 
-## Application Routes
+**Note:** Requires backend API running at `http://localhost:8100` for full functionality.
 
-### Public Routes
-- `/` - Home page with featured products
-- `/products` - Product catalog with search and filters
-- `/products/:id` - Product detail page
-- `/categories` - Browse by categories
-- `/login` - User login
-- `/register` - User registration
+## 🔧 Configuration
 
-### Protected Routes (Require Authentication)
-- `/profile` - User profile management
-- `/cart` - Shopping cart
-- `/checkout` - Checkout process
-- `/orders` - Order history
-- `/orders/:id` - Order detail page
-- `/upgrade-seller` - Upgrade to seller account
+### Environment Variables
 
-### Seller Routes (Require Seller Role)
-- `/seller/dashboard` - Seller dashboard
-- `/seller/products` - Manage seller products
-- `/seller/products/create` - Create new product
-- `/seller/products/:id/edit` - Edit existing product
+Create `.env` file in the frontend directory:
+
+```env
+# Backend API Configuration
+REACT_APP_API_URL=http://localhost:8100
+
+# Development Server (optional)
+PORT=3000
+```
+
+### Available Scripts
+
+```bash
+npm start           # Development server with hot reload
+npm run build       # Production build
+npm test           # Run test suite
+npm run clean      # Clean build artifacts
+npm run security:check  # Security audit
+```
+
+For a detailed description of all the features please refer to [NAVIGATION.md](./NAVIGATION.md)
+
+## 🎯 Key Features
+
+### 🛒 E-commerce Functionality
+- **User Authentication** - Login, registration, profile management
+- **Product Catalog** - Browse, search, filter with pagination
+- **Shopping Cart** - Add/remove items, quantity management
+- **Order Management** - Checkout, order history, tracking
+- **Seller Dashboard** - Product management for sellers
+
+### 🎨 User Experience
+- **Responsive Design** - Mobile-first with Tailwind CSS
+- **Type Safety** - Full TypeScript implementation
+- **State Management** - React Context API for global state
+- **Error Handling** - Comprehensive error boundaries
+- **Performance** - Code splitting and lazy loading
+
+## 📁 Frontend Architecture
+
+```
+frontend/src/
+├── 🧩 components/          # Reusable UI Components
+│   ├── CategoryFilter.tsx     # Product category filtering
+│   ├── ErrorBoundary.tsx      # Error handling wrapper
+│   ├── Layout.tsx             # Main application layout
+│   ├── ProductCard.tsx        # Product display card
+│   ├── ProtectedRoute.tsx     # Authentication guard
+│   ├── SearchBar.tsx          # Product search functionality
+│   └── ...                    # Other UI components
+│
+├── 🔄 contexts/            # Global State Management
+│   ├── AuthContext.tsx        # User authentication state
+│   └── CartContext.tsx        # Shopping cart state
+│
+├── 📄 pages/               # Route-based Page Components
+│   ├── HomePage.tsx           # Landing page
+│   ├── ProductsPage.tsx       # Product catalog
+│   ├── CartPage.tsx           # Shopping cart
+│   ├── CheckoutPage.tsx       # Order checkout
+│   ├── SellerDashboardPage.tsx # Seller management
+│   └── ...                    # Other pages
+│
+├── 🔌 services/            # API Integration Layer
+├── 🛠️ utils/               # Utility functions
+├── 🧪 tests/               # Test files
+├── 🚀 App.tsx              # Main application component
+└── 📍 index.tsx            # Application entry point
+
+Static Assets:
+├── 📁 public/              # Static files (images, icons, etc.)
+└── 📦 build/               # Production build output (generated)
+```
+
+## 🛣️ Application Routes
+
+### 🌐 Public Routes (No Authentication Required)
+| Route | Component | Description |
+|-------|-----------|-------------|
+| `/` | HomePage | Landing page with featured products |
+| `/products` | ProductsPage | Product catalog with search/filters |
+| `/products/:id` | ProductDetailPage | Individual product details |
+| `/categories` | CategoriesPage | Browse by product categories |
+| `/login` | LoginPage | User authentication |
+| `/register` | RegisterPage | User registration |
+
+### 🔒 Protected Routes (Authentication Required)
+| Route | Component | Description |
+|-------|-----------|-------------|
+| `/profile` | ProfilePage | User profile management |
+| `/cart` | CartPage | Shopping cart management |
+| `/checkout` | CheckoutPage | Order checkout process |
+| `/orders` | OrderHistoryPage | User's order history |
+| `/orders/:id` | OrderDetailPage | Individual order details |
+
+### 🏪 Seller Routes (Seller Role Required)
+| Route | Component | Description |
+|-------|-----------|-------------|
+| `/seller/dashboard` | SellerDashboardPage | Seller overview and analytics |
+| `/seller/products` | SellerProductsPage | Manage seller's products |
+| `/seller/products/create` | CreateProductPage | Add new product |
+| `/seller/products/:id/edit` | EditProductPage | Edit existing product |
 
 ## Key Components
 
