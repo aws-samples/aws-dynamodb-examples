@@ -168,19 +168,21 @@ const CreateProductPage: React.FC = () => {
     }
   };
 
-  const renderCategoryOptions = (categories: Category[], level: number = 0): React.ReactElement[] => {
+  const renderCategoryOptions = (categories: Category[], parentName?: string): React.ReactElement[] => {
     const options: React.ReactElement[] = [];
     
     categories.forEach(category => {
-      const indent = '  '.repeat(level);
-      options.push(
-        <option key={category.id} value={category.id}>
-          {indent}{category.name}
-        </option>
-      );
-      
       if (category.children && category.children.length > 0) {
-        options.push(...renderCategoryOptions(category.children, level + 1));
+        // This is a parent category - don't add it as an option, but process its children
+        options.push(...renderCategoryOptions(category.children, category.name));
+      } else {
+        // This is a child category (leaf node) - add it as a selectable option
+        const displayName = parentName ? `(${parentName}) ${category.name}` : category.name;
+        options.push(
+          <option key={category.id} value={category.id}>
+            {displayName}
+          </option>
+        );
       }
     });
     

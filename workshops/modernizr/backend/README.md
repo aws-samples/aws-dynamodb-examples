@@ -1,157 +1,160 @@
-# Online Shopping Store - Backend API
+# Backend API Server 🔧
 
-A robust Node.js/TypeScript backend API for the online shopping store application, featuring user authentication, product management, order processing, and load testing capabilities.
+Node.js/TypeScript REST API server for the online shopping store. This backend provides secure authentication, product management, order processing, and comprehensive testing infrastructure.
 
-## Features
+## 🚀 Quick Start
 
-- **User Authentication**: JWT-based authentication with secure password hashing
-- **Product Management**: CRUD operations for products and categories
-- **Order Processing**: Complete order management system
-- **Database Integration**: MySQL 8 with connection pooling
-- **Load Testing**: Built-in load testing utilities
-- **Security**: Helmet.js, CORS, input validation
-- **Testing**: Comprehensive test suite with Jest
-- **TypeScript**: Full type safety and modern JavaScript features
-
-## Quick Start
-
-### Prerequisites
-
-- Node.js (v16 or higher)
-- npm or yarn
-- MySQL 8.0+
-
-### Installation
-
-1. **Clone and navigate to backend directory:**
-   ```bash
-   cd backend
-   ```
-
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
-
-3. **Set up environment variables:**
-   ```bash
-   cp .env.example .env
-   ```
-   
-   Edit `.env` with your configuration:
-   ```env
-   DB_HOST=localhost
-   DB_PORT=3306
-   DB_USER=your_db_user
-   DB_PASSWORD=your_db_password
-   DB_NAME=online_shopping_store
-   PORT=8100
-   JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
-   ```
-
-4. **Set up the database:**
-   ```bash
-   # Test database connection
-   npm run db:test
-   
-   # Initialize database schema
-   npm run db:init
-   
-   # Seed with sample data
-   npm run db:seed
-   ```
-
-5. **Start the development server:**
-   ```bash
-   npm run dev
-   ```
-
-The API will be available at `http://localhost:8100`
-
-## Available Scripts
-
-### Development
-- `npm run dev` - Start development server with hot reload
-- `npm run build` - Build TypeScript to JavaScript
-- `npm start` - Start production server
-
-### Code Quality
-- `npm run lint` - Run ESLint
-- `npm run lint:fix` - Fix ESLint issues automatically
-
-### Testing
-- `npm test` - Run unit tests (fast feedback)
-- `npm run test:unit` - Run unit tests only
-- `npm run test:integration` - Run integration tests (auto-sets up test database)
-- `npm run test:e2e` - Run end-to-end tests (auto-builds and sets up test database)
-- `npm run test:all` - Run all test types in sequence with comprehensive reporting
-- `npm run test:watch` - Run tests in watch mode
-- `npm run test:coverage` - Run tests with coverage report
-- `npm run test:report:open` - Generate and open interactive test dashboard
-
-### Database Management
-- `npm run db:test` - Test database connection
-- `npm run db:init` - Initialize database schema
-- `npm run db:seed` - Seed database with sample data
-- `npm run db:reset` - Reset database (drop, init, seed)
-- `npm run db:clear` - Clear all seed data
-- `npm run db:setup-integration` - Setup integration test database (auto-run before integration tests)
-- `npm run db:setup-e2e` - Setup e2e test database (auto-run before e2e tests)
-
-### Load Testing
-- `npm run load-test` - Run load testing suite
-- `npm run load-test:build` - Build and run load tests
-
-## Project Structure
-
-```
-backend/
-├── src/
-│   ├── config/          # Configuration files
-│   ├── database/        # Database setup and CLI tools
-│   ├── middleware/      # Express middleware
-│   ├── models/          # Data models and interfaces
-│   ├── repositories/    # Data access layer
-│   ├── routes/          # API route definitions
-│   ├── services/        # Business logic layer
-│   ├── utils/           # Utility functions
-│   ├── load-testing/    # Load testing utilities
-│   ├── __tests__/       # Test files
-│   │   ├── unit/        # Unit tests (fast, isolated)
-│   │   ├── integration/ # Integration tests (component interactions)
-│   │   └── e2e/         # End-to-end tests (full workflows)
-│   ├── test-configs/    # Test configuration and helpers
-│   └── index.ts         # Application entry point
-├── dist/                # Compiled JavaScript files
-├── coverage/            # Test coverage reports
-├── .env.example         # Environment variables template
-└── package.json         # Dependencies and scripts
+```bash
+cd backend
+npm install
+cp .env.example .env    # Configure your database
+npm run db:init         # Initialize database
+npm run db:seed         # Add sample data
+npm run dev            # Start development server
 ```
 
-## API Endpoints
+**Server will be available at:** `http://localhost:8100`
 
-### Authentication
-- `POST /api/auth/register` - User registration
-- `POST /api/auth/login` - User login
-- `GET /api/auth/profile` - Get user profile (protected)
+## 🔧 Environment Configuration
 
-### Products
-- `GET /api/products` - Get all products
-- `GET /api/products/:id` - Get product by ID
-- `POST /api/products` - Create product (admin)
-- `PUT /api/products/:id` - Update product (admin)
-- `DELETE /api/products/:id` - Delete product (admin)
+### Required Environment Variables
 
-### Categories
-- `GET /api/categories` - Get all categories
-- `POST /api/categories` - Create category (admin)
+Create `.env` file from the example:
 
-### Orders
-- `GET /api/orders` - Get user orders (protected)
-- `POST /api/orders` - Create order (protected)
-- `GET /api/orders/:id` - Get order by ID (protected)
+```bash
+cp .env.example .env
+```
 
-## Environment Variables
+**Essential Configuration:**
+```env
+# Database Configuration
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=your_db_user
+DB_PASSWORD=your_db_password
+DB_NAME=online_shopping_store
+
+# Server Configuration
+PORT=8100
+JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
+
+# Security Settings (optional - defaults provided)
+BCRYPT_SALT_ROUNDS=12
+RATE_LIMIT_MAX_REQUESTS=10000
+```
+
+### Database Setup Commands
+
+```bash
+npm run db:test     # Test database connection
+npm run db:init     # Create tables and schema
+npm run db:seed     # Add sample data (users, products, categories)
+npm run db:reset    # Full reset (drop + init + seed)
+```
+
+## 📋 Development Commands
+
+### 🏗️ Development & Building
+```bash
+npm run dev         # Development server with hot reload
+npm run build       # Compile TypeScript to JavaScript
+npm start          # Production server
+npm run lint       # ESLint code analysis
+npm run lint:fix   # Auto-fix ESLint issues
+```
+
+### 🗄️ Database Management
+```bash
+npm run db:test    # Test database connection
+npm run db:init    # Initialize schema
+npm run db:seed    # Add sample data
+npm run db:reset   # Full reset (drop/init/seed)
+npm run db:clear   # Clear seed data only
+```
+
+### 🧪 Testing Suite
+```bash
+npm test                    # Unit tests (fastest)
+npm run test:integration    # Integration tests (auto DB setup)
+npm run test:e2e           # End-to-end tests (auto build + DB setup)
+npm run test:all           # All tests + comprehensive reporting
+npm run test:watch         # Watch mode for development
+npm run test:coverage      # Coverage reports
+npm run test:report:open   # Interactive test dashboard
+```
+
+### 🔧 Maintenance
+```bash
+npm run clean      # Clean build artifacts and cache
+npm run clean:all  # Clean everything including node_modules
+```
+
+**Note:** Load testing is now handled by the Cypress infrastructure in the root directory. See `/cypress/README.md` for load testing capabilities.
+
+## 📁 Backend Architecture
+
+```
+backend/src/
+├── � coknfig/              # Application configuration
+├── 🗄️ database/            # Schema, migrations, CLI tools
+├── 🛡️ middleware/          # Express middleware (auth, validation, security)
+├── 📋 models/              # TypeScript interfaces and data models
+├── �  repositories/        # Data access layer (MySQL integration)
+├── �️ rotutes/              # RESTful API endpoints
+├── ⚙️ services/            # Business logic and service layer
+├── � utilss/               # Utility functions and helpers
+├── 🧪 __tests__/           # Comprehensive test suite
+│   ├── unit/              # Fast, isolated unit tests
+│   ├── integration/       # Component interaction tests
+│   └── e2e/               # Full workflow end-to-end tests
+├── ⚙️ test-configs/        # Advanced testing configurations
+├── 🚀 app.ts               # Express application setup
+└── 🚀 index.ts             # Application entry point
+
+Generated:
+├── � dipst/                # Compiled JavaScript (npm run build)
+├── � covexrage/            # Test coverage reports
+└── 📈 test-results/        # Test execution reports and dashboards
+```
+
+## 🛣️ API Endpoints Overview
+
+### 🔐 Authentication (`/api/auth`)
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| POST | `/register` | User registration | ❌ |
+| POST | `/login` | User login | ❌ |
+| GET | `/profile` | Get user profile | ✅ |
+
+### 🛍️ Products (`/api/products`)
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| GET | `/` | List all products | ❌ |
+| GET | `/:id` | Get product details | ❌ |
+| POST | `/` | Create product | ✅ (Seller/Admin) |
+| PUT | `/:id` | Update product | ✅ (Owner/Admin) |
+| DELETE | `/:id` | Delete product | ✅ (Owner/Admin) |
+
+### 📂 Categories (`/api/categories`)
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| GET | `/` | List categories | ❌ |
+| POST | `/` | Create category | ✅ (Admin) |
+
+### 📦 Orders (`/api/orders`)
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| GET | `/` | User's orders | ✅ |
+| POST | `/` | Create order | ✅ |
+| GET | `/:id` | Order details | ✅ (Owner) |
+
+### 🏥 System (`/api`)
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| GET | `/health` | Health check | ❌ |
+| GET | `/docs` | API documentation | ❌ |
+
+## 🔧 Environment Variables Reference
 
 | Variable | Description | Default |
 |----------|-------------|---------|
@@ -175,7 +178,7 @@ backend/
 | `RATE_LIMIT_AUTH_MAX` | Auth rate limit max requests | 1000 |
 | `RATE_LIMIT_AUTH_WINDOW_MS` | Auth rate limit window (ms) | 60000 |
 
-## Database Schema
+## 🗄️ Database Schema
 
 The application uses MySQL with the following main tables:
 - `users` - User accounts and authentication
@@ -184,57 +187,37 @@ The application uses MySQL with the following main tables:
 - `orders` - Customer orders
 - `order_items` - Order line items
 
-## Load Testing
+## 🧪 Testing Architecture
 
-The backend includes built-in load testing capabilities:
+Our testing follows the testing pyramid with automatic database setup:
 
-```bash
-# Run basic load test
-npm run load-test
+### Unit Tests (`npm run test:unit`)
+- **Speed**: Fast execution (< 10 seconds)
+- **Scope**: Individual functions/classes in isolation
+- **Dependencies**: All external dependencies mocked
+- **Database**: No database setup required
+- **Location**: `src/__tests__/unit/`
 
-# Run with custom parameters
-npm run load-test -- --users 100 --duration 60s --endpoint /api/products
-```
+### Integration Tests (`npm run test:integration`)
+- **Speed**: Medium execution (< 60 seconds)
+- **Scope**: Component interactions with real database
+- **Database**: Automatically sets up `online_shopping_store_test_integration`
+- **Dependencies**: External services mocked
+- **Location**: `src/__tests__/integration/`
 
-## Development Guidelines
+### End-to-End Tests (`npm run test:e2e`)
+- **Speed**: Comprehensive testing (< 120 seconds)
+- **Scope**: Complete user workflows
+- **Database**: Automatically builds app and sets up `online_shopping_store_test_e2e`
+- **Dependencies**: Real server + database + HTTP requests
+- **Location**: `src/__tests__/e2e/`
 
-### Code Style
-- Use TypeScript for all new code
-- Follow ESLint configuration
-- Write tests for new features
-- Use meaningful commit messages
-
-### Testing
-
-Our testing architecture follows the testing pyramid with automatic database setup:
-
-**Unit Tests** (`npm run test:unit`)
-- Fast execution (< 10 seconds)
-- Test individual functions/classes in isolation
-- All external dependencies mocked
-- No database setup required
-- Located in `src/__tests__/unit/`
-
-**Integration Tests** (`npm run test:integration`)
-- Medium execution speed (< 60 seconds)
-- Test component interactions with real database
-- Automatically sets up `online_shopping_store_test_integration` database
-- External services mocked
-- Located in `src/__tests__/integration/`
-
-**End-to-End Tests** (`npm run test:e2e`)
-- Comprehensive testing (< 120 seconds)
-- Test complete user workflows
-- Automatically builds application and sets up `online_shopping_store_test_e2e` database
-- Real server + database + HTTP requests
-- Located in `src/__tests__/e2e/`
-
-**Test Reports** (`npm run test:report:open`)
+### Test Reports (`npm run test:report:open`)
 - Interactive HTML dashboard with test results
 - Coverage analysis and performance metrics
 - Available at `test-results/combined/dashboard.html`
 
-**Guidelines:**
+### Testing Guidelines
 - All database setup is automatic - just run the test commands
 - Each test type uses isolated databases to prevent interference
 - Write unit tests for business logic
@@ -242,13 +225,21 @@ Our testing architecture follows the testing pyramid with automatic database set
 - Write E2E tests for critical user workflows
 - Maintain test coverage above 80%
 
-### Security
+## 🛡️ Security & Best Practices
+
+### Code Style
+- Use TypeScript for all new code
+- Follow ESLint configuration
+- Write tests for new features
+- Use meaningful commit messages
+
+### Security Guidelines
 - Always validate input data
 - Use parameterized queries for database operations
 - Keep JWT secrets secure
 - Implement proper error handling
 
-## Troubleshooting
+## 🔧 Troubleshooting
 
 ### Common Issues
 
@@ -265,13 +256,13 @@ Our testing architecture follows the testing pyramid with automatic database set
 - Clear node_modules: `rm -rf node_modules && npm install`
 - Check TypeScript version compatibility
 
-## Contributing
+## 🤝 Contributing
 
 1. Create feature branch from `main`
 2. Make changes with tests
 3. Run `npm run lint` and `npm test`
 4. Submit pull request
 
-## License
+## 📄 License
 
 MIT License
