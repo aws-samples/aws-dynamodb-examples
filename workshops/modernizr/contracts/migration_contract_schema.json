@@ -1,0 +1,354 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Migration Contract Schema",
+  "description": "Comprehensive schema for MySQL to DynamoDB migration contracts supporting all join patterns",
+  "type": "object",
+  "required": ["tables"],
+  "properties": {
+    "tables": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/table"
+      }
+    }
+  },
+  "definitions": {
+    "table": {
+      "type": "object",
+      "required": ["table", "type", "source_table", "pk", "attributes", "satisfies", "estimated_item_size_bytes"],
+      "properties": {
+        "table": {
+          "type": "string",
+          "description": "DynamoDB table name"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["single-entity", "multi-entity"],
+          "description": "Table type - single entity or multi-entity"
+        },
+        "source_table": {
+          "type": "string",
+          "description": "Primary MySQL source table"
+        },
+        "pk": {
+          "type": "string",
+          "description": "Partition key attribute name"
+        },
+        "sk": {
+          "type": ["string", "null"],
+          "description": "Sort key attribute name (optional)"
+        },
+        "gsis": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gsi"
+          }
+        },
+        "entities": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity"
+          },
+          "description": "Required for multi-entity tables"
+        },
+        "attributes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/attribute"
+          },
+          "description": "Required for single-entity tables"
+        },
+        "satisfies": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of access patterns this table satisfies"
+        },
+        "estimated_item_size_bytes": {
+          "type": "number",
+          "description": "Estimated average item size in bytes"
+        }
+      }
+    },
+    "gsi": {
+      "type": "object",
+      "required": ["index_name", "pk"],
+      "properties": {
+        "index_name": {
+          "type": "string"
+        },
+        "pk": {
+          "type": "string"
+        },
+        "sk": {
+          "type": ["string", "null"]
+        },
+        "projection": {
+          "type": "string",
+          "enum": ["ALL", "KEYS_ONLY", "INCLUDE"],
+          "default": "ALL"
+        },
+        "projected_attributes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "entity": {
+      "type": "object",
+      "required": ["entity_type", "source_table", "pk_template", "sk_template", "attributes"],
+      "properties": {
+        "entity_type": {
+          "type": "string",
+          "description": "Entity type identifier"
+        },
+        "source_table": {
+          "type": "string",
+          "description": "MySQL source table for this entity"
+        },
+        "pk_template": {
+          "type": "string",
+          "description": "Template for partition key generation"
+        },
+        "sk_template": {
+          "type": "string",
+          "description": "Template for sort key generation"
+        },
+        "attributes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/attribute"
+          }
+        }
+      }
+    },
+    "attribute": {
+      "type": "object",
+      "required": ["name", "type", "source_table", "source_column"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "DynamoDB attribute name"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["S", "N", "B", "SS", "NS", "BS", "M", "L", "BOOL", "NULL"],
+          "description": "DynamoDB attribute type"
+        },
+        "source_table": {
+          "type": "string",
+          "description": "MySQL source table"
+        },
+        "source_column": {
+          "oneOf": [
+            {"type": "string"},
+            {"type": "array", "items": {"type": "string"}}
+          ],
+          "description": "MySQL source column(s)"
+        },
+        "join": {
+          "$ref": "#/definitions/join"
+        },
+        "calculation": {
+          "$ref": "#/definitions/calculation"
+        },
+        "transformation": {
+          "$ref": "#/definitions/transformation"
+        },
+        "denormalized": {
+          "type": "boolean",
+          "description": "Indicates if this is denormalized data"
+        },
+        "justification": {
+          "type": "string",
+          "description": "Justification for denormalization"
+        }
+      }
+    },
+    "join": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["self-join", "foreign-key", "multi-column", "conditional", "chain", "lookup-table", "json-construction"]
+        }
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"type": {"const": "self-join"}}},
+          "then": {
+            "required": ["join_alias", "join_condition", "select_column"],
+            "properties": {
+              "join_alias": {"type": "string"},
+              "join_condition": {"type": "string"},
+              "select_column": {"type": "string"},
+              "null_value": {"type": "string"}
+            }
+          }
+        },
+        {
+          "if": {"properties": {"type": {"const": "foreign-key"}}},
+          "then": {
+            "required": ["target_table", "join_condition", "select_column"],
+            "properties": {
+              "target_table": {"type": "string"},
+              "join_condition": {"type": "string"},
+              "select_column": {"type": "string"}
+            }
+          }
+        },
+        {
+          "if": {"properties": {"type": {"const": "multi-column"}}},
+          "then": {
+            "required": ["target_table", "join_conditions", "select_column"],
+            "properties": {
+              "target_table": {"type": "string"},
+              "join_conditions": {
+                "type": "array",
+                "items": {"type": "string"}
+              },
+              "select_column": {"type": "string"}
+            }
+          }
+        },
+        {
+          "if": {"properties": {"type": {"const": "conditional"}}},
+          "then": {
+            "required": ["condition", "target_table", "join_condition", "select_column", "else_value"],
+            "properties": {
+              "condition": {"type": "string"},
+              "target_table": {"type": "string"},
+              "join_condition": {"type": "string"},
+              "select_column": {"type": "string"},
+              "else_value": {"type": "string"}
+            }
+          }
+        },
+        {
+          "if": {"properties": {"type": {"const": "chain"}}},
+          "then": {
+            "required": ["joins"],
+            "properties": {
+              "chain_separator": {
+                "type": "string",
+                "description": "String to use when concatenating chain join results"
+              },
+              "joins": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["target_table", "join_condition", "select_column"],
+                  "properties": {
+                    "target_table": {"type": "string"},
+                    "join_condition": {"type": "string"},
+                    "select_column": {"type": "string"}
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {"properties": {"type": {"const": "lookup-table"}}},
+          "then": {
+            "required": ["target_table", "join_condition", "select_column"],
+            "properties": {
+              "target_table": {"type": "string"},
+              "join_condition": {"type": "string"},
+              "select_column": {"type": "string"}
+            }
+          }
+        },
+        {
+          "if": {"properties": {"type": {"const": "json-construction"}}},
+          "then": {
+            "required": ["target_table", "join_condition", "construction"],
+            "properties": {
+              "target_table": {"type": "string"},
+              "join_condition": {"type": "string"},
+              "construction": {
+                "type": "object",
+                "required": ["type", "select_columns"],
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": ["array", "object"]
+                  },
+                  "limit": {"type": "number"},
+                  "order_by": {"type": "string"},
+                  "select_columns": {
+                    "type": "object",
+                    "additionalProperties": {"type": "string"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "calculation": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["aggregate", "case", "concat", "date-math"]
+        }
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"type": {"const": "aggregate"}}},
+          "then": {
+            "required": ["target_table", "join_condition", "operation", "select_column"],
+            "properties": {
+              "target_table": {"type": "string"},
+              "join_condition": {"type": "string"},
+              "operation": {
+                "type": "string",
+                "enum": ["SUM", "COUNT", "AVG", "MIN", "MAX"]
+              },
+              "select_column": {"type": "string"}
+            }
+          }
+        },
+        {
+          "if": {"properties": {"type": {"const": "case"}}},
+          "then": {
+            "required": ["cases"],
+            "properties": {
+              "cases": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["when", "then"],
+                  "properties": {
+                    "when": {"type": "string"},
+                    "then": {"type": "string"}
+                  }
+                }
+              },
+              "else": {"type": "string"}
+            }
+          }
+        }
+      ]
+    },
+    "transformation": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["date-format", "string-format", "number-format", "json-parse"]
+        },
+        "format": {"type": "string"},
+        "source_format": {"type": "string"}
+      }
+    }
+  }
+}

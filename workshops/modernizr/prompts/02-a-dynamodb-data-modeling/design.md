@@ -152,29 +152,54 @@ class MCPOutputValidator:
 ```
 
 ### 4. Migration Contract Generation System
-**Purpose**: Generate exact JSON format migration contract with MCP server assistance
+**Purpose**: Generate exact JSON format migration contract with MCP server assistance using comprehensive join patterns and standardized generation process
 
-**Contract Generation Process**:
+**Contract Generation Process with Pattern Integration**:
 ```typescript
 interface ContractGenerationRequest {
     final_design: DynamoDBDesign;
     mysql_schema: MySQLSchema;
     access_patterns: AccessPattern[];
     contract_format: ContractJSONSchema; // Exact format specification
+    join_patterns: JoinPatternLibrary; // Comprehensive pattern library
+    generation_standards: GenerationGuideStandards; // Standardized process
 }
 
 class MigrationContractGenerator {
+    private patternLibrary: JoinPatternLibrary;
+    private generationGuide: GenerationGuideStandards;
+    
+    constructor() {
+        this.patternLibrary = this.loadPatternLibrary(); // From contracts/migration_contract_patterns.md
+        this.generationGuide = this.loadGenerationStandards(); // From contracts/migration_contract_generation_guide.md
+    }
+    
     async generateContract(request: ContractGenerationRequest): Promise<MigrationContract> {
-        // Use MCP server to generate contract following exact JSON structure
+        // Step 1: Analyze source schema using pattern-based approach
+        const schemaAnalysis = await this.analyzeSourceSchema(request.mysql_schema);
+        
+        // Step 2: Map access patterns to join requirements
+        const accessPatternMapping = await this.mapAccessPatterns(request.access_patterns, schemaAnalysis);
+        
+        // Step 3: Select appropriate join patterns for each relationship
+        const joinPatternSelection = await this.selectJoinPatterns(schemaAnalysis.relationships);
+        
+        // Step 4: Design table structure with pattern integration
+        const tableStructure = await this.designTableStructure(request.final_design, joinPatternSelection);
+        
+        // Step 5: Generate contract JSON with MCP server assistance
         const mcpResponse = await this.mcpServer.generateMigrationContract({
             design: request.final_design,
             source_schema: request.mysql_schema,
             format_specification: request.contract_format,
+            join_patterns: joinPatternSelection,
+            pattern_library: this.patternLibrary,
+            generation_standards: this.generationGuide,
             validation_rules: this.getValidationRules()
         });
         
-        // Validate generated contract
-        const validation = this.validateContract(mcpResponse.contract);
+        // Step 6: Validate generated contract using comprehensive checklist
+        const validation = await this.validateContractComprehensive(mcpResponse.contract, request);
         if (!validation.isValid) {
             throw new Error(`Contract validation failed: ${validation.errors}`);
         }
@@ -182,15 +207,144 @@ class MigrationContractGenerator {
         return mcpResponse.contract;
     }
     
-    private validateContract(contract: any): ValidationResult {
-        // Ensure exact JSON structure compliance
+    private async analyzeSourceSchema(schema: MySQLSchema): Promise<SchemaAnalysis> {
         return {
-            isValid: this.checkJSONStructure(contract) && 
-                    this.checkAllFieldsPresent(contract) &&
-                    this.checkMappingCompleteness(contract),
-            errors: this.collectValidationErrors(contract)
+            tables: schema.tables,
+            relationships: this.identifyRelationships(schema),
+            hierarchical_data: this.findSelfReferencingTables(schema),
+            many_to_many: this.findJunctionTables(schema),
+            calculated_fields: this.identifyCalculatedFields(schema),
+            time_based_data: this.findTimeBasedTables(schema)
         };
     }
+    
+    private async selectJoinPatterns(relationships: Relationship[]): Promise<JoinPatternSelection[]> {
+        return relationships.map(rel => {
+            switch (rel.type) {
+                case 'self-referencing':
+                    return { relationship: rel, pattern: this.patternLibrary.selfJoin };
+                case 'foreign-key':
+                    return { relationship: rel, pattern: this.patternLibrary.foreignKey };
+                case 'composite-key':
+                    return { relationship: rel, pattern: this.patternLibrary.multiColumn };
+                case 'optional':
+                    return { relationship: rel, pattern: this.patternLibrary.conditional };
+                case 'multi-hop':
+                    return { relationship: rel, pattern: this.patternLibrary.chain };
+                case 'many-to-many':
+                    return { relationship: rel, pattern: this.patternLibrary.lookupTable };
+                case 'aggregated':
+                    return { relationship: rel, pattern: this.patternLibrary.jsonConstruction };
+                default:
+                    throw new Error(`Unknown relationship type: ${rel.type}`);
+            }
+        });
+    }
+    
+    private async validateContractComprehensive(contract: any, request: ContractGenerationRequest): Promise<ValidationResult> {
+        const validations = {
+            // Schema compliance validation
+            schema_compliance: this.validateSchemaCompliance(contract),
+            
+            // Data integrity validation
+            data_integrity: this.validateDataIntegrity(contract, request.mysql_schema),
+            
+            // Performance optimization validation
+            performance_optimization: this.validatePerformanceOptimization(contract),
+            
+            // Access pattern coverage validation
+            access_pattern_coverage: this.validateAccessPatternCoverage(contract, request.access_patterns),
+            
+            // Join pattern validation
+            join_pattern_validation: this.validateJoinPatterns(contract),
+            
+            // Transformation logic validation
+            transformation_validation: this.validateTransformationLogic(contract)
+        };
+        
+        return {
+            isValid: Object.values(validations).every(v => v.isValid),
+            errors: Object.values(validations).flatMap(v => v.errors || []),
+            validations: validations
+        };
+    }
+    
+    private validateJoinPatterns(contract: any): ValidationResult {
+        const errors: string[] = [];
+        
+        for (const table of contract.tables) {
+            for (const attribute of table.attributes) {
+                if (attribute.join) {
+                    // Validate join pattern structure
+                    const pattern = this.patternLibrary.getPattern(attribute.join.type);
+                    if (!pattern) {
+                        errors.push(`Unknown join pattern: ${attribute.join.type}`);
+                        continue;
+                    }
+                    
+                    // Validate required fields for pattern
+                    const requiredFields = pattern.getRequiredFields();
+                    for (const field of requiredFields) {
+                        if (!attribute.join[field]) {
+                            errors.push(`Missing required field ${field} for ${attribute.join.type} pattern`);
+                        }
+                    }
+                    
+                    // Validate chain pattern specific fields
+                    if (attribute.join.type === 'chain') {
+                        if (attribute.join.chain_separator !== undefined && typeof attribute.join.chain_separator !== 'string') {
+                            errors.push(`chain_separator must be a string for chain join pattern`);
+                        }
+                        if (!attribute.join.joins || !Array.isArray(attribute.join.joins)) {
+                            errors.push(`joins array is required for chain join pattern`);
+                        }
+                    }
+                    
+                    // Validate pattern-specific logic
+                    const patternValidation = pattern.validate(attribute.join);
+                    if (!patternValidation.isValid) {
+                        errors.push(...patternValidation.errors);
+                    }
+                }
+            }
+        }
+        
+        return {
+            isValid: errors.length === 0,
+            errors: errors
+        };
+    }
+}
+
+// Join Pattern Library Integration
+interface JoinPatternLibrary {
+    selfJoin: SelfJoinPattern;
+    foreignKey: ForeignKeyPattern;
+    multiColumn: MultiColumnPattern;
+    conditional: ConditionalPattern;
+    chain: ChainPattern;
+    lookupTable: LookupTablePattern;
+    jsonConstruction: JsonConstructionPattern;
+    
+    getPattern(type: string): JoinPattern | null;
+}
+
+interface JoinPattern {
+    type: string;
+    description: string;
+    useCase: string;
+    getRequiredFields(): string[];
+    validate(joinSpec: any): ValidationResult;
+    generateExample(context: any): any;
+}
+
+// Generation Standards Integration
+interface GenerationGuideStandards {
+    coreSchema: CoreSchemaStructure;
+    patternImplementation: PatternImplementationGuide;
+    validationChecklist: ValidationChecklistStandards;
+    performanceOptimization: PerformanceOptimizationStandards;
+    testingStrategy: TestingStrategyStandards;
 }
 ```
 
@@ -342,6 +496,210 @@ class UserValidationGates {
 }
 ```
 
+## Migration Contract Pattern Integration
+
+### Comprehensive Join Pattern Support
+
+The migration contract generation system integrates a comprehensive library of join patterns to handle all relational data transformation scenarios:
+
+#### Pattern Categories and Use Cases
+
+1. **Self-Join Pattern**: Hierarchical data (categories, organizational charts)
+   ```json
+   {
+     "join": {
+       "type": "self-join",
+       "join_alias": "parent_cat",
+       "join_condition": "parent_cat.id = categories.parent_id",
+       "select_column": "parent_cat.name",
+       "null_value": "ROOT"
+     }
+   }
+   ```
+
+2. **Foreign Key Pattern**: Simple lookups (product→category, order→user)
+   ```json
+   {
+     "join": {
+       "type": "foreign-key",
+       "target_table": "categories",
+       "join_condition": "categories.id = products.category_id",
+       "select_column": "categories.name"
+     }
+   }
+   ```
+
+3. **Multi-Column Pattern**: Composite foreign keys, complex relationships
+   ```json
+   {
+     "join": {
+       "type": "multi-column",
+       "target_table": "product_variants",
+       "join_conditions": [
+         "product_variants.product_id = order_items.product_id",
+         "product_variants.variant_id = order_items.variant_id"
+       ],
+       "select_column": "CONCAT(product_variants.name, ' - ', product_variants.variant_name)"
+     }
+   }
+   ```
+
+4. **Conditional Pattern**: Optional relationships, polymorphic associations
+   ```json
+   {
+     "join": {
+       "type": "conditional",
+       "condition": "reviews.user_id IS NOT NULL",
+       "target_table": "users",
+       "join_condition": "users.id = reviews.user_id",
+       "select_column": "users.username",
+       "else_value": "Anonymous"
+     }
+   }
+   ```
+
+5. **Chain Pattern**: Multi-hop relationships (user→order→product)
+   ```json
+   {
+     "join": {
+       "type": "chain",
+       "joins": [
+         {
+           "target_table": "orders",
+           "join_condition": "orders.id = order_items.order_id",
+           "select_column": "orders.user_id"
+         },
+         {
+           "target_table": "users",
+           "join_condition": "users.id = orders.user_id",
+           "select_column": "users.username"
+         }
+       ]
+     }
+   }
+   ```
+
+   **Chain Pattern with Separator**: For concatenated results from chain joins
+   ```json
+   {
+     "join": {
+       "type": "chain",
+       "chain_separator": " > ",
+       "joins": [
+         {
+           "target_table": "products",
+           "join_condition": "products.id = order_items.product_id",
+           "select_column": "products.name"
+         },
+         {
+           "target_table": "categories",
+           "join_condition": "categories.id = products.category_id",
+           "select_column": "categories.name"
+         }
+       ]
+     }
+   }
+   ```
+
+6. **Lookup Table Pattern**: Many-to-many relationships (product tags, user roles)
+   ```json
+   {
+     "join": {
+       "type": "lookup-table",
+       "target_table": "tags",
+       "join_condition": "tags.id = product_tags.tag_id",
+       "select_column": "tags.name"
+     }
+   }
+   ```
+
+7. **JSON Construction Pattern**: Aggregated data (denormalizing related records)
+   ```json
+   {
+     "join": {
+       "type": "json-construction",
+       "target_table": "reviews",
+       "join_condition": "reviews.product_id = products.id",
+       "construction": {
+         "type": "array",
+         "limit": 5,
+         "order_by": "reviews.created_at DESC",
+         "select_columns": {
+           "rating": "reviews.rating",
+           "comment": "reviews.comment",
+           "reviewer": "reviews.username",
+           "date": "reviews.created_at"
+         }
+       }
+     }
+   }
+   ```
+
+#### Pattern Selection Algorithm
+
+```typescript
+class PatternSelector {
+    selectPattern(relationship: Relationship): JoinPattern {
+        // Analyze relationship characteristics
+        const analysis = this.analyzeRelationship(relationship);
+        
+        // Apply pattern selection logic
+        if (analysis.isSelfReferencing) {
+            return this.patternLibrary.selfJoin;
+        } else if (analysis.isOptional) {
+            return this.patternLibrary.conditional;
+        } else if (analysis.isComposite) {
+            return this.patternLibrary.multiColumn;
+        } else if (analysis.isMultiHop) {
+            return this.patternLibrary.chain;
+        } else if (analysis.isManyToMany) {
+            return this.patternLibrary.lookupTable;
+        } else if (analysis.requiresAggregation) {
+            return this.patternLibrary.jsonConstruction;
+        } else {
+            return this.patternLibrary.foreignKey;
+        }
+    }
+}
+```
+
+### Generation Process Integration
+
+The migration contract generation follows a standardized 5-step process:
+
+1. **Source Schema Analysis**: Identify all tables, relationships, and transformation requirements
+2. **Access Pattern Mapping**: Map access patterns to join requirements and denormalization needs
+3. **Join Pattern Selection**: Choose appropriate patterns for each relationship type
+4. **Table Structure Design**: Design DynamoDB tables with pattern integration
+5. **Contract JSON Generation**: Generate final contract with comprehensive validation
+
+### Validation Framework
+
+```typescript
+interface ComprehensiveValidation {
+    schema_compliance: {
+        json_structure: boolean;
+        required_fields: boolean;
+        type_safety: boolean;
+    };
+    data_integrity: {
+        null_handling: boolean;
+        join_completeness: boolean;
+        transformation_logic: boolean;
+    };
+    performance_optimization: {
+        partition_distribution: boolean;
+        gsi_efficiency: boolean;
+        item_size_limits: boolean;
+    };
+    access_pattern_coverage: {
+        all_patterns_satisfied: boolean;
+        query_efficiency: boolean;
+        cost_optimization: boolean;
+    };
+}
+```
+
 ## Data Models
 
 ### MCP Context Structure
@@ -418,11 +776,15 @@ The MCP server should surface these warnings when relevant:
 
 The MCP server used for this stage should provide:
 
-1. **DynamoDB Design Expertise**: Knowledge of best practices and patterns
-2. **Cost Analysis Capabilities**: Ability to calculate RCU/WCU costs and optimizations
-3. **Migration Contract Generation**: Ability to generate exact JSON format required
-4. **Trade-off Analysis**: Comprehensive analysis of design alternatives
-5. **Production Risk Assessment**: Identification of potential production issues
+1. **DynamoDB Design Expertise**: Knowledge of best practices, patterns, and anti-patterns with comprehensive understanding of join pattern library
+2. **Cost Analysis Capabilities**: Ability to calculate RCU/WCU costs and optimizations with consideration for join pattern performance implications
+3. **Migration Contract Generation**: Ability to generate exact JSON format required using comprehensive join patterns and standardized generation process
+4. **Join Pattern Integration**: Full support for all join pattern types (self-join, foreign-key, multi-column, conditional, chain, lookup-table, json-construction) with proper validation and optimization
+5. **Trade-off Analysis**: Comprehensive analysis of design alternatives including join pattern selection rationale and performance implications
+6. **Production Risk Assessment**: Identification of potential production issues including join pattern-specific risks (chain join complexity, JSON construction size limits, conditional join performance)
+7. **Schema Transformation Expertise**: Understanding of complex relational data transformations including hierarchical data, many-to-many relationships, calculated fields, and time-based partitioning
+8. **Validation Framework Integration**: Ability to validate generated contracts against comprehensive validation checklist including schema compliance, data integrity, performance optimization, and access pattern coverage
+9. **Pattern Documentation Generation**: Capability to generate comprehensive migration contract schema documentation with field-by-field specifications and join pattern examples
 
 ## Testing Strategy
 

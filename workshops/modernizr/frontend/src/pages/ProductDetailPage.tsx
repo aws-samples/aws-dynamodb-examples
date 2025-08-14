@@ -32,6 +32,7 @@ interface ApiProduct {
   description: string;
   price: number;
   inventory_quantity: number;
+  imageUrl?: string;
   category: {
     id: number;
     name: string;
@@ -49,23 +50,31 @@ const ProductDetailPage: React.FC = () => {
   const { addToCart } = useCart();
 
   // Transform API product to expected Product interface
-  const transformProduct = (apiProduct: ApiProduct): Product => ({
-    id: apiProduct.id,
-    name: apiProduct.name,
-    description: apiProduct.description,
-    price: apiProduct.price,
-    inventory_quantity: apiProduct.inventory_quantity,
-    seller: {
-      id: apiProduct.seller_id,
-      username: apiProduct.seller_username
-    },
-    category: {
-      id: apiProduct.category.id,
-      name: apiProduct.category.name
-    },
-    created_at: apiProduct.created_at,
-    updated_at: apiProduct.updated_at
-  });
+  const transformProduct = (apiProduct: ApiProduct): Product => {
+    const product: Product = {
+      id: apiProduct.id,
+      name: apiProduct.name,
+      description: apiProduct.description,
+      price: apiProduct.price,
+      inventory_quantity: apiProduct.inventory_quantity,
+      seller: {
+        id: apiProduct.seller_id,
+        username: apiProduct.seller_username
+      },
+      category: {
+        id: apiProduct.category.id,
+        name: apiProduct.category.name
+      },
+      created_at: apiProduct.created_at,
+      updated_at: apiProduct.updated_at
+    };
+    
+    if (apiProduct.imageUrl) {
+      product.imageUrl = apiProduct.imageUrl;
+    }
+    
+    return product;
+  };
 
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
