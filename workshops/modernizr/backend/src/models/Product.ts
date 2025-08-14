@@ -6,6 +6,7 @@ export interface Product {
   description?: string;
   price: number;
   inventory_quantity: number;
+  image_url?: string;
   created_at: Date;
   updated_at: Date;
 }
@@ -22,6 +23,7 @@ export interface CreateProductRequest {
   category_id: number;
   price: number;
   inventory_quantity: number;
+  image_url?: string;
 }
 
 export interface UpdateProductRequest {
@@ -30,6 +32,7 @@ export interface UpdateProductRequest {
   category_id?: number;
   price?: number;
   inventory_quantity?: number;
+  image_url?: string;
 }
 
 export interface ProductSearchFilters {
@@ -83,6 +86,7 @@ export function toProductResponse(product: ProductWithDetails): any {
     description: product.description,
     price: Number(product.price),
     inventory_quantity: product.inventory_quantity,
+    imageUrl: product.image_url, // Map database field to frontend field
     category: {
       id: product.category_id,
       name: product.category_name || 'Uncategorized'
@@ -126,6 +130,12 @@ export function validateCreateProductRequest(data: any): CreateProductRequest {
     errors.push('Inventory quantity cannot exceed 999,999');
   }
 
+  if (data.image_url && typeof data.image_url !== 'string') {
+    errors.push('Image URL must be a string');
+  } else if (data.image_url && data.image_url.length > 500) {
+    errors.push('Image URL must be 500 characters or less');
+  }
+
   if (errors.length > 0) {
     throw new Error(errors.join(', '));
   }
@@ -136,6 +146,7 @@ export function validateCreateProductRequest(data: any): CreateProductRequest {
     category_id: Number(data.category_id),
     price: Number(data.price),
     inventory_quantity: Number(data.inventory_quantity),
+    image_url: data.image_url?.trim() || undefined,
   };
 }
 
@@ -188,6 +199,16 @@ export function validateUpdateProductRequest(data: any): UpdateProductRequest {
       errors.push('Inventory quantity cannot exceed 999,999');
     } else {
       update.inventory_quantity = Number(data.inventory_quantity);
+    }
+  }
+
+  if (data.image_url !== undefined) {
+    if (data.image_url !== null && typeof data.image_url !== 'string') {
+      errors.push('Image URL must be a string or null');
+    } else if (data.image_url && data.image_url.length > 500) {
+      errors.push('Image URL must be 500 characters or less');
+    } else {
+      update.image_url = data.image_url?.trim() || undefined;
     }
   }
 

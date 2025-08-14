@@ -29,15 +29,16 @@ export class ProductRepository {
       
       // Insert the product
       const [result] = await connection.execute(
-        `INSERT INTO products (seller_id, category_id, name, description, price, inventory_quantity)
-         VALUES (?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO products (seller_id, category_id, name, description, price, inventory_quantity, image_url)
+         VALUES (?, ?, ?, ?, ?, ?, ?)`,
         [
           sellerId,
           productData.category_id,
           productData.name,
           productData.description || null,
           productData.price,
-          productData.inventory_quantity
+          productData.inventory_quantity,
+          productData.image_url || null
         ]
       );
       
@@ -70,6 +71,7 @@ export class ProductRepository {
            description,
            price,
            inventory_quantity,
+           image_url,
            created_at,
            updated_at
          FROM products WHERE id = ?`,
@@ -94,7 +96,16 @@ export class ProductRepository {
     try {
       const [rows] = await connection.execute(
         `SELECT 
-           p.*,
+           p.id,
+           p.seller_id,
+           p.category_id,
+           p.name,
+           p.description,
+           p.price,
+           p.inventory_quantity,
+           p.image_url,
+           p.created_at,
+           p.updated_at,
            c.name as category_name,
            u.username as seller_username,
            u.email as seller_email
@@ -169,6 +180,11 @@ export class ProductRepository {
       if (updateData.inventory_quantity !== undefined) {
         updateFields.push('inventory_quantity = ?');
         updateValues.push(updateData.inventory_quantity);
+      }
+      
+      if (updateData.image_url !== undefined) {
+        updateFields.push('image_url = ?');
+        updateValues.push(updateData.image_url);
       }
       
       if (updateFields.length === 0) {
@@ -291,6 +307,7 @@ export class ProductRepository {
           p.description,
           p.price,
           p.inventory_quantity,
+          p.image_url,
           p.created_at,
           p.updated_at,
           c.name as category_name,
