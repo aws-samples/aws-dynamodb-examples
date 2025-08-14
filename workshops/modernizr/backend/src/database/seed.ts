@@ -220,6 +220,7 @@ async function seedProducts(): Promise<void> {
       description: 'High-performance laptop with advanced processor, 14-inch display, 16GB RAM, 512GB SSD. Perfect for professional work and creative projects.',
       price: 1999.99,
       inventory_quantity: 15,
+      image_url: 'https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=600&h=600&fit=crop&auto=format',
       category_id: laptopCategoryId,
       seller_id: adminId
     },
@@ -228,6 +229,7 @@ async function seedProducts(): Promise<void> {
       description: 'A timeless story about the Jazz Age exploring themes of wealth, love, and the American Dream. A must-read classic.',
       price: 12.99,
       inventory_quantity: 50,
+      image_url: 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=600&h=600&fit=crop&auto=format',
       category_id: booksCategoryId,
       seller_id: adminId
     },
@@ -236,6 +238,7 @@ async function seedProducts(): Promise<void> {
       description: 'Professional 5-quart stand mixer with 10 speeds. Includes dough hook, flat beater, and wire whip. Perfect for baking enthusiasts.',
       price: 299.99,
       inventory_quantity: 8,
+      image_url: 'https://images.unsplash.com/photo-1578643463396-0997cb5328c1?w=600&h=600&fit=crop&auto=format',
       category_id: kitchenCategoryId,
       seller_id: adminId
     },
@@ -244,6 +247,7 @@ async function seedProducts(): Promise<void> {
       description: 'Classic straight-leg jeans in dark wash. Made from 100% cotton denim. Timeless style and comfortable fit.',
       price: 89.99,
       inventory_quantity: 25,
+      image_url: 'https://images.unsplash.com/photo-1582552938357-32b906df40cb?w=600&h=600&fit=crop&auto=format',
       category_id: clothingCategoryId,
       seller_id: adminId
     },
@@ -252,6 +256,7 @@ async function seedProducts(): Promise<void> {
       description: 'Space-saving adjustable dumbbells with weight range from 5-50 lbs per dumbbell. Quick-change system for efficient workouts.',
       price: 449.99,
       inventory_quantity: 12,
+      image_url: 'https://images.unsplash.com/photo-1586401100295-7a8096fd231a?w=600&h=600&fit=crop&auto=format',
       category_id: sportsCategoryId,
       seller_id: adminId
     },
@@ -260,6 +265,7 @@ async function seedProducts(): Promise<void> {
       description: '20V MAX cordless drill with 2 batteries, charger, and carrying case. 1/2-inch chuck, LED light, and 15 clutch settings.',
       price: 129.99,
       inventory_quantity: 20,
+      image_url: 'https://images.unsplash.com/photo-1504148455328-c376907d081c?w=600&h=600&fit=crop&auto=format',
       category_id: gardenCategoryId,
       seller_id: adminId
     }
@@ -270,15 +276,16 @@ async function seedProducts(): Promise<void> {
       try {
         await pool.execute(
           `INSERT IGNORE INTO products 
-           (seller_id, category_id, name, description, price, inventory_quantity) 
-           VALUES (?, ?, ?, ?, ?, ?)`,
+           (seller_id, category_id, name, description, price, inventory_quantity, image_url) 
+           VALUES (?, ?, ?, ?, ?, ?, ?)`,
           [
             product.seller_id,
             product.category_id,
             product.name,
             product.description,
             product.price,
-            product.inventory_quantity
+            product.inventory_quantity,
+            product.image_url || null
           ]
         );
         console.log(`✓ Inserted product: ${product.name} (category_id: ${product.category_id})`);
