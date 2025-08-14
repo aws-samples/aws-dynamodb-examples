@@ -125,33 +125,48 @@
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
     - _Requirements: 3.4, 3.5_
 
-- [ ] 4. Generate migration contract with MCP server assistance
-  - [ ] 4.1 Generate migration contract from finalized data model
-    - **CRITICAL**: Create `migrationContract.json` in the `artifacts/stage-02/` folder following the EXACT JSON structure specified in design document
+- [ ] 4. Generate migration contract
+  - [x] 4.1 Generate migration contract from finalized data model using comprehensive join patterns
+    - **CRITICAL**: Create `migrationContract.json` in the `artifacts/stage-02/` folder following the EXACT JSON structure specified in design document with comprehensive join pattern support
     - Use the finalized `dynamodb_data_model.md` from task 3.3 as the source for contract generation
+    - Apply the standardized generation process from contracts/migration_contract_generation_guide.md:
+      - Step 1: Analyze source schema and identify all relationship types
+      - Step 2: Map access patterns to join requirements
+      - Step 3: Select appropriate join patterns for each relationship
+      - Step 4: Design table structure with pattern integration
+      - Step 5: Generate contract JSON with comprehensive validation
     - Each table entry MUST include: table, type, source_table, pk, sk (optional), gsis (optional), attributes, satisfies, estimated_item_size_bytes
-    - For each attribute: include type (S/N/B), source_table, source_column mappings
-    - For denormalized attributes: MUST include denormalized=true, justification, and join object with local_column and source_column
-    - Implement proper unique constraint handling patterns with lookup tables as specified in the data model
-    - Map all table designs and access patterns from the data model document to the JSON contract format
-    - **COMMIT**: Commit migration contract generation with message "stage-02-a task 4.1: Generate migration contract from finalized data model"
+    - For each attribute: include type (S/N/B), source_table, source_column mappings with appropriate join pattern specifications
+    - For complex relationships: MUST include proper join pattern type (self-join, foreign-key, multi-column, conditional, chain with optional chain_separator, lookup-table, json-construction) with complete transformation logic
+    - For denormalized attributes: MUST include denormalized=true, justification, and join object with pattern-specific fields and validation rules
+    - Implement proper unique constraint handling patterns with lookup tables as specified in the comprehensive pattern library
+    - Map all table designs and access patterns from the data model document to the JSON contract format using standardized patterns
+    - Validate generated contract against comprehensive validation checklist including schema compliance, data integrity, performance optimization, and access pattern coverage
+    - **COMMIT**: Commit migration contract generation with message "stage-02-a task 4.1: Generate comprehensive migration contract with join patterns from finalized data model"
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
-    - _Requirements: 4.1, 4.2, 4.3_
+    - _Requirements: 4.1, 4.2, 4.3, 7.1, 7.2, 7.3_
 
-  - [ ] 4.2 Validate migration contract completeness and accuracy
-    - Verify that all access patterns from requirements are satisfied by designed tables and GSIs
-    - Confirm all MySQL entities are properly mapped to DynamoDB structures
-    - Validate JSON structure follows exact format requirements
-    - Ensure all required fields are present and properly formatted
-    - Check that unique constraint handling is properly implemented with TransactWriteItems patterns
-    - **USER CONFIRMATION GATE**: Ask user "Does this migration contract look complete and accurate? Are all the mappings correct?"
-    - Do not proceed until user explicitly validates the migration contract
-    - **COMMIT**: Commit contract validation with message "stage-02-a task 4.2: Validate migration contract completeness and accuracy"
+  - [x] 4.2 Validate migration contract completeness and accuracy using comprehensive validation framework
+    - Verify that all access patterns from requirements are satisfied by designed tables and GSIs with appropriate join pattern support
+    - Confirm all MySQL entities are properly mapped to DynamoDB structures using correct join pattern classifications
+    - Validate JSON structure follows exact format requirements with proper join pattern specifications
+    - Ensure all required fields are present and properly formatted for each join pattern type
+    - Check that unique constraint handling is properly implemented with TransactWriteItems patterns as specified in the pattern library
+    - Validate join pattern implementations using comprehensive validation checklist:
+      - Schema compliance: JSON structure, required fields, type safety
+      - Data integrity: null handling, join completeness, transformation logic
+      - Performance optimization: partition distribution, GSI efficiency, item size limits
+      - Access pattern coverage: all patterns satisfied, query efficiency, cost optimization
+    - Verify that complex transformation scenarios are properly handled: hierarchical data, many-to-many relationships, calculated fields, time-based partitioning
+    - Ensure pattern-specific validation rules are met for each join type used in the contract
+    - **USER CONFIRMATION GATE**: Ask user "Does this migration contract look complete and accurate? Are all the mappings correct and do the join patterns properly handle all relational data transformations?"
+    - Do not proceed until user explicitly validates the migration contract and understands the join pattern implementations
+    - **COMMIT**: Commit contract validation with message "stage-02-a task 4.2: Validate comprehensive migration contract with join patterns for completeness and accuracy"
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
-    - _Requirements: 4.4, 4.5_
+    - _Requirements: 4.4, 4.5, 7.4, 7.5_
 
 - [ ] 5. Finalize documentation and prepare for next stage
-  - [ ] 5.1 Create comprehensive documentation summary
+  - [x] 5.1 Create comprehensive documentation summary
     - Document the MCP server interaction process and key decisions made
     - Summarize all design trade-offs and rationale for chosen approach
     - Document any deviations from MCP server recommendations and reasons
@@ -161,7 +176,7 @@
     - **MARK COMPLETE**: Update this task to [x] and commit the tasks.md change
     - _Requirements: 5.1_
 
-  - [ ] 5.2 Validate readiness for next stage
+  - [x] 5.2 Validate readiness for next stage
     - Ensure `dynamodb_data_model.md` is complete with comprehensive justifications
     - Confirm `migrationContract.json` follows exact structure and includes all mappings
     - Verify that all design decisions are documented with trade-offs and rollback strategies
@@ -186,6 +201,9 @@ Before marking this stage complete, verify:
 - [ ] **All tables individually approved**: User has confirmed understanding and approval of each table design
 - [ ] `artifacts/stage-02/dynamodb_data_model.md` exists with comprehensive justifications from MCP analysis
 - [ ] `artifacts/stage-02/migrationContract.json` exists and follows EXACT JSON structure specified in design
+- [ ] Migration contract properly implements join patterns from contracts/migration_contract_patterns.md
+- [ ] Contract generation followed standardized process from contracts/migration_contract_generation_guide.md
+- [ ] Contract validates against schema defined in contracts/migration_contract_schema.json
 - [ ] All MySQL entities are mapped to DynamoDB structures in the contract
 - [ ] Unique constraint handling is properly implemented with lookup tables
 - [ ] User has explicitly approved the complete design after table-by-table review
@@ -222,12 +240,15 @@ This stage includes critical user confirmation points:
 
 The MCP server used for this stage should provide:
 
-1. **DynamoDB Design Expertise**: Knowledge of best practices, patterns, and anti-patterns
-2. **Cost Analysis Capabilities**: Ability to calculate realistic RCU/WCU costs and identify optimization opportunities
-3. **Migration Contract Generation**: Ability to generate the exact JSON format required by subsequent stages
-4. **Trade-off Analysis**: Comprehensive analysis of design alternatives with clear justifications
-5. **Production Risk Assessment**: Identification of potential production issues with mitigation strategies
-6. **Unique Constraint Handling**: Proper implementation of lookup table patterns for MySQL unique constraints
+1. **DynamoDB Design Expertise**: Knowledge of best practices, patterns, and anti-patterns with comprehensive understanding of join pattern library from contracts/migration_contract_patterns.md
+2. **Cost Analysis Capabilities**: Ability to calculate realistic RCU/WCU costs and identify optimization opportunities with consideration for join pattern performance implications
+3. **Migration Contract Generation**: Ability to generate the exact JSON format required by subsequent stages using comprehensive join patterns and standardized generation process from contracts/migration_contract_generation_guide.md
+4. **Join Pattern Integration**: Full support for all join pattern types (self-join, foreign-key, multi-column, conditional, chain, lookup-table, json-construction) with proper validation and optimization
+5. **Trade-off Analysis**: Comprehensive analysis of design alternatives with clear justifications including join pattern selection rationale and performance implications
+6. **Production Risk Assessment**: Identification of potential production issues with mitigation strategies including join pattern-specific risks (chain join complexity, JSON construction size limits, conditional join performance)
+7. **Schema Transformation Expertise**: Understanding of complex relational data transformations including hierarchical data, many-to-many relationships, calculated fields, and time-based partitioning
+8. **Validation Framework Integration**: Ability to validate generated contracts against comprehensive validation checklist including schema compliance, data integrity, performance optimization, and access pattern coverage
+9. **Unique Constraint Handling**: Proper implementation of lookup table patterns for MySQL unique constraints using standardized patterns from the comprehensive pattern library
 
 ## Troubleshooting Guide
 
@@ -237,10 +258,13 @@ The MCP server used for this stage should provide:
 - **Multiple File Confusion**: Only request ONE file (`dynamodb_data_model.md`) - do not ask for `dynamodb_requirement.md`
 - **API Patterns Missing**: If MCP server ignores API patterns and only focuses on table structure, emphasize: "The API patterns are the PRIMARY requirements that define what must be supported. Please ensure ALL API patterns are addressed in your design."
 - **Table Structure Dominance**: If MCP server focuses too heavily on table structure, clarify: "Use table structure as the source data model, but design should be driven by API access patterns."
-- If MCP server provides incomplete analysis, request specific missing elements
-- If design recommendations don't address all access patterns, provide additional context
-- If cost estimates seem unrealistic, request detailed breakdown and justification
-- If migration contract format is incorrect, provide exact format specification
+- **Join Pattern Issues**: If MCP server doesn't properly implement join patterns, provide specific pattern examples from contracts/migration_contract_patterns.md and emphasize the need for comprehensive relational data transformation support
+- **Contract Format Problems**: If migration contract doesn't follow the standardized format, reference contracts/migration_contract_generation_guide.md and provide specific examples of required join pattern structures
+- **Validation Failures**: If generated contract fails validation, use the comprehensive validation checklist to identify specific issues and request corrections with pattern-specific guidance
+- If MCP server provides incomplete analysis, request specific missing elements with reference to the comprehensive pattern library
+- If design recommendations don't address all access patterns, provide additional context including join pattern requirements
+- If cost estimates seem unrealistic, request detailed breakdown and justification including join pattern performance implications
+- If migration contract format is incorrect, provide exact format specification with join pattern examples from the standardized patterns
 
 **Requirements Gathering Issues:**
 - **RPS Missing**: If user hasn't provided RPS estimates, do NOT create any files until all RPS data is collected
