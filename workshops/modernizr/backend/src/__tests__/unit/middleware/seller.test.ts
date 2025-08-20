@@ -46,6 +46,7 @@ describe('SellerMiddleware', () => {
         first_name: 'Seller',
         last_name: 'User',
         is_seller: true,
+        super_admin: false,
         created_at: new Date(),
         updated_at: new Date(),
       };

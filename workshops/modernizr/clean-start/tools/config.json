@@ -1,0 +1,24 @@
+{
+  "aws": {
+    "account_id": "111122223333",
+    "region": "us-west-2",
+    "s3_bucket": "<CF S3 BUCKET>",
+    "glue_role": "<CF GLUE ROLE>",
+    "vpc_id": "<CF VPC ID>",
+    "subnet_ids": ["<CF SUBNET IDS>"],
+    "security_group_ids": ["<CF SECURITY GROUP ID>"]
+  },
+  "mysql": {
+    "public_host": "<CF PUBLIC IP>",
+    "private_host": "<CF PRIVATE IP>",
+    "port": 3306,
+    "user": "<CF DB USERNAME>",
+    "password": "<CF DB PASSWORD>",
+    "database": "online_shopping_store"
+  },
+  "migration": {
+    "contract_file": "../artifacts/stage-02/migrationContract.json",
+    "view_generator": "generate_mysql_views.py",
+    "s3_script_prefix": "etl-scripts/"
+  }
+}

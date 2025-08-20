@@ -8,6 +8,8 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import { testConnection, getPoolStats } from './config/database';
 import { config as envConfig } from './config/env';
+import { DatabaseFactory } from './database/factory/DatabaseFactory';
+import { DatabaseConfigManager } from './database/config/DatabaseConfig';
 import { 
   globalErrorHandler, 
   notFoundHandler, 
@@ -22,11 +24,17 @@ import categoryRoutes from './routes/categories';
 import productRoutes from './routes/products';
 import cartRoutes from './routes/cart';
 import orderRoutes from './routes/orders';
+import adminRoutes from './routes/admin';
 
 const app = express();
 
+// Initialize database abstraction layer
+const databaseConfig = DatabaseConfigManager.initialize();
+DatabaseFactory.initialize(databaseConfig.type);
+
 console.log('Starting server with enhanced error handling...');
 console.log('✅ Environment variables validated successfully');
+console.log(`✅ Database abstraction layer initialized with ${databaseConfig.type} configuration`);
 
 // Handle uncaught exceptions and unhandled rejections
 handleUncaughtException();
@@ -76,6 +84,7 @@ app.use('/api/categories', categoryRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/admin', adminRoutes);
 
 console.log('All routes registered.');
 

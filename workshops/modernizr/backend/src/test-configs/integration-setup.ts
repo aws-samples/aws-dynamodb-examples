@@ -12,50 +12,65 @@ config({
 process.env.DB_NAME = 'online_shopping_store_test_integration';
 
 // Global test setup for integration tests
-// Since we run db:setup-integration before tests, assume database is available
-let databaseAvailable = true;
+let mysqlAvailable = true;
+let dynamodbAvailable = true;
 
 export async function setupIntegrationTests(): Promise<void> {
+  // Test MySQL connection
   try {
-    // Try to connect to database to verify it's working
     const { pool } = await import('../config/database');
     await pool.execute('SELECT 1');
-    databaseAvailable = true;
-    console.log('✅ Database connection established for integration tests');
+    mysqlAvailable = true;
+    console.log('✅ MySQL connection established for integration tests');
   } catch (error) {
-    console.warn('⚠️  Database not available for integration tests:', (error as Error).message);
-    console.warn('⚠️  Integration tests requiring database will be skipped');
-    databaseAvailable = false;
+    console.warn('⚠️  MySQL not available for integration tests:', (error as Error).message);
+    mysqlAvailable = false;
   }
+
+  // Test DynamoDB Local connection
+  try {
+    const { DynamoDBClient } = await import('@aws-sdk/client-dynamodb');
+    const { ListTablesCommand } = await import('@aws-sdk/client-dynamodb');
+    
+    const client = new DynamoDBClient({
+      region: process.env.DYNAMODB_REGION || 'us-east-1',
+      endpoint: process.env.DYNAMODB_ENDPOINT || 'http://localhost:8000',
+      credentials: {
+        accessKeyId: 'test',
+        secretAccessKey: 'test'
+      }
+    });
+    
+    await client.send(new ListTablesCommand({}));
+    dynamodbAvailable = true;
+    console.log('✅ DynamoDB Local connection established for integration tests');
+  } catch (error) {
+    console.warn('⚠️  DynamoDB Local not available for integration tests:', (error as Error).message);
+    console.warn('⚠️  Start DynamoDB Local with: docker run -p 8000:8000 amazon/dynamodb-local');
+    dynamodbAvailable = false;
+  }
+}
+
+export function isMySQLAvailable(): boolean {
+  return mysqlAvailable;
+}
+
+export function isDynamoDBAvailable(): boolean {
+  return dynamodbAvailable;
 }
 
 export function isDatabaseAvailable(): boolean {
-  return databaseAvailable;
+  return mysqlAvailable;
 }
-
-export function skipIfNoDB(testName: string): void {
-  if (!isDatabaseAvailable()) {
-    console.log(`⏭️  Skipping ${testName} - database not available`);
-  }
-}
-
-// Helper to conditionally skip tests based on database availability
-export const skipIfNoDatabase = () => {
-  if (!isDatabaseAvailable()) {
-    console.log('⏭️  Skipping database-dependent test - database not available');
-    return true;
-  }
-  return false;
-};
 
 export async function teardownIntegrationTests(): Promise<void> {
-  if (databaseAvailable) {
+  if (mysqlAvailable) {
     try {
       const { pool } = await import('../config/database');
       await pool.end();
-      console.log('✅ Database connections closed');
+      console.log('✅ MySQL connections closed');
     } catch (error) {
-      console.warn('⚠️  Error closing database connections:', (error as Error).message);
+      console.warn('⚠️  Error closing MySQL connections:', (error as Error).message);
     }
   }
 }

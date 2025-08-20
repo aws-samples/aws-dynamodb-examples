@@ -54,6 +54,28 @@ export async function initializeDatabase(): Promise<void> {
       }
     }
     
+    // Ensure image_url column exists in products table (fix for schema inconsistency)
+    try {
+      // Check if column exists first
+      const [rows] = await connection.execute(`
+        SELECT COLUMN_NAME 
+        FROM INFORMATION_SCHEMA.COLUMNS 
+        WHERE TABLE_SCHEMA = ? AND TABLE_NAME = 'products' AND COLUMN_NAME = 'image_url'
+      `, [databaseConfig.database]);
+      
+      if ((rows as any[]).length === 0) {
+        // Column doesn't exist, add it
+        await connection.execute(`
+          ALTER TABLE products 
+          ADD COLUMN image_url VARCHAR(500) NULL 
+          AFTER inventory_quantity
+        `);
+        console.log('Added missing image_url column to products table');
+      }
+    } catch (error) {
+      console.warn('Warning checking/adding image_url column:', error);
+    }
+    
     connection.release();
     console.log('Database schema initialized successfully');
   } catch (error) {

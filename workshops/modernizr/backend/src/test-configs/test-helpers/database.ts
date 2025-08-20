@@ -180,6 +180,7 @@ export class DatabaseTestHelper {
         description TEXT,
         price DECIMAL(10,2) NOT NULL,
         inventory_quantity INT NOT NULL DEFAULT 0,
+        image_url VARCHAR(500) NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
         

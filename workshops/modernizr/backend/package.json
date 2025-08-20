@@ -18,7 +18,7 @@
     "lint:fix": "eslint src/**/*.ts --fix",
     "test": "jest --config=src/test-configs/jest.unit.config.js",
     "test:unit": "jest --config=src/test-configs/jest.unit.config.js",
-    "pretest:integration": "npm run db:setup-integration",
+    "pretest:integration": "npm run db:setup-integration && npm run dynamodb:setup",
     "test:integration": "jest --config=src/test-configs/jest.integration.config.js",
     "pretest:e2e": "npm run build && npm run db:setup-e2e",
     "test:e2e": "jest --config=src/test-configs/jest.e2e.config.js",
@@ -34,7 +34,10 @@
     "db:seed": "ts-node src/database/cli.ts seed",
     "db:reset": "ts-node src/database/cli.ts reset",
     "db:clear": "ts-node src/database/cli.ts clear",
-    "db:test": "ts-node src/database/cli.ts test"
+    "db:test": "ts-node src/database/cli.ts test",
+    "dynamodb:setup": "node scripts/setup-dynamodb-local.js",
+    "dynamodb:start": "docker run -d -p 8000:8000 --name dynamodb-local amazon/dynamodb-local",
+    "dynamodb:stop": "docker stop dynamodb-local && docker rm dynamodb-local"
   },
   "keywords": [
     "ecommerce",
@@ -45,6 +48,9 @@
   "author": "Esteban Serna",
   "license": "MIT",
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.868.0",
+    "@aws-sdk/credential-providers": "^3.864.0",
+    "@aws-sdk/lib-dynamodb": "^3.868.0",
     "axios": "^1.11.0",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.5",

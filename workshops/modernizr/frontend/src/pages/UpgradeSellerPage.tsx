@@ -30,6 +30,7 @@ const UpgradeSellerPage: React.FC = () => {
           username: user.username,
           email: user.email,
           is_seller: Boolean(backendUser.is_seller),
+          super_admin: user.super_admin || false,
           role: backendUser.is_seller ? 'seller' as const : 'buyer' as const
         };
         setUser(updatedUser);

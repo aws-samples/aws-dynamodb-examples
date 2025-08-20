@@ -14,12 +14,14 @@ CREATE TABLE IF NOT EXISTS users (
     first_name VARCHAR(50),
     last_name VARCHAR(50),
     is_seller BOOLEAN DEFAULT FALSE,
+    super_admin BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     
     INDEX idx_username (username),
     INDEX idx_email (email),
-    INDEX idx_is_seller (is_seller)
+    INDEX idx_is_seller (is_seller),
+    INDEX idx_super_admin (super_admin)
 );
 
 -- Categories table (hierarchical structure)
