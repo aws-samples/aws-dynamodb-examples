@@ -47,6 +47,7 @@ describe('AuthService', () => {
       first_name: 'Test',
       last_name: 'User',
       is_seller: false,
+      super_admin: false,
       created_at: new Date(),
       updated_at: new Date()
     };
@@ -83,6 +84,7 @@ describe('AuthService', () => {
           first_name: 'Test',
           last_name: 'User',
           is_seller: false,
+      super_admin: false,
           created_at: mockUser.created_at,
           updated_at: mockUser.updated_at
         },
@@ -167,6 +169,7 @@ describe('AuthService', () => {
       first_name: 'Test',
       last_name: 'User',
       is_seller: false,
+      super_admin: false,
       created_at: new Date(),
       updated_at: new Date()
     };
@@ -196,6 +199,7 @@ describe('AuthService', () => {
           first_name: 'Test',
           last_name: 'User',
           is_seller: false,
+      super_admin: false,
           created_at: mockUser.created_at,
           updated_at: mockUser.updated_at
         },
@@ -252,6 +256,7 @@ describe('AuthService', () => {
       first_name: 'Test',
       last_name: 'User',
       is_seller: false,
+      super_admin: false,
       created_at: new Date(),
       updated_at: new Date()
     };
@@ -272,6 +277,7 @@ describe('AuthService', () => {
         first_name: 'Test',
         last_name: 'User',
         is_seller: false,
+      super_admin: false,
         created_at: mockUser.created_at,
         updated_at: mockUser.updated_at
       });
@@ -297,6 +303,7 @@ describe('AuthService', () => {
       first_name: 'Test',
       last_name: 'User',
       is_seller: false,
+      super_admin: false,
       created_at: new Date(),
       updated_at: new Date()
     };
@@ -326,6 +333,7 @@ describe('AuthService', () => {
         first_name: 'Updated',
         last_name: 'Name',
         is_seller: false,
+      super_admin: false,
         created_at: mockUser.created_at,
         updated_at: mockUser.updated_at
       });
@@ -367,6 +375,7 @@ describe('AuthService', () => {
       first_name: 'Test',
       last_name: 'User',
       is_seller: false,
+      super_admin: false,
       created_at: new Date(),
       updated_at: new Date()
     };

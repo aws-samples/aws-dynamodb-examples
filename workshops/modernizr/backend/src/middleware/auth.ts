@@ -7,6 +7,7 @@ declare global {
     interface Request {
       user?: {
         userId: number;
+        super_admin?: boolean;
       };
     }
   }

@@ -157,7 +157,7 @@ describe('CategoryService', () => {
       const result = await categoryService.createCategory(categoryData);
 
       expect(result).toEqual(mockCreatedCategory);
-      expect(mockCategoryRepositoryInstance.existsByName).toHaveBeenCalledWith('Electronics');
+      expect(mockCategoryRepositoryInstance.existsByName).toHaveBeenCalledWith('Electronics', undefined);
       expect(mockCategoryRepositoryInstance.create).toHaveBeenCalledWith({
         name: 'Electronics',
         parent_id: undefined,

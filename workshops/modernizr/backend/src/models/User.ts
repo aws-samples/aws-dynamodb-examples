@@ -6,6 +6,7 @@ export interface User {
   first_name?: string;
   last_name?: string;
   is_seller: boolean;
+  super_admin: boolean;
   created_at: Date;
   updated_at: Date;
 }
@@ -30,6 +31,7 @@ export interface UserResponse {
   first_name?: string;
   last_name?: string;
   is_seller: boolean;
+  super_admin: boolean;
   created_at: Date;
   updated_at: Date;
 }

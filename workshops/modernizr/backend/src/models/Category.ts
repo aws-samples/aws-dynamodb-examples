@@ -2,7 +2,13 @@ export interface Category {
   id: number;
   name: string;
   parent_id?: number;
+  parent_name?: string;
+  category_path?: string;
+  level?: number;
+  children_count?: number;
+  product_count?: number;
   created_at: Date;
+  updated_at?: Date;
 }
 
 export interface CategoryWithChildren extends Category {
@@ -24,6 +30,7 @@ export interface CategoryResponse {
   name: string;
   parent_id?: number;
   created_at: Date;
+  updated_at?: Date;
 }
 
 export interface CategoryTreeResponse {
@@ -31,6 +38,7 @@ export interface CategoryTreeResponse {
   name: string;
   parent_id?: number;
   created_at: Date;
+  updated_at?: Date;
   children?: CategoryTreeResponse[];
 }
 
@@ -43,6 +51,7 @@ export function toCategoryResponse(category: Category): CategoryResponse {
     name: category.name,
     parent_id: category.parent_id,
     created_at: category.created_at,
+    updated_at: category.updated_at,
   };
 }
 
@@ -60,6 +69,7 @@ export function buildCategoryTree(categories: Category[]): CategoryTreeResponse[
       name: category.name,
       parent_id: category.parent_id,
       created_at: category.created_at,
+      updated_at: category.updated_at,
       children: [],
     });
   });

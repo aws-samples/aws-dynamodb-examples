@@ -38,11 +38,22 @@ router.get('/', ValidationSets.getProducts, asyncHandler(async (req: Request, re
       in_stock_only: in_stock_only === 'true',
     };
 
-    const result = await productService.getProducts(
-      filters,
-      Number(page),
-      Number(limit)
-    );
+    let result;
+    
+    // Use getProductsByCategory when filtering by category to include child categories
+    if (filters.category_id && !filters.seller_id && !filters.search && !filters.min_price && !filters.max_price) {
+      result = await productService.getProductsByCategory(
+        filters.category_id,
+        Number(page),
+        Number(limit)
+      );
+    } else {
+      result = await productService.getProducts(
+        filters,
+        Number(page),
+        Number(limit)
+      );
+    }
 
     const responseProducts = result.products.map(toProductResponse);
 
@@ -369,7 +380,7 @@ router.put('/:id',
           statusCode = 400;
         } else if (error.message.includes('not found')) {
           statusCode = 404;
-        } else if (error.message.includes('only update your own')) {
+        } else if (error.message.includes('You can only update your own products')) {
           statusCode = 403;
         }
       }
@@ -439,7 +450,7 @@ router.delete('/:id',
       if (error instanceof Error) {
         if (error.message.includes('not found')) {
           statusCode = 404;
-        } else if (error.message.includes('only delete your own')) {
+        } else if (error.message.includes('You can only delete your own products')) {
           statusCode = 403;
         }
       }

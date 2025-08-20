@@ -1,0 +1,601 @@
+{
+  "tables": [
+    {
+      "table": "Users",
+      "type": "multi-entity",
+      "source_table": "users",
+      "pk": "PK",
+      "sk": "SK",
+      "gsis": [
+        {
+          "index_name": "GSI1",
+          "pk": "GSI1PK", 
+          "sk": "GSI1SK",
+          "projection": "ALL"
+        },
+        {
+          "index_name": "GSI2",
+          "pk": "GSI2PK",
+          "sk": "GSI2SK", 
+          "projection": "ALL"
+        },
+        {
+          "index_name": "GSI3",
+          "pk": "GSI3PK",
+          "sk": "GSI3SK",
+          "projection": "ALL"
+        }
+      ],
+      "entities": [
+        {
+          "entity_type": "USER",
+          "source_table": "users",
+          "pk_template": "{email}",
+          "sk_template": "#META",
+          "attributes": [
+            {
+              "name": "PK",
+              "type": "S",
+              "source_table": "users",
+              "source_column": "email"
+            },
+            {
+              "name": "SK", 
+              "type": "S",
+              "source_table": "users",
+              "source_column": "email",
+              "transformation": {
+                "type": "string-format",
+                "format": "#META"
+              }
+            },
+            {
+              "name": "username",
+              "type": "S",
+              "source_table": "users",
+              "source_column": "username"
+            },
+            {
+              "name": "email",
+              "type": "S", 
+              "source_table": "users",
+              "source_column": "email"
+            },
+            {
+              "name": "password_hash",
+              "type": "S",
+              "source_table": "users", 
+              "source_column": "password_hash"
+            },
+            {
+              "name": "profile_data",
+              "type": "M",
+              "source_table": "users",
+              "source_column": "id",
+              "join": {
+                "type": "json-construction",
+                "target_table": "users",
+                "join_condition": "users.id = users.id",
+                "construction": {
+                  "type": "object",
+                  "select_columns": {
+                    "first_name": "first_name",
+                    "last_name": "last_name"
+                  }
+                }
+              }
+            },
+            {
+              "name": "is_seller",
+              "type": "BOOL",
+              "source_table": "users",
+              "source_column": "is_seller"
+            },
+            {
+              "name": "created_at",
+              "type": "S",
+              "source_table": "users",
+              "source_column": "created_at"
+            },
+            {
+              "name": "updated_at", 
+              "type": "S",
+              "source_table": "users",
+              "source_column": "updated_at"
+            },
+            {
+              "name": "GSI1PK",
+              "type": "S",
+              "source_table": "users",
+              "source_column": "id"
+            },
+            {
+              "name": "GSI1SK",
+              "type": "S", 
+              "source_table": "users",
+              "source_column": "id"
+            },
+            {
+              "name": "GSI2PK",
+              "type": "S",
+              "source_table": "users",
+              "source_column": "username"
+            },
+            {
+              "name": "GSI2SK",
+              "type": "S",
+              "source_table": "users", 
+              "source_column": "username"
+            }
+          ]
+        },
+        {
+          "entity_type": "CART",
+          "source_table": "shopping_carts",
+          "pk_template": "{user_email}",
+          "sk_template": "CART#{product_id}",
+          "attributes": [
+            {
+              "name": "PK",
+              "type": "S",
+              "source_table": "shopping_carts",
+              "source_column": "user_id",
+              "join": {
+                "type": "foreign-key",
+                "target_table": "users",
+                "join_condition": "users.id = shopping_carts.user_id",
+                "select_column": "users.email"
+              }
+            },
+            {
+              "name": "SK",
+              "type": "S",
+              "source_table": "shopping_carts",
+              "source_column": "product_id",
+              "transformation": {
+                "type": "string-format",
+                "format": "CART#{product_id}"
+              }
+            },
+            {
+              "name": "product_id",
+              "type": "S",
+              "source_table": "shopping_carts",
+              "source_column": "product_id"
+            },
+            {
+              "name": "quantity",
+              "type": "N",
+              "source_table": "shopping_carts",
+              "source_column": "quantity"
+            },
+            {
+              "name": "price",
+              "type": "N",
+              "source_table": "shopping_carts",
+              "source_column": "product_id",
+              "join": {
+                "type": "foreign-key",
+                "target_table": "products",
+                "join_condition": "products.id = shopping_carts.product_id",
+                "select_column": "products.price"
+              },
+              "denormalized": true,
+              "justification": "Avoid product lookup for cart display"
+            },
+            {
+              "name": "product_name",
+              "type": "S",
+              "source_table": "shopping_carts",
+              "source_column": "product_id",
+              "join": {
+                "type": "foreign-key",
+                "target_table": "products",
+                "join_condition": "products.id = shopping_carts.product_id",
+                "select_column": "products.name"
+              },
+              "denormalized": true,
+              "justification": "Avoid product lookup for cart display"
+            },
+            {
+              "name": "created_at",
+              "type": "S",
+              "source_table": "shopping_carts",
+              "source_column": "created_at"
+            },
+            {
+              "name": "updated_at",
+              "type": "S",
+              "source_table": "shopping_carts",
+              "source_column": "updated_at"
+            }
+          ]
+        },
+        {
+          "entity_type": "ORDER",
+          "source_table": "orders",
+          "pk_template": "{user_email}",
+          "sk_template": "ORDER#{created_at}#{order_id}",
+          "attributes": [
+            {
+              "name": "PK",
+              "type": "S",
+              "source_table": "orders",
+              "source_column": "user_id",
+              "join": {
+                "type": "foreign-key",
+                "target_table": "users",
+                "join_condition": "users.id = orders.user_id",
+                "select_column": "users.email"
+              }
+            },
+            {
+              "name": "SK",
+              "type": "S",
+              "source_table": "orders",
+              "source_column": "id",
+              "transformation": {
+                "type": "string-format",
+                "format": "ORDER#{created_at}#{id}"
+              }
+            },
+            {
+              "name": "user_id",
+              "type": "S",
+              "source_table": "orders",
+              "source_column": "user_id"
+            },
+            {
+              "name": "order_status",
+              "type": "S",
+              "source_table": "orders",
+              "source_column": "status"
+            },
+            {
+              "name": "total_amount",
+              "type": "N",
+              "source_table": "orders",
+              "source_column": "total_amount"
+            },
+            {
+              "name": "order_items",
+              "type": "S",
+              "source_table": "orders",
+              "source_column": "id",
+              "join": {
+                "type": "json-construction",
+                "target_table": "order_items",
+                "join_condition": "order_items.order_id = orders.id",
+                "construction": {
+                  "type": "array",
+                  "select_columns": {
+                    "product_id": "product_id",
+                    "quantity": "quantity",
+                    "price_at_time": "price_at_time"
+                  }
+                }
+              },
+              "denormalized": true,
+              "justification": "Eliminate separate OrderItems table"
+            },
+            {
+              "name": "created_at",
+              "type": "S",
+              "source_table": "orders",
+              "source_column": "created_at"
+            },
+            {
+              "name": "updated_at",
+              "type": "S",
+              "source_table": "orders",
+              "source_column": "updated_at"
+            },
+            {
+              "name": "order_id",
+              "type": "S",
+              "source_table": "orders",
+              "source_column": "id"
+            },
+            {
+              "name": "GSI3PK",
+              "type": "S",
+              "source_table": "orders",
+              "source_column": "id"
+            },
+            {
+              "name": "GSI3SK",
+              "type": "S",
+              "source_table": "orders",
+              "source_column": "id"
+            }
+          ]
+        }
+      ],
+      "satisfies": ["AP1", "AP2", "AP3", "AP4", "AP5", "AP7", "AP29", "AP30", "AP31", "AP32", "AP33", "AP34", "AP35", "AP36", "AP37", "AP38", "AP39", "AP40", "AP41", "AP42", "AP43", "AP44", "AP45", "AP46", "AP47", "AP48"],
+      "estimated_item_size_bytes": 4096
+    },
+    {
+      "table": "Products",
+      "type": "single-entity",
+      "source_table": "products",
+      "pk": "PK",
+      "sk": "SK",
+      "gsis": [
+        {
+          "index_name": "GSI1",
+          "pk": "GSI1PK",
+          "sk": "GSI1SK",
+          "projection": "ALL"
+        },
+        {
+          "index_name": "GSI2", 
+          "pk": "GSI2PK",
+          "sk": "GSI2SK",
+          "projection": "ALL"
+        }
+      ],
+      "attributes": [
+        {
+          "name": "PK",
+          "type": "S",
+          "source_table": "products",
+          "source_column": "id"
+        },
+        {
+          "name": "SK",
+          "type": "S",
+          "source_table": "products",
+          "source_column": "id",
+          "transformation": {
+            "type": "string-format",
+            "format": "#META"
+          }
+        },
+        {
+          "name": "seller_id",
+          "type": "S",
+          "source_table": "products",
+          "source_column": "seller_id"
+        },
+        {
+          "name": "category_id",
+          "type": "S",
+          "source_table": "products",
+          "source_column": "category_id"
+        },
+        {
+          "name": "category_path",
+          "type": "S",
+          "source_table": "products",
+          "source_column": "category_id",
+          "join": {
+            "type": "self-join",
+            "join_alias": "cat_hierarchy",
+            "join_condition": "cat_hierarchy.id = products.category_id",
+            "select_column": "cat_hierarchy.name",
+            "null_value": ""
+          },
+          "denormalized": true,
+          "justification": "Eliminate category hierarchy traversal for breadcrumbs"
+        },
+        {
+          "name": "product_name",
+          "type": "S",
+          "source_table": "products",
+          "source_column": "name"
+        },
+        {
+          "name": "description",
+          "type": "S",
+          "source_table": "products",
+          "source_column": "description"
+        },
+        {
+          "name": "price",
+          "type": "N",
+          "source_table": "products",
+          "source_column": "price"
+        },
+        {
+          "name": "inventory_quantity",
+          "type": "N",
+          "source_table": "products",
+          "source_column": "inventory_quantity"
+        },
+        {
+          "name": "image_url",
+          "type": "S",
+          "source_table": "products",
+          "source_column": "image_url"
+        },
+        {
+          "name": "created_at",
+          "type": "S",
+          "source_table": "products",
+          "source_column": "created_at"
+        },
+        {
+          "name": "updated_at",
+          "type": "S",
+          "source_table": "products",
+          "source_column": "updated_at"
+        },
+        {
+          "name": "GSI1PK",
+          "type": "S",
+          "source_table": "products",
+          "source_column": "category_id"
+        },
+        {
+          "name": "GSI1SK",
+          "type": "S",
+          "source_table": "products",
+          "source_column": "name"
+        },
+        {
+          "name": "GSI2PK",
+          "type": "S",
+          "source_table": "products",
+          "source_column": "seller_id"
+        },
+        {
+          "name": "GSI2SK",
+          "type": "S",
+          "source_table": "products",
+          "source_column": "name"
+        }
+      ],
+      "satisfies": ["AP8", "AP10", "AP11", "AP12", "AP13", "AP14", "AP15", "AP16", "AP17", "AP18"],
+      "estimated_item_size_bytes": 4096
+    },
+    {
+      "table": "Categories",
+      "type": "single-entity",
+      "source_table": "categories",
+      "pk": "PK",
+      "sk": "SK",
+      "gsis": [
+        {
+          "index_name": "GSI1",
+          "pk": "GSI1PK",
+          "sk": "GSI1SK",
+          "projection": "ALL"
+        }
+      ],
+      "attributes": [
+        {
+          "name": "PK",
+          "type": "S",
+          "source_table": "categories",
+          "source_column": "parent_id",
+          "join": {
+            "type": "conditional",
+            "condition": "parent_id IS NULL",
+            "target_table": "categories",
+            "join_condition": "categories.id = categories.parent_id",
+            "select_column": "categories.name",
+            "else_value": "ROOT"
+          }
+        },
+        {
+          "name": "SK",
+          "type": "S",
+          "source_table": "categories",
+          "source_column": "name"
+        },
+        {
+          "name": "category_id",
+          "type": "S",
+          "source_table": "categories",
+          "source_column": "id"
+        },
+        {
+          "name": "parent_id",
+          "type": "S",
+          "source_table": "categories",
+          "source_column": "parent_id"
+        },
+        {
+          "name": "parent_name",
+          "type": "S",
+          "source_table": "categories",
+          "source_column": "parent_id",
+          "join": {
+            "type": "foreign-key",
+            "target_table": "categories",
+            "join_condition": "categories.id = categories.parent_id",
+            "select_column": "categories.name"
+          }
+        },
+        {
+          "name": "category_name",
+          "type": "S",
+          "source_table": "categories",
+          "source_column": "name"
+        },
+        {
+          "name": "category_path",
+          "type": "S",
+          "source_table": "categories",
+          "source_column": "id",
+          "join": {
+            "type": "self-join",
+            "join_alias": "cat_path",
+            "join_condition": "cat_path.parent_id = categories.id",
+            "select_column": "cat_path.name",
+            "null_value": ""
+          },
+          "denormalized": true,
+          "justification": "Eliminate recursive queries for breadcrumb navigation"
+        },
+        {
+          "name": "level",
+          "type": "N",
+          "source_table": "categories",
+          "source_column": "id",
+          "calculation": {
+            "type": "aggregate",
+            "target_table": "categories",
+            "join_condition": "categories.parent_id = categories.id",
+            "operation": "COUNT",
+            "select_column": "categories.id"
+          }
+        },
+        {
+          "name": "children_count",
+          "type": "N",
+          "source_table": "categories",
+          "source_column": "id",
+          "calculation": {
+            "type": "aggregate",
+            "target_table": "categories",
+            "join_condition": "categories.parent_id = categories.id",
+            "operation": "COUNT",
+            "select_column": "categories.id"
+          }
+        },
+        {
+          "name": "product_count",
+          "type": "N",
+          "source_table": "categories",
+          "source_column": "id",
+          "calculation": {
+            "type": "aggregate",
+            "target_table": "products",
+            "join_condition": "products.category_id = categories.id",
+            "operation": "COUNT",
+            "select_column": "products.id"
+          }
+        },
+        {
+          "name": "created_at",
+          "type": "S",
+          "source_table": "categories",
+          "source_column": "created_at"
+        },
+        {
+          "name": "GSI1PK",
+          "type": "S",
+          "source_table": "categories",
+          "source_column": "parent_id",
+          "join": {
+            "type": "conditional",
+            "condition": "parent_id IS NULL",
+            "target_table": "categories",
+            "join_condition": "categories.id = categories.parent_id",
+            "select_column": "categories.id",
+            "else_value": "ROOT"
+          }
+        },
+        {
+          "name": "GSI1SK",
+          "type": "S",
+          "source_table": "categories",
+          "source_column": "id"
+        }
+      ],
+      "satisfies": ["AP19", "AP20", "AP21", "AP22", "AP23", "AP24", "AP25", "AP26", "AP27", "AP28"],
+      "estimated_item_size_bytes": 1024
+    }
+  ]
+}

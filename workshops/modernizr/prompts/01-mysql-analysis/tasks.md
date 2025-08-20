@@ -8,7 +8,7 @@
 - **Update the tasks.md file** itself when marking tasks complete and commit those changes too
 - **Use single working log**: Use `artifacts/stage-01/01_working_log.md` throughout the entire stage (not individual logs per subtask)
 - **DO NOT MODIFY THE CONTENT OF THIS FILE**: Only add a [x] mark to complete the task, for tracking purposes.
-- [ ] 0. Set up Git source control for the project
+- [x] 0. Set up Git source control for the project
   - Initialize GIT at the root of this workspace so you have a point to revert your changes if needed in the future
   - You must always use git -P to avoid getting stuck in git operations
   - The subfolders have compiled projects, make sure to create a gitignore so you track only what you will be modifying not the compiled version or the node_modules
@@ -17,7 +17,7 @@
   - **COMMIT**: Commit the latest changes with message "stage-01 task 0: Set up Git source control and initialize project structure"
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5_
 
-- [ ] 1. Identify current application access patterns
+- [x] 1. Identify current application access patterns
   - Make sure you have a clean commit log
   - From the backend/ folder use the README.md to understand its API endpoints
   - Explore the backend/ folder to understand in detail the available access patterns
@@ -34,7 +34,7 @@
   - Update the file task.md once completed, please let the user know that you have completed this task and summarize what has been done
   - _Requirements: 3.3, 4.2, 4.4_
 
-- [ ] 2. Analyze MySQL database logs for performance data
+- [x] 2. Analyze MySQL database logs for performance data
   - Make sure you have a clean commit log
   - From the database/ folder use the mysql_log_parser.py script to capture mysql query statistics and performance data
   - **CRITICAL**: This analysis provides SUPPLEMENTAL performance metrics for the API patterns identified in task 1
@@ -51,7 +51,7 @@
   - DO NOT SUGGEST A DYNAMODB TABLE STRUCTURE - focus only on current MySQL analysis
   - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6_
 
-- [ ] 3. Extract complete table structure using MySQL MCP server
+- [x] 3. Extract complete table structure using MySQL MCP server
   - Make sure you have a clean commit log
   - Use the MySQL MCP server's execute_sql tool to run SQL queries and collect the actual schema information deployed in the database
   - Write and execute SQL queries to extract table structures, relationships, indexes, and constraints for the online shopping store database

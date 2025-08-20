@@ -1,4 +1,5 @@
-import { ProductRepository } from '../repositories/ProductRepository';
+import { IProductRepository } from '../database/interfaces/IProductRepository';
+import { DatabaseFactory } from '../database/factory/DatabaseFactory';
 import { 
   Product, 
   ProductWithDetails, 
@@ -11,10 +12,12 @@ import {
 } from '../models/Product';
 
 export class ProductService {
-  private productRepository: ProductRepository;
-
   constructor() {
-    this.productRepository = new ProductRepository();
+    // No longer cache repository - get fresh one on each request
+  }
+
+  private getProductRepository(): IProductRepository {
+    return DatabaseFactory.createProductRepository();
   }
 
   /**
@@ -26,7 +29,7 @@ export class ProductService {
       const validatedData = validateCreateProductRequest(productData);
       
       // Create the product
-      const product = await this.productRepository.createProduct(sellerId, validatedData);
+      const product = await this.getProductRepository().createProduct(sellerId, validatedData);
       
       return product;
     } catch (error) {
@@ -46,7 +49,7 @@ export class ProductService {
         throw new Error('Invalid product ID');
       }
 
-      return await this.productRepository.getProductWithDetails(productId);
+      return await this.getProductRepository().getProductWithDetails(productId);
     } catch (error) {
       if (error instanceof Error) {
         throw error;
@@ -73,7 +76,7 @@ export class ProductService {
       }
 
       // Update the product
-      const updatedProduct = await this.productRepository.updateProduct(productId, sellerId, validatedData);
+      const updatedProduct = await this.getProductRepository().updateProduct(productId, sellerId, validatedData);
       
       return updatedProduct;
     } catch (error) {
@@ -93,7 +96,7 @@ export class ProductService {
         throw new Error('Invalid product ID');
       }
 
-      return await this.productRepository.deleteProduct(productId, sellerId);
+      return await this.getProductRepository().deleteProduct(productId, sellerId);
     } catch (error) {
       if (error instanceof Error) {
         throw error;
@@ -160,7 +163,7 @@ export class ProductService {
         validatedFilters.in_stock_only = Boolean(filters.in_stock_only);
       }
 
-      return await this.productRepository.getProducts(validatedFilters, page, limit);
+      return await this.getProductRepository().getProducts(validatedFilters, page, limit);
     } catch (error) {
       if (error instanceof Error) {
         throw error;
@@ -182,7 +185,7 @@ export class ProductService {
         throw new Error('Invalid seller ID');
       }
 
-      return await this.productRepository.getProductsBySeller(sellerId, page, limit);
+      return await this.getProductRepository().getProductsBySeller(sellerId, page, limit);
     } catch (error) {
       if (error instanceof Error) {
         throw error;
@@ -204,7 +207,7 @@ export class ProductService {
         throw new Error('Invalid category ID');
       }
 
-      return await this.productRepository.getProductsByCategory(categoryId, page, limit);
+      return await this.getProductRepository().getProductsByCategory(categoryId, page, limit);
     } catch (error) {
       if (error instanceof Error) {
         throw error;
@@ -235,7 +238,7 @@ export class ProductService {
         throw new Error('Search term is too long');
       }
 
-      return await this.productRepository.searchProducts(trimmedSearch, page, limit);
+      return await this.getProductRepository().searchProducts(trimmedSearch, page, limit);
     } catch (error) {
       if (error instanceof Error) {
         throw error;
@@ -262,7 +265,7 @@ export class ProductService {
       }
 
       // Verify the product belongs to the seller
-      const product = await this.productRepository.getProductById(productId);
+      const product = await this.getProductRepository().getProductById(productId);
       if (!product) {
         throw new Error('Product not found');
       }
@@ -271,7 +274,7 @@ export class ProductService {
         throw new Error('You can only update inventory for your own products');
       }
 
-      return await this.productRepository.updateInventory(productId, newQuantity);
+      return await this.getProductRepository().updateInventory(productId, newQuantity);
     } catch (error) {
       if (error instanceof Error) {
         throw error;
@@ -293,7 +296,7 @@ export class ProductService {
         throw new Error('Required quantity must be a positive integer');
       }
 
-      return await this.productRepository.hasInventory(productId, requiredQuantity);
+      return await this.getProductRepository().hasInventory(productId, requiredQuantity);
     } catch (error) {
       if (error instanceof Error) {
         throw error;
@@ -315,7 +318,7 @@ export class ProductService {
         throw new Error('Quantity must be a positive integer');
       }
 
-      return await this.productRepository.reduceInventory(productId, quantity);
+      return await this.getProductRepository().reduceInventory(productId, quantity);
     } catch (error) {
       if (error instanceof Error) {
         throw error;
@@ -338,7 +341,7 @@ export class ProductService {
         throw new Error('Invalid seller ID');
       }
 
-      const products = await this.productRepository.getProductsBySeller(sellerId, 1, 999999);
+      const products = await this.getProductRepository().getProductsBySeller(sellerId, 1, 999999);
       
       const stats = {
         total_products: products.total,

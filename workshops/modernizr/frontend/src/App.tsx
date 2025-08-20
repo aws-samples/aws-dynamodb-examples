@@ -24,6 +24,7 @@ import CheckoutPage from './pages/CheckoutPage';
 import OrderConfirmationPage from './pages/OrderConfirmationPage';
 import OrderHistoryPage from './pages/OrderHistoryPage';
 import OrderDetailPage from './pages/OrderDetailPage';
+import AdminMigrationControlPage from './pages/AdminMigrationControlPage';
 
 // API configuration is handled in services/api.ts
 import { logger } from './services/logger';
@@ -152,6 +153,16 @@ function App() {
               />
 
               <Route path="/categories" element={<CategoriesPage />} />
+
+              {/* Hidden admin route - not in navigation */}
+              <Route
+                path="/admin/migration-control"
+                element={
+                  <ProtectedRoute>
+                    <AdminMigrationControlPage />
+                  </ProtectedRoute>
+                }
+              />
 
               {/* 404 route */}
               <Route

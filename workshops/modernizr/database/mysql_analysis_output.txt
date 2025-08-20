@@ -1,0 +1,1721 @@
+# MySQL Query Analysis Summary
+
+## Overview
+- Unique queries: 80
+- Total query executions: 6974
+- Log time span: 2025-07-31 18:11:07.814734 to 2025-07-31 19:41:16.763598 (1:30:08.948864)
+- Active query span: 1:20:55.356902
+- Overall throughput: 1.29 queries/second
+- Active throughput: 1.44 queries/second
+
+## Query Type Distribution
+- SELECT: 6972 (100.0%)
+- TRUNCATE: 2 (0.0%)
+
+## All Queries By Frequency
+
+### Query 1 (883 executions)
+```sql
+SELECT COUNT(*) as total FROM products p
+```
+- First seen: 2025-07-31 18:20:34.404024
+- Last seen: 2025-07-31 19:41:15.490857
+- Frequency: 883 times over 1:20:41.086833
+- Throughput: 0.18 queries/second
+
+### Query 2 (876 executions)
+```sql
+SELECT id, name, parent_id, created_at FROM categories ORDER BY name
+```
+- First seen: 2025-07-31 18:21:52.199376
+- Last seen: 2025-07-31 19:41:15.470794
+- Frequency: 876 times over 1:19:23.271418
+- Throughput: 0.18 queries/second
+
+### Query 3 (850 executions)
+```sql
+SELECT
+p.id,
+p.seller_id,
+p.category_id,
+p.name,
+p.description,
+p.price,
+p.inventory_quantity,
+p.created_at,
+p.updated_at,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+
+ORDER BY p.created_at DESC
+LIMIT 12 OFFSET 0
+```
+- First seen: 2025-07-31 18:21:52.823652
+- Last seen: 2025-07-31 19:41:15.499254
+- Frequency: 850 times over 1:19:22.675602
+- Throughput: 0.18 queries/second
+
+### Query 4 (373 executions)
+```sql
+SELECT COUNT(*) as total FROM products p WHERE (p.name LIKE '%laptop%' OR p.description LIKE '%laptop%')
+```
+- First seen: 2025-07-31 18:21:51.937837
+- Last seen: 2025-07-31 19:41:16.737299
+- Frequency: 373 times over 1:19:24.799462
+- Throughput: 0.08 queries/second
+
+### Query 5 (371 executions)
+```sql
+SELECT
+p.id,
+p.seller_id,
+p.category_id,
+p.name,
+p.description,
+p.price,
+p.inventory_quantity,
+p.created_at,
+p.updated_at,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+WHERE (p.name LIKE '%laptop%' OR p.description LIKE '%laptop%')
+ORDER BY p.created_at DESC
+LIMIT 12 OFFSET 0
+```
+- First seen: 2025-07-31 18:36:21.494444
+- Last seen: 2025-07-31 19:41:16.763598
+- Frequency: 371 times over 1:04:55.269154
+- Throughput: 0.10 queries/second
+
+### Query 6 (356 executions)
+```sql
+SELECT COUNT(*) as total FROM products p WHERE (p.name LIKE '%shoes%' OR p.description LIKE '%shoes%')
+```
+- First seen: 2025-07-31 18:35:52.483689
+- Last seen: 2025-07-31 19:41:14.333566
+- Frequency: 356 times over 1:05:21.849877
+- Throughput: 0.09 queries/second
+
+### Query 7 (356 executions)
+```sql
+SELECT
+p.id,
+p.seller_id,
+p.category_id,
+p.name,
+p.description,
+p.price,
+p.inventory_quantity,
+p.created_at,
+p.updated_at,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+WHERE (p.name LIKE '%shoes%' OR p.description LIKE '%shoes%')
+ORDER BY p.created_at DESC
+LIMIT 12 OFFSET 0
+```
+- First seen: 2025-07-31 18:35:52.516680
+- Last seen: 2025-07-31 19:41:14.348151
+- Frequency: 356 times over 1:05:21.831471
+- Throughput: 0.09 queries/second
+
+### Query 8 (343 executions)
+```sql
+SELECT COUNT(*) as total FROM products p WHERE (p.name LIKE '%phone%' OR p.description LIKE '%phone%')
+```
+- First seen: 2025-07-31 18:21:51.958632
+- Last seen: 2025-07-31 19:41:03.168423
+- Frequency: 343 times over 1:19:11.209791
+- Throughput: 0.07 queries/second
+
+### Query 9 (341 executions)
+```sql
+SELECT COUNT(*) as total FROM products p WHERE (p.name LIKE '%book%' OR p.description LIKE '%book%')
+```
+- First seen: 2025-07-31 18:21:51.981499
+- Last seen: 2025-07-31 19:41:16.319811
+- Frequency: 341 times over 1:19:24.338312
+- Throughput: 0.07 queries/second
+
+### Query 10 (341 executions)
+```sql
+SELECT
+p.id,
+p.seller_id,
+p.category_id,
+p.name,
+p.description,
+p.price,
+p.inventory_quantity,
+p.created_at,
+p.updated_at,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+WHERE (p.name LIKE '%phone%' OR p.description LIKE '%phone%')
+ORDER BY p.created_at DESC
+LIMIT 12 OFFSET 0
+```
+- First seen: 2025-07-31 18:35:56.024643
+- Last seen: 2025-07-31 19:41:03.188867
+- Frequency: 341 times over 1:05:07.164224
+- Throughput: 0.09 queries/second
+
+### Query 11 (339 executions)
+```sql
+SELECT
+p.id,
+p.seller_id,
+p.category_id,
+p.name,
+p.description,
+p.price,
+p.inventory_quantity,
+p.created_at,
+p.updated_at,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+WHERE (p.name LIKE '%book%' OR p.description LIKE '%book%')
+ORDER BY p.created_at DESC
+LIMIT 12 OFFSET 0
+```
+- First seen: 2025-07-31 18:36:03.969325
+- Last seen: 2025-07-31 19:41:16.354137
+- Frequency: 339 times over 1:05:12.384812
+- Throughput: 0.09 queries/second
+
+### Query 12 (335 executions)
+```sql
+SELECT COUNT(*) as total FROM products p WHERE (p.name LIKE '%shirt%' OR p.description LIKE '%shirt%')
+```
+- First seen: 2025-07-31 18:21:52.000118
+- Last seen: 2025-07-31 19:41:09.915404
+- Frequency: 335 times over 1:19:17.915286
+- Throughput: 0.07 queries/second
+
+### Query 13 (334 executions)
+```sql
+SELECT
+p.id,
+p.seller_id,
+p.category_id,
+p.name,
+p.description,
+p.price,
+p.inventory_quantity,
+p.created_at,
+p.updated_at,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+WHERE (p.name LIKE '%shirt%' OR p.description LIKE '%shirt%')
+ORDER BY p.created_at DESC
+LIMIT 12 OFFSET 0
+```
+- First seen: 2025-07-31 18:36:00.301343
+- Last seen: 2025-07-31 19:41:09.933382
+- Frequency: 334 times over 1:05:09.632039
+- Throughput: 0.09 queries/second
+
+### Query 14 (236 executions)
+```sql
+SELECT
+p.*,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+WHERE p.id = 7965
+```
+- First seen: 2025-07-31 18:21:52.135954
+- Last seen: 2025-07-31 19:41:14.622140
+- Frequency: 236 times over 1:19:22.486186
+- Throughput: 0.05 queries/second
+
+### Query 15 (194 executions)
+```sql
+SELECT
+p.*,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+WHERE p.id = 7964
+```
+- First seen: 2025-07-31 18:35:38.439051
+- Last seen: 2025-07-31 19:41:04.283390
+- Frequency: 194 times over 1:05:25.844339
+- Throughput: 0.05 queries/second
+
+### Query 16 (136 executions)
+```sql
+SELECT
+p.*,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+WHERE p.id = 1
+```
+- First seen: 2025-07-31 18:36:24.494538
+- Last seen: 2025-07-31 19:41:11.008568
+- Frequency: 136 times over 1:04:46.514030
+- Throughput: 0.03 queries/second
+
+### Query 17 (130 executions)
+```sql
+SELECT
+p.*,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+WHERE p.id = 7960
+```
+- First seen: 2025-07-31 18:21:52.142976
+- Last seen: 2025-07-31 19:41:13.212762
+- Frequency: 130 times over 1:19:21.069786
+- Throughput: 0.03 queries/second
+
+### Query 18 (114 executions)
+```sql
+SELECT
+p.*,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+WHERE p.id = 7963
+```
+- First seen: 2025-07-31 18:52:49.726358
+- Last seen: 2025-07-31 19:41:12.384866
+- Frequency: 114 times over 0:48:22.658508
+- Throughput: 0.04 queries/second
+
+### Query 19 (2 executions)
+```sql
+SELECT
+p.id,
+p.seller_id,
+p.category_id,
+p.name,
+p.description,
+p.price,
+p.inventory_quantity,
+p.created_at,
+p.updated_at,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+WHERE (p.name LIKE '%laptop%' OR p.description LIKE '%laptop%')
+ORDER BY p.created_at DESC
+LIMIT 20 OFFSET 0
+```
+- First seen: 2025-07-31 18:21:51.943251
+- Last seen: 2025-07-31 18:21:52.893893
+- Frequency: 2 times over 0:00:00.950642
+- Throughput: 2.10 queries/second
+
+### Query 20 (2 executions)
+```sql
+SELECT
+p.id,
+p.seller_id,
+p.category_id,
+p.name,
+p.description,
+p.price,
+p.inventory_quantity,
+p.created_at,
+p.updated_at,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+WHERE (p.name LIKE '%phone%' OR p.description LIKE '%phone%')
+ORDER BY p.created_at DESC
+LIMIT 20 OFFSET 0
+```
+- First seen: 2025-07-31 18:21:51.968252
+- Last seen: 2025-07-31 18:21:52.915378
+- Frequency: 2 times over 0:00:00.947126
+- Throughput: 2.11 queries/second
+
+### Query 21 (2 executions)
+```sql
+SELECT
+p.id,
+p.seller_id,
+p.category_id,
+p.name,
+p.description,
+p.price,
+p.inventory_quantity,
+p.created_at,
+p.updated_at,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+WHERE (p.name LIKE '%book%' OR p.description LIKE '%book%')
+ORDER BY p.created_at DESC
+LIMIT 20 OFFSET 0
+```
+- First seen: 2025-07-31 18:21:51.987173
+- Last seen: 2025-07-31 18:21:52.932505
+- Frequency: 2 times over 0:00:00.945332
+- Throughput: 2.12 queries/second
+
+### Query 22 (2 executions)
+```sql
+SELECT
+p.*,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+WHERE p.id = 7955
+```
+- First seen: 2025-07-31 18:21:52.149267
+- Last seen: 2025-07-31 18:21:52.952618
+- Frequency: 2 times over 0:00:00.803351
+- Throughput: 2.49 queries/second
+
+### Query 23 (1 executions)
+```sql
+TRUNCATE TABLE mysql.general_log
+```
+- First seen: 2025-07-31 18:20:21.406696
+- Last seen: 2025-07-31 18:20:21.406696
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 24 (1 executions)
+```sql
+TRUNCATE TABLE mysql.slow_log
+```
+- First seen: 2025-07-31 18:20:21.412440
+- Last seen: 2025-07-31 18:20:21.412440
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 25 (1 executions)
+```sql
+SELECT
+p.id,
+p.seller_id,
+p.category_id,
+p.name,
+p.description,
+p.price,
+p.inventory_quantity,
+p.created_at,
+p.updated_at,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+
+ORDER BY p.created_at DESC
+LIMIT 2 OFFSET 0
+```
+- First seen: 2025-07-31 18:20:34.409858
+- Last seen: 2025-07-31 18:20:34.409858
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 26 (1 executions)
+```sql
+SELECT COUNT(*) as general_log_count FROM mysql.general_log WHERE command_type = 'Query'
+```
+- First seen: 2025-07-31 18:20:44.607305
+- Last seen: 2025-07-31 18:20:44.607305
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 27 (1 executions)
+```sql
+SELECT COUNT(*) as slow_log_count FROM mysql.slow_log
+```
+- First seen: 2025-07-31 18:20:56.155228
+- Last seen: 2025-07-31 18:20:56.155228
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 28 (1 executions)
+```sql
+SELECT start_time, user_host, query_time, lock_time, rows_sent, rows_examined, LEFT(sql_text, 100) as query_preview FROM mysql.slow_log ORDER BY start_time DESC LIMIT 10
+```
+- First seen: 2025-07-31 18:21:07.186355
+- Last seen: 2025-07-31 18:21:07.186355
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 29 (1 executions)
+```sql
+SELECT
+p.id,
+p.seller_id,
+p.category_id,
+p.name,
+p.description,
+p.price,
+p.inventory_quantity,
+p.created_at,
+p.updated_at,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+
+ORDER BY p.created_at DESC
+LIMIT 5 OFFSET 0
+```
+- First seen: 2025-07-31 18:21:51.709903
+- Last seen: 2025-07-31 18:21:51.709903
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 30 (1 executions)
+```sql
+SELECT
+p.id,
+p.seller_id,
+p.category_id,
+p.name,
+p.description,
+p.price,
+p.inventory_quantity,
+p.created_at,
+p.updated_at,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+
+ORDER BY p.created_at DESC
+LIMIT 5 OFFSET 5
+```
+- First seen: 2025-07-31 18:21:51.747214
+- Last seen: 2025-07-31 18:21:51.747214
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 31 (1 executions)
+```sql
+SELECT
+p.id,
+p.seller_id,
+p.category_id,
+p.name,
+p.description,
+p.price,
+p.inventory_quantity,
+p.created_at,
+p.updated_at,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+
+ORDER BY p.created_at DESC
+LIMIT 5 OFFSET 10
+```
+- First seen: 2025-07-31 18:21:51.770427
+- Last seen: 2025-07-31 18:21:51.770427
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 32 (1 executions)
+```sql
+SELECT
+p.id,
+p.seller_id,
+p.category_id,
+p.name,
+p.description,
+p.price,
+p.inventory_quantity,
+p.created_at,
+p.updated_at,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+
+ORDER BY p.created_at DESC
+LIMIT 5 OFFSET 15
+```
+- First seen: 2025-07-31 18:21:51.809779
+- Last seen: 2025-07-31 18:21:51.809779
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 33 (1 executions)
+```sql
+SELECT
+p.id,
+p.seller_id,
+p.category_id,
+p.name,
+p.description,
+p.price,
+p.inventory_quantity,
+p.created_at,
+p.updated_at,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+
+ORDER BY p.created_at DESC
+LIMIT 5 OFFSET 20
+```
+- First seen: 2025-07-31 18:21:51.835460
+- Last seen: 2025-07-31 18:21:51.835460
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 34 (1 executions)
+```sql
+SELECT
+p.id,
+p.seller_id,
+p.category_id,
+p.name,
+p.description,
+p.price,
+p.inventory_quantity,
+p.created_at,
+p.updated_at,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+
+ORDER BY p.created_at DESC
+LIMIT 5 OFFSET 25
+```
+- First seen: 2025-07-31 18:21:51.850989
+- Last seen: 2025-07-31 18:21:51.850989
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 35 (1 executions)
+```sql
+SELECT
+p.id,
+p.seller_id,
+p.category_id,
+p.name,
+p.description,
+p.price,
+p.inventory_quantity,
+p.created_at,
+p.updated_at,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+
+ORDER BY p.created_at DESC
+LIMIT 5 OFFSET 30
+```
+- First seen: 2025-07-31 18:21:51.870001
+- Last seen: 2025-07-31 18:21:51.870001
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 36 (1 executions)
+```sql
+SELECT
+p.id,
+p.seller_id,
+p.category_id,
+p.name,
+p.description,
+p.price,
+p.inventory_quantity,
+p.created_at,
+p.updated_at,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+
+ORDER BY p.created_at DESC
+LIMIT 5 OFFSET 35
+```
+- First seen: 2025-07-31 18:21:51.890127
+- Last seen: 2025-07-31 18:21:51.890127
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 37 (1 executions)
+```sql
+SELECT
+p.id,
+p.seller_id,
+p.category_id,
+p.name,
+p.description,
+p.price,
+p.inventory_quantity,
+p.created_at,
+p.updated_at,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+
+ORDER BY p.created_at DESC
+LIMIT 5 OFFSET 40
+```
+- First seen: 2025-07-31 18:21:51.908387
+- Last seen: 2025-07-31 18:21:51.908387
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 38 (1 executions)
+```sql
+SELECT
+p.id,
+p.seller_id,
+p.category_id,
+p.name,
+p.description,
+p.price,
+p.inventory_quantity,
+p.created_at,
+p.updated_at,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+
+ORDER BY p.created_at DESC
+LIMIT 5 OFFSET 45
+```
+- First seen: 2025-07-31 18:21:51.924232
+- Last seen: 2025-07-31 18:21:51.924232
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 39 (1 executions)
+```sql
+SELECT
+p.id,
+p.seller_id,
+p.category_id,
+p.name,
+p.description,
+p.price,
+p.inventory_quantity,
+p.created_at,
+p.updated_at,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+WHERE (p.name LIKE '%shirt%' OR p.description LIKE '%shirt%')
+ORDER BY p.created_at DESC
+LIMIT 20 OFFSET 0
+```
+- First seen: 2025-07-31 18:21:52.005723
+- Last seen: 2025-07-31 18:21:52.005723
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 40 (1 executions)
+```sql
+SELECT COUNT(*) as total FROM products p WHERE (p.name LIKE '%watch%' OR p.description LIKE '%watch%')
+```
+- First seen: 2025-07-31 18:21:52.017554
+- Last seen: 2025-07-31 18:21:52.017554
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 41 (1 executions)
+```sql
+SELECT
+p.id,
+p.seller_id,
+p.category_id,
+p.name,
+p.description,
+p.price,
+p.inventory_quantity,
+p.created_at,
+p.updated_at,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+WHERE (p.name LIKE '%watch%' OR p.description LIKE '%watch%')
+ORDER BY p.created_at DESC
+LIMIT 20 OFFSET 0
+```
+- First seen: 2025-07-31 18:21:52.023158
+- Last seen: 2025-07-31 18:21:52.023158
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 42 (1 executions)
+```sql
+SELECT COUNT(*) as total FROM products p WHERE (p.name LIKE '%computer%' OR p.description LIKE '%computer%')
+```
+- First seen: 2025-07-31 18:21:52.035111
+- Last seen: 2025-07-31 18:21:52.035111
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 43 (1 executions)
+```sql
+SELECT
+p.id,
+p.seller_id,
+p.category_id,
+p.name,
+p.description,
+p.price,
+p.inventory_quantity,
+p.created_at,
+p.updated_at,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+WHERE (p.name LIKE '%computer%' OR p.description LIKE '%computer%')
+ORDER BY p.created_at DESC
+LIMIT 20 OFFSET 0
+```
+- First seen: 2025-07-31 18:21:52.042029
+- Last seen: 2025-07-31 18:21:52.042029
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 44 (1 executions)
+```sql
+SELECT COUNT(*) as total FROM products p WHERE (p.name LIKE '%tablet%' OR p.description LIKE '%tablet%')
+```
+- First seen: 2025-07-31 18:21:52.055853
+- Last seen: 2025-07-31 18:21:52.055853
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 45 (1 executions)
+```sql
+SELECT
+p.id,
+p.seller_id,
+p.category_id,
+p.name,
+p.description,
+p.price,
+p.inventory_quantity,
+p.created_at,
+p.updated_at,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+WHERE (p.name LIKE '%tablet%' OR p.description LIKE '%tablet%')
+ORDER BY p.created_at DESC
+LIMIT 20 OFFSET 0
+```
+- First seen: 2025-07-31 18:21:52.062618
+- Last seen: 2025-07-31 18:21:52.062618
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 46 (1 executions)
+```sql
+SELECT COUNT(*) as total FROM products p WHERE (p.name LIKE '%mouse%' OR p.description LIKE '%mouse%')
+```
+- First seen: 2025-07-31 18:21:52.076772
+- Last seen: 2025-07-31 18:21:52.076772
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 47 (1 executions)
+```sql
+SELECT
+p.id,
+p.seller_id,
+p.category_id,
+p.name,
+p.description,
+p.price,
+p.inventory_quantity,
+p.created_at,
+p.updated_at,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+WHERE (p.name LIKE '%mouse%' OR p.description LIKE '%mouse%')
+ORDER BY p.created_at DESC
+LIMIT 20 OFFSET 0
+```
+- First seen: 2025-07-31 18:21:52.081612
+- Last seen: 2025-07-31 18:21:52.081612
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 48 (1 executions)
+```sql
+SELECT COUNT(*) as total FROM products p WHERE (p.name LIKE '%keyboard%' OR p.description LIKE '%keyboard%')
+```
+- First seen: 2025-07-31 18:21:52.093690
+- Last seen: 2025-07-31 18:21:52.093690
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 49 (1 executions)
+```sql
+SELECT
+p.id,
+p.seller_id,
+p.category_id,
+p.name,
+p.description,
+p.price,
+p.inventory_quantity,
+p.created_at,
+p.updated_at,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+WHERE (p.name LIKE '%keyboard%' OR p.description LIKE '%keyboard%')
+ORDER BY p.created_at DESC
+LIMIT 20 OFFSET 0
+```
+- First seen: 2025-07-31 18:21:52.103635
+- Last seen: 2025-07-31 18:21:52.103635
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 50 (1 executions)
+```sql
+SELECT COUNT(*) as total FROM products p WHERE (p.name LIKE '%monitor%' OR p.description LIKE '%monitor%')
+```
+- First seen: 2025-07-31 18:21:52.115731
+- Last seen: 2025-07-31 18:21:52.115731
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 51 (1 executions)
+```sql
+SELECT
+p.id,
+p.seller_id,
+p.category_id,
+p.name,
+p.description,
+p.price,
+p.inventory_quantity,
+p.created_at,
+p.updated_at,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+WHERE (p.name LIKE '%monitor%' OR p.description LIKE '%monitor%')
+ORDER BY p.created_at DESC
+LIMIT 20 OFFSET 0
+```
+- First seen: 2025-07-31 18:21:52.123055
+- Last seen: 2025-07-31 18:21:52.123055
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 52 (1 executions)
+```sql
+SELECT
+p.*,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+WHERE p.id = 7950
+```
+- First seen: 2025-07-31 18:21:52.155477
+- Last seen: 2025-07-31 18:21:52.155477
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 53 (1 executions)
+```sql
+SELECT
+p.*,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+WHERE p.id = 7945
+```
+- First seen: 2025-07-31 18:21:52.161336
+- Last seen: 2025-07-31 18:21:52.161336
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 54 (1 executions)
+```sql
+SELECT
+p.*,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+WHERE p.id = 7940
+```
+- First seen: 2025-07-31 18:21:52.167016
+- Last seen: 2025-07-31 18:21:52.167016
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 55 (1 executions)
+```sql
+SELECT
+p.*,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+WHERE p.id = 7935
+```
+- First seen: 2025-07-31 18:21:52.173553
+- Last seen: 2025-07-31 18:21:52.173553
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 56 (1 executions)
+```sql
+SELECT
+p.*,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+WHERE p.id = 7930
+```
+- First seen: 2025-07-31 18:21:52.179438
+- Last seen: 2025-07-31 18:21:52.179438
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 57 (1 executions)
+```sql
+SELECT
+p.*,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+WHERE p.id = 7925
+```
+- First seen: 2025-07-31 18:21:52.185419
+- Last seen: 2025-07-31 18:21:52.185419
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 58 (1 executions)
+```sql
+SELECT
+p.*,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+WHERE p.id = 7920
+```
+- First seen: 2025-07-31 18:21:52.191779
+- Last seen: 2025-07-31 18:21:52.191779
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 59 (1 executions)
+```sql
+SELECT
+p.id,
+p.seller_id,
+p.category_id,
+p.name,
+p.description,
+p.price,
+p.inventory_quantity,
+p.created_at,
+p.updated_at,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+
+ORDER BY p.created_at DESC
+LIMIT 1 OFFSET 0
+```
+- First seen: 2025-07-31 18:21:52.341751
+- Last seen: 2025-07-31 18:21:52.341751
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 60 (1 executions)
+```sql
+SELECT
+p.id,
+p.seller_id,
+p.category_id,
+p.name,
+p.description,
+p.price,
+p.inventory_quantity,
+p.created_at,
+p.updated_at,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+
+ORDER BY p.created_at DESC
+LIMIT 1 OFFSET 1
+```
+- First seen: 2025-07-31 18:21:52.380530
+- Last seen: 2025-07-31 18:21:52.380530
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 61 (1 executions)
+```sql
+SELECT
+p.id,
+p.seller_id,
+p.category_id,
+p.name,
+p.description,
+p.price,
+p.inventory_quantity,
+p.created_at,
+p.updated_at,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+
+ORDER BY p.created_at DESC
+LIMIT 1 OFFSET 2
+```
+- First seen: 2025-07-31 18:21:52.414820
+- Last seen: 2025-07-31 18:21:52.414820
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 62 (1 executions)
+```sql
+SELECT
+p.id,
+p.seller_id,
+p.category_id,
+p.name,
+p.description,
+p.price,
+p.inventory_quantity,
+p.created_at,
+p.updated_at,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+
+ORDER BY p.created_at DESC
+LIMIT 1 OFFSET 3
+```
+- First seen: 2025-07-31 18:21:52.443145
+- Last seen: 2025-07-31 18:21:52.443145
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 63 (1 executions)
+```sql
+SELECT
+p.id,
+p.seller_id,
+p.category_id,
+p.name,
+p.description,
+p.price,
+p.inventory_quantity,
+p.created_at,
+p.updated_at,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+
+ORDER BY p.created_at DESC
+LIMIT 1 OFFSET 4
+```
+- First seen: 2025-07-31 18:21:52.473735
+- Last seen: 2025-07-31 18:21:52.473735
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 64 (1 executions)
+```sql
+SELECT
+p.id,
+p.seller_id,
+p.category_id,
+p.name,
+p.description,
+p.price,
+p.inventory_quantity,
+p.created_at,
+p.updated_at,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+
+ORDER BY p.created_at DESC
+LIMIT 1 OFFSET 5
+```
+- First seen: 2025-07-31 18:21:52.488090
+- Last seen: 2025-07-31 18:21:52.488090
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 65 (1 executions)
+```sql
+SELECT
+p.id,
+p.seller_id,
+p.category_id,
+p.name,
+p.description,
+p.price,
+p.inventory_quantity,
+p.created_at,
+p.updated_at,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+
+ORDER BY p.created_at DESC
+LIMIT 1 OFFSET 6
+```
+- First seen: 2025-07-31 18:21:52.512645
+- Last seen: 2025-07-31 18:21:52.512645
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 66 (1 executions)
+```sql
+SELECT
+p.id,
+p.seller_id,
+p.category_id,
+p.name,
+p.description,
+p.price,
+p.inventory_quantity,
+p.created_at,
+p.updated_at,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+
+ORDER BY p.created_at DESC
+LIMIT 1 OFFSET 7
+```
+- First seen: 2025-07-31 18:21:52.530150
+- Last seen: 2025-07-31 18:21:52.530150
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 67 (1 executions)
+```sql
+SELECT
+p.id,
+p.seller_id,
+p.category_id,
+p.name,
+p.description,
+p.price,
+p.inventory_quantity,
+p.created_at,
+p.updated_at,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+
+ORDER BY p.created_at DESC
+LIMIT 1 OFFSET 8
+```
+- First seen: 2025-07-31 18:21:52.543618
+- Last seen: 2025-07-31 18:21:52.543618
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 68 (1 executions)
+```sql
+SELECT
+p.id,
+p.seller_id,
+p.category_id,
+p.name,
+p.description,
+p.price,
+p.inventory_quantity,
+p.created_at,
+p.updated_at,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+
+ORDER BY p.created_at DESC
+LIMIT 1 OFFSET 9
+```
+- First seen: 2025-07-31 18:21:52.556580
+- Last seen: 2025-07-31 18:21:52.556580
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 69 (1 executions)
+```sql
+SELECT
+p.id,
+p.seller_id,
+p.category_id,
+p.name,
+p.description,
+p.price,
+p.inventory_quantity,
+p.created_at,
+p.updated_at,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+
+ORDER BY p.created_at DESC
+LIMIT 1 OFFSET 10
+```
+- First seen: 2025-07-31 18:21:52.572946
+- Last seen: 2025-07-31 18:21:52.572946
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 70 (1 executions)
+```sql
+SELECT
+p.id,
+p.seller_id,
+p.category_id,
+p.name,
+p.description,
+p.price,
+p.inventory_quantity,
+p.created_at,
+p.updated_at,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+
+ORDER BY p.created_at DESC
+LIMIT 1 OFFSET 11
+```
+- First seen: 2025-07-31 18:21:52.586971
+- Last seen: 2025-07-31 18:21:52.586971
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 71 (1 executions)
+```sql
+SELECT
+p.id,
+p.seller_id,
+p.category_id,
+p.name,
+p.description,
+p.price,
+p.inventory_quantity,
+p.created_at,
+p.updated_at,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+
+ORDER BY p.created_at DESC
+LIMIT 1 OFFSET 12
+```
+- First seen: 2025-07-31 18:21:52.603769
+- Last seen: 2025-07-31 18:21:52.603769
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 72 (1 executions)
+```sql
+SELECT
+p.id,
+p.seller_id,
+p.category_id,
+p.name,
+p.description,
+p.price,
+p.inventory_quantity,
+p.created_at,
+p.updated_at,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+
+ORDER BY p.created_at DESC
+LIMIT 1 OFFSET 13
+```
+- First seen: 2025-07-31 18:21:52.617060
+- Last seen: 2025-07-31 18:21:52.617060
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 73 (1 executions)
+```sql
+SELECT
+p.id,
+p.seller_id,
+p.category_id,
+p.name,
+p.description,
+p.price,
+p.inventory_quantity,
+p.created_at,
+p.updated_at,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+
+ORDER BY p.created_at DESC
+LIMIT 1 OFFSET 14
+```
+- First seen: 2025-07-31 18:21:52.630383
+- Last seen: 2025-07-31 18:21:52.630383
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 74 (1 executions)
+```sql
+SELECT
+p.id,
+p.seller_id,
+p.category_id,
+p.name,
+p.description,
+p.price,
+p.inventory_quantity,
+p.created_at,
+p.updated_at,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+
+ORDER BY p.created_at DESC
+LIMIT 1 OFFSET 15
+```
+- First seen: 2025-07-31 18:21:52.643323
+- Last seen: 2025-07-31 18:21:52.643323
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 75 (1 executions)
+```sql
+SELECT
+p.id,
+p.seller_id,
+p.category_id,
+p.name,
+p.description,
+p.price,
+p.inventory_quantity,
+p.created_at,
+p.updated_at,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+
+ORDER BY p.created_at DESC
+LIMIT 1 OFFSET 16
+```
+- First seen: 2025-07-31 18:21:52.655924
+- Last seen: 2025-07-31 18:21:52.655924
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 76 (1 executions)
+```sql
+SELECT
+p.id,
+p.seller_id,
+p.category_id,
+p.name,
+p.description,
+p.price,
+p.inventory_quantity,
+p.created_at,
+p.updated_at,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+
+ORDER BY p.created_at DESC
+LIMIT 1 OFFSET 17
+```
+- First seen: 2025-07-31 18:21:52.669309
+- Last seen: 2025-07-31 18:21:52.669309
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 77 (1 executions)
+```sql
+SELECT
+p.id,
+p.seller_id,
+p.category_id,
+p.name,
+p.description,
+p.price,
+p.inventory_quantity,
+p.created_at,
+p.updated_at,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+
+ORDER BY p.created_at DESC
+LIMIT 1 OFFSET 18
+```
+- First seen: 2025-07-31 18:21:52.685280
+- Last seen: 2025-07-31 18:21:52.685280
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 78 (1 executions)
+```sql
+SELECT
+p.id,
+p.seller_id,
+p.category_id,
+p.name,
+p.description,
+p.price,
+p.inventory_quantity,
+p.created_at,
+p.updated_at,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+
+ORDER BY p.created_at DESC
+LIMIT 1 OFFSET 19
+```
+- First seen: 2025-07-31 18:21:52.703701
+- Last seen: 2025-07-31 18:21:52.703701
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 79 (1 executions)
+```sql
+SELECT
+p.id,
+p.seller_id,
+p.category_id,
+p.name,
+p.description,
+p.price,
+p.inventory_quantity,
+p.created_at,
+p.updated_at,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+
+ORDER BY p.created_at DESC
+LIMIT 12 OFFSET 12
+```
+- First seen: 2025-07-31 18:21:52.854268
+- Last seen: 2025-07-31 18:21:52.854268
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second
+
+### Query 80 (1 executions)
+```sql
+SELECT
+p.id,
+p.seller_id,
+p.category_id,
+p.name,
+p.description,
+p.price,
+p.inventory_quantity,
+p.created_at,
+p.updated_at,
+c.name as category_name,
+u.username as seller_username,
+u.email as seller_email
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN users u ON p.seller_id = u.id
+
+ORDER BY p.created_at DESC
+LIMIT 12 OFFSET 24
+```
+- First seen: 2025-07-31 18:21:52.874132
+- Last seen: 2025-07-31 18:21:52.874132
+- Frequency: 1 times over 0:00:00
+- Throughput: 0.00 queries/second

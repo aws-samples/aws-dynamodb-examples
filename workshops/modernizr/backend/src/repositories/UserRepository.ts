@@ -140,9 +140,50 @@ export class UserRepository {
     }
   }
 
+  async promoteToSuperAdmin(id: number): Promise<User | null> {
+    try {
+      await pool.execute(
+        'UPDATE users SET super_admin = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+        [1, id] // Set super_admin to 1 (true)
+      );
+      
+      return this.findById(id);
+    } catch (error) {
+      console.error('Error promoting user to super admin:', error);
+      throw error;
+    }
+  }
+
+  async demoteFromSuperAdmin(id: number): Promise<User | null> {
+    try {
+      await pool.execute(
+        'UPDATE users SET super_admin = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+        [0, id] // Set super_admin to 0 (false)
+      );
+      
+      return this.findById(id);
+    } catch (error) {
+      console.error('Error demoting user from super admin:', error);
+      throw error;
+    }
+  }
+
+  async findAllSuperAdmins(): Promise<User[]> {
+    try {
+      const [rows] = await pool.execute<RowDataPacket[]>(
+        'SELECT * FROM users WHERE super_admin = 1 ORDER BY username'
+      );
+      
+      return rows.map(row => this.mapDbRowToUser(row));
+    } catch (error) {
+      console.error('Error finding super admin users:', error);
+      throw error;
+    }
+  }
+
   /**
    * Map database row to User model
-   * Converts 'is_seller' tinyint to boolean
+   * Converts 'is_seller' and 'super_admin' tinyint to boolean
    */
   private mapDbRowToUser(row: any): User {
     return {
@@ -153,6 +194,7 @@ export class UserRepository {
       first_name: row.first_name,
       last_name: row.last_name,
       is_seller: Boolean(row.is_seller), // Convert tinyint to boolean
+      super_admin: Boolean(row.super_admin || 0), // Convert tinyint to boolean, default to false
       created_at: row.created_at,
       updated_at: row.updated_at
     };

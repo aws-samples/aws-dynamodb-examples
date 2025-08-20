@@ -1,21 +1,24 @@
 import bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
-import { UserRepository } from '../repositories/UserRepository';
+import { IUserRepository } from '../database/interfaces/IUserRepository';
+import { DatabaseFactory } from '../database/factory/DatabaseFactory';
 import { CreateUserRequest, LoginRequest, AuthResponse, toUserResponse, UpdateUserRequest } from '../models/User';
 import { config } from '../config/env';
 import { AppError, ErrorTypes } from '../middleware/errorHandler';
 
 export class AuthService {
-  private userRepository: UserRepository;
+  private userRepository: IUserRepository;
   private jwtSecret: string;
   private jwtExpiresIn: string;
   private saltRounds: number;
 
   constructor() {
-    this.userRepository = new UserRepository();
+    console.log('🔐 AuthService constructor called');
+    this.userRepository = DatabaseFactory.createUserRepository();
     this.jwtSecret = config.JWT_SECRET;
     this.jwtExpiresIn = config.JWT_EXPIRES_IN;
     this.saltRounds = config.BCRYPT_SALT_ROUNDS;
+    console.log('🔐 AuthService repositories created');
   }
 
   async register(userData: CreateUserRequest): Promise<AuthResponse> {
