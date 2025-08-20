@@ -29,6 +29,7 @@ describe('UserRepository', () => {
     first_name: 'Test',
     last_name: 'User',
     is_seller: false,
+    super_admin: false,
     created_at: new Date(),
     updated_at: new Date()
   };

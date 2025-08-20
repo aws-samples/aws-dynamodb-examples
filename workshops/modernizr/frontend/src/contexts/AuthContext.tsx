@@ -9,6 +9,7 @@ interface User {
   username: string;
   email: string;
   is_seller: boolean;
+  super_admin: boolean;
 }
 
 interface AuthContextType {

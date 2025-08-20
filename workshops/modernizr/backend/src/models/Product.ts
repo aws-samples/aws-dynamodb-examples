@@ -78,7 +78,7 @@ export interface ProductListApiResponse {
 
 // Helper function to convert database row to Product response
 export function toProductResponse(product: ProductWithDetails): any {
-  return {
+  const response: any = {
     id: product.id,
     seller_id: product.seller_id,
     category_id: product.category_id,
@@ -87,15 +87,28 @@ export function toProductResponse(product: ProductWithDetails): any {
     price: Number(product.price),
     inventory_quantity: product.inventory_quantity,
     imageUrl: product.image_url, // Map database field to frontend field
-    category: {
-      id: product.category_id,
-      name: product.category_name || 'Uncategorized'
-    },
-    seller_username: product.seller_username,
-    seller_email: product.seller_email,
     created_at: product.created_at,
     updated_at: product.updated_at,
   };
+
+  // Only include category if category_name is provided
+  if (product.category_name) {
+    response.category = {
+      id: product.category_id,
+      name: product.category_name
+    };
+  }
+
+  // Only include seller fields if they are provided
+  if (product.seller_username) {
+    response.seller_username = product.seller_username;
+  }
+
+  if (product.seller_email) {
+    response.seller_email = product.seller_email;
+  }
+
+  return response;
 }
 
 // Validation helpers

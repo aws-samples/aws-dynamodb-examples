@@ -37,9 +37,12 @@ router.get('/', authenticate, asyncHandler(async (req: Request, res: Response) =
 
 // Add item to cart
 router.post('/items', authenticate, ValidationSets.addToCart, asyncHandler(async (req: Request, res: Response) => {
+  console.log('🛒 ROUTE HIT: POST /api/cart/items');
   try {
+    console.log('🛒 Cart route POST /items called');
     const userId = (req as any).user.userId;
     const { productId, quantity } = req.body;
+    console.log(`🛒 Route calling cartService.addToCart: userId=${userId}, productId=${productId}, quantity=${quantity}`);
 
     const cart = await cartService.addToCart(userId, { productId, quantity });
 

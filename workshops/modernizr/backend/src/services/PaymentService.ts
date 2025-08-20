@@ -18,7 +18,13 @@ export class PaymentService {
   }
 
   private async simulateProcessingDelay(): Promise<void> {
-    // Simulate realistic payment processing time (500ms - 2s)
+    // In test environments, use minimal delay for faster tests
+    if (process.env.NODE_ENV === 'test') {
+      const delay = 100; // 100ms for tests
+      return new Promise(resolve => setTimeout(resolve, delay));
+    }
+    
+    // Simulate realistic payment processing time (500ms - 2s) in non-test environments
     const delay = Math.random() * 1500 + 500;
     return new Promise(resolve => setTimeout(resolve, delay));
   }
@@ -65,7 +71,12 @@ export class PaymentService {
 
       // Simulate random failures for realistic testing (5% failure rate)
       // Skip random failures in test environments for reliable testing
-      if (process.env.NODE_ENV !== 'test' && Math.random() < 0.05) {
+      const isTestEnvironment = process.env.NODE_ENV === 'test' || 
+                                process.env.NODE_ENV === 'testing' ||
+                                process.env.NODE_ENV?.includes('test') ||
+                                process.env.DB_NAME?.includes('test');
+      
+      if (!isTestEnvironment && Math.random() < 0.05) {
         const errors = [
           'Payment processing temporarily unavailable. Please try again.',
           'Card verification failed. Please check your card details.',

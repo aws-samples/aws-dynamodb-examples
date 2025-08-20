@@ -1,0 +1,18 @@
+{
+  "short_name": "ShopStore",
+  "name": "ShopStore - Online Marketplace",
+  "description": "Your trusted online marketplace for buying and selling quality products",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#2563eb",
+  "background_color": "#ffffff",
+  "categories": ["shopping", "business"],
+  "lang": "en"
+}

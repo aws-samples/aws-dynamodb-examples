@@ -1,4 +1,5 @@
-import { CategoryRepository } from '../repositories/CategoryRepository';
+import { ICategoryRepository } from '../database/interfaces/ICategoryRepository';
+import { DatabaseFactory } from '../database/factory/DatabaseFactory';
 import { 
   Category, 
   CategoryTreeResponse, 
@@ -9,24 +10,26 @@ import {
 } from '../models/Category';
 
 export class CategoryService {
-  private categoryRepository: CategoryRepository;
-
   constructor() {
-    this.categoryRepository = new CategoryRepository();
+    // No longer cache repository - get fresh one on each request
+  }
+
+  private getCategoryRepository(): ICategoryRepository {
+    return DatabaseFactory.createCategoryRepository();
   }
 
   /**
    * Get all categories as a flat list
    */
   async getAllCategories(): Promise<Category[]> {
-    return this.categoryRepository.findAll();
+    return this.getCategoryRepository().findAll();
   }
 
   /**
    * Get categories organized in a hierarchical tree structure
    */
   async getCategoryTree(): Promise<CategoryTreeResponse[]> {
-    const categories = await this.categoryRepository.findAll();
+    const categories = await this.getCategoryRepository().findAll();
     return buildCategoryTree(categories);
   }
 
@@ -34,14 +37,14 @@ export class CategoryService {
    * Get a specific category by ID
    */
   async getCategoryById(id: number): Promise<Category | null> {
-    return this.categoryRepository.findById(id);
+    return this.getCategoryRepository().findById(id);
   }
 
   /**
    * Get root categories (top-level categories)
    */
   async getRootCategories(): Promise<Category[]> {
-    return this.categoryRepository.findRootCategories();
+    return this.getCategoryRepository().findRootCategories();
   }
 
   /**
@@ -49,12 +52,12 @@ export class CategoryService {
    */
   async getChildCategories(parentId: number): Promise<Category[]> {
     // First verify the parent category exists
-    const parentExists = await this.categoryRepository.existsById(parentId);
+    const parentExists = await this.getCategoryRepository().existsById(parentId);
     if (!parentExists) {
       throw new Error('Parent category not found');
     }
 
-    return this.categoryRepository.findChildCategories(parentId);
+    return this.getCategoryRepository().findChildCategories(parentId);
   }
 
   /**
@@ -71,26 +74,26 @@ export class CategoryService {
     }
 
     // Check if category name already exists
-    const nameExists = await this.categoryRepository.existsByName(categoryData.name.trim());
+    const nameExists = await this.getCategoryRepository().existsByName(categoryData.name.trim());
     if (nameExists) {
       throw new Error('Category name already exists');
     }
 
     // Validate parent_id if provided
     if (categoryData.parent_id) {
-      const parentValid = await this.categoryRepository.validateParentId(categoryData.parent_id);
+      const parentValid = await this.getCategoryRepository().validateParentId(categoryData.parent_id);
       if (!parentValid) {
         throw new Error('Parent category not found');
       }
 
       // For two-level hierarchy, ensure we don't create more than 2 levels
-      const parentCategory = await this.categoryRepository.findById(categoryData.parent_id);
+      const parentCategory = await this.getCategoryRepository().findById(categoryData.parent_id);
       if (parentCategory && parentCategory.parent_id) {
         throw new Error('Cannot create more than two levels of categories');
       }
     }
 
-    return this.categoryRepository.create({
+    return this.getCategoryRepository().create({
       name: categoryData.name.trim(),
       parent_id: categoryData.parent_id,
     });
@@ -101,7 +104,7 @@ export class CategoryService {
    */
   async updateCategory(id: number, updateData: UpdateCategoryRequest): Promise<Category | null> {
     // Check if category exists
-    const existingCategory = await this.categoryRepository.findById(id);
+    const existingCategory = await this.getCategoryRepository().findById(id);
     if (!existingCategory) {
       throw new Error('Category not found');
     }
@@ -117,7 +120,7 @@ export class CategoryService {
       }
 
       // Check if name already exists (excluding current category)
-      const nameExists = await this.categoryRepository.existsByName(updateData.name.trim(), id);
+      const nameExists = await this.getCategoryRepository().existsByName(updateData.name.trim(), id);
       if (nameExists) {
         throw new Error('Category name already exists');
       }
@@ -126,25 +129,25 @@ export class CategoryService {
     // Validate parent_id if provided
     if (updateData.parent_id !== undefined) {
       if (updateData.parent_id) {
-        const parentValid = await this.categoryRepository.validateParentId(updateData.parent_id);
+        const parentValid = await this.getCategoryRepository().validateParentId(updateData.parent_id);
         if (!parentValid) {
           throw new Error('Parent category not found');
         }
 
         // Check for cycles
-        const wouldCreateCycle = await this.categoryRepository.wouldCreateCycle(id, updateData.parent_id);
+        const wouldCreateCycle = await this.getCategoryRepository().wouldCreateCycle(id, updateData.parent_id);
         if (wouldCreateCycle) {
           throw new Error('Cannot create circular category relationship');
         }
 
         // For two-level hierarchy, ensure we don't create more than 2 levels
-        const parentCategory = await this.categoryRepository.findById(updateData.parent_id);
+        const parentCategory = await this.getCategoryRepository().findById(updateData.parent_id);
         if (parentCategory && parentCategory.parent_id) {
           throw new Error('Cannot create more than two levels of categories');
         }
 
         // If this category has children, it cannot become a child itself (two-level limit)
-        const children = await this.categoryRepository.findChildCategories(id);
+        const children = await this.getCategoryRepository().findChildCategories(id);
         if (children.length > 0) {
           throw new Error('Category with children cannot become a subcategory');
         }
@@ -159,7 +162,7 @@ export class CategoryService {
       processedUpdateData.parent_id = updateData.parent_id;
     }
 
-    return this.categoryRepository.update(id, processedUpdateData);
+    return this.getCategoryRepository().update(id, processedUpdateData);
   }
 
   /**
@@ -167,32 +170,32 @@ export class CategoryService {
    */
   async deleteCategory(id: number): Promise<boolean> {
     // Check if category exists
-    const existingCategory = await this.categoryRepository.findById(id);
+    const existingCategory = await this.getCategoryRepository().findById(id);
     if (!existingCategory) {
       throw new Error('Category not found');
     }
 
     // The repository will check for children and products
-    return this.categoryRepository.delete(id);
+    return this.getCategoryRepository().delete(id);
   }
 
   /**
    * Get category path (breadcrumb) from root to category
    */
   async getCategoryPath(categoryId: number): Promise<Category[]> {
-    const category = await this.categoryRepository.findById(categoryId);
+    const category = await this.getCategoryRepository().findById(categoryId);
     if (!category) {
       throw new Error('Category not found');
     }
 
-    return this.categoryRepository.getCategoryPath(categoryId);
+    return this.getCategoryRepository().getCategoryPath(categoryId);
   }
 
   /**
    * Get all category IDs in a subtree (useful for product filtering)
    */
   async getCategorySubtreeIds(categoryId: number): Promise<number[]> {
-    const category = await this.categoryRepository.findById(categoryId);
+    const category = await this.getCategoryRepository().findById(categoryId);
     if (!category) {
       throw new Error('Category not found');
     }
@@ -209,7 +212,7 @@ export class CategoryService {
       return [];
     }
 
-    const allCategories = await this.categoryRepository.findAll();
+    const allCategories = await this.getCategoryRepository().findAll();
     const searchTermLower = searchTerm.trim().toLowerCase();
 
     return allCategories.filter(category =>
@@ -221,7 +224,7 @@ export class CategoryService {
    * Validate category hierarchy constraints
    */
   async validateCategoryHierarchy(): Promise<{ valid: boolean; errors: string[] }> {
-    const categories = await this.categoryRepository.findAll();
+    const categories = await this.getCategoryRepository().findAll();
     const errors: string[] = [];
 
     // Check for cycles
