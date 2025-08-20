@@ -63,7 +63,7 @@ public class LoadMaxValues {
             System.exit(1);
         }
 
-        Initialize DynamoDB client.
+        // Initialize DynamoDB client.
         dynamoDb = DynamoDbClient.builder().region(awsRegion).build();
     
         // We need to create a string that is encoded in UTF-8 to 1024 bytes of the highest
