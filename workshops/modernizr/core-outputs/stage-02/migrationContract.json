@@ -473,8 +473,8 @@
             "condition": "parent_id IS NULL",
             "target_table": "categories",
             "join_condition": "categories.id = categories.parent_id",
-            "select_column": "categories.name",
-            "else_value": "ROOT"
+            "select_column": "'ROOT'",
+            "else_value": "parent.name"
           }
         },
         {
@@ -521,7 +521,7 @@
           "join": {
             "type": "self-join",
             "join_alias": "cat_path",
-            "join_condition": "cat_path.parent_id = categories.id",
+            "join_condition": "cat_path.id = categories.parent_id",
             "select_column": "cat_path.name",
             "null_value": ""
           },
@@ -583,8 +583,8 @@
             "condition": "parent_id IS NULL",
             "target_table": "categories",
             "join_condition": "categories.id = categories.parent_id",
-            "select_column": "categories.id",
-            "else_value": "ROOT"
+            "select_column": "'ROOT'",
+            "else_value": "parent.id"
           }
         },
         {
