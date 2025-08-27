@@ -51,10 +51,9 @@ def execute_mysql_views_via_mcp(view_sql, mysql_config, config):
     
     mysql_defaults = config.get('mysql', {})
     
-    # Parse SQL statements
+    # Parse SQL statements - improved logic
     statements = []
     current_statement = ""
-    in_view = False
     
     for line in view_sql.split('\n'):
         line = line.strip()
@@ -65,16 +64,15 @@ def execute_mysql_views_via_mcp(view_sql, mysql_config, config):
             if current_statement:
                 statements.append(current_statement.strip())
             current_statement = line
-            in_view = True
-        elif in_view:
+        else:
             current_statement += '\n' + line
-            if line.endswith(';'):
-                statements.append(current_statement.strip())
-                current_statement = ""
-                in_view = False
+            
+        if line.endswith(';'):
+            statements.append(current_statement.strip())
+            current_statement = ""
     
-    if current_statement and in_view:
-        statements.append(current_statement.strip() + ';')
+    if current_statement:
+        statements.append(current_statement.strip())
     
     print(f"   📋 Found {len(statements)} view statements to execute")
     

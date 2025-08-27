@@ -298,7 +298,7 @@ export class DynamoDBProductRepository extends BaseDynamoDBRepository implements
 
   private async transformFromDynamoDB(item: any): Promise<ProductWithDetails> {
     const product: ProductWithDetails = {
-      id: parseInt(item.id),
+      id: parseInt(item.PK),
       seller_id: parseInt(item.seller_id),
       category_id: parseInt(item.category_id),
       name: item.product_name || item.name,
