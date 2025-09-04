@@ -1,10 +1,201 @@
 # Data Migration Execution - Tasks
 
-- [ ] 1. Execute data migration script.
+- [ ] 1. Generate MySQL views for data transformation
   - [ ] 1.1 Validate migration contract and infrastructure inputs
-    - **INPUT**: Use artifacts/stage-02/migrationContract.json from the data modeling stage and deployed infrastructure from infrastructure deployment stage
-    - Ask the user to provide AWS credentials to add as environment variables
+    - **INPUT**: Use migrationContract.json from the data modeling stage and deployed infrastructure from infrastructure deployment stage
+    - Verify that the migration contract file exists and is properly formatted
+    - Confirm that DynamoDB tables have been successfully deployed and are accessible
     - Check AWS region consistency between infrastructure deployment and planned Glue jobs
-    - Execute using python the file `tools/contract_driven_migration_glue_mcp.py`
-    - Validate that all required fields are present in the migration contract
     - _Requirements: 1.1, 3.3_
+
+  - [ ] 1.2 Generate MySQL views using the provided script
+    - **CRITICAL**: Run generate_mysql_views.py script for each DynamoDB table defined in the migration contract
+    - Use the migration contract as input to the script with proper parameters
+    - Ensure the script processes all table definitions and handles denormalized attributes correctly
+    - **CRITICAL**: Create a single .sql file containing all resulting SQL statements
+    - Validate that the generated SQL is syntactically correct and follows MySQL standards
+    - _Requirements: 1.1, 1.2_
+
+  - [ ] 1.3 Execute generated SQL against MySQL database
+    - **CRITICAL**: Run the generated SQL against the user's MySQL database using MCP server connectivity
+    - Use MCP server tools for secure database connectivity and SQL execution
+    - Verify that all views are created successfully without errors
+    - _Requirements: 1.3, 1.4_
+
+  - [ ] 1.4 Validate view creation and data transformation
+    - Test each generated view to ensure it returns data in the expected format
+    - Verify that denormalized data is properly handled with correct joins
+    - **CRITICAL**: Properly handle joins and data denormalization as specified in the contract
+    - Check that data types are correctly mapped and transformed
+    - Validate that the views exclude soft-deleted records and apply appropriate filters
+    - _Requirements: 1.5_
+
+- [ ] 2. Execute contract-driven migration using Data Processing MCP server
+  - [ ] 2.1 Prepare migration environment and validate MCP server availability
+    - Verify that AWS credentials are properly configured with sufficient permissions for Glue operations
+    - Confirm that the target AWS region matches the infrastructure deployment region
+    - **CRITICAL**: Ensure AWS region consistency between infrastructure and Glue jobs
+    - Validate that config.json file is properly configured with migration contract path, AWS settings, and MySQL discovery parameters 
+    - Confirm that MCP servers have proper permissions and can execute required operations
+    - _Requirements: 2.2, 3.3_
+
+  - [ ] 2.3 Monitor migration execution and handle errors
+    - **CRITICAL**: Monitor the contract-driven migration script execution for comprehensive error handling
+    - Track progress through each phase: MySQL view creation, DynamoDB table creation, Glue job execution
+    - Verify that the script properly handles MySQL connection discovery and database connectivity
+    - Ensure that DynamoDB tables are created with correct schema including GSIs and key structures
+    - Monitor Glue job creation, script upload to S3, and job execution via MCP server calls
+    - **CRITICAL**: Validate that error handling and retry mechanisms are working properly throughout the process
+    - _Requirements: 2.4, 3.1, 3.2_
+
+- [ ] 3. Execute data migration with monitoring and validation
+  - [ ] 3.1 Execute migration jobs with comprehensive monitoring
+    - Start all configured Glue ETL jobs and monitor their execution progress
+    - **CRITICAL**: Provide real-time progress tracking and status updates
+    - Monitor resource utilization and performance metrics during execution
+    - **CRITICAL**: Log detailed error information and provide troubleshooting guidance
+    - Set up alerts for job failures or performance issues
+    - _Requirements: 3.1, 3.2_
+
+  - [ ] 3.2 Implement incremental migration with data validation
+    - **CRITICAL**: Perform incremental data migration with conditional writes to prevent data corruption
+    - Use DynamoDB conditional writes to prevent overwriting existing data
+    - Implement data validation checks during the migration process
+    - Monitor data consistency and integrity throughout the migration
+    - **CRITICAL**: Provide data validation and integrity checks throughout the process
+    - _Requirements: 2.3, 2.5_
+
+  - [ ] 3.3 Monitor migration progress and handle errors
+    - Track migration progress for each table and provide regular status updates
+    - Monitor CloudWatch metrics for Glue job performance and DynamoDB table metrics
+    - Handle migration errors gracefully with appropriate retry and recovery mechanisms
+    - **CRITICAL**: Use MCP servers for database connectivity where available
+    - Provide detailed error reporting and troubleshooting guidance for any issues
+    - _Requirements: 3.4_
+
+- [ ] 4. Validate migration completeness and data integrity
+  - [ ] 4.1 Perform comprehensive data validation
+    - Compare record counts between MySQL source tables and DynamoDB target tables
+    - Validate a statistical sample of migrated records for data accuracy and completeness
+    - Check that all required attributes are properly mapped and transformed
+    - Verify that denormalized data is correctly joined and represented
+    - Test that all access patterns from the migration contract work with migrated data
+    - _Requirements: 2.5_
+
+  - [ ] 4.2 Execute data integrity checks
+    - Validate that primary key constraints are maintained in DynamoDB
+    - Check that unique constraints are properly enforced through lookup tables
+    - Verify that referential integrity is maintained for denormalized data
+    - Test that all GSIs contain the expected data and support required access patterns
+    - Perform end-to-end testing of critical application workflows with migrated data
+    - _Requirements: 2.5_
+
+  - [ ] 4.3 Generate validation reports and metrics
+    - Create detailed validation reports showing migration success rates and data integrity scores
+    - Document any data discrepancies found during validation with recommended remediation
+    - Generate performance metrics for the migration process including throughput and latency
+    - Create summary reports for stakeholders showing migration completion status
+    - Provide recommendations for any post-migration optimizations or corrections needed
+    - _Requirements: 3.5_
+
+- [ ] 5. Generate comprehensive migration reports and documentation
+  - [ ] 5.1 Create migration completion reports
+    - **CRITICAL**: Generate comprehensive migration completion and validation reports
+    - Document total records migrated, migration duration, and performance metrics
+    - Include data integrity scores and validation results for each table
+    - Provide detailed error logs and resolution status for any issues encountered
+    - Create executive summary reports for project stakeholders
+    - _Requirements: 3.5_
+
+  - [ ] 5.2 Document post-migration procedures and recommendations
+    - Create operational runbooks for ongoing DynamoDB table management
+    - Document monitoring and alerting procedures for production operations
+    - Provide recommendations for performance optimization and cost management
+    - Create troubleshooting guides for common post-migration issues
+    - Document rollback procedures and disaster recovery plans
+    - _Requirements: 3.5_
+
+  - [ ] 5.3 Provide cleanup and maintenance guidance
+    - Document cleanup procedures for temporary migration resources (Glue jobs, S3 buckets, etc.)
+    - Provide guidance for removing MySQL views and temporary database objects
+    - Create maintenance schedules for ongoing DynamoDB operations (backups, monitoring, etc.)
+    - Document capacity planning and scaling procedures for production workloads
+    - Provide cost optimization recommendations based on actual migration results
+    - _Requirements: 3.5_
+
+## Output Validation Checklist
+
+Before marking this stage complete, verify:
+- [ ] MySQL views are generated and executed via contract-driven migration script using MCP server
+- [ ] MySQL connection is discovered automatically via Data Processing MCP server
+- [ ] DynamoDB tables are created via MCP server based on migration contract specifications
+- [ ] AWS Glue ETL jobs are created and executed using contract_driven_migration_glue_mcp.py
+- [ ] AWS region consistency is maintained between infrastructure and Glue jobs
+- [ ] Complete migration process is executed via Data Processing MCP server with comprehensive monitoring
+- [ ] All MCP server calls (MySQL, DynamoDB, Glue, S3) are executed successfully
+- [ ] Data validation confirms successful migration with integrity checks
+- [ ] Migration completion reports are generated with detailed metrics and recommendations
+- [ ] Post-migration documentation and operational guidance are provided
+
+## Critical Execution Guidelines
+
+**Script Execution Requirements**:
+- **ALWAYS** use data-migration-tools/contract_driven_migration_glue_mcp.py for complete migration execution
+- **VERIFY** that config.json is properly configured with migration contract path and AWS settings
+- **ENSURE** that Data Processing MCP server (Glue MCP) is available and accessible
+- **VALIDATE** that the script handles all phases: MySQL views, DynamoDB tables, and Glue jobs via MCP
+
+**Data Integrity Requirements**:
+- **ALWAYS** use conditional writes to prevent data corruption during migration
+- **ALWAYS** perform comprehensive data validation throughout the process
+- **VERIFY** that record counts match between source and target systems
+- **VALIDATE** that data transformations are applied correctly according to the contract
+
+**Monitoring and Error Handling**:
+- **ALWAYS** provide real-time progress tracking and status updates
+- **ALWAYS** log detailed error information for troubleshooting
+- **IMPLEMENT** comprehensive retry mechanisms for transient failures
+- **ENSURE** that all errors are properly handled and documented
+
+**Regional Consistency**:
+- **VERIFY** that AWS region is consistent between infrastructure deployment and Glue jobs
+- **ENSURE** that all AWS resources are created in the same region
+- **VALIDATE** that cross-region dependencies are properly handled if they exist
+
+## Troubleshooting Guide
+
+**Contract-Driven Migration Script Issues**:
+- Verify that config.json exists and contains proper migration contract path and AWS configuration
+- Check that Data Processing MCP server (Glue MCP) is running and accessible
+- Ensure that the migration contract file is properly formatted and accessible
+- Validate that MySQL connection discovery parameters are correctly configured in config.json
+
+**MCP Server Connectivity Issues**:
+- Verify that MySQL MCP server can discover and connect to the database automatically
+- Check that AWS credentials have sufficient permissions for DynamoDB, Glue, and S3 operations
+- Ensure that all MCP server calls are executing successfully (MySQL, DynamoDB, Glue, S3)
+- Validate that the script properly handles MCP server responses and error conditions
+
+**AWS Glue Job Issues via MCP**:
+- Monitor Glue job creation and execution through MCP server calls
+- Check that Glue scripts are properly uploaded to S3 via MCP server
+- Verify that Glue jobs are created with correct IAM roles and configurations
+- Ensure that Glue job execution completes successfully with proper error handling
+
+**Data Migration Issues**:
+- Monitor CloudWatch logs for detailed error information from Glue jobs
+- Check DynamoDB table metrics for throttling or capacity issues
+- Verify that conditional writes are working properly to prevent data corruption
+- Ensure that data transformations are being applied correctly
+
+**Validation Issues**:
+- Compare record counts between source and target systems to identify discrepancies
+- Check data type mappings and transformations for accuracy
+- Verify that denormalized data is properly joined and represented
+- Test access patterns with migrated data to ensure functionality
+
+**Performance Issues**:
+- Monitor Glue job resource utilization and adjust worker configuration if needed
+- Check DynamoDB table capacity and scaling settings
+- Optimize data transformation logic for better performance
+- Consider parallel processing for large datasets to improve throughput
