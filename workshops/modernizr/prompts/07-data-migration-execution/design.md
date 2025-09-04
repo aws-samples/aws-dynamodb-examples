@@ -2,448 +2,763 @@
 
 ## Overview
 
-The Data Migration Execution stage implements a safe, monitored data migration process using MySQL views for data transformation and AWS Glue ETL jobs for data transfer. The design emphasizes data integrity, comprehensive validation, and detailed monitoring throughout the migration process.
+The Data Migration Execution stage implements a comprehensive MCP server-driven approach to migrate data from MySQL to DynamoDB. The design emphasizes proper MCP server integration, replacing subprocess calls with native MCP server operations for MySQL, AWS Glue, DynamoDB, and S3 services.
 
 ## Architecture
 
-### Migration Execution Architecture
+### MCP Server-Driven Migration Architecture
 
 ```mermaid
 graph TD
-    A[migrationContract.json] --> B[MySQL Views Generation]
-    B --> C[View Execution on MySQL]
-    C --> D[AWS Glue Job Creation]
-    D --> E[ETL Job Execution]
-    E --> F[Data Validation]
-    F --> G[Migration Reports]
+    A[Migration Contract] --> B[MCP Server Orchestrator]
+    B --> C[MySQL MCP Server]
+    B --> D[Glue MCP Server]
+    B --> E[DynamoDB MCP Server]
+    B --> F[S3 MCP Server]
     
-    subgraph "Data Sources"
-        H[MySQL Database]
-        I[Generated Views]
+    C --> G[View Generation & Execution]
+    D --> H[ETL Job Creation & Management]
+    E --> I[Table Creation & Validation]
+    F --> J[Script Management & Storage]
+    
+    G --> K[Data Transformation]
+    H --> L[Migration Execution]
+    I --> M[Schema Validation]
+    J --> N[Resource Management]
+    
+    K --> O[Migration Monitoring]
+    L --> O
+    M --> O
+    N --> O
+    
+    O --> P[Validation & Reporting]
+    
+    subgraph "MCP Server Integration"
+        Q[MySQL Operations]
+        R[Glue Operations]
+        S[DynamoDB Operations]
+        T[S3 Operations]
     end
     
-    subgraph "AWS Infrastructure"
-        J[DynamoDB Tables]
-        K[AWS Glue Jobs]
-        L[CloudWatch Monitoring]
-    end
-    
-    B --> H
-    C --> I
-    D --> K
-    E --> J
-    F --> L
+    C --> Q
+    D --> R
+    E --> S
+    F --> T
 ```
 
 ## Components and Interfaces
 
-### 1. MySQL Views Generation System
-**Purpose**: Transform MySQL data structure to match DynamoDB requirements
+### 1. MCP Server Orchestrator
+**Purpose**: Coordinate operations across multiple MCP servers and manage migration workflow
 
-**View Generation Process**:
-```python
-class MySQLViewGenerator:
-    def __init__(self, migration_contract: MigrationContract):
-        self.contract = migration_contract
-        self.generated_views = []
+**Orchestration Process**:
+```typescript
+interface MCPServerOrchestrator {
+    validateMCPServers(): Promise<MCPServerStatus>;
+    executeMigration(contract: MigrationContract): Promise<MigrationResult>;
+    monitorProgress(): Promise<ProgressReport>;
+    handleErrors(error: MCPError): Promise<ErrorResolution>;
+}
+
+class DataMigrationOrchestrator implements MCPServerOrchestrator {
+    private mysqlMCP: MySQLMCPClient;
+    private glueMCP: GlueMCPClient;
+    private dynamodbMCP: DynamoDBMCPClient;
+    private s3MCP: S3MCPClient;
     
-    def generate_views_for_all_tables(self) -> str:
-        """Generate MySQL views for each DynamoDB table in the migration contract"""
-        sql_statements = []
-        
-        for table_config in self.contract:
-            if table_config['type'] == 'Table':
-                view_sql = self.generate_view_for_table(table_config)
-                sql_statements.append(view_sql)
-                self.generated_views.append({
-                    'table_name': table_config['table'],
-                    'view_name': f"migration_view_{table_config['table']}",
-                    'source_table': table_config['source_table']
-                })
-        
-        return '\n\n'.join(sql_statements)
+    constructor() {
+        this.mysqlMCP = new MySQLMCPClient();
+        this.glueMCP = new GlueMCPClient();
+        this.dynamodbMCP = new DynamoDBMCPClient();
+        this.s3MCP = new S3MCPClient();
+    }
     
-    def generate_view_for_table(self, table_config: dict) -> str:
-        """Generate SQL view for a specific DynamoDB table"""
-        view_name = f"migration_view_{table_config['table']}"
-        source_table = table_config['source_table']
+    async validateMCPServers(): Promise<MCPServerStatus> {
+        const validations = await Promise.all([
+            this.validateMySQLMCP(),
+            this.validateGlueMCP(),
+            this.validateDynamoDBMCP(),
+            this.validateS3MCP()
+        ]);
         
-        # Build SELECT clause with attribute mappings
-        select_clauses = []
-        join_clauses = []
+        return {
+            allServersOperational: validations.every(v => v.isOperational),
+            serverStatuses: validations,
+            readyForMigration: validations.every(v => v.isOperational && v.hasRequiredPermissions)
+        };
+    }
+    
+    async executeMigration(contract: MigrationContract): Promise<MigrationResult> {
+        // Phase 1: MySQL View Generation and Execution
+        const viewResults = await this.executeViewGeneration(contract);
         
-        for attr_name, attr_config in table_config['attributes'].items():
-            if attr_config.get('denormalized', False):
-                # Handle denormalized attributes with joins
-                join_info = attr_config['join']
-                join_table = attr_config['source_table']
-                
-                select_clauses.append(
-                    f"{join_table}.{attr_config['source_column']} AS {attr_name}"
-                )
-                
-                join_clauses.append(
-                    f"LEFT JOIN {join_table} ON {source_table}.{join_info['local_column']} = {join_table}.{join_info['source_column']}"
-                )
-            else:
-                # Handle regular attributes
-                select_clauses.append(
-                    f"{source_table}.{attr_config['source_column']} AS {attr_name}"
-                )
+        // Phase 2: DynamoDB Table Creation
+        const tableResults = await this.createDynamoDBTables(contract);
         
-        # Construct the complete SQL view
-        sql = f"""
-CREATE OR REPLACE VIEW {view_name} AS
-SELECT 
-    {', '.join(select_clauses)}
-FROM {source_table}
-{' '.join(join_clauses)}
-WHERE {source_table}.deleted_at IS NULL  -- Exclude soft-deleted records
-ORDER BY {source_table}.id;
-"""
+        // Phase 3: Glue ETL Job Creation and Execution
+        const migrationResults = await this.executeGlueJobs(contract, viewResults, tableResults);
         
-        return sql.strip()
+        // Phase 4: Data Validation and Reporting
+        const validationResults = await this.validateMigration(contract, migrationResults);
+        
+        return {
+            success: validationResults.isValid,
+            viewsCreated: viewResults.createdViews,
+            tablesCreated: tableResults.createdTables,
+            jobsExecuted: migrationResults.executedJobs,
+            validationReport: validationResults,
+            migrationMetrics: this.generateMetrics(viewResults, tableResults, migrationResults)
+        };
+    }
+    
+    private async validateMySQLMCP(): Promise<MCPServerValidation> {
+        try {
+            const connectionTest = await this.mysqlMCP.testConnection();
+            const permissionTest = await this.mysqlMCP.validatePermissions(['CREATE VIEW', 'SELECT', 'SHOW TABLES']);
+            
+            return {
+                serverType: 'MySQL MCP',
+                isOperational: connectionTest.success,
+                hasRequiredPermissions: permissionTest.hasAllPermissions,
+                lastChecked: new Date(),
+                details: {
+                    connectionInfo: connectionTest.connectionInfo,
+                    availableOperations: permissionTest.availableOperations
+                }
+            };
+        } catch (error) {
+            return {
+                serverType: 'MySQL MCP',
+                isOperational: false,
+                hasRequiredPermissions: false,
+                lastChecked: new Date(),
+                error: error.message
+            };
+        }
+    }
+    
+    private async validateGlueMCP(): Promise<MCPServerValidation> {
+        try {
+            const serviceTest = await this.glueMCP.testService();
+            const permissionTest = await this.glueMCP.validatePermissions([
+                'glue:CreateJob',
+                'glue:StartJobRun',
+                'glue:GetJobRun',
+                's3:PutObject',
+                's3:GetObject'
+            ]);
+            
+            return {
+                serverType: 'Glue MCP',
+                isOperational: serviceTest.success,
+                hasRequiredPermissions: permissionTest.hasAllPermissions,
+                lastChecked: new Date(),
+                details: {
+                    availableRegions: serviceTest.availableRegions,
+                    supportedJobTypes: serviceTest.supportedJobTypes
+                }
+            };
+        } catch (error) {
+            return {
+                serverType: 'Glue MCP',
+                isOperational: false,
+                hasRequiredPermissions: false,
+                lastChecked: new Date(),
+                error: error.message
+            };
+        }
+    }
+}
 ```
 
-### 2. AWS Glue ETL Job Management System
-**Purpose**: Create and execute ETL jobs for data migration
+### 2. MySQL MCP Integration System
+**Purpose**: Handle all MySQL operations through MCP server calls
 
-**Glue Job Configuration**:
-```python
-class GlueJobManager:
-    def __init__(self, region: str, migration_contract: MigrationContract):
-        self.glue_client = boto3.client('glue', region_name=region)
-        self.region = region
-        self.contract = migration_contract
+**MySQL Operations**:
+```typescript
+interface MySQLMCPClient {
+    discoverConnection(): Promise<MySQLConnectionInfo>;
+    executeQuery(query: string): Promise<QueryResult>;
+    createView(viewDefinition: ViewDefinition): Promise<ViewCreationResult>;
+    validateView(viewName: string): Promise<ViewValidationResult>;
+}
+
+class MySQLMCPOperations implements MySQLMCPClient {
+    private mcpClient: MCPClient;
     
-    def create_migration_jobs(self, view_names: List[str]) -> List[str]:
-        """Create AWS Glue jobs for each migration view"""
-        job_names = []
-        
-        for i, table_config in enumerate(self.contract):
-            if table_config['type'] == 'Table':
-                job_name = f"mysql-to-dynamodb-{table_config['table']}"
-                view_name = view_names[i]
-                
-                job_definition = self.create_job_definition(
-                    job_name, 
-                    table_config, 
-                    view_name
-                )
-                
-                self.glue_client.create_job(**job_definition)
-                job_names.append(job_name)
-        
-        return job_names
+    constructor(mcpEndpoint: string) {
+        this.mcpClient = new MCPClient(mcpEndpoint);
+    }
     
-    def create_job_definition(self, job_name: str, table_config: dict, view_name: str) -> dict:
-        """Create Glue job definition for a specific table migration"""
+    async discoverConnection(): Promise<MySQLConnectionInfo> {
+        const response = await this.mcpClient.call('mysql_discover_connection', {
+            discovery_hosts: ['localhost', '127.0.0.1'],
+            discovery_ports: [3306, 3307, 33060],
+            discovery_users: ['root', 'mysql', 'admin'],
+            timeout: 30
+        });
+        
+        if (!response.success) {
+            throw new Error(`MySQL connection discovery failed: ${response.error}`);
+        }
+        
         return {
-            'Name': job_name,
-            'Role': 'arn:aws:iam::ACCOUNT:role/GlueServiceRole',  # User must provide
-            'Command': {
-                'Name': 'glueetl',
-                'ScriptLocation': f's3://migration-scripts/{job_name}.py',
-                'PythonVersion': '3'
-            },
-            'DefaultArguments': {
-                '--job-bookmark-option': 'job-bookmark-enable',
-                '--enable-metrics': 'true',
-                '--enable-continuous-cloudwatch-log': 'true',
-                '--mysql-view-name': view_name,
-                '--dynamodb-table-name': table_config['table'],
-                '--region': self.region,
-                '--migration-contract': json.dumps(table_config)
-            },
-            'MaxRetries': 3,
-            'Timeout': 2880,  # 48 hours
-            'GlueVersion': '3.0',
-            'NumberOfWorkers': 10,
-            'WorkerType': 'G.1X',
-            'Tags': {
-                'Project': 'MySQL-DynamoDB-Migration',
-                'Table': table_config['table'],
-                'Environment': 'Migration'
+            host: response.connection.host,
+            port: response.connection.port,
+            user: response.connection.user,
+            database: response.connection.database,
+            availableDatabases: response.connection.available_databases
+        };
+    }
+    
+    async createView(viewDefinition: ViewDefinition): Promise<ViewCreationResult> {
+        const response = await this.mcpClient.call('mysql_execute_ddl', {
+            query: viewDefinition.sql,
+            operation_type: 'CREATE_VIEW',
+            view_name: viewDefinition.name
+        });
+        
+        if (!response.success) {
+            throw new Error(`View creation failed for ${viewDefinition.name}: ${response.error}`);
+        }
+        
+        return {
+            viewName: viewDefinition.name,
+            created: true,
+            rowCount: await this.getViewRowCount(viewDefinition.name),
+            executionTime: response.execution_time
+        };
+    }
+    
+    async generateViewsFromContract(contract: MigrationContract): Promise<ViewGenerationResult[]> {
+        const results: ViewGenerationResult[] = [];
+        
+        for (const tableConfig of contract.tables) {
+            try {
+                const viewDefinition = this.generateViewDefinition(tableConfig);
+                const creationResult = await this.createView(viewDefinition);
+                
+                results.push({
+                    tableName: tableConfig.table,
+                    viewName: viewDefinition.name,
+                    success: true,
+                    result: creationResult
+                });
+            } catch (error) {
+                results.push({
+                    tableName: tableConfig.table,
+                    viewName: `ddb_${tableConfig.table.toLowerCase()}_view`,
+                    success: false,
+                    error: error.message
+                });
             }
         }
-    
-    def execute_migration_jobs(self, job_names: List[str]) -> List[str]:
-        """Execute all migration jobs and return job run IDs"""
-        job_run_ids = []
         
-        for job_name in job_names:
-            response = self.glue_client.start_job_run(
-                JobName=job_name,
-                Arguments={
-                    '--migration-timestamp': datetime.now().isoformat()
+        return results;
+    }
+    
+    private generateViewDefinition(tableConfig: MigrationContractEntry): ViewDefinition {
+        const viewName = `ddb_${tableConfig.table.toLowerCase()}_view`;
+        let sql = `CREATE OR REPLACE VIEW ${viewName} AS SELECT `;
+        
+        // Build SELECT clause based on attributes and join patterns
+        const selectClauses: string[] = [];
+        
+        for (const attribute of tableConfig.attributes) {
+            if (attribute.join) {
+                selectClauses.push(this.generateJoinClause(attribute));
+            } else {
+                selectClauses.push(`${tableConfig.source_table}.${attribute.source_column} AS ${attribute.name}`);
+            }
+        }
+        
+        sql += selectClauses.join(', ');
+        sql += ` FROM ${tableConfig.source_table}`;
+        
+        // Add JOIN clauses for complex patterns
+        const joinClauses = this.generateJoinClauses(tableConfig);
+        if (joinClauses.length > 0) {
+            sql += ' ' + joinClauses.join(' ');
+        }
+        
+        return {
+            name: viewName,
+            sql: sql,
+            sourceTable: tableConfig.source_table,
+            targetTable: tableConfig.table
+        };
+    }
+    
+    private generateJoinClause(attribute: AttributeDefinition): string {
+        switch (attribute.join.type) {
+            case 'self-join':
+                return `COALESCE(${attribute.join.join_alias}.${attribute.join.select_column}, '${attribute.join.null_value}') AS ${attribute.name}`;
+            
+            case 'foreign-key':
+                return `${attribute.join.target_table}.${attribute.join.select_column} AS ${attribute.name}`;
+            
+            case 'chain':
+                if (attribute.join.chain_separator) {
+                    const chainParts = attribute.join.joins.map(join => join.select_column);
+                    return `CONCAT_WS('${attribute.join.chain_separator}', ${chainParts.join(', ')}) AS ${attribute.name}`;
+                } else {
+                    const lastJoin = attribute.join.joins[attribute.join.joins.length - 1];
+                    return `${lastJoin.target_table}.${lastJoin.select_column} AS ${attribute.name}`;
                 }
+            
+            case 'conditional':
+                return `CASE WHEN ${attribute.join.condition} THEN ${attribute.join.target_table}.${attribute.join.select_column} ELSE '${attribute.join.else_value}' END AS ${attribute.name}`;
+            
+            case 'json-construction':
+                return `(SELECT JSON_ARRAYAGG(JSON_OBJECT(${this.buildJsonObjectFields(attribute.join.construction.select_columns)})) FROM ${attribute.join.target_table} WHERE ${attribute.join.join_condition} ${attribute.join.construction.order_by ? 'ORDER BY ' + attribute.join.construction.order_by : ''} ${attribute.join.construction.limit ? 'LIMIT ' + attribute.join.construction.limit : ''}) AS ${attribute.name}`;
+            
+            default:
+                throw new Error(`Unsupported join type: ${attribute.join.type}`);
+        }
+    }
+}
+```
+
+### 3. Glue MCP Integration System
+**Purpose**: Handle all AWS Glue operations through MCP server calls
+
+**Glue Operations**:
+```typescript
+interface GlueMCPClient {
+    createJob(jobDefinition: GlueJobDefinition): Promise<JobCreationResult>;
+    startJobRun(jobName: string, parameters?: Record<string, string>): Promise<JobRunResult>;
+    monitorJobRun(jobName: string, runId: string): Promise<JobRunStatus>;
+    getJobLogs(jobName: string, runId: string): Promise<JobLogs>;
+}
+
+class GlueMCPOperations implements GlueMCPClient {
+    private mcpClient: MCPClient;
+    private s3MCP: S3MCPClient;
+    
+    constructor(mcpEndpoint: string, s3MCPClient: S3MCPClient) {
+        this.mcpClient = new MCPClient(mcpEndpoint);
+        this.s3MCP = s3MCPClient;
+    }
+    
+    async createJob(jobDefinition: GlueJobDefinition): Promise<JobCreationResult> {
+        // First, upload the script to S3 via S3 MCP
+        const scriptUploadResult = await this.s3MCP.uploadObject({
+            bucket: jobDefinition.scriptBucket,
+            key: jobDefinition.scriptKey,
+            content: jobDefinition.scriptContent,
+            contentType: 'text/x-python'
+        });
+        
+        if (!scriptUploadResult.success) {
+            throw new Error(`Failed to upload Glue script: ${scriptUploadResult.error}`);
+        }
+        
+        // Create the Glue job via MCP
+        const response = await this.mcpClient.call('glue_create_job', {
+            job_name: jobDefinition.jobName,
+            role_arn: jobDefinition.roleArn,
+            script_location: `s3://${jobDefinition.scriptBucket}/${jobDefinition.scriptKey}`,
+            command_name: 'pythonshell',
+            python_version: '3.9',
+            max_retries: 0,
+            timeout: 60,
+            default_arguments: {
+                '--additional-python-modules': 'mysql-connector-python,boto3'
+            }
+        });
+        
+        if (!response.success) {
+            throw new Error(`Glue job creation failed: ${response.error}`);
+        }
+        
+        return {
+            jobName: jobDefinition.jobName,
+            jobArn: response.job_arn,
+            scriptLocation: `s3://${jobDefinition.scriptBucket}/${jobDefinition.scriptKey}`,
+            created: true
+        };
+    }
+    
+    async startJobRun(jobName: string, parameters?: Record<string, string>): Promise<JobRunResult> {
+        const response = await this.mcpClient.call('glue_start_job_run', {
+            job_name: jobName,
+            arguments: parameters || {}
+        });
+        
+        if (!response.success) {
+            throw new Error(`Failed to start Glue job ${jobName}: ${response.error}`);
+        }
+        
+        return {
+            jobName: jobName,
+            runId: response.job_run_id,
+            status: 'STARTING',
+            startedAt: new Date()
+        };
+    }
+    
+    async monitorJobRun(jobName: string, runId: string): Promise<JobRunStatus> {
+        const response = await this.mcpClient.call('glue_get_job_run', {
+            job_name: jobName,
+            run_id: runId
+        });
+        
+        if (!response.success) {
+            throw new Error(`Failed to get job run status: ${response.error}`);
+        }
+        
+        return {
+            jobName: jobName,
+            runId: runId,
+            status: response.job_run.job_run_state,
+            startedAt: new Date(response.job_run.started_on),
+            completedAt: response.job_run.completed_on ? new Date(response.job_run.completed_on) : undefined,
+            errorMessage: response.job_run.error_message,
+            executionTime: response.job_run.execution_time
+        };
+    }
+    
+    async createJobsFromContract(
+        contract: MigrationContract,
+        mysqlConnection: MySQLConnectionInfo,
+        createdViews: string[]
+    ): Promise<GlueJobCreationResult[]> {
+        const results: GlueJobCreationResult[] = [];
+        
+        for (const tableConfig of contract.tables) {
+            const viewName = `ddb_${tableConfig.table.toLowerCase()}_view`;
+            
+            if (!createdViews.includes(viewName)) {
+                results.push({
+                    tableName: tableConfig.table,
+                    jobName: `${tableConfig.table.toLowerCase()}_migration_job`,
+                    success: false,
+                    error: `View ${viewName} not found in created views`
+                });
+                continue;
+            }
+            
+            try {
+                const jobDefinition = this.generateJobDefinition(tableConfig, mysqlConnection, viewName);
+                const creationResult = await this.createJob(jobDefinition);
+                
+                results.push({
+                    tableName: tableConfig.table,
+                    jobName: jobDefinition.jobName,
+                    success: true,
+                    result: creationResult
+                });
+            } catch (error) {
+                results.push({
+                    tableName: tableConfig.table,
+                    jobName: `${tableConfig.table.toLowerCase()}_migration_job`,
+                    success: false,
+                    error: error.message
+                });
+            }
+        }
+        
+        return results;
+    }
+    
+    private generateJobDefinition(
+        tableConfig: MigrationContractEntry,
+        mysqlConnection: MySQLConnectionInfo,
+        viewName: string
+    ): GlueJobDefinition {
+        const jobName = `${tableConfig.table.toLowerCase()}_migration_job`;
+        const scriptContent = this.generateETLScript(tableConfig, mysqlConnection, viewName);
+        
+        return {
+            jobName: jobName,
+            roleArn: process.env.GLUE_ROLE_ARN!,
+            scriptBucket: process.env.S3_SCRIPT_BUCKET!,
+            scriptKey: `migration-scripts/${jobName}.py`,
+            scriptContent: scriptContent,
+            sourceView: viewName,
+            targetTable: tableConfig.table
+        };
+    }
+    
+    private generateETLScript(
+        tableConfig: MigrationContractEntry,
+        mysqlConnection: MySQLConnectionInfo,
+        viewName: string
+    ): string {
+        return `
+import sys
+import boto3
+import mysql.connector
+from awsglue.utils import getResolvedOptions
+import json
+
+# Get job arguments
+args = getResolvedOptions(sys.argv, ['JOB_NAME'])
+
+def main():
+    # Connect to MySQL
+    mysql_conn = mysql.connector.connect(
+        host='${mysqlConnection.host}',
+        port=${mysqlConnection.port},
+        user='${mysqlConnection.user}',
+        password='',
+        database='${mysqlConnection.database}'
+    )
+    
+    # Connect to DynamoDB
+    dynamodb = boto3.resource('dynamodb', region_name='${process.env.AWS_REGION}')
+    table = dynamodb.Table('${tableConfig.table}')
+    
+    try:
+        cursor = mysql_conn.cursor(dictionary=True)
+        cursor.execute('SELECT * FROM ${viewName}')
+        
+        batch_size = 25  # DynamoDB batch write limit
+        batch = []
+        total_processed = 0
+        
+        for row in cursor:
+            # Convert row to DynamoDB item format
+            item = {}
+            for key, value in row.items():
+                if value is not None:
+                    if isinstance(value, (int, float)):
+                        item[key] = {'N': str(value)}
+                    elif isinstance(value, bool):
+                        item[key] = {'BOOL': value}
+                    else:
+                        item[key] = {'S': str(value)}
+            
+            batch.append({'PutRequest': {'Item': item}})
+            
+            # Write batch when full
+            if len(batch) >= batch_size:
+                response = table.batch_writer().batch_write_item(
+                    RequestItems={'${tableConfig.table}': batch}
+                )
+                total_processed += len(batch)
+                batch = []
+                print(f'Processed {total_processed} records')
+        
+        # Write remaining items
+        if batch:
+            table.batch_writer().batch_write_item(
+                RequestItems={'${tableConfig.table}': batch}
             )
-            job_run_ids.append(response['JobRunId'])
+            total_processed += len(batch)
         
-        return job_run_ids
+        print(f'✅ Migration completed: {total_processed} records migrated to ${tableConfig.table}')
+        
+    except Exception as e:
+        print(f'❌ Migration failed for ${tableConfig.table}: {str(e)}')
+        raise e
+    finally:
+        mysql_conn.close()
+
+if __name__ == '__main__':
+    main()
+`;
+    }
+}
 ```
 
-### 3. Data Validation and Integrity System
-**Purpose**: Ensure data integrity throughout the migration process
+### 4. DynamoDB MCP Integration System
+**Purpose**: Handle all DynamoDB operations through MCP server calls
 
-**Validation Framework**:
-```python
-class MigrationValidator:
-    def __init__(self, mysql_connection, dynamodb_client, migration_contract):
-        self.mysql = mysql_connection
-        self.dynamodb = dynamodb_client
-        self.contract = migration_contract
-    
-    def validate_migration_completeness(self) -> ValidationReport:
-        """Validate that all data has been successfully migrated"""
-        report = ValidationReport()
-        
-        for table_config in self.contract:
-            if table_config['type'] == 'Table':
-                table_validation = self.validate_table_migration(table_config)
-                report.add_table_validation(table_validation)
-        
-        return report
-    
-    def validate_table_migration(self, table_config: dict) -> TableValidationResult:
-        """Validate migration for a specific table"""
-        source_table = table_config['source_table']
-        target_table = table_config['table']
-        
-        # Count records in source
-        mysql_count = self.count_mysql_records(source_table)
-        
-        # Count records in DynamoDB
-        dynamodb_count = self.count_dynamodb_records(target_table)
-        
-        # Sample data validation
-        sample_validation = self.validate_sample_data(table_config)
-        
-        return TableValidationResult(
-            table_name=target_table,
-            source_count=mysql_count,
-            target_count=dynamodb_count,
-            count_match=mysql_count == dynamodb_count,
-            sample_validation=sample_validation,
-            data_integrity_score=self.calculate_integrity_score(sample_validation)
-        )
-    
-    def validate_sample_data(self, table_config: dict, sample_size: int = 100) -> SampleValidationResult:
-        """Validate a sample of migrated data for accuracy"""
-        source_table = table_config['source_table']
-        target_table = table_config['table']
-        
-        # Get sample records from MySQL
-        mysql_sample = self.get_mysql_sample(source_table, sample_size)
-        
-        validation_results = []
-        
-        for mysql_record in mysql_sample:
-            # Get corresponding DynamoDB record
-            pk_value = mysql_record[table_config['pk']]
-            dynamodb_record = self.get_dynamodb_record(target_table, pk_value)
-            
-            if dynamodb_record:
-                comparison = self.compare_records(mysql_record, dynamodb_record, table_config)
-                validation_results.append(comparison)
-            else:
-                validation_results.append(RecordComparison(
-                    mysql_id=pk_value,
-                    found_in_dynamodb=False,
-                    differences=['Record not found in DynamoDB']
-                ))
-        
-        return SampleValidationResult(
-            total_sampled=len(mysql_sample),
-            successful_matches=len([r for r in validation_results if r.is_match]),
-            validation_results=validation_results
-        )
-    
-    def compare_records(self, mysql_record: dict, dynamodb_record: dict, table_config: dict) -> RecordComparison:
-        """Compare individual records between MySQL and DynamoDB"""
-        differences = []
-        
-        for attr_name, attr_config in table_config['attributes'].items():
-            mysql_value = mysql_record.get(attr_config['source_column'])
-            dynamodb_value = dynamodb_record.get(attr_name)
-            
-            # Handle type conversions and formatting
-            if not self.values_match(mysql_value, dynamodb_value, attr_config['type']):
-                differences.append(f"{attr_name}: MySQL={mysql_value}, DynamoDB={dynamodb_value}")
-        
-        return RecordComparison(
-            mysql_id=mysql_record[table_config['pk']],
-            found_in_dynamodb=True,
-            is_match=len(differences) == 0,
-            differences=differences
-        )
-```
+**DynamoDB Operations**:
+```typescript
+interface DynamoDBMCPClient {
+    createTable(tableDefinition: DynamoDBTableDefinition): Promise<TableCreationResult>;
+    describeTable(tableName: string): Promise<TableDescription>;
+    validateTableSchema(tableName: string, expectedSchema: TableSchema): Promise<SchemaValidationResult>;
+    monitorTableMetrics(tableName: string): Promise<TableMetrics>;
+}
 
-### 4. Monitoring and Reporting System
-**Purpose**: Provide comprehensive monitoring and reporting throughout migration
-
-**Monitoring Implementation**:
-```python
-class MigrationMonitor:
-    def __init__(self, cloudwatch_client, glue_client):
-        self.cloudwatch = cloudwatch_client
-        self.glue = glue_client
-        self.metrics = []
+class DynamoDBMCPOperations implements DynamoDBMCPClient {
+    private mcpClient: MCPClient;
     
-    def monitor_job_progress(self, job_run_ids: List[str]) -> MigrationProgress:
-        """Monitor progress of all migration jobs"""
-        progress = MigrationProgress()
+    constructor(mcpEndpoint: string) {
+        this.mcpClient = new MCPClient(mcpEndpoint);
+    }
+    
+    async createTable(tableDefinition: DynamoDBTableDefinition): Promise<TableCreationResult> {
+        const response = await this.mcpClient.call('dynamodb_create_table', {
+            table_name: tableDefinition.tableName,
+            key_schema: tableDefinition.keySchema,
+            attribute_definitions: tableDefinition.attributeDefinitions,
+            billing_mode: 'PAY_PER_REQUEST',
+            global_secondary_indexes: tableDefinition.globalSecondaryIndexes,
+            stream_specification: {
+                stream_enabled: true,
+                stream_view_type: 'NEW_AND_OLD_IMAGES'
+            },
+            point_in_time_recovery_specification: {
+                point_in_time_recovery_enabled: true
+            },
+            sse_specification: {
+                enabled: true
+            },
+            deletion_protection_enabled: true
+        });
         
-        for job_run_id in job_run_ids:
-            job_status = self.get_job_status(job_run_id)
-            progress.add_job_status(job_status)
+        if (!response.success) {
+            if (response.error.includes('ResourceInUseException')) {
+                return {
+                    tableName: tableDefinition.tableName,
+                    created: false,
+                    alreadyExists: true,
+                    tableArn: await this.getTableArn(tableDefinition.tableName)
+                };
+            }
+            throw new Error(`Table creation failed: ${response.error}`);
+        }
+        
+        return {
+            tableName: tableDefinition.tableName,
+            created: true,
+            tableArn: response.table_description.table_arn,
+            tableStatus: response.table_description.table_status
+        };
+    }
+    
+    async createTablesFromContract(contract: MigrationContract): Promise<TableCreationResult[]> {
+        const results: TableCreationResult[] = [];
+        
+        for (const tableConfig of contract.tables) {
+            try {
+                const tableDefinition = this.generateTableDefinition(tableConfig);
+                const creationResult = await this.createTable(tableDefinition);
+                
+                results.push(creationResult);
+            } catch (error) {
+                results.push({
+                    tableName: tableConfig.table,
+                    created: false,
+                    error: error.message
+                });
+            }
+        }
+        
+        return results;
+    }
+    
+    private generateTableDefinition(tableConfig: MigrationContractEntry): DynamoDBTableDefinition {
+        const keySchema = [
+            { AttributeName: tableConfig.pk, KeyType: 'HASH' }
+        ];
+        
+        const attributeDefinitions = [
+            { AttributeName: tableConfig.pk, AttributeType: 'S' }
+        ];
+        
+        if (tableConfig.sk) {
+            keySchema.push({ AttributeName: tableConfig.sk, KeyType: 'RANGE' });
+            attributeDefinitions.push({ AttributeName: tableConfig.sk, AttributeType: 'S' });
+        }
+        
+        const globalSecondaryIndexes = tableConfig.gsis?.map(gsi => {
+            const gsiKeySchema = [{ AttributeName: gsi.pk, KeyType: 'HASH' }];
             
-            if job_status.state in ['FAILED', 'ERROR']:
-                error_details = self.get_job_error_details(job_run_id)
-                progress.add_error(error_details)
-        
-        return progress
-    
-    def generate_migration_report(self, validation_report: ValidationReport, job_statuses: List[JobStatus]) -> MigrationReport:
-        """Generate comprehensive migration completion report"""
-        return MigrationReport(
-            migration_timestamp=datetime.now(),
-            total_tables_migrated=len([s for s in job_statuses if s.state == 'SUCCEEDED']),
-            total_records_migrated=sum(v.target_count for v in validation_report.table_validations),
-            data_integrity_score=validation_report.overall_integrity_score,
-            job_execution_summary=job_statuses,
-            validation_summary=validation_report,
-            recommendations=self.generate_recommendations(validation_report, job_statuses)
-        )
-    
-    def publish_metrics(self, metric_name: str, value: float, unit: str = 'Count'):
-        """Publish custom metrics to CloudWatch"""
-        self.cloudwatch.put_metric_data(
-            Namespace='MySQL-DynamoDB-Migration',
-            MetricData=[
-                {
-                    'MetricName': metric_name,
-                    'Value': value,
-                    'Unit': unit,
-                    'Timestamp': datetime.now()
+            if (!attributeDefinitions.find(attr => attr.AttributeName === gsi.pk)) {
+                attributeDefinitions.push({ AttributeName: gsi.pk, AttributeType: 'S' });
+            }
+            
+            if (gsi.sk) {
+                gsiKeySchema.push({ AttributeName: gsi.sk, KeyType: 'RANGE' });
+                if (!attributeDefinitions.find(attr => attr.AttributeName === gsi.sk)) {
+                    attributeDefinitions.push({ AttributeName: gsi.sk, AttributeType: 'S' });
                 }
-            ]
-        )
+            }
+            
+            return {
+                IndexName: gsi.index_name,
+                KeySchema: gsiKeySchema,
+                Projection: { ProjectionType: 'ALL' }
+            };
+        }) || [];
+        
+        return {
+            tableName: tableConfig.table,
+            keySchema: keySchema,
+            attributeDefinitions: attributeDefinitions,
+            globalSecondaryIndexes: globalSecondaryIndexes
+        };
+    }
+}
 ```
 
 ## Data Models
 
-### Migration Contract Reference
-```python
-@dataclass
-class MigrationContractEntry:
-    table: str
-    type: str  # 'Table' or 'GSI'
-    source_table: str
-    pk: str
-    sk: Optional[str]
-    gsis: Optional[List[GSIDefinition]]
-    attributes: Dict[str, AttributeDefinition]
-    satisfies: List[str]
-    estimated_item_size_bytes: int
+### MCP Server Status
+```typescript
+interface MCPServerStatus {
+    allServersOperational: boolean;
+    serverStatuses: MCPServerValidation[];
+    readyForMigration: boolean;
+}
+
+interface MCPServerValidation {
+    serverType: string;
+    isOperational: boolean;
+    hasRequiredPermissions: boolean;
+    lastChecked: Date;
+    details?: any;
+    error?: string;
+}
 ```
 
-### Validation Results
-```python
-@dataclass
-class ValidationReport:
-    migration_timestamp: datetime
-    table_validations: List[TableValidationResult]
-    overall_integrity_score: float
-    total_records_validated: int
-    issues_found: List[str]
-    recommendations: List[str]
+### Migration Result
+```typescript
+interface MigrationResult {
+    success: boolean;
+    viewsCreated: string[];
+    tablesCreated: string[];
+    jobsExecuted: string[];
+    validationReport: ValidationReport;
+    migrationMetrics: MigrationMetrics;
+}
 
-@dataclass
-class TableValidationResult:
-    table_name: str
-    source_count: int
-    target_count: int
-    count_match: bool
-    sample_validation: SampleValidationResult
-    data_integrity_score: float
-```
-
-### Migration Progress Tracking
-```python
-@dataclass
-class MigrationProgress:
-    total_jobs: int
-    completed_jobs: int
-    failed_jobs: int
-    in_progress_jobs: int
-    job_statuses: List[JobStatus]
-    errors: List[ErrorDetails]
-    estimated_completion_time: Optional[datetime]
+interface MigrationMetrics {
+    totalRecordsMigrated: number;
+    migrationDuration: number;
+    averageThroughput: number;
+    errorRate: number;
+    tableMetrics: TableMigrationMetrics[];
+}
 ```
 
 ## Error Handling
 
-### MySQL View Generation Errors
-- Invalid migration contract format
-- Missing source tables or columns
-- SQL syntax errors in generated views
-- Database connectivity issues
-
-### AWS Glue Job Errors
-- Insufficient IAM permissions
-- Resource allocation failures
-- Data transformation errors
+### MCP Server Communication Errors
+- Server unavailability or timeout errors
+- Authentication and permission failures
 - Network connectivity issues
+- Invalid request format or parameters
 
-### Data Validation Errors
-- Record count mismatches
-- Data type conversion failures
-- Missing or corrupted records
-- Performance issues with large datasets
+### Migration-Specific Errors
+- MySQL view creation failures
+- DynamoDB table creation conflicts
+- Glue job execution failures
+- Data validation and integrity issues
 
-### Recovery Procedures
-- Automatic retry mechanisms for transient failures
-- Partial migration recovery and resumption
-- Data rollback procedures for critical failures
-- Manual intervention procedures for complex issues
-
-## Security and Compliance
-
-### Data Protection
-- Encryption in transit for all data transfers
-- Secure credential management for database connections
-- Audit logging for all migration activities
-- Data masking for sensitive information during validation
-
-### Access Control
-- Least privilege access for all migration components
-- Separate roles for different migration phases
-- Network isolation for migration infrastructure
-- Comprehensive access logging and monitoring
-
-### Compliance Considerations
-- Data residency requirements for cross-region migrations
-- Audit trail maintenance for compliance reporting
-- Data retention policies for migration artifacts
-- Privacy protection during data transformation
+### Recovery Mechanisms
+- Automatic retry with exponential backoff
+- Circuit breaker patterns for persistent failures
+- Graceful degradation and partial migration support
+- Comprehensive error logging and reporting
 
 ## Performance Optimization
 
-### Parallel Processing
-- Concurrent execution of multiple Glue jobs
-- Parallel data validation processes
-- Batch processing for large datasets
-- Resource optimization for cost efficiency
+### Batch Processing
+- Optimize batch sizes for DynamoDB writes
+- Parallel processing for independent tables
+- Memory-efficient data streaming
+- Connection pooling and reuse
 
-### Memory and Storage Management
-- Efficient memory usage in ETL processes
-- Temporary storage management for large datasets
-- Cleanup procedures for intermediate data
-- Resource monitoring and optimization
+### Monitoring and Alerting
+- Real-time progress tracking
+- Performance metrics collection
+- Capacity utilization monitoring
+- Error rate and latency tracking
 
-### Network Optimization
-- VPC endpoints for AWS service communication
-- Connection pooling for database connections
-- Bandwidth optimization for large data transfers
-- Regional placement for optimal performance
+This design replaces subprocess calls with proper MCP server integration, providing better error handling, monitoring, and maintainability while leveraging the full capabilities of specialized MCP servers for each service.
