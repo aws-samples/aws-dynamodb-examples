@@ -382,13 +382,13 @@ def get_mysql_config_from_mcp(use_private_ip=False):
 
 def verify_glue_connection(aws_config):
     """Verify that the CloudFormation-created Glue connection exists"""
-    print("🔗 Verifying Glue connection: mysql-modernizr-connection...")
+    print("🔗 Verifying Glue connection: mysql-modernizer-connection...")
     
     connection_script = f'''
 import boto3
 glue = boto3.client('glue', region_name='{aws_config['region']}')
 try:
-    response = glue.get_connection(Name='mysql-modernizr-connection')
+    response = glue.get_connection(Name='mysql-modernizer-connection')
     connection = response['Connection']
     print(f"Connection found: {{connection['Name']}}")
     print(f"Connection type: {{connection['ConnectionType']}}")
@@ -405,7 +405,7 @@ except Exception as e:
     os.unlink(script_path)
     
     if "SUCCESS" in result.stdout:
-        print("   ✅ Glue connection verified: mysql-modernizr-connection")
+        print("   ✅ Glue connection verified: mysql-modernizer-connection")
         return True
     else:
         print(f"   ❌ Connection not found: {result.stdout}")
@@ -511,7 +511,7 @@ try:
             'MaxConcurrentRuns': 1
         }},
         Connections={{
-            'Connections': ['mysql-modernizr-connection']
+            'Connections': ['mysql-modernizer-connection']
         }},
         MaxRetries=0,
         Timeout=60

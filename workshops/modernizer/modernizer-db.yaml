@@ -1,0 +1,1984 @@
+Description: Provides VSCode Server, database instances, and required components without Cloud9.
+
+Parameters:
+  EnvironmentName:
+    Description: An environment name that is tagged to the resources.
+    Type: String
+    Default: DynamoDBID
+  DBLatestAmiId:
+    Type:  'AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>'
+    Default: '/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-arm64'
+  DbMasterUsername:
+    Description: The datbase master user name
+    Type: String
+    Default: dbuser
+  ################## VSCode Server #################
+  VSCodeUser:
+    Type: String
+    Description: Username for VS code-server
+    Default: participant
+  VSCodeInstanceName:
+    Type: String
+    Description: EC2 Instance name for VS code-server
+    Default: VSCodeServer
+  VSCodeInstanceVolumeSize:
+    Type: Number
+    Description: VS code-server EC2 instance volume size in GB
+    Default: 40
+  VSCodeInstanceType:
+    Description: VS code-server EC2 instance type
+    Type: String
+    Default: t4g.medium
+    AllowedPattern: ^(t4g|m6g|m7g|m8g|c6g|c7g)\.[0-9a-z]+$
+    ConstraintDescription: Must be a valid t, c or m series Graviton EC2 instance type
+  VSCodeHomeFolder:
+    Type: String
+    Description: Folder to open in VS Code server
+    Default: /home/participant/workshop
+  PythonMajorMinor:
+    Type: String
+    Default: "3.13"
+    Description: "Python major.minor version (e.g., 3.13) for the Code instance. Latest patch version will be installed automatically."
+    AllowedPattern: "^[0-9]+\\.[0-9]+$"
+    ConstraintDescription: "Must be in format X.Y (e.g., 3.13)"
+  AllowedIP:
+    Type: String
+    Description: IP address allowed to access VSCode Server (use 0.0.0.0/0 for open access, not recommended)
+    Default: "15.248.6.46/32"
+    AllowedPattern: ^([0-9]{1,3}\.){3}[0-9]{1,3}(\/([0-9]|[1-2][0-9]|3[0-2]))?$
+    ConstraintDescription: Must be a valid IP address in CIDR format (e.g., 1.2.3.4/32)
+
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: General configuration
+        Parameters:
+          - EnvironmentName
+      - Label:
+          default: VSCode Server configuration
+        Parameters:
+          - VSCodeInstanceName
+          - VSCodeInstanceType
+          - VSCodeInstanceVolumeSize
+          - VSCodeUser
+          - VSCodeHomeFolder
+    ParameterLabels:
+      EnvironmentName:
+        default: Environment name
+      VSCodeInstanceName:
+        default: VSCode Instance Name
+      VSCodeInstanceType:
+        default: VSCode Instance type
+      VSCodeInstanceVolumeSize:
+        default: VSCode Attached volume size
+      VSCodeUser:
+        default: VSCode Username
+      VSCodeHomeFolder:
+        default: VSCode Home Folder
+
+Mappings:
+  DesignPatterns:
+    options:
+      UserDataURL: "https://amazon-dynamodb-labs.com/assets/UserDataC9.sh"
+      version: "1"
+  # AWS Managed Prefix Lists for EC2 InstanceConnect
+  AWSRegions2PrefixListID:
+    ap-south-1:
+      PrefixList: pl-0fa83cebf909345ca
+    eu-north-1:
+      PrefixList: pl-0bd77a95ba8e317a6
+    eu-west-3:
+      PrefixList: pl-0f2a97ab210dbbae1
+    eu-west-2:
+      PrefixList: pl-067eefa539e593d55
+    eu-west-1:
+      PrefixList: pl-0839cc4c195a4e751
+    ap-northeast-3:
+      PrefixList: pl-086543b458dc7add9
+    ap-northeast-2:
+      PrefixList: pl-00ec8fd779e5b4175
+    ap-northeast-1:
+      PrefixList: pl-08d491d20eebc3b95
+    ca-central-1:
+      PrefixList: pl-0beea00ad1821f2ef
+    sa-east-1:
+      PrefixList: pl-029debe66aa9d13b3
+    ap-southeast-1:
+      PrefixList: pl-073f7512b7b9a2450
+    ap-southeast-2:
+      PrefixList: pl-0e1bc5673b8a57acc
+    eu-central-1:
+      PrefixList: pl-03384955215625250
+    us-east-1:
+      PrefixList: pl-0e4bcff02b13bef1e
+    us-east-2:
+      PrefixList: pl-03915406641cb1f53
+    us-west-1:
+      PrefixList: pl-0e99958a47b22d6ab
+    us-west-2:
+      PrefixList: pl-047d464325e7bf465
+
+  AWSRegionsPrefixListID:
+  # aws ec2 describe-managed-prefix-lists  --region <REGION> | jq -r '.PrefixLists[] | select (.PrefixListName == "com.amazonaws.global.cloudfront.origin-facing") | .PrefixListId'
+    ap-northeast-1:
+      PrefixList: pl-58a04531
+    ap-northeast-2:
+      PrefixList: pl-22a6434b
+    ap-south-1:
+      PrefixList: pl-9aa247f3
+    ap-southeast-1:
+      PrefixList: pl-31a34658
+    ap-southeast-2:
+      PrefixList: pl-b8a742d1
+    ca-central-1:
+      PrefixList: pl-38a64351
+    eu-central-1:
+      PrefixList: pl-a3a144ca
+    eu-north-1:
+      PrefixList: pl-fab65393
+    eu-west-1:
+      PrefixList: pl-4fa04526
+    eu-west-2:
+      PrefixList: pl-93a247fa
+    eu-west-3:
+      PrefixList: pl-75b1541c
+    sa-east-1:
+      PrefixList: pl-5da64334
+    us-east-1:
+      PrefixList: pl-3b927c52
+    us-east-2:
+      PrefixList: pl-b6a144df
+    us-west-1:
+      PrefixList: pl-4ea04527
+    us-west-2:
+      PrefixList: pl-82a045eb
+
+
+Resources:
+  #LADV Role
+  DDBReplicationRole:
+      Type: AWS::IAM::Role
+      Properties:
+        AssumeRolePolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+              Action:
+                - sts:AssumeRole
+        Path: /
+        Policies:
+          - PolicyName: root
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - dynamodb:DescribeStream
+                    - dynamodb:GetRecords
+                    - dynamodb:GetShardIterator
+                    - dynamodb:ListStreams
+                  Resource:
+                    - '*'
+                - Effect: Allow
+                  Action:
+                    - dynamodb:DeleteItem
+                    - dynamodb:PutItem
+                  Resource:
+                    - '*'
+                - Effect: Allow
+                  Action:
+                    - logs:CreateLogGroup
+                    - logs:CreateLogStream
+                    - logs:PutLogEvents
+                  Resource:
+                    - '*'
+
+  # Glue Service Role for MySQL to DynamoDB Migration
+  GlueServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - glue.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSGlueServiceRole
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonDynamoDBFullAccess
+      Policies:
+        - PolicyName: S3MigrationBucketAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:PutObject
+                  - s3:DeleteObject
+                  - s3:ListBucket
+                Resource:
+                  - !Sub ${MigrationS3Bucket.Arn}/*
+              - Effect: Allow
+                Action:
+                  - s3:ListBucket
+                Resource:
+                  - !GetAtt MigrationS3Bucket.Arn
+        - PolicyName: CloudWatchLogsAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                  - logs:DescribeLogGroups
+                  - logs:DescribeLogStreams
+                Resource:
+                  - !Sub arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws-glue/*
+                  - !Sub arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws-glue/*:log-stream:*
+        - PolicyName: SecretsManagerAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - secretsmanager:GetSecretValue
+                  - secretsmanager:DescribeSecret
+                Resource:
+                  - !Ref DbPasswordSecret
+      Tags:
+        - Key: Environment
+          Value: !Ref EnvironmentName
+        - Key: Purpose
+          Value: GlueETLMigration
+  ################## PERMISSIONS AND ROLES #################
+  CodeInstanceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Tags:
+        - Key: Environment
+          Value: !Sub ${EnvironmentName}
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+                - ssm.amazonaws.com
+                - opensearchservice.amazonaws.com
+                - osis-pipelines.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/AdministratorAccess
+      Path: '/'
+
+  ################ LAMBDA INSTANCE TYPE FINDER ################
+  VSCodeFindTheInstanceTypeLambda:
+    Type: Custom::VSCodeFindTheInstanceTypeLambda
+    Properties:
+      Tags:
+        - Key: Environment
+          Value: !Sub ${EnvironmentName}
+      ServiceToken:
+        Fn::GetAtt:
+          - VSCodeFindTheInstanceTypeLambdaFunction
+          - Arn
+      Region:
+        Ref: AWS::Region
+      StackName:
+        Ref: AWS::StackName
+      InstanceType:
+        Ref: VSCodeInstanceType
+
+  VSCodeFindTheInstanceTypeLambdaFunction:
+    Type: AWS::Lambda::Function
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W58
+            reason: Lambda execution role has basic execution permissions
+          - id: W89
+            reason: Bootstrap function does not need the scaffolding of a VPC or provisioned concurrency
+          - id: W92
+            reason: Bootstrap function does not need provisioned concurrency   
+    Properties:
+      Tags:
+        - Key: Environment
+          Value: !Sub ${EnvironmentName}
+      Handler: index.lambda_handler
+      Role:
+        Fn::GetAtt:
+          - VSCodeLambdaExecutionRole
+          - Arn
+      Runtime: python3.13
+      MemorySize: 1024
+      Timeout: 400
+      Code:
+        ZipFile: |
+          import json
+          import boto3
+          import random
+          import cfnresponse
+          import logging
+          import traceback
+
+          logger = logging.getLogger(__name__)
+
+          ec2 = boto3.client('ec2')
+          def lambda_handler(event, context):
+              print(event.values())
+              print('context: {}'.format(context))
+              responseData = {}
+
+              status = cfnresponse.SUCCESS
+              if event['RequestType'] == 'Delete':
+                  responseData = {'Success': 'Custom Resource removed'}
+                  cfnresponse.send(event, context, status, responseData, 'CustomResourcePhysicalID')
+              elif event['RequestType'] == 'Update':
+                  responseData = {'Success': 'No-op'}
+                  cfnresponse.send(event, context, status, responseData, 'CustomResourcePhysicalID')
+              elif event['RequestType'] == 'Create':
+                  try:
+                      resp = ec2.describe_subnets(
+                          Filters = [
+                          {
+                              'Name':'default-for-az',
+                              'Values': ['true']
+                          }])
+                      inst_types = list()
+                      inst_types.append(event['ResourceProperties']['InstanceType'])
+                      subnet_ids = dict()
+                      for subnet in resp['Subnets']:
+                          subnet_ids[subnet['AvailabilityZone']] = subnet['SubnetId']
+                      offerings = get_offerings(inst_types)
+                      subnet_id = None
+                      #hunt time
+                      results = dict()
+                      for instance in inst_types:
+                          for az in offerings[instance]:
+                              if az in subnet_ids:
+                                  subnet_id = subnet_ids[az]
+                                  if instance not in results:
+                                      results[instance] = subnet_ids[az]
+                      instance_type, subnet = random.choice(list(results.items()))
+                      responseData = {'InstanceType':instance_type, 'SubnetId': subnet}
+                      cfnresponse.send(event, context, status, responseData, 'CustomResourcePhysicalID')
+                  except Exception as err:
+                      print(err)
+                      status = cfnresponse.FAILED
+                      print(traceback.format_exc())
+                      responseData = {'Error': traceback.format_exc(err)}
+                  finally:
+                      cfnresponse.send(event, context, status, responseData, 'CustomResourcePhysicalID')
+                      
+
+          def get_offerings(inst_types):
+              product_types = ('Linux/UNIX (Amazon VPC)', 'Windows (Amazon VPC)')
+              resp = ec2.describe_instance_type_offerings(
+                  LocationType='availability-zone',
+                  Filters = [
+                      {
+                          'Name': 'instance-type',
+                          'Values': inst_types
+                      }
+                  ])
+              offerings = dict()
+              for inst in resp['InstanceTypeOfferings']:
+                  if inst['InstanceType'] not in offerings:
+                      offerings[inst['InstanceType']] = list()
+                  offerings[inst['InstanceType']].append(inst['Location'])
+
+              # TODO implement
+              return offerings
+
+  VSCodeLambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W11
+            reason: Describe Action doesn't support any resource condition
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: '/'
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: !Sub VSCodeLambdaPolicy-${AWS::Region}
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - cloudformation:DescribeStacks
+                  - cloudformation:DescribeStackEvents
+                  - cloudformation:DescribeStackResource
+                  - cloudformation:DescribeStackResources
+                Resource:
+                  - !Sub arn:${AWS::Partition}:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/*
+              - Effect: Allow
+                Action:
+                  - ec2:AssociateIamInstanceProfile
+                  - ec2:ModifyInstanceAttribute
+                  - ec2:ReplaceIamInstanceProfileAssociation
+                  - ec2:RebootInstances
+                Resource:
+                  - !Sub arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:instance/*
+              - Effect: Allow
+                Action:
+                  - ec2:DescribeInstances
+                  - ec2:DescribeVolumesModifications
+                  - ec2:DescribeVolumes
+                  - ec2:DescribeIamInstanceProfileAssociations
+                  - ec2:ModifyVolume
+                  - ssm:DescribeInstanceInformation
+                  - ssm:SendCommand
+                  - ssm:GetCommandInvocation
+                  - ec2:DescribeSubnets
+                  - ec2:DescribeInstanceTypeOfferings
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - iam:ListInstanceProfiles
+                Resource:
+                  - !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:instance-profile/*
+              - Effect: Allow
+                Action:
+                  - iam:PassRole
+                Resource:
+                  Fn::GetAtt:
+                    - CodeInstanceRole
+                    - Arn
+
+  ############ RELATIONAL MIGRATION  STAGING BUCKET #########
+  MigrationS3Bucket:
+    Type: AWS::S3::Bucket
+
+################ VSCode Server ################
+  VSCodeSecret:
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W77
+            reason: The default KMS Key used by Secrets Manager is appropriate for this password which will be used to log into VSCodeServer, which has very limited permissions. In addition this secret will not be required to be shared across accounts
+    Type: AWS::SecretsManager::Secret
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+    Properties:
+      Name: !Sub ${AWS::StackName}-VSCodeServer
+      Description: VS code-server user details
+      GenerateSecretString:
+        PasswordLength: 16
+        SecretStringTemplate: !Sub '{"username":"${VSCodeUser}"}'
+        GenerateStringKey: "password"
+        ExcludePunctuation: true
+
+  DbPasswordSecret:
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W77
+            reason: The default KMS Key used by Secrets Manager is appropriate for this password which will be used for database access
+    Type: AWS::SecretsManager::Secret
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+    Properties:
+      Name: !Sub ${AWS::StackName}-DatabasePassword
+      Description: Auto-generated MySQL database password
+      GenerateSecretString:
+        PasswordLength: 24
+        ExcludeCharacters: '"@/\`{}$!&*()[]|;:<>?'
+        ExcludePunctuation: false
+        IncludeSpace: false
+
+  SecretPlaintextLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: !Sub lambda.${AWS::URLSuffix}
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: AwsSecretsManager
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - secretsmanager:GetSecretValue
+                Resource: 
+                  - !Ref VSCodeSecret
+                  - !Ref DbPasswordSecret
+
+  DbPasswordPlaintextLambda:
+    Type: AWS::Lambda::Function
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W58
+            reason: Warning incorrectly reported. The role associated with the Lambda function has the AWSLambdaBasicExecutionRole managed policy attached, which includes permission to write CloudWatch Logs. See https://docs.aws.amazon.com/aws-managed-policy/latest/reference/AWSLambdaBasicExecutionRole.html
+          - id: W89
+            reason: CloudFormation custom function does not need the scaffolding of a VPC, to do so would add unnecessary complexity
+          - id: W92
+            reason: CloudFormation custom function does not need reserved concurrent executions, to do so would add unnecessary complexity
+    Properties:
+      Description: Return the value of the database password secret
+      Handler: index.lambda_handler
+      Runtime: python3.13
+      MemorySize: 128
+      Timeout: 10
+      Architectures:
+        - arm64
+      Role: !GetAtt SecretPlaintextLambdaRole.Arn
+      Code:
+        ZipFile: |
+          import boto3
+          import json
+          import cfnresponse
+          import logging
+
+          logger = logging.getLogger()
+          logger.setLevel(logging.INFO)
+
+          def lambda_handler(event, context):
+              logger.debug(f'event: {event}')
+              logger.debug(f'context: {context}')
+              try:
+                  if event['RequestType'] == 'Delete':
+                      cfnresponse.send(event, context, cfnresponse.SUCCESS, responseData={}, reason='No action to take')
+                  else:
+                      resource_properties = event['ResourceProperties']
+                      secret_name = resource_properties['SecretArn']
+                      secrets_mgr = boto3.client('secretsmanager')
+
+                      logger.info('Getting secret from %s', secret_name)
+
+                      secret = secrets_mgr.get_secret_value(SecretId = secret_name)
+                      logger.debug(f'secret: {secret}')
+                      secret_value = secret['SecretString']
+
+                      responseData = {'password': secret_value}
+                      logger.debug(f'responseData: {responseData}')
+                      cfnresponse.send(event, context, cfnresponse.SUCCESS, responseData=responseData, reason='OK', noEcho=True)
+              except Exception as e:
+                  logger.error(e)
+                  cfnresponse.send(event, context, cfnresponse.FAILED, responseData={}, reason=str(e))
+
+  DbPasswordPlaintext:
+    Type: Custom::DbPasswordPlaintextLambda
+    Properties:
+      ServiceToken: !GetAtt DbPasswordPlaintextLambda.Arn
+      ServiceTimeout: 15
+      SecretArn: !Ref DbPasswordSecret
+
+  SecretPlaintextLambda:
+    Type: AWS::Lambda::Function
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W58
+            reason: Warning incorrectly reported. The role associated with the Lambda function has the AWSLambdaBasicExecutionRole managed policy attached, which includes permission to write CloudWatch Logs. See https://docs.aws.amazon.com/aws-managed-policy/latest/reference/AWSLambdaBasicExecutionRole.html
+          - id: W89
+            reason: CloudFormation custom function does not need the scaffolding of a VPC, to do so would add unnecessary complexity
+          - id: W92
+            reason: CloudFormation custom function does not need reserved concurrent executions, to do so would add unnecessary complexity
+    Properties:
+      Description: Return the value of the secret
+      Handler: index.lambda_handler
+      Runtime: python3.13
+      MemorySize: 128
+      Timeout: 10
+      Architectures:
+        - arm64
+      Role: !GetAtt SecretPlaintextLambdaRole.Arn
+      Code:
+        ZipFile: |
+          import boto3
+          import json
+          import cfnresponse
+          import logging
+
+          logger = logging.getLogger()
+          logger.setLevel(logging.INFO)
+
+          def is_valid_json(json_string):
+              logger.debug(f'Calling is_valid_jason:{json_string}')
+              try:
+                  json.loads(json_string)
+                  logger.info('Secret is in json format')
+                  return True
+              except json.JSONDecodeError:
+                  logger.info('Secret is in string format')
+                  return False
+
+          def lambda_handler(event, context):
+              logger.debug(f'event: {event}')
+              logger.debug(f'context: {context}')
+              try:
+                  if event['RequestType'] == 'Delete':
+                      cfnresponse.send(event, context, cfnresponse.SUCCESS, responseData={}, reason='No action to take')
+                  else:
+                      resource_properties = event['ResourceProperties']
+                      secret_name = resource_properties['SecretArn']
+                      secrets_mgr = boto3.client('secretsmanager')
+
+                      logger.info('Getting secret from %s', secret_name)
+
+                      secret = secrets_mgr.get_secret_value(SecretId = secret_name)
+                      logger.debug(f'secret: {secret}')
+                      secret_value = secret['SecretString']
+
+                      responseData = {}
+                      if is_valid_json(secret_value):
+                          responseData = secret_value
+                      else:
+                          responseData = {'secret': secret_value}
+                      logger.debug(f'responseData: {responseData}')
+                      logger.debug(f'type(responseData): {type(responseData)}')
+                      cfnresponse.send(event, context, cfnresponse.SUCCESS, responseData=json.loads(responseData), reason='OK', noEcho=True)
+              except Exception as e:
+                  logger.error(e)
+                  cfnresponse.send(event, context, cfnresponse.FAILED, responseData={}, reason=str(e))
+
+  SecretPlaintext:
+    Type: Custom::SecretPlaintextLambda
+    Properties:
+      ServiceToken: !GetAtt SecretPlaintextLambda.Arn
+      ServiceTimeout: 15
+      SecretArn: !Ref VSCodeSecret
+
+  VSCodeSSMDoc:
+    Type: AWS::SSM::Document
+    Properties:
+      DocumentType: Command
+      Content:
+        schemaVersion: "2.2"
+        description: Bootstrap VS code-server instance
+        parameters:
+          LinuxFlavor:
+            type: String
+            default: "al2023"
+          VSCodePassword:
+            type: String
+            default: !Ref AWS::StackId
+          PythonMajorMinor:
+            type: String
+            default: "3.13"
+        # all mainSteps scripts are in in /var/lib/amazon/ssm/<instanceid>/document/orchestration/<uuid>/<StepName>/_script.sh
+        mainSteps:
+          # This step was needed to avoid "Can't create transaction lock" error likely due to competing install
+          - name: RemoveTransactionLock
+            action: aws:runShellScript
+            inputs:
+              timeoutSeconds: 300
+              runCommand:
+                - "#!/bin/bash"
+                - sudo rm -f /var/lib/rpm/.rpm.lock
+          - name: InstallCloudWatchAgent
+            action: aws:configurePackage
+            inputs:
+              name: AmazonCloudWatchAgent
+              action: Install
+          - name: ConfigureCloudWatchAgent
+            action: aws:runDocument
+            inputs:
+              documentType: SSMDocument
+              documentPath: AmazonCloudWatch-ManageAgent
+              documentParameters:
+                action: configure
+                mode: ec2
+                optionalConfigurationSource: default
+                optionalRestart: "yes"
+          - name: InstallBasePackagesDnf
+            action: aws:runShellScript
+            precondition:
+              StringEquals:
+                - "{{ LinuxFlavor }}"
+                - al2023
+            inputs:
+              timeoutSeconds: 300
+              runCommand:
+                - "#!/bin/bash"
+                - dnf install -y --allowerasing curl gnupg whois argon2 unzip nginx openssl
+          - name: AddUserDnf
+            action: aws:runShellScript
+            precondition:
+              StringEquals:
+                - "{{ LinuxFlavor }}"
+                - al2023
+            inputs:
+              timeoutSeconds: 300
+              runCommand:
+                - "#!/bin/bash"
+                - !Sub |
+                  echo 'Adding user: ${VSCodeUser}'
+                  adduser -c '' ${VSCodeUser}
+                  passwd -l ${VSCodeUser}
+                  echo "${VSCodeUser}:{{ VSCodePassword }}" | chpasswd
+                  usermod -aG wheel ${VSCodeUser}
+                  echo "participant ALL=(ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/participant
+                  sudo chmod 440 /etc/sudoers.d/participant
+                - echo "User added. Checking configuration"
+                - !Sub getent passwd ${VSCodeUser}
+          - name: UpdateProfile
+            action: aws:runShellScript
+            inputs:
+              timeoutSeconds: 300
+              runCommand:
+                - "#!/bin/bash"
+                - echo LANG=en_US.utf-8 >> /etc/environment
+                - echo LC_ALL=en_US.UTF-8 >> /etc/environment
+                - !Sub echo 'PATH=$PATH:/home/${VSCodeUser}/.local/bin' >> /home/${VSCodeUser}/.bashrc
+                - !Sub echo 'export PATH' >> /home/${VSCodeUser}/.bashrc
+                - !Sub echo 'export AWS_REGION=${AWS::Region}' >> /home/${VSCodeUser}/.bashrc
+                - !Sub echo 'export AWS_ACCOUNTID=${AWS::AccountId}' >> /home/${VSCodeUser}/.bashrc
+                - !Sub echo 'export NEXT_TELEMETRY_DISABLED=1' >> /home/${VSCodeUser}/.bashrc
+                - !Sub echo "export PS1='\[\033[01;32m\]\u:\[\033[01;34m\]\w\[\033[00m\]\$ '" >> /home/${VSCodeUser}/.bashrc
+                - !Sub chown -R ${VSCodeUser}:${VSCodeUser} /home/${VSCodeUser}
+          - name: InstallAWSCLI
+            action: aws:runShellScript
+            inputs:
+              timeoutSeconds: 300
+              runCommand:
+                - "#!/bin/bash"
+                - mkdir -p /tmp
+                - curl -fsSL https://awscli.amazonaws.com/awscli-exe-linux-$(uname -m).zip -o /tmp/aws-cli.zip
+                - !Sub chown -R ${VSCodeUser}:${VSCodeUser} /tmp/aws-cli.zip
+                - unzip -q -d /tmp /tmp/aws-cli.zip
+                - sudo /tmp/aws/install
+                - rm -rf /tmp/aws
+                - echo "AWS CLI installed. Checking configuration"
+                - aws --version
+          - name: InstallGitDnf
+            action: aws:runShellScript
+            precondition:
+              StringEquals:
+                - "{{ LinuxFlavor }}"
+                - al2023
+            inputs:
+              timeoutSeconds: 300
+              runCommand:
+                - "#!/bin/bash"
+                - dnf install -y git
+                - !Sub sudo -u ${VSCodeUser} git config --global user.email "participant@example.com"
+                - !Sub sudo -u ${VSCodeUser} git config --global user.name "Workshop Participant"
+                - !Sub sudo -u ${VSCodeUser} git config --global init.defaultBranch "main"
+                - echo "Git installed. Checking configuration"
+                - git --version
+          - name: ConfigureCodeServer
+            action: aws:runShellScript
+            inputs:
+              timeoutSeconds: 600
+              runCommand:
+                - "#!/bin/bash"
+                - !Sub export HOME=/home/${VSCodeUser}
+                - curl -fsSL https://code-server.dev/install.sh | bash -s -- 2>&1
+                - !Sub systemctl enable --now code-server@${VSCodeUser} 2>&1
+                - !Sub |
+                  tee /etc/nginx/conf.d/code-server.conf <<EOF
+                  server {
+                      listen 80;
+                      listen [::]:80;
+                      server_name *.cloudfront.net;
+                      
+                      # Root directory for static files
+                      root /var/www/html;
+                      
+                      # Enable gzip compression for better performance
+                      gzip on;
+                      gzip_vary on;
+                      gzip_min_length 1024;
+                      gzip_proxied any;
+                      gzip_types
+                          text/plain
+                          text/css
+                          text/xml
+                          text/javascript
+                          application/javascript
+                          application/xml+rss
+                          application/json;
+
+                      # Security headers
+                      add_header X-Frame-Options "SAMEORIGIN" always;
+                      add_header X-Content-Type-Options "nosniff" always;
+                      add_header X-XSS-Protection "1; mode=block" always;
+                      add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+                      
+                      # Health check endpoint for CloudFormation
+                      location /healthz {
+                        access_log off;
+                        return 200 '{"status":"alive"}';
+                        add_header Content-Type application/json;
+                      }
+                      
+                      # VS Code Server (default route)
+                      location / {
+                        proxy_pass http://localhost:8080/;
+                        proxy_set_header Host \$host;
+                        proxy_set_header Upgrade \$http_upgrade;
+                        proxy_set_header Connection upgrade;
+                        proxy_set_header Accept-Encoding gzip;
+                        proxy_set_header X-Real-IP \$remote_addr;
+                        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+                        proxy_set_header X-Forwarded-Proto \$scheme;
+                      }
+                      
+                      # ========================================
+                      # DEVELOPMENT MODE - React App at /store (Development Server)
+                      # ========================================
+                      
+                      # React Frontend on port 3000 (development mode for live updates)
+                      location /store/ {
+                        proxy_pass http://localhost:3000/;
+                        proxy_set_header Host \$host;
+                        proxy_set_header X-Real-IP \$remote_addr;
+                        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+                        proxy_set_header X-Forwarded-Proto \$scheme;
+                        proxy_set_header Upgrade \$http_upgrade;
+                        proxy_set_header Connection "upgrade";
+                        
+                        # Handle timeouts
+                        proxy_connect_timeout 60s;
+                        proxy_send_timeout 60s;
+                        proxy_read_timeout 60s;
+                        
+                        # Buffer settings for live updates
+                        proxy_buffering off;
+                        proxy_request_buffering off;
+                        
+                        # Disable caching for development
+                        add_header Cache-Control "no-cache, no-store, must-revalidate";
+                        add_header Pragma "no-cache";
+                        add_header Expires "0";
+                      }
+                      
+                      # Handle /store without trailing slash
+                      location = /store {
+                        return 301 /store/;
+                      }
+                      
+                      # Handle React static assets - proxy directly to development server
+                      location /static/ {
+                        proxy_pass http://localhost:3000;
+                        proxy_set_header Host \$host;
+                        proxy_set_header X-Real-IP \$remote_addr;
+                        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+                        proxy_set_header X-Forwarded-Proto \$scheme;
+                        
+                        # Cache static assets
+                        expires 1y;
+                        add_header Cache-Control "public, immutable";
+                      }
+                      
+                      # Express Backend API on port 8100
+                      location /api/ {
+                        proxy_pass http://localhost:8100/api/;
+                        proxy_set_header Host \$host;
+                        proxy_set_header X-Real-IP \$remote_addr;
+                        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+                        proxy_set_header X-Forwarded-Proto \$scheme;
+                        
+                        # CORS headers for API requests
+                        add_header 'Access-Control-Allow-Origin' '*' always;
+                        add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, DELETE, OPTIONS' always;
+                        add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization' always;
+                        
+                        # Handle preflight requests
+                        if (\$request_method = OPTIONS) {
+                            add_header 'Access-Control-Allow-Origin' '*';
+                            add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE';
+                            add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization';
+                            add_header 'Access-Control-Max-Age' 1728000;
+                            add_header 'Content-Type' 'text/plain; charset=utf-8';
+                            add_header 'Content-Length' 0;
+                            return 204;
+                        }
+                      }
+                      
+                      # Legacy /app route (keeping for backward compatibility)
+                      location /app {
+                        proxy_pass http://localhost:8081/app;
+                        proxy_set_header Host \$host;
+                        proxy_set_header Upgrade \$http_upgrade;
+                        proxy_set_header Connection upgrade;
+                        proxy_set_header Accept-Encoding gzip;
+                      }
+                  }
+                  EOF
+                - !Sub mkdir -p /home/${VSCodeUser}/.config/code-server
+                - !Sub |
+                  tee /home/${VSCodeUser}/.config/code-server/config.yaml <<EOF
+                  cert: false
+                  auth: password
+                  hashed-password: "$(echo -n {{ VSCodePassword }} | argon2 $(openssl rand -base64 12) -e)"
+                  EOF
+                - !Sub mkdir -p /home/${VSCodeUser}/.local/share/code-server/User/
+                - !Sub touch /home/${VSCodeUser}/.hushlogin
+                - !Sub mkdir -p ${VSCodeHomeFolder} && chown -R ${VSCodeUser}:${VSCodeUser} ${VSCodeHomeFolder}
+                - !Sub |
+                  tee /home/${VSCodeUser}/.local/share/code-server/User/settings.json <<EOF
+                  {
+                    "extensions.autoUpdate": false,
+                    "extensions.autoCheckUpdates": false,
+                    "telemetry.telemetryLevel": "off",
+                    "security.workspace.trust.startupPrompt": "never",
+                    "security.workspace.trust.enabled": false,
+                    "security.workspace.trust.banner": "never",
+                    "security.workspace.trust.emptyWindow": false,
+                    "auto-run-command.rules": [
+                      {
+                        "command": "workbench.action.terminal.new"
+                      }
+                    ]
+                  }
+                  EOF
+                - !Sub chown -R ${VSCodeUser}:${VSCodeUser} /home/${VSCodeUser}
+                - echo "Starting and configuring services..."
+                - echo "Stopping any existing nginx processes..."
+                - pkill nginx || true
+                - systemctl stop nginx || true
+                - echo "Starting nginx service..."
+                - systemctl enable nginx
+                - systemctl start nginx
+                - echo "Starting code-server service..."
+                - !Sub systemctl restart code-server@${VSCodeUser}
+                - echo "Installing VSCode extensions..."
+                - !Sub sudo -u ${VSCodeUser} --login code-server --install-extension AmazonWebServices.aws-toolkit-vscode --force
+                - !Sub sudo -u ${VSCodeUser} --login code-server --install-extension AmazonWebServices.amazon-q-vscode --force
+                - !Sub sudo -u ${VSCodeUser} --login code-server --install-extension ms-vscode.live-server --force
+                - !Sub sudo -u ${VSCodeUser} --login code-server --install-extension synedra.auto-run-command --force
+                - !Sub chown -R ${VSCodeUser}:${VSCodeUser} /home/${VSCodeUser}
+                - echo "Verifying services..."
+                - nginx -t 2>&1
+                - systemctl status nginx --no-pager
+                - echo "CodeServer installed. Checking configuration"
+                - code-server -v
+                - !Sub systemctl status code-server@${VSCodeUser} --no-pager
+          - name: InstallLADVDeps
+            action: aws:runShellScript
+            inputs:
+              timeoutSeconds: 1200
+              runCommand:
+                - "#!/bin/bash"
+                # Workshop files are no longer downloaded
+                - echo "Workshop folder setup (no download required)"
+                - !Sub echo "${DDBReplicationRole.Arn}" > ${VSCodeHomeFolder}/ddb-replication-role-arn.txt
+                - !Sub chown -R ${VSCodeUser}:${VSCodeUser} ${VSCodeHomeFolder}
+                - echo "Installing pyenv dependencies..."
+                - dnf install -y make gcc zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel tk-devel libffi-devel xz-devel > /dev/null
+                - echo "Installing pyenv for VSCode user..."
+                - !Sub sudo -u ${VSCodeUser} bash -c 'curl https://pyenv.run | bash'
+                - echo "Configuring pyenv in shell profiles..."
+                - !Sub echo 'export PYENV_ROOT="$HOME/.pyenv"' >> /home/${VSCodeUser}/.bashrc
+                - !Sub echo 'command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"' >> /home/${VSCodeUser}/.bashrc
+                - !Sub echo 'eval "$(pyenv init -)"' >> /home/${VSCodeUser}/.bashrc
+                - echo "Installing Python {{ PythonMajorMinor }}:latest using pyenv..."
+                - !Sub sudo -u ${VSCodeUser} bash -c 'source ~/.bashrc && pyenv install {{ PythonMajorMinor }}:latest'
+                - echo "Getting installed Python version and setting global..."
+                - !Sub sudo -u ${VSCodeUser} bash -c 'source ~/.bashrc && PYTHON_VERSION=$(pyenv versions --bare | grep "^{{ PythonMajorMinor }}" | tail -1) && echo "Setting global Python version to $PYTHON_VERSION" && pyenv global $PYTHON_VERSION'
+                - echo "Installing required Python packages..."
+                - !Sub sudo -u ${VSCodeUser} bash -c 'source ~/.bashrc && pip install boto3 opensearch-py'
+                - echo "Creating symlink for backward compatibility..."
+                - !Sub sudo -u ${VSCodeUser} bash -c 'source ~/.bashrc && sudo ln -sf $(pyenv which python) /usr/local/bin/python'
+                - !Sub chown -R ${VSCodeUser}:${VSCodeUser} /home/${VSCodeUser}/.pyenv
+                - echo "Python installation completed. Version:"
+                - !Sub sudo -u ${VSCodeUser} bash -c 'source ~/.bashrc && python --version'
+          - name: InstallNode
+            action: aws:runShellScript
+            inputs:
+              timeoutSeconds: 600
+              runCommand:
+                - "#!/bin/bash"
+                - echo "Installing Node.js using nvm..."
+                - !Sub |
+                  # Install nvm as participant user
+                  sudo -u ${VSCodeUser} bash -c 'curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash'
+                - !Sub |
+                  # Install Node.js 18 as participant user and set as default
+                  sudo -u ${VSCodeUser} bash -c 'export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && nvm install 18 && nvm use 18 && nvm alias default 18'
+                - echo "Adding nvm configuration to shell profiles..."
+                - !Sub |
+                  # Add to .bashrc for interactive bash shells
+                  cat >> /home/${VSCodeUser}/.bashrc <<EOF
+                  # NVM configuration
+                  export NVM_DIR="\$HOME/.nvm"
+                  [ -s "\$NVM_DIR/nvm.sh" ] && \. "\$NVM_DIR/nvm.sh"
+                  [ -s "\$NVM_DIR/bash_completion" ] && \. "\$NVM_DIR/bash_completion"
+                  EOF
+                - !Sub |
+                  # Add to .zshrc for interactive zsh shells
+                  cat >> /home/${VSCodeUser}/.zshrc <<EOF
+                  # NVM configuration
+                  export NVM_DIR="\$HOME/.nvm"
+                  [ -s "\$NVM_DIR/nvm.sh" ] && \. "\$NVM_DIR/nvm.sh"
+                  [ -s "\$NVM_DIR/bash_completion" ] && \. "\$NVM_DIR/bash_completion"
+                  EOF
+                - !Sub |
+                  # Add to .profile for login shells and non-interactive shells
+                  cat >> /home/${VSCodeUser}/.profile <<EOF
+                  # NVM configuration
+                  export NVM_DIR="\$HOME/.nvm"
+                  [ -s "\$NVM_DIR/nvm.sh" ] && \. "\$NVM_DIR/nvm.sh"
+                  [ -s "\$NVM_DIR/bash_completion" ] && \. "\$NVM_DIR/bash_completion"
+                  EOF
+                - !Sub |
+                  # Ensure .local/bin directory exists first
+                  sudo -u ${VSCodeUser} mkdir -p /home/${VSCodeUser}/.local/bin
+                - !Sub |
+                  # Create symlinks for global access
+                  sudo -u ${VSCodeUser} bash -c 'export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && ln -sf $(which node) /home/${VSCodeUser}/.local/bin/node'
+                  sudo -u ${VSCodeUser} bash -c 'export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && ln -sf $(which npm) /home/${VSCodeUser}/.local/bin/npm'
+                  sudo -u ${VSCodeUser} bash -c 'export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && ln -sf $(which npx) /home/${VSCodeUser}/.local/bin/npx'
+                - !Sub |
+                  # Create global symlinks in /usr/local/bin for system-wide access
+                  sudo bash -c 'export NVM_DIR="/home/${VSCodeUser}/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && ln -sf $(which node) /usr/local/bin/node'
+                  sudo bash -c 'export NVM_DIR="/home/${VSCodeUser}/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && ln -sf $(which npm) /usr/local/bin/npm'
+                  sudo bash -c 'export NVM_DIR="/home/${VSCodeUser}/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && ln -sf $(which npx) /usr/local/bin/npx'
+                - !Sub chown -R ${VSCodeUser}:${VSCodeUser} /home/${VSCodeUser}
+                - echo "Node.js installation completed. Checking version:"
+                - !Sub sudo -u ${VSCodeUser} bash -c 'source ~/.bashrc && node --version'
+                - !Sub sudo -u ${VSCodeUser} bash -c 'source ~/.bashrc && npm --version'
+                - echo "Verifying global access:"
+                - !Sub sudo -u ${VSCodeUser} bash -c '/home/${VSCodeUser}/.local/bin/node --version'
+                - !Sub sudo -u ${VSCodeUser} bash -c '/home/${VSCodeUser}/.local/bin/npm --version'
+          - name: SetupMySQL
+            action: aws:runShellScript
+            inputs:
+              timeoutSeconds: 300
+              runCommand:
+                - "#!/bin/bash"
+                - echo "Starting MySQL setup..."
+                - sudo rpm --import https://repo.mysql.com/RPM-GPG-KEY-mysql-2023
+                - sudo dnf install https://dev.mysql.com/get/mysql80-community-release-el9-1.noarch.rpm -y
+                - echo "Installing MySQL client and server..."
+                - sudo dnf install mysql-community-client mysql-community-server -y
+                - echo "Starting and enabling MySQL service..."
+                - sudo systemctl enable mysqld
+                - sudo systemctl start mysqld
+                - echo "Waiting for MySQL to be ready..."
+                - for i in {1..30}; do
+                - "  if systemctl is-active --quiet mysqld; then"
+                - "    echo 'MySQL service is active'"
+                - "    break"
+                - "  fi"
+                - "  echo 'Waiting for MySQL service... ($i/30)'"
+                - "  sleep 2"
+                - done
+                - echo "Getting temporary root password..."
+                - TEMP_PASSWORD=$(sudo grep 'temporary password' /var/log/mysqld.log | awk '{print $NF}' | tail -1)
+                - if [ -z "$TEMP_PASSWORD" ]; then
+                - "  echo 'ERROR: Could not find temporary password in MySQL log'"
+                - "  exit 1"
+                - fi
+                - echo "Found temporary password, configuring MySQL..."
+                - !Sub |
+                  mysql -u root -p"$TEMP_PASSWORD" --connect-expired-password -e "SET GLOBAL validate_password.policy=LOW;" || {
+                    echo "Failed to set password policy, trying alternative method..."
+                    mysql -u root -p"$TEMP_PASSWORD" --connect-expired-password -e "SET GLOBAL validate_password_policy=LOW;" || {
+                      echo "Warning: Could not set password validation policy"
+                    }
+                  }
+                - !Sub |
+                  mysql -u root -p"$TEMP_PASSWORD" --connect-expired-password -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '${DbPasswordPlaintext.password}';" || {
+                    echo "ERROR: Failed to change root password"
+                    exit 1
+                  }
+                - !Sub |
+                  mysql -u root -p"${DbPasswordPlaintext.password}" -e "CREATE USER IF NOT EXISTS '${DbMasterUsername}'@'%' IDENTIFIED BY '${DbPasswordPlaintext.password}';" || {
+                    echo "ERROR: Failed to create user"
+                    exit 1
+                  }
+                - !Sub |
+                  mysql -u root -p"${DbPasswordPlaintext.password}" -e "GRANT ALL PRIVILEGES ON *.* TO '${DbMasterUsername}'@'%';" || {
+                    echo "ERROR: Failed to grant privileges"
+                    exit 1
+                  }
+                - !Sub mysql -u root -p"${DbPasswordPlaintext.password}" -e "FLUSH PRIVILEGES;"
+                - !Sub mysql -u root -p"${DbPasswordPlaintext.password}" -e "CREATE DATABASE IF NOT EXISTS app_db;"
+                - !Sub mysql -u root -p"${DbPasswordPlaintext.password}" -e "CREATE DATABASE IF NOT EXISTS online_shopping_store;"
+                - echo "Configuring MySQL for remote connections and performance logging..."
+                - !Sub |
+                  mysql -u root -p"${DbPasswordPlaintext.password}" -e "
+                  UPDATE mysql.user SET host='%' WHERE user='root';
+                  UPDATE mysql.user SET host='%' WHERE user='${DbMasterUsername}';
+                  FLUSH PRIVILEGES;
+                  "
+                - echo "Configuring MySQL settings for remote access and performance logging..."
+                - !Sub |
+                  # Backup original config file
+                  cp /etc/my.cnf /etc/my.cnf.backup
+                  
+                  # Create MySQL configuration directory if it doesn't exist
+                  mkdir -p /etc/mysql/mysql.conf.d
+                  
+                  # Create custom configuration file for remote access
+                  cat > /etc/mysql/mysql.conf.d/remote-access.cnf <<EOF
+                  [mysqld]
+                  # Remote access configuration
+                  bind-address = 0.0.0.0
+                  
+                  # Performance logging configuration
+                  slow_query_log = 1
+                  slow_query_log_file = /var/log/mysql/mysql-slow.log
+                  long_query_time = 2
+                  log_queries_not_using_indexes = 1
+                  
+                  # General query log (optional - can generate large logs)
+                  general_log = 1
+                  general_log_file = /var/log/mysql/mysql-general.log
+                  
+                  # Performance schema for detailed monitoring
+                  performance_schema = ON
+                  
+                  # Additional security and connection settings
+                  max_connections = 200
+                  max_user_connections = 100
+                  EOF
+                  
+                  # Also add to main config file as fallback
+                  cat >> /etc/my.cnf <<EOF
+                  
+                  [mysqld]
+                  # Remote access configuration
+                  bind-address = 0.0.0.0
+                  EOF
+                - echo "Creating MySQL log directory and setting permissions..."
+                - sudo mkdir -p /var/log/mysql
+                - sudo chown mysql:mysql /var/log/mysql
+                - sudo chmod 755 /var/log/mysql
+                - echo "Restarting MySQL to apply configuration changes..."
+                - sudo systemctl restart mysqld
+                - echo "Waiting for MySQL to restart..."
+                - for i in {1..15}; do
+                - "  if systemctl is-active --quiet mysqld; then"
+                - "    echo 'MySQL service restarted successfully'"
+                - "    break"
+                - "  fi"
+                - "  echo 'Waiting for MySQL restart... ($i/15)'"
+                - "  sleep 2"
+                - done
+                - echo "Adding MySQL configuration to .bashrc..."
+                - !Sub |
+                  cat >> /home/${VSCodeUser}/.bashrc <<EOF
+                  # MySQL configuration
+                  PATH=$PATH:/usr/local/bin
+                  export PATH
+                  export AWS_ACCOUNT_ID="${AWS::AccountId}"
+                  export AWS_REGION="${AWS::Region}"
+                  export AWS_DEFAULT_REGION="${AWS::Region}"
+                  export MYSQL_PASSWORD="${DbPasswordPlaintext.password}"
+                  export MYSQL_USERNAME="${DbMasterUsername}"
+                  EOF
+                - !Sub chown -R ${VSCodeUser}:${VSCodeUser} /home/${VSCodeUser}
+                - echo "MySQL setup completed successfully."
+                - echo "Verifying MySQL installation..."
+                - sudo systemctl status mysqld
+                - !Sub mysql -u ${DbMasterUsername} -p"${DbPasswordPlaintext.password}" -e "SHOW DATABASES;"
+          - name: InstallModernizr
+            action: aws:runShellScript
+            inputs:
+              timeoutSeconds: 1200
+              runCommand:
+                - "#!/bin/bash"
+                - "set -euo pipefail"
+                - echo "Setting up Modernizr environment for participant user..."
+                - !Sub |
+                  # Create modernizr directory as participant user
+                  sudo -u ${VSCodeUser} mkdir -p /home/${VSCodeUser}/modernizr
+                - !Sub |
+                  # Create AWS config directory as participant user
+                  sudo -u ${VSCodeUser} mkdir -p /home/${VSCodeUser}/.aws
+                  sudo -u ${VSCodeUser} chmod 755 /home/${VSCodeUser}/.aws
+                - !Sub |
+                  # Create AWS config file as participant user
+                  sudo -u ${VSCodeUser} touch /home/${VSCodeUser}/.aws/config
+                  sudo -u ${VSCodeUser} chmod 644 /home/${VSCodeUser}/.aws/config
+                - !Sub |
+                  # Write AWS config as participant user
+                  sudo -u ${VSCodeUser} bash -c 'cat > /home/${VSCodeUser}/.aws/config <<EOF
+                  [default]
+                  region = us-west-2
+                  EOF'
+                - !Sub |
+                  # Install uv as participant user
+                  sudo -u ${VSCodeUser} bash -c 'curl -LsSf https://astral.sh/uv/install.sh | sh'
+                - !Sub |
+                  # Create amazonq directory as participant user
+                  sudo -u ${VSCodeUser} mkdir -p /home/${VSCodeUser}/.aws/amazonq
+                  sudo -u ${VSCodeUser} chmod 755 /home/${VSCodeUser}/.aws/amazonq
+                - !Sub |
+                  # Create MCP config file as participant user
+                  sudo -u ${VSCodeUser} bash -c 'cat > /home/${VSCodeUser}/.aws/amazonq/mcp.json <<'\''EOF'\''
+                  {
+                    "mcpServers": {
+                      "awslabs.dynamodb-mcp-server": {
+                        "command": "uvx",
+                        "args": ["awslabs.dynamodb-mcp-server@latest"],
+                        "env": {
+                          "DDB-MCP-READONLY": "true",
+                          "AWS_PROFILE": "default",
+                          "AWS_REGION": "us-west-2",
+                          "FASTMCP_LOG_LEVEL": "ERROR"
+                        },
+                        "disabled": false,
+                        "autoApprove": []
+                      },
+                      "mysql": {
+                        "type": "stdio",
+                        "command": "uvx",
+                        "args": [
+                          "--from",
+                          "mysql-mcp-server",
+                          "mysql_mcp_server"
+                        ],
+                        "env": {
+                          "MYSQL_HOST": "127.0.0.1",
+                          "MYSQL_PORT": "3306",
+                          "MYSQL_USER": "${DbMasterUsername}",
+                          "MYSQL_PASSWORD": "${DbPasswordPlaintext.password}",
+                          "MYSQL_DATABASE": "online_shopping_store"
+                        }
+                      }
+                    }
+                  }
+                  EOF'
+                - echo "Modernizr setup completed successfully."
+          - name: InstallDocker
+            action: aws:runShellScript
+            inputs:
+              timeoutSeconds: 1200
+              runCommand:
+                - "#!/bin/bash"
+                - "set -euo pipefail"
+                - echo "Installing Docker..."
+                - yum install docker -y
+                - systemctl start docker
+                - systemctl enable docker
+                - !Sub "usermod -aG docker ${VSCodeUser}"
+                - echo "Installing Docker Compose..."
+                - "curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose"
+                - "chmod +x /usr/local/bin/docker-compose"
+                - echo "Verifying Docker installation..."
+                - "docker --version"
+                - "docker-compose --version"
+                - echo "Docker installation completed successfully."
+          - name: CloneWorkshop
+            action: aws:runShellScript
+            inputs:
+              timeoutSeconds: 1200
+              runCommand:
+                - "#!/bin/bash"
+                - "set -euo pipefail"
+                - echo "Cloning workshop repository..."
+                - !Sub |
+                  # Clone repository as participant user
+                  sudo -u ${VSCodeUser} bash -c 'cd /home/${VSCodeUser} && git clone https://github.com/aws-samples/aws-dynamodb-examples.git'
+                - !Sub |
+                  # Copy files as participant user
+                  sudo -u ${VSCodeUser} bash -c 'cd /home/${VSCodeUser}/aws-dynamodb-examples/workshops/modernizr && cp -R * /home/${VSCodeUser}/modernizr/'
+                - echo "Workshop repository cloned successfully."
+          - name: ConfigureBackendEnv
+            action: aws:runShellScript
+            inputs:
+              timeoutSeconds: 300
+              runCommand:
+                - "#!/bin/bash"
+                - "set -euo pipefail"
+                - echo "Configuring backend .env file with database credentials..."
+                - !Sub |
+                  # Update .env file with correct database credentials as participant user
+                  if [ -f "/home/${VSCodeUser}/modernizr/backend/.env" ]; then
+                    sudo -u ${VSCodeUser} sed -i "s/^DB_USER=.*/DB_USER=\"${DbMasterUsername}\"/" /home/${VSCodeUser}/modernizr/backend/.env
+                    sudo -u ${VSCodeUser} sed -i "s/^DB_PASSWORD=.*/DB_PASSWORD=\"${DbPasswordPlaintext.password}\"/" /home/${VSCodeUser}/modernizr/backend/.env
+                    sudo -u ${VSCodeUser} sed -i "s/^JWT_SECRET=.*/JWT_SECRET=63de917288d776db7e6761b183bc1fd8ffc5905565d30c635294c25cc574adc496062bc59cc4370479ecbf1e826fff3c12abe4a6ecbc5203a4d58ca24a86e6fa/" /home/${VSCodeUser}/modernizr/backend/.env
+                    echo "Updated .env file with database credentials and JWT secret"
+                  else
+                    echo "Warning: .env file not found, creating new one with full configuration"
+                    sudo -u ${VSCodeUser} bash -c 'cat > /home/${VSCodeUser}/modernizr/backend/.env <<EOF
+                    # Database Configuration
+                    DB_HOST=localhost
+                    DB_PORT=3306
+                    DB_USER="${DbMasterUsername}"
+                    DB_PASSWORD="${DbPasswordPlaintext.password}"
+                    DB_NAME=online_shopping_store
+                    DB_CONNECTION_LIMIT=10
+                    DB_ACQUIRE_TIMEOUT=60000
+                    DB_TIMEOUT=60000
+
+                    # Server Configuration
+                    PORT=8100
+
+                    # JWT Configuration (IMPORTANT: Change this in production!)
+                    JWT_SECRET=63de917288d776db7e6761b183bc1fd8ffc5905565d30c635294c25cc574adc496062bc59cc4370479ecbf1e826fff3c12abe4a6ecbc5203a4d58ca24a86e6fa
+                    JWT_EXPIRES_IN=24h
+
+                    # Environment
+                    NODE_ENV=development
+
+                    # Security Configuration
+                    BCRYPT_SALT_ROUNDS=12
+
+                    # Performance Monitoring Thresholds
+                    MEMORY_WARNING_THRESHOLD=85
+                    MEMORY_CRITICAL_THRESHOLD=95
+
+                    # Rate Limiting Configuration
+                    RATE_LIMIT_AUTH_MAX=1000
+                    RATE_LIMIT_AUTH_WINDOW_MS=60000
+
+                    # Global Rate Limiting Configuration
+                    RATE_LIMIT_MAX_REQUESTS=10000
+                    RATE_LIMIT_WINDOW_MS=60000
+                    EOF'
+                  fi
+                - echo "Updating test environment files with database credentials..."
+                - !Sub |
+                  # Update .env.test.integration file
+                  if [ -f "/home/${VSCodeUser}/modernizr/backend/.env.test.integration" ]; then
+                    sudo -u ${VSCodeUser} sed -i "s/^DB_USER=.*/DB_USER=\"${DbMasterUsername}\"/" /home/${VSCodeUser}/modernizr/backend/.env.test.integration
+                    sudo -u ${VSCodeUser} sed -i "s/^DB_PASSWORD=.*/DB_PASSWORD=\"${DbPasswordPlaintext.password}\"/" /home/${VSCodeUser}/modernizr/backend/.env.test.integration
+                    echo "Updated .env.test.integration file"
+                  else
+                    echo "Warning: .env.test.integration file not found"
+                  fi
+                - !Sub |
+                  # Update .env.test.e2e file
+                  if [ -f "/home/${VSCodeUser}/modernizr/backend/.env.test.e2e" ]; then
+                    sudo -u ${VSCodeUser} sed -i "s/^DB_USER=.*/DB_USER=\"${DbMasterUsername}\"/" /home/${VSCodeUser}/modernizr/backend/.env.test.e2e
+                    sudo -u ${VSCodeUser} sed -i "s/^DB_PASSWORD=.*/DB_PASSWORD=\"${DbPasswordPlaintext.password}\"/" /home/${VSCodeUser}/modernizr/backend/.env.test.e2e
+                    echo "Updated .env.test.e2e file"
+                  else
+                    echo "Warning: .env.test.e2e file not found"
+                  fi
+                - !Sub |
+                  # Update .env.test.unit file
+                  if [ -f "/home/${VSCodeUser}/modernizr/backend/.env.test.unit" ]; then
+                    sudo -u ${VSCodeUser} sed -i "s/^DB_USER=.*/DB_USER=\"${DbMasterUsername}\"/" /home/${VSCodeUser}/modernizr/backend/.env.test.unit
+                    sudo -u ${VSCodeUser} sed -i "s/^DB_PASSWORD=.*/DB_PASSWORD=\"${DbPasswordPlaintext.password}\"/" /home/${VSCodeUser}/modernizr/backend/.env.test.unit
+                    echo "Updated .env.test.unit file"
+                  else
+                    echo "Warning: .env.test.unit file not found"
+                  fi
+                - echo "Backend environment files configured successfully."
+          - name: InstallBackendDependencies
+            action: aws:runShellScript
+            inputs:
+              timeoutSeconds: 600
+              runCommand:
+                - "#!/bin/bash"
+                - "set -euo pipefail"
+                - echo "Installing backend npm dependencies..."
+                - !Sub |
+                  # Install npm dependencies as participant user
+                  sudo -u ${VSCodeUser} bash -c 'cd /home/${VSCodeUser}/modernizr/backend && source ~/.bashrc && export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && npm install'
+                - echo "Backend npm dependencies installed successfully."
+          - name: SetupDatabase
+            action: aws:runShellScript
+            inputs:
+              timeoutSeconds: 600
+              runCommand:
+                - "#!/bin/bash"
+                - "set -euo pipefail"
+                - echo "Setting up database for the backend application..."
+                - !Sub |
+                  # Change to backend directory and run database setup as participant user
+                  sudo -u ${VSCodeUser} bash -c 'cd /home/${VSCodeUser}/modernizr/backend && source ~/.bashrc && export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && npm run db:test'
+                - echo "Database connection test completed successfully."
+                - !Sub |
+                  # Initialize database schema
+                  sudo -u ${VSCodeUser} bash -c 'cd /home/${VSCodeUser}/modernizr/backend && source ~/.bashrc && export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && npm run db:init'
+                - echo "Database schema initialization completed successfully."
+                - !Sub |
+                  # Seed database with sample data
+                  sudo -u ${VSCodeUser} bash -c 'cd /home/${VSCodeUser}/modernizr/backend && source ~/.bashrc && export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && npm run db:seed'
+                - echo "Database seeding completed successfully."
+                - echo "Database setup completed successfully."
+          - name: SetupFrontEnd
+            action: aws:runShellScript
+            inputs:
+              timeoutSeconds: 600
+              runCommand:
+                - "#!/bin/bash"
+                - "set -euo pipefail"
+                - echo "Setting up frontend development environment..."
+                - !Sub |
+                  sudo -u ${VSCodeUser} bash -c 'cd /home/${VSCodeUser}/modernizr/frontend && source ~/.bashrc && export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && npm install'
+                - echo "Frontend npm dependencies installed successfully."
+                - echo "Frontend development environment setup completed successfully."
+                - echo "Note - Frontend will be served from development server on port 3000 for live updates during workshop."
+
+  SSMDocLambdaRole:
+    Type: AWS::IAM::Role
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W11
+            reason: The Amazon EC2 ssm:*CommandInvocation API actions do not support resource-level permissions, so you cannot control which individual resources users can view in the console. Therefore, the * wildcard is necessary in the Resource element. See https://docs.aws.amazon.com/service-authorization/latest/reference/list_awssystemsmanager.html
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: !Sub lambda.${AWS::URLSuffix}
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: SSMDocOnEC2
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ssm:SendCommand
+                Resource:
+                  - !Sub arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:document/${VSCodeSSMDoc}
+                  - !Sub arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:document/AmazonCloudWatch-ManageAgent
+                  - !Sub arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:instance/${VSCodeInstance}
+              - Effect: Allow
+                Action:
+                  - ssm:ListCommandInvocations
+                  - ssm:GetCommandInvocation
+                Resource: "*"
+
+  RunSSMDocLambda:
+    Type: AWS::Lambda::Function
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W58
+            reason: Warning incorrectly reported. The role associated with the Lambda function has the AWSLambdaBasicExecutionRole managed policy attached, which includes permission to write CloudWatch Logs. See https://docs.aws.amazon.com/aws-managed-policy/latest/reference/AWSLambdaBasicExecutionRole.html
+          - id: W89
+            reason: CloudFormation custom function does not need the scaffolding of a VPC, to do so would add unnecessary complexity
+          - id: W92
+            reason: CloudFormation custom function does not need reserved concurrent executions, to do so would add unnecessary complexity
+    Properties:
+      Description: Run SSM document on EC2 instance
+      Handler: index.lambda_handler
+      Runtime: python3.13
+      MemorySize: 128
+      Timeout: 600
+      Environment:
+        Variables:
+          RetrySleep: 2900
+          AbortTimeRemaining: 3200
+      Architectures:
+        - arm64
+      Role: !GetAtt SSMDocLambdaRole.Arn
+      Code:
+        ZipFile: |
+          import boto3
+          import cfnresponse
+          import logging
+          import time
+          import os
+
+          logger = logging.getLogger()
+          logger.setLevel(logging.INFO)
+
+          def lambda_handler(event, context):
+              logger.debug(f'event: {event}')
+              logger.debug(f'context: {context}')
+
+              if event['RequestType'] != 'Create':
+                  cfnresponse.send(event, context, cfnresponse.SUCCESS, responseData={}, reason='No action to take')
+              else:
+                  sleep_ms = int(os.environ.get('RetrySleep'))
+                  abort_time_remaining_ms = int(os.environ.get('AbortTimeRemaining'))
+                  resource_properties = event['ResourceProperties']
+                  instance_id = resource_properties['InstanceId']
+                  document_name = resource_properties['DocumentName']
+                  cloudwatch_log_group_name = resource_properties['CloudWatchLogGroupName']
+
+                  logger.info(f'Running SSM Document {document_name} on EC2 instance {instance_id}. Logging to {cloudwatch_log_group_name}')
+
+                  del resource_properties['ServiceToken']
+                  if 'ServiceTimeout' in resource_properties:
+                      del resource_properties['ServiceTimeout']
+                  del resource_properties['InstanceId']
+                  del resource_properties['DocumentName']
+                  del resource_properties['CloudWatchLogGroupName']
+                  if 'PhysicalResourceId' in resource_properties:
+                      del resource_properties['PhysicalResourceId']
+
+                  logger.debug(f'resource_properties filtered: {resource_properties}')
+
+                  parameters = {}
+                  for key, value in resource_properties.items():
+                      parameters[key] = [value]
+
+                  logger.debug(f'parameters: {parameters}')
+
+                  retry = True
+                  attempt_no = 0
+                  time_remaining_ms = context.get_remaining_time_in_millis()
+
+                  ssm = boto3.client('ssm')
+
+                  while (retry == True):
+                      attempt_no += 1
+                      logger.info(f'Attempt: {attempt_no}. Time Remaining: {time_remaining_ms/1000}s')
+                      try:
+                          response = ssm.send_command(
+                              InstanceIds = [instance_id],
+                              DocumentName = document_name,
+                              CloudWatchOutputConfig = {'CloudWatchLogGroupName': cloudwatch_log_group_name, 'CloudWatchOutputEnabled': True},
+                              Parameters = parameters
+                          )
+                          logger.debug(f'response: {response}')
+                          command_id = response['Command']['CommandId']
+                          responseData = {'CommandId': command_id}
+                          cfnresponse.send(event, context, cfnresponse.SUCCESS, responseData, reason='OK')
+                          retry = False
+
+                      except ssm.exceptions.InvalidInstanceId as e:
+                          time_remaining_ms = context.get_remaining_time_in_millis()
+                          if (time_remaining_ms > abort_time_remaining_ms):
+                              logger.info(f'Instance {instance_id} not ready. Sleeping: {sleep_ms/1000}s')
+                              time.sleep(sleep_ms/1000)
+                              retry = True
+                          else:
+                              logger.info(f'Instance {instance_id} not ready, timed out. Time remaining {time_remaining_ms/1000}s < Abort time remaining {abort_time_remaining_ms/1000}s')
+                              logger.error(e, exc_info=True)
+                              cfnresponse.send(event, context, cfnresponse.FAILED, responseData={}, reason='Timed out. Time remaining: ' + str(time_remaining_ms/1000) + 's < Abort time remaining: ' + str(abort_time_remaining_ms/1000) + 's')
+                              retry = False
+
+                      except Exception as e:
+                          logger.error(e, exc_info=True)
+                          cfnresponse.send(event, context, cfnresponse.FAILED, responseData={}, reason=str(e))
+                          retry = False
+
+  RunVSCodeSSMDoc:
+    Type: Custom::RunSSMDocLambda
+    DependsOn: VSCodeInstance
+    Properties:
+      ServiceToken: !GetAtt RunSSMDocLambda.Arn
+      ServiceTimeout: 600
+      InstanceId: !Ref VSCodeInstance
+      DocumentName: !Ref VSCodeSSMDoc
+      CloudWatchLogGroupName: !Sub /aws/ssm/${VSCodeSSMDoc}
+      VSCodePassword: !GetAtt SecretPlaintext.password
+      LinuxFlavor: al2023
+      PythonMajorMinor: !Ref PythonMajorMinor
+
+  CodeInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+        - !Ref CodeInstanceRole
+
+  VSCodeInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref DBLatestAmiId
+      InstanceType: !GetAtt VSCodeFindTheInstanceTypeLambda.InstanceType
+      BlockDeviceMappings:
+        - DeviceName: /dev/xvda
+          Ebs:
+            VolumeSize: !Ref VSCodeInstanceVolumeSize
+            VolumeType: gp3
+            DeleteOnTermination: true
+            Encrypted: true
+      Monitoring: true
+      SecurityGroupIds:
+        - !GetAtt SecurityGroup.GroupId
+      IamInstanceProfile: !Ref CodeInstanceProfile
+      SubnetId: !GetAtt VSCodeFindTheInstanceTypeLambda.SubnetId
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash -ex
+          exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
+          echo "Starting VSCode Server setup at $(date)"
+          
+          # Update system
+          yum update -y
+          
+          # Install base packages
+          yum install -y curl wget git unzip nginx openssl which
+          
+          # Create participant user
+          useradd -m ${VSCodeUser}
+          echo "${VSCodeUser}:$(openssl rand -base64 32)" | chpasswd
+          usermod -aG wheel ${VSCodeUser}
+          echo "${VSCodeUser} ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/${VSCodeUser}
+          chmod 440 /etc/sudoers.d/${VSCodeUser}
+          
+          # Set up environment
+          echo 'export AWS_REGION=${AWS::Region}' >> /home/${VSCodeUser}/.bashrc
+          echo 'export AWS_ACCOUNT_ID=${AWS::AccountId}' >> /home/${VSCodeUser}/.bashrc
+          echo 'export PATH=$PATH:/home/${VSCodeUser}/.local/bin' >> /home/${VSCodeUser}/.bashrc
+          echo 'export MYSQL_PASSWORD=${DbPasswordPlaintext.password}' >> /home/${VSCodeUser}/.bashrc
+          echo 'export MYSQL_USERNAME=${DbMasterUsername}' >> /home/${VSCodeUser}/.bashrc
+          
+          # Install AWS CLI
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+          ./aws/install
+          rm -rf aws awscliv2.zip
+          
+          # Note: MySQL setup is handled by SSM document to ensure proper timing and error handling
+          echo "MySQL will be configured by SSM document after instance initialization"
+          
+          # Install Node.js via NodeSource
+          curl -fsSL https://rpm.nodesource.com/setup_18.x | bash -
+          yum install -y nodejs
+          
+          # Install Python 3.13 via pyenv
+          yum groupinstall -y "Development tools"
+          yum install -y zlib-devel bzip2-devel readline-devel sqlite-devel openssl-devel tk-devel libffi-devel xz-devel
+          
+          # Install pyenv as participant user
+          sudo -u ${VSCodeUser} bash -c 'curl https://pyenv.run | bash'
+          sudo -u ${VSCodeUser} bash -c 'echo "export PYENV_ROOT=\"\$HOME/.pyenv\"" >> ~/.bashrc'
+          sudo -u ${VSCodeUser} bash -c 'echo "command -v pyenv >/dev/null || export PATH=\"\$PYENV_ROOT/bin:\$PATH\"" >> ~/.bashrc'
+          sudo -u ${VSCodeUser} bash -c 'echo "eval \"\$(pyenv init -)\"" >> ~/.bashrc'
+          
+          # Install Python 3.13
+          sudo -u ${VSCodeUser} bash -c 'source ~/.bashrc && pyenv install ${PythonMajorMinor}:latest && pyenv global $(pyenv versions --bare | grep "^${PythonMajorMinor}" | tail -1)'
+          
+          # Install pip packages
+          sudo -u ${VSCodeUser} bash -c 'source ~/.bashrc && pip install boto3 opensearch-py'
+          
+          # Install uv
+          sudo -u ${VSCodeUser} bash -c 'curl -LsSf https://astral.sh/uv/install.sh | sh'
+          
+          # Install Docker
+          yum install -y docker
+          systemctl enable docker
+          systemctl start docker
+          usermod -aG docker ${VSCodeUser}
+          
+          # Install Docker Compose
+          curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          chmod +x /usr/local/bin/docker-compose
+          
+          # Install code-server
+          curl -fsSL https://code-server.dev/install.sh | bash
+          
+          # Configure code-server
+          mkdir -p /home/${VSCodeUser}/.config/code-server
+          cat > /home/${VSCodeUser}/.config/code-server/config.yaml << EOF
+          bind-addr: 127.0.0.1:8080
+          auth: password
+          password: ${DbPasswordPlaintext.password}
+          cert: false
+          EOF
+          
+          # Configure nginx for code-server
+          cat > /etc/nginx/conf.d/code-server.conf << 'EOF'
+          server {
+              listen 80;
+              server_name _;
+              
+              location /healthz {
+                  return 200 '{"status":"alive"}';
+                  add_header Content-Type application/json;
+              }
+              
+              location / {
+                  proxy_pass http://127.0.0.1:8080/;
+                  proxy_set_header Host $host;
+                  proxy_set_header Upgrade $http_upgrade;
+                  proxy_set_header Connection upgrade;
+                  proxy_set_header Accept-Encoding gzip;
+                  proxy_set_header X-Real-IP $remote_addr;
+                  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                  proxy_set_header X-Forwarded-Proto $scheme;
+              }
+          }
+          EOF
+          
+          # Start services
+          systemctl enable nginx
+          systemctl start nginx
+          systemctl enable code-server@${VSCodeUser}
+          systemctl start code-server@${VSCodeUser}
+          
+          # Create workshop folder and write DDB role ARN
+          mkdir -p ${VSCodeHomeFolder}
+          echo "${DDBReplicationRole.Arn}" > ${VSCodeHomeFolder}/ddb-replication-role-arn.txt
+          
+          # Clone modernizr workshop
+          sudo -u ${VSCodeUser} bash -c 'cd /home/${VSCodeUser} && git clone https://github.com/aws-samples/aws-dynamodb-examples.git'
+          sudo -u ${VSCodeUser} bash -c 'mkdir -p /home/${VSCodeUser}/modernizr'
+          sudo -u ${VSCodeUser} bash -c 'cd /home/${VSCodeUser}/aws-dynamodb-examples/workshops/modernizr && cp -R * /home/${VSCodeUser}/modernizr/'
+          
+          # Set permissions
+          chown -R ${VSCodeUser}:${VSCodeUser} ${VSCodeHomeFolder}
+          chown -R ${VSCodeUser}:${VSCodeUser} /home/${VSCodeUser}
+          
+          echo "VSCode Server setup completed at $(date)"
+      Tags:
+        - Key: Name
+          Value: !Ref VSCodeInstanceName
+
+
+  SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: F1000
+            reason: All outbound traffic should be allowed from this instance. The EC2 instance is provisioned in the default VPC, which already has this egress rule, and it is not possible to duplicate this egress rule in the default VPC
+    Properties:
+      GroupDescription: SG for VSCodeServer - allow HTTP access from specified IP
+      SecurityGroupIngress:
+        - Description: Allow HTTP from specified IP address
+          IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: !Ref AllowedIP
+        - Description: Allow MySQL from specified IP address
+          IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          CidrIp: !Ref AllowedIP
+        - Description: Allow MySQL from VPC CIDR (for Glue connectivity)
+          IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          CidrIp: 172.31.0.0/16
+        - Description: "Allow Instance Connect"
+          FromPort: 22
+          ToPort: 22
+          IpProtocol: tcp
+          SourcePrefixListId: !FindInMap [AWSRegions2PrefixListID, !Ref 'AWS::Region', PrefixList]
+
+  # Self-referencing security group rule for Glue job communication
+  SecurityGroupSelfIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      Description: Allow all traffic from same security group (required for AWS Glue)
+      GroupId: !GetAtt SecurityGroup.GroupId
+      IpProtocol: -1
+      SourceSecurityGroupId: !GetAtt SecurityGroup.GroupId
+
+  # VPC Endpoints for Glue to access AWS services
+  # AWS Glue requires Gateway endpoints for S3 and DynamoDB
+  RouteTableLookupRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: EC2RouteTableAccess
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ec2:DescribeRouteTables
+                  - ec2:DescribeSubnets
+                Resource: '*'
+
+  RouteTableLookupFunction:
+    Type: AWS::Lambda::Function
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W58
+            reason: Lambda execution role has basic execution permissions
+          - id: W89
+            reason: Lambda function does not need VPC configuration
+          - id: W92
+            reason: Lambda function does not need provisioned concurrency
+    Properties:
+      Handler: index.handler
+      Role: !GetAtt RouteTableLookupRole.Arn
+      Runtime: python3.13
+      MemorySize: 128
+      Timeout: 60
+      Code:
+        ZipFile: |
+          import boto3
+          import cfnresponse
+          import logging
+
+          logger = logging.getLogger()
+          logger.setLevel(logging.INFO)
+
+          def handler(event, context):
+              try:
+                  if event['RequestType'] == 'Delete':
+                      cfnresponse.send(event, context, cfnresponse.SUCCESS, {})
+                      return
+
+                  subnet_id = event['ResourceProperties']['SubnetId']
+                  vpc_id = event['ResourceProperties']['VpcId']
+                  
+                  ec2 = boto3.client('ec2')
+                  
+                  # First check if subnet has explicit route table association
+                  response = ec2.describe_route_tables(
+                      Filters=[
+                          {'Name': 'association.subnet-id', 'Values': [subnet_id]}
+                      ]
+                  )
+                  
+                  if response['RouteTables']:
+                      route_table_id = response['RouteTables'][0]['RouteTableId']
+                      logger.info(f'Found explicit route table: {route_table_id}')
+                  else:
+                      # If no explicit association, find main route table for VPC
+                      response = ec2.describe_route_tables(
+                          Filters=[
+                              {'Name': 'vpc-id', 'Values': [vpc_id]},
+                              {'Name': 'association.main', 'Values': ['true']}
+                          ]
+                      )
+                      if response['RouteTables']:
+                          route_table_id = response['RouteTables'][0]['RouteTableId']
+                          logger.info(f'Using main route table: {route_table_id}')
+                      else:
+                          raise Exception(f'No route table found for VPC {vpc_id}')
+                  
+                  cfnresponse.send(event, context, cfnresponse.SUCCESS, {'RouteTableId': route_table_id})
+                  
+              except Exception as e:
+                  logger.error(f'Error: {str(e)}')
+                  cfnresponse.send(event, context, cfnresponse.FAILED, {}, str(e))
+
+  RouteTableLookup:
+    Type: Custom::RouteTableLookup
+    Properties:
+      ServiceToken: !GetAtt RouteTableLookupFunction.Arn
+      SubnetId: !GetAtt VSCodeInstance.SubnetId
+      VpcId: !GetAtt VSCodeInstance.VpcId
+
+  S3VPCEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      VpcId: !GetAtt VSCodeInstance.VpcId
+      ServiceName: !Sub com.amazonaws.${AWS::Region}.s3
+      VpcEndpointType: Gateway
+      RouteTableIds:
+        - !GetAtt RouteTableLookup.RouteTableId
+
+  DynamoDBVPCEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      VpcId: !GetAtt VSCodeInstance.VpcId
+      ServiceName: !Sub com.amazonaws.${AWS::Region}.dynamodb
+      VpcEndpointType: Gateway
+      RouteTableIds:
+        - !GetAtt RouteTableLookup.RouteTableId
+
+  # VPC Endpoint for AWS Secrets Manager (required for Glue connections with stored credentials)
+  SecretsManagerVPCEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      VpcId: !GetAtt VSCodeInstance.VpcId
+      ServiceName: !Sub com.amazonaws.${AWS::Region}.secretsmanager
+      VpcEndpointType: Interface
+      SubnetIds:
+        - !GetAtt VSCodeInstance.SubnetId
+      SecurityGroupIds:
+        - !GetAtt SecurityGroup.GroupId
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal: '*'
+            Action:
+              - secretsmanager:GetSecretValue
+              - secretsmanager:DescribeSecret
+            Resource: '*'
+
+  # AWS Glue Connection for MySQL Database
+  MySQLGlueConnection:
+    Type: AWS::Glue::Connection
+    DependsOn:
+      - VSCodeInstance
+      - SecurityGroupSelfIngress
+    Properties:
+      CatalogId: !Ref AWS::AccountId
+      ConnectionInput:
+        Name: mysql-modernizr-connection
+        Description: MySQL connection for DynamoDB modernization workshop
+        ConnectionType: JDBC
+        ConnectionProperties:
+          JDBC_CONNECTION_URL: !Sub "jdbc:mysql://${VSCodeInstance.PrivateIp}:3306/online_shopping_store"
+          USERNAME: !Ref DbMasterUsername
+          PASSWORD: !GetAtt DbPasswordPlaintext.password
+        PhysicalConnectionRequirements:
+          AvailabilityZone: !GetAtt VSCodeInstance.AvailabilityZone
+          SecurityGroupIdList:
+            - !GetAtt SecurityGroup.GroupId
+          SubnetId: !GetAtt VSCodeInstance.SubnetId
+
+
+Outputs:
+  EnvironmentName:
+    Description: Environment Name
+    Value: !Ref EnvironmentName
+  VSCodeURL:
+    Description: VSCode Server URL (Direct HTTP Access)
+    Value: !Sub http://${VSCodeInstance.PublicDnsName}
+  VSCodePassword:
+    Description: VSCode Server Password (stored in AWS Secrets Manager)
+    Value: !GetAtt SecretPlaintext.password
+  VSCodePublicIP:
+    Description: VSCode Server Public IP Address
+    Value: !GetAtt VSCodeInstance.PublicIp
+  VSCodeInstanceId:
+    Description: VSCode Server Instance ID (MySQL is installed on this instance)
+    Value: !Ref VSCodeInstance
+  VSCodeVpcId:
+    Description: VPC ID where the VSCode instance is deployed
+    Value: !GetAtt VSCodeInstance.VpcId
+  VSCodeSubnetId:
+    Description: Subnet ID where the VSCode instance is deployed
+    Value: !GetAtt VSCodeInstance.SubnetId
+  VSCodeSecurityGroupId:
+    Description: Security Group ID associated with the VSCode instance
+    Value: !GetAtt SecurityGroup.GroupId
+  VSCodePrivateIP:
+    Description: Private IP Address of VSCode instance (use this for JDBC connections from Glue)
+    Value: !GetAtt VSCodeInstance.PrivateIp
+  MigrationS3Bucket:
+    Description: S3 Bucket for Migration
+    Value: !Ref MigrationS3Bucket
+  DDBReplicationRoleArn:
+    Description: DynamoDB Replication Role ARN
+    Value: !GetAtt DDBReplicationRole.Arn
+  GlueServiceRoleArn:
+    Description: Glue Service Role ARN for MySQL to DynamoDB Migration
+    Value: !GetAtt GlueServiceRole.Arn
+  MySQLCredentials:
+    Description: MySQL Database Credentials
+    Value: !Sub "Username: ${DbMasterUsername}, Password: ${DbPasswordPlaintext.password}"
+  DatabasePasswordSecret:
+    Description: AWS Secrets Manager Secret Name for Database Password
+    Value: !Ref DbPasswordSecret
