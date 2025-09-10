@@ -2,7 +2,7 @@
 
 A modern, full-stack e-commerce platform built with Node.js/TypeScript backend and React/TypeScript frontend. This application demonstrates enterprise-grade development practices with comprehensive testing, security, performance monitoring, and load testing capabilities.
 
-## 🚀 Database Modernizr Workflow
+## 🚀 Database Modernizer Workflow
 
 > **⚠️ IMPORTANT: Before running any modernization commands, you MUST complete the prerequisites and setup steps!**
 >

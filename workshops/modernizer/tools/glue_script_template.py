@@ -29,12 +29,12 @@ AWS_REGION = "{aws_region}"
 
 # Read from MySQL using the Glue connection
 try:
-    print(f"Attempting to read from MySQL using Glue connection: mysql-modernizr-connection")
+    print(f"Attempting to read from MySQL using Glue connection: mysql-modernizer-connection")
     mysql_df = glueContext.create_dynamic_frame.from_options(
         connection_type="mysql",
         connection_options={
             "useConnectionProperties": "true",
-            "connectionName": "mysql-modernizr-connection",
+            "connectionName": "mysql-modernizer-connection",
             "dbtable": VIEW_NAME
         },
         transformation_ctx="mysql_source"

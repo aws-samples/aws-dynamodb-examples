@@ -1,4 +1,4 @@
-# Entity Relationship Diagram - Modernizr E-commerce Platform
+# Entity Relationship Diagram - Modernizer E-commerce Platform
 
 This diagram shows the entity relationships for the DynamoDB design based on the API access patterns analysis.
 

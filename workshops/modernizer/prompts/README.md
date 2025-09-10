@@ -1,12 +1,12 @@
-# Database Modernizr Workflow Guide 🚀
+# Database Modernizer Workflow Guide 🚀
 
 This guide provides step-by-step instructions for executing the complete database modernization workflow from MySQL to DynamoDB using AWS services and AI-powered automation.
 
 The modernization workflow consists of 7 stages that you need to run to incrementally modernize your application. 
 
-![Stages](modernizr-stages.png)
+![Stages](modernizer-stages.png)
 
-For simplicity, during this workshop you will be working with some stages that were alreaady generated, however you can find the clean files to run this workshop on your own in the `workshops/modernizr/clean-start` folder. When we execute this workshop from scratch, it takes around 11 hours to complete. 
+For simplicity, during this workshop you will be working with some stages that were alreaady generated, however you can find the clean files to run this workshop on your own in the `workshops/modernizer/clean-start` folder. When we execute this workshop from scratch, it takes around 11 hours to complete. 
 
 We want you focused on the most important sections of this workshop:
 
@@ -23,7 +23,7 @@ We want you focused on the most important sections of this workshop:
 
 ### 1. AWS Infrastructure Deployment
 
-Deploy the `modernizr-db.yaml` CloudFormation template to create the required infrastructure:
+Deploy the `modernizer-db.yaml` CloudFormation template to create the required infrastructure:
 
 **What it creates:**
 - MySQL database (simulates on-premises setup)
@@ -43,7 +43,7 @@ Deploy the `modernizr-db.yaml` CloudFormation template to create the required in
 
 **🔧 Manual Configuration Step:**
 1. Go to **AWS Glue Connections** console
-2. Edit connection named `mysql-modernizr-connection`
+2. Edit connection named `mysql-modernizer-connection`
 3. Update password (found in CloudFormation outputs)
 4. **Save the connection**
 
@@ -107,7 +107,7 @@ Deploy the `modernizr-db.yaml` CloudFormation template to create the required in
 ```json
 {
   "mcpServers": {
-    "modernizr-mysql-mcp-server": {
+    "modernizer-mysql-mcp-server": {
       "type": "stdio",
       "command": "uvx",
       "args": [
