@@ -1,5 +1,15 @@
 # Data Migration Execution - Tasks
 
+**IMPORTANT**: 
+- **Commit changes frequently** throughout this stage to maintain a clean Git history
+- **Use `git -P`** to avoid interactive prompts
+- **Mark tasks as completed** by changing `[ ]` to `[x]` as you finish each task
+- **Commit after each major task completion** with descriptive messages
+- **Update the tasks.md file** itself when marking tasks complete and commit those changes too
+- **Use single working log**: Use `artifacts/stage-07/07_working_log.md` throughout the entire stage (not individual logs per subtask)
+- **DO NOT MODIFY THE CONTENT OF THIS FILE**: Only add a [x] mark to complete the task, for tracking purposes.
+- Consult the `design.md` document for detailed code examples and references on these tasks. 
+
 - [ ] 1. Generate MySQL views for data transformation
   - [ ] 1.1 Validate migration contract and infrastructure inputs
     - **INPUT**: Use migrationContract.json from the data modeling stage and deployed infrastructure from infrastructure deployment stage
@@ -39,8 +49,19 @@
     - Confirm that MCP servers have proper permissions and can execute required operations
     - _Requirements: 2.2, 3.3_
 
+  - [ ] 2.2 Glue Job generation and prepareation. 
+    - Use a template based approach `tools/glue_script_template.py` to generate Glue scripts for each table
+    - Apply dynamic configuration from migration contract and configuration file. 
+    - Upload the generated python scripts to S3 using the Glue MCP server
+    - Create a job with the previously uploaded file to S3, with the respective parameters ensuring the database connection `mysql-modernizer-connection` is used. 
+    - Confirm that the target AWS region matches the infrastructure deployment region
+    - **CRITICAL**: Ensure AWS region consistency between infrastructure and Glue jobs
+    - Validate that config.json file is properly configured with migration contract path, AWS settings, and MySQL discovery parameters 
+    - Confirm that MCP servers have proper permissions and can execute required operations
+    - Repeat this process as many times as required as specified on the `migrationContract.json`
+    - _Requirements: 2.2, 3.3_
+
   - [ ] 2.3 Monitor migration execution and handle errors
-    - **CRITICAL**: Monitor the contract-driven migration script execution for comprehensive error handling
     - Track progress through each phase: MySQL view creation, DynamoDB table creation, Glue job execution
     - Verify that the script properly handles MySQL connection discovery and database connectivity
     - Ensure that DynamoDB tables are created with correct schema including GSIs and key structures
@@ -126,7 +147,7 @@
 ## Output Validation Checklist
 
 Before marking this stage complete, verify:
-- [ ] MySQL views are generated and executed via contract-driven migration script using MCP server
+- [ ] MySQL views are generated and executed using the `tools/generate_mysql_views.py` script and using the MySQL CP server
 - [ ] MySQL connection is discovered automatically via Data Processing MCP server
 - [ ] DynamoDB tables are created via MCP server based on migration contract specifications
 - [ ] AWS Glue ETL jobs are created and executed using contract_driven_migration_glue_mcp.py
