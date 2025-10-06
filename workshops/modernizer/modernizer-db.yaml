@@ -28,7 +28,7 @@ Parameters:
   VSCodeInstanceType:
     Description: VS code-server EC2 instance type
     Type: String
-    Default: t4g.medium
+    Default: t4g.large
     AllowedPattern: ^(t4g|m6g|m7g|m8g|c6g|c7g)\.[0-9a-z]+$
     ConstraintDescription: Must be a valid t, c or m series Graviton EC2 instance type
   VSCodeHomeFolder:
@@ -506,7 +506,7 @@ Resources:
       Description: Auto-generated MySQL database password
       GenerateSecretString:
         PasswordLength: 24
-        ExcludeCharacters: '"@/\`{}$!&*()[]|;:<>?'
+        ExcludeCharacters: '"@/\`{}$!&*()[]|;:<>?''%#^+=~'
         ExcludePunctuation: false
         IncludeSpace: false
 
@@ -968,9 +968,9 @@ Resources:
                 - !Sub systemctl restart code-server@${VSCodeUser}
                 - echo "Installing VSCode extensions..."
                 - !Sub sudo -u ${VSCodeUser} --login code-server --install-extension AmazonWebServices.aws-toolkit-vscode --force
-                - !Sub sudo -u ${VSCodeUser} --login code-server --install-extension AmazonWebServices.amazon-q-vscode --force
                 - !Sub sudo -u ${VSCodeUser} --login code-server --install-extension ms-vscode.live-server --force
                 - !Sub sudo -u ${VSCodeUser} --login code-server --install-extension synedra.auto-run-command --force
+                - !Sub sudo -u ${VSCodeUser} --login code-server --install-extension saoudrizwan.claude-dev --force
                 - !Sub chown -R ${VSCodeUser}:${VSCodeUser} /home/${VSCodeUser}
                 - echo "Verifying services..."
                 - nginx -t 2>&1
@@ -1430,6 +1430,143 @@ Resources:
                 - echo "Frontend npm dependencies installed successfully."
                 - echo "Frontend development environment setup completed successfully."
                 - echo "Note - Frontend will be served from development server on port 3000 for live updates during workshop."
+          - name: UpdateFrontEnd
+            action: aws:runShellScript
+            inputs:
+              timeoutSeconds: 600
+              runCommand:
+                - "#!/bin/bash"
+                - "set -euo pipefail"
+                - echo "Updating frontend CSP configuration..."
+                - !Sub |
+                  # Modify the build-csp.js file to comment out the production CSP and set it to empty string
+                  if [ -f "/home/${VSCodeUser}/modernizr/frontend/scripts/build-csp.js" ]; then
+                    sudo -u ${VSCodeUser} bash -c 'cd /home/${VSCodeUser}/modernizr/frontend/scripts && cp build-csp.js build-csp.js.backup'
+                    echo "Created backup of build-csp.js"
+                    
+                    # Comment out the existing productionCSP line and add the new empty one
+                    sudo -u ${VSCodeUser} bash -c 'cd /home/${VSCodeUser}/modernizr/frontend/scripts && sed -i "s/^const productionCSP = \`.*\`;$/\/\/ &\nconst productionCSP = \`\`;/" build-csp.js'
+                    echo "Updated build-csp.js - commented out original productionCSP and set to empty string"
+                  else
+                    echo "Warning: build-csp.js file not found"
+                  fi
+                - echo "Updating frontend index.html security headers..."
+                - !Sub |
+                  # Modify the index.html file to remove CSP and update security headers
+                  if [ -f "/home/${VSCodeUser}/modernizr/frontend/public/index.html" ]; then
+                    sudo -u ${VSCodeUser} bash -c 'cd /home/${VSCodeUser}/modernizr/frontend/public && cp index.html index.html.backup'
+                    echo "Created backup of index.html"
+                    
+                    # Update the security headers section
+                    # First, change the comment
+                    sudo -u ${VSCodeUser} bash -c 'cd /home/${VSCodeUser}/modernizr/frontend/public && sed -i "s/<!-- Security Headers - Environment-based CSP -->/<!-- Security Headers - Removed CSP for development -->/" index.html'
+                    
+                    # Remove the CSP meta tag (multi-line)
+                    sudo -u ${VSCodeUser} bash -c 'cd /home/${VSCodeUser}/modernizr/frontend/public && sed -i "/meta http-equiv=\"Content-Security-Policy\"/,+1d" index.html'
+                    
+                    # Add the new comment after the first comment
+                    sudo -u ${VSCodeUser} bash -c 'cd /home/${VSCodeUser}/modernizr/frontend/public && sed -i "/<!-- Security Headers - Removed CSP for development -->/a\    <!-- CSP removed to eliminate development issues -->" index.html'
+                    
+                    # Update X-Frame-Options content from DENY to empty
+                    sudo -u ${VSCodeUser} bash -c 'cd /home/${VSCodeUser}/modernizr/frontend/public && sed -i "s/content=\"DENY\"/content=\"\"/" index.html'
+                    
+                    echo "Updated index.html - removed CSP and updated X-Frame-Options"
+                  else
+                    echo "Warning: index.html file not found"
+                  fi
+                - echo "Frontend CSP configuration updated successfully."
+          - name: SetupGit
+            action: aws:runShellScript
+            inputs:
+              timeoutSeconds: 600
+              runCommand:
+                - "#!/bin/bash"
+                - "set -euo pipefail"
+                - echo "Setting up Git repository for modernizr project..."
+                - !Sub |
+                  # Initialize git repository in modernizr directory as participant user
+                  sudo -u ${VSCodeUser} bash -c 'cd /home/${VSCodeUser}/modernizr && git init'
+                - !Sub |
+                  # Create .gitignore file with comprehensive content
+                  sudo -u ${VSCodeUser} bash -c 'cat > /home/${VSCodeUser}/modernizr/.gitignore <<EOF
+                  # Dependencies
+                  node_modules/
+                  npm-debug.log*
+                  yarn-debug.log*
+                  yarn-error.log*
+                  
+                  # Build outputs
+                  dist/
+                  build/
+                  coverage/
+                  *.tsbuildinfo
+                  
+                  # Environment files
+                  .env
+                  .env.local
+                  .env.development.local
+                  .env.test.local
+                  .env.production.local
+                  
+                  # IDE files
+                  .vscode/
+                  .idea/
+                  *.swp
+                  *.swo
+                  
+                  # OS files
+                  .DS_Store
+                  Thumbs.db
+                  
+                  # Logs
+                  logs/
+                  *.log
+                  
+                  # Runtime data
+                  pids/
+                  *.pid
+                  *.seed
+                  *.pid.lock
+                  
+                  # Test results
+                  test-results/
+                  cypress/videos/
+                  cypress/screenshots/
+                  
+                  # Temporary files
+                  tmp/
+                  temp/
+                  .amazonq
+                  .venv
+                  EOF'
+                - !Sub |
+                  # Add all files to staging area
+                  sudo -u ${VSCodeUser} bash -c 'cd /home/${VSCodeUser}/modernizr && git add .'
+                - !Sub |
+                  # Create initial commit
+                  sudo -u ${VSCodeUser} bash -c 'cd /home/${VSCodeUser}/modernizr && git commit -m "Initial commit - modernizr e-commerce application setup"'
+                - echo "Git repository initialized successfully with .gitignore and initial commit."
+          - name: SetupToolsConfigurationFile
+            action: aws:runShellScript
+            inputs:
+              timeoutSeconds: 600
+              runCommand:
+                - "#!/bin/bash"
+                - "set -euo pipefail"
+                - echo "Setting up tools configuration file with CloudFormation values"
+                - !Sub |
+                  # Update all CloudFormation placeholder values in config.json
+                  sudo -u ${VSCodeUser} sed -i 's/111122223333/${AWS::AccountId}/g' /home/${VSCodeUser}/modernizr/tools/config.json
+                  sudo -u ${VSCodeUser} sed -i 's/<CF S3 BUCKET>/${MigrationS3Bucket}/g' /home/${VSCodeUser}/modernizr/tools/config.json
+                  sudo -u ${VSCodeUser} sed -i 's|<CF GLUE ROLE>|${GlueServiceRole.Arn}|g' /home/${VSCodeUser}/modernizr/tools/config.json
+                  sudo -u ${VSCodeUser} sed -i 's/<CF VPC ID>/${VSCodeInstance.VpcId}/g' /home/${VSCodeUser}/modernizr/tools/config.json
+                  sudo -u ${VSCodeUser} sed -i 's/<CF SUBNET IDS>/${VSCodeInstance.SubnetId}/g' /home/${VSCodeUser}/modernizr/tools/config.json
+                  sudo -u ${VSCodeUser} sed -i 's/<CF SECURITY GROUP ID>/${SecurityGroup.GroupId}/g' /home/${VSCodeUser}/modernizr/tools/config.json
+                  sudo -u ${VSCodeUser} sed -i 's/<CF PUBLIC IP>/${VSCodeInstance.PublicIp}/g' /home/${VSCodeUser}/modernizr/tools/config.json
+                  sudo -u ${VSCodeUser} sed -i 's/<CF PRIVATE IP>/${VSCodeInstance.PrivateIp}/g' /home/${VSCodeUser}/modernizr/tools/config.json
+                  sudo -u ${VSCodeUser} sed -i 's/<CF DB USERNAME>/${DbMasterUsername}/g' /home/${VSCodeUser}/modernizr/tools/config.json
+                  sudo -u ${VSCodeUser} sed -i 's/<CF DB PASSWORD>/${DbPasswordPlaintext.password}/g' /home/${VSCodeUser}/modernizr/tools/config.json
+                - echo "Configuration file updated with CloudFormation values successfully."
 
   SSMDocLambdaRole:
     Type: AWS::IAM::Role
