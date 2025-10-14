@@ -8,30 +8,13 @@ A comprehensive CloudFormation template that sets up all required infrastructure
 
 This template (`modernizer-db.yaml`) creates the following resources:
 
-### 💻 Development Environment
-- **VS Code Server**: Browser-based development environment with pre-installed tools
-- **User Authentication**: Secure password-protected access to development environment
-- **Workshop Files**: Pre-loaded repository with workshop materials and utilities
+This CloudFormation (`modernizer-db.yaml`) template provisions the complete infrastructure needed for database modernization workshops, focusing on MySQL to DynamoDB migration paths.
 
-### 🗄️ Database Infrastructure
-- **MySQL Database**: Fully configured MySQL instance with sample e-commerce data
-- **Database Credentials**: Auto-generated secure credentials for database access
-- **Database Monitoring**: Performance logging and monitoring tools
+The template creates a secure development environment based on VS Code Server, accessible through a browser and protected by user authentication. Workshop materials and utilities come pre-loaded in the environment. The database layer consists of a fully configured MySQL instance populated with sample e-commerce data, along with monitoring capabilities and secure credential management.
 
-### 🔌 Network Configuration
-- **Security Groups**: Properly configured access rules for secure communication
-- **VPC Endpoints**: Optimized connectivity for AWS services
-- **CloudFront Distribution**: Fast, secure access to the development environment
+Network infrastructure is configured with appropriate security groups and VPC endpoints to ensure secure communication between services. A CloudFront distribution provides fast, secure access to the development interface.
 
-### 👤 IAM Resources
-- **DynamoDB Replication Role**: IAM role for DynamoDB streams and replication
-- **Glue Service Role**: Permissions for ETL processes between MySQL and DynamoDB
-- **Lambda Execution Roles**: Properly scoped permissions for utility functions
-
-### 🔄 Migration Components
-- **S3 Bucket**: Staging area for migration data
-- **Glue Connections**: Pre-configured connection to MySQL database
-- **Docker Support**: Container environment for compatibility testing
+The migration components include necessary IAM roles for DynamoDB replication, Glue ETL processes, and Lambda functions. An S3 bucket serves as the staging area, while pre-configured Glue connections streamline the database migration process. Docker support is included for compatibility testing across environments.
 
 ## 📋 Prerequisites
 
