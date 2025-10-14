@@ -59,8 +59,8 @@ Once your CloudFormation template is CREATE_COMPLETE, access the "Outputs" tab t
 <img width="1482" height="508" alt="image" src="https://github.com/user-attachments/assets/6d069ca9-5ee6-4f7b-ab5f-6fb2d42b6409" />
 
 Locate these two important values:
-    VSCodeServerPassword - Authentication credential for your VS Code instance
-    VSCodeServerURLModernizer - Direct endpoint to your cloud-based IDE
+   - VSCodeServerPassword - Authentication credential for your VS Code instance
+   - VSCodeServerURLModernizer - Direct endpoint to your cloud-based IDE
 
 Your values are unique to you and will differ from the above example.
 
