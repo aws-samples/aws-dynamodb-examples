@@ -6,15 +6,11 @@ A comprehensive CloudFormation template that sets up all required infrastructure
 
 ## 🔧 Infrastructure Components
 
-This template (`modernizer-db.yaml`) creates the following resources:
-
-This CloudFormation (`modernizer-db.yaml`) template provisions the complete infrastructure needed for database modernization workshops, focusing on MySQL to DynamoDB migration paths.
-
-The template creates a secure development environment based on VS Code Server, accessible through a browser and protected by user authentication. Workshop materials and utilities come pre-loaded in the environment. The database layer consists of a fully configured MySQL instance populated with sample e-commerce data, along with monitoring capabilities and secure credential management.
+This (`modernizer-db.yaml`) template creates a secure development environment based on VS Code Server, accessible through a browser and protected by user authentication. Workshop materials and utilities come pre-loaded in the environment. The database layer consists of a fully configured MySQL instance populated with sample e-commerce data, along with monitoring capabilities and secure credential management.
 
 Network infrastructure is configured with appropriate security groups and VPC endpoints to ensure secure communication between services. A CloudFront distribution provides fast, secure access to the development interface.
 
-The migration components include necessary IAM roles for DynamoDB replication, Glue ETL processes, and Lambda functions. An S3 bucket serves as the staging area, while pre-configured Glue connections streamline the database migration process. Docker support is included for compatibility testing across environments.
+The migration components include necessary IAM roles for DynamoDB, Glue ETL processes, and Lambda functions. An S3 bucket serves as the staging area, while pre-configured Glue connections streamline the database migration process. Docker support is included for compatibility testing across environments.
 
 ## 📋 Prerequisites
 
