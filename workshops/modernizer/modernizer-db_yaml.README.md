@@ -60,8 +60,23 @@ Click the VSCodeServerURLModernizer to launch your development environment. Ente
 
 ## 🚮 Cleanup Instructions
 
-1. Delete DynamoDB tables (Users, Products, Categories) created for this workshop.
-2. Delete Glue jobs (users_migration_job, product_migration_job, categories_migration_job) created for this workshop.
-3. Delete the stack, it should delete the rest of the resources.
+1. Delete the DynamoDB tables (Users, Products, Categories)
+       <img width="800" height="300" alt="image" src="https://github.com/user-attachments/assets/0c0fe99c-fb71-48d8-9d4f-4863b6ee1b99" />
+   
+            CLI commands to delete DynamoDB tables:
+            $ aws dynamodb delete-table --table-name Categories --region us-west-2
+            $ aws dynamodb delete-table --table-name Products --region us-west-2
+            $ aws dynamodb delete-table --table-name Users --region us-west-2
+   
+2. Delete the Glue jobs (users_migration_job, product_migration_job, categories_migration_job)
+        <img width="800" height="300" alt="image" src="https://github.com/user-attachments/assets/7f77fb58-c7fb-4b3a-8da6-2b0e382b70bc" />
+
+            CLI commands to delete Glue jobs:
+            $ aws glue delete-job --job-name categories_migration_job
+            $ aws glue delete-job --job-name products_migration_job
+            $ aws glue delete-job --job-name users_migration_job
+   
+4. Delete the CloudFormation stack.
+            $ aws cloudformation delete-stack --stack-name <StackName> 
 
 
