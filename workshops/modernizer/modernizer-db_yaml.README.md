@@ -60,23 +60,29 @@ Click the VSCodeServerURLModernizer to launch your development environment. Ente
 
 ## 🚮 Cleanup Instructions
 
-1. Delete the DynamoDB tables (Users, Products, Categories)
+1. After executing the workshop, you would have created three DynamoDB tables: Users, Products, Categories. Please delete them using the DynamoDB AWS console as indicated in the below picture:
        <img width="800" height="300" alt="image" src="https://github.com/user-attachments/assets/0c0fe99c-fb71-48d8-9d4f-4863b6ee1b99" />
    
-            CLI commands to delete DynamoDB tables:
-            $ aws dynamodb delete-table --table-name Categories --region us-west-2
-            $ aws dynamodb delete-table --table-name Products --region us-west-2
-            $ aws dynamodb delete-table --table-name Users --region us-west-2
+   If you prefer you can use below AWS CLI commands to delete the DynamoDB tables:
    
-2. Delete the Glue jobs (users_migration_job, product_migration_job, categories_migration_job)
+               $ aws dynamodb delete-table --table-name Categories --region us-west-2
+               $ aws dynamodb delete-table --table-name Products --region us-west-2
+               $ aws dynamodb delete-table --table-name Users --region us-west-2
+   
+3. After executing the workshop, you would have also created three Glue jobs: users_migration_job, product_migration_job, categories_migration_job. Please delete them using the Glue AWS console as indicated in the below picture:
         <img width="800" height="300" alt="image" src="https://github.com/user-attachments/assets/7f77fb58-c7fb-4b3a-8da6-2b0e382b70bc" />
 
-            CLI commands to delete Glue jobs:
-            $ aws glue delete-job --job-name categories_migration_job
-            $ aws glue delete-job --job-name products_migration_job
-            $ aws glue delete-job --job-name users_migration_job
+   If you prefer you can use below AWS CLI commands to delete the Glue jobs:
    
-4. Delete the CloudFormation stack.
-            $ aws cloudformation delete-stack --stack-name <StackName> 
+               $ aws glue delete-job --job-name categories_migration_job
+               $ aws glue delete-job --job-name products_migration_job
+               $ aws glue delete-job --job-name users_migration_job
+   
+4. Finally, delete the CloudFormation stack you deployed as part of this workshop. You can delete the CloudFormation stack as shown in the below picture:
+         <img width="3004" height="830" alt="image" src="https://github.com/user-attachments/assets/223e9ac8-979f-4b31-8d5e-f319a4f17044" />
+
+   If you prefer you can use below AWS CLI commands to delete the CloudFormation stack:
+
+               $ aws cloudformation delete-stack --stack-name <StackName> 
 
 
