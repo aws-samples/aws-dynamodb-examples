@@ -378,5 +378,6 @@ Ready to dive in? Check out the detailed setup guides:
 - **🔧 Backend Development** → [backend/README.md](./backend/README.md)
 - **🎨 Frontend Development** → [frontend/README.md](./frontend/README.md)  
 - **🧪 E2E Testing & Load Testing** → [cypress/README.md](./cypress/README.md)
+- **🚀 Modernizer Infrastructure Setup** → [modernizer/SELF_HOSTED_README.md](./modernizer/SELF_HOSTED_README.md)  
 
 For questions or contributions, please refer to the individual README files in each directory for detailed instructions and best practices.
