@@ -1,6 +1,6 @@
-const AWS = require("aws-sdk");
+const { DynamoDBClient, UpdateTableCommand } = require("@aws-sdk/client-dynamodb");
 
-const dynamodb = new AWS.DynamoDB({ region: "us-west-2" });
+const dynamodb = new DynamoDBClient({ region: "us-west-2" });
 
 const tableName = "Music";
 
@@ -16,7 +16,8 @@ async function deleteGlobalTableRegion() {
     ],
   };
 
-  const response = await dynamodb.updateTable(params).promise();
+  const command = new UpdateTableCommand(params);
+  const response = await dynamodb.send(command);
   return response;
 }
 

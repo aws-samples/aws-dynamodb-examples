@@ -1,15 +1,14 @@
-const AWS = require("aws-sdk");
+const { DynamoDBClient, DescribeTableCommand } = require("@aws-sdk/client-dynamodb");
 
-const dynamodb = new AWS.DynamoDB({ region: "us-west-2" });
+const dynamodb = new DynamoDBClient({ region: "us-west-2" });
 
 const describeTable = async () => {
-  const response = await dynamodb
-    .describeTable({ TableName: "Music" }) // Substitute your table name for "Music"
-    .promise();
+  const command = new DescribeTableCommand({ TableName: "Music" }); // Substitute your table name for "Music"
+  const response = await dynamodb.send(command);
 
   //console.log(JSON.stringify(response, null, 2));
-  let test = JSON.stringify(response.Table.StreamSpecification.StreamEnabled, null, 2)
-  console.log(test)
+  const streamEnabled = JSON.stringify(response.Table.StreamSpecification.StreamEnabled, null, 2)
+  console.log(streamEnabled);
 };
 
 describeTable().catch((error) => console.error(JSON.stringify(error, null, 2)));

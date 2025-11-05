@@ -1,6 +1,6 @@
-const AWS = require("aws-sdk");
+const { DynamoDBClient, CreateGlobalTableCommand } = require("@aws-sdk/client-dynamodb");
 
-const dynamodb = new AWS.DynamoDB({ region: "us-west-2" });
+const dynamodb = new DynamoDBClient({ region: "us-west-2" });
 
 const tableName = "Music";
 
@@ -15,7 +15,8 @@ async function createGlobalTable() {
     ],
   };
 
-  const response = await dynamodb.createGlobalTable(params).promise();
+  const command = new CreateGlobalTableCommand(params);
+  const response = await dynamodb.send(command);
   return response;
 }
 
