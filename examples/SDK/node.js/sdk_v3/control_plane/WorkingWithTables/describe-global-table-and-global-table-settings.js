@@ -1,6 +1,6 @@
-const AWS = require("aws-sdk");
+const { DynamoDBClient, DescribeGlobalTableCommand, DescribeGlobalTableSettingsCommand } = require("@aws-sdk/client-dynamodb");
 
-const dynamodb = new AWS.DynamoDB({ region: "us-west-2" });
+const dynamodb = new DynamoDBClient({ region: "us-west-2" });
 
 const tableName = "Music";
 
@@ -10,7 +10,8 @@ async function describeGlobalTable() {
     GlobalTableName: tableName,
   };
 
-  const response = await dynamodb.describeGlobalTable(params).promise();
+  const command = new DescribeGlobalTableCommand(params);
+  const response = await dynamodb.send(command);
   return response;
 }
 
@@ -20,7 +21,8 @@ async function describeGlobalTableSettings() {
     GlobalTableName: tableName,
   };
 
-  const response = await dynamodb.describeGlobalTableSettings(params).promise();
+  const command = new DescribeGlobalTableSettingsCommand(params);
+  const response = await dynamodb.send(command);
   return response;
 }
 

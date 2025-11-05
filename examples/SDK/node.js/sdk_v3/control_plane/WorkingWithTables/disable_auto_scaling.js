@@ -1,50 +1,48 @@
-const AWS = require("aws-sdk");
+const { 
+  ApplicationAutoScalingClient, 
+  DeleteScalingPolicyCommand, 
+  DeregisterScalableTargetCommand 
+} = require("@aws-sdk/client-application-auto-scaling");
 
-const applicationAutoscaling = new AWS.ApplicationAutoScaling({
-  apiVersion: "2016-02-06",
+const applicationAutoscaling = new ApplicationAutoScalingClient({
   region: "us-west-2",
-  logger: console,
 });
 
 const tableName = "Music"; // Add the name of the DynamoDB table you want to add auto-scaling to between the double quotes.
 
 const disableAutoScaling = async () => {
-  // Attach the Read scaling policy to the table.
-  let response = await applicationAutoscaling
-    .deleteScalingPolicy({
-      PolicyName: `${tableName}ScalingPolicy`,
-      ServiceNamespace: "dynamodb",
-      ResourceId: `table/${tableName}`,
-      ScalableDimension: "dynamodb:table:ReadCapacityUnits",
-    })
-    .promise();
+  // Delete the Read scaling policy from the table.
+  let command = new DeleteScalingPolicyCommand({
+    PolicyName: `${tableName}ScalingPolicy`,
+    ServiceNamespace: "dynamodb",
+    ResourceId: `table/${tableName}`,
+    ScalableDimension: "dynamodb:table:ReadCapacityUnits",
+  });
+  let response = await applicationAutoscaling.send(command);
 
-  response = await applicationAutoscaling
-    .deleteScalingPolicy({
-      PolicyName: `${tableName}ScalingPolicy`,
-      ServiceNamespace: "dynamodb",
-      ResourceId: `table/${tableName}`,
-      ScalableDimension: "dynamodb:table:WriteCapacityUnits",
-    })
-    .promise();
+  command = new DeleteScalingPolicyCommand({
+    PolicyName: `${tableName}ScalingPolicy`,
+    ServiceNamespace: "dynamodb",
+    ResourceId: `table/${tableName}`,
+    ScalableDimension: "dynamodb:table:WriteCapacityUnits",
+  });
+  response = await applicationAutoscaling.send(command);
 
-  // Register the RCU targets for the table
-  response = await applicationAutoscaling
-    .deregisterScalableTarget({
-      ServiceNamespace: "dynamodb",
-      ResourceId: `table/${tableName}`,
-      ScalableDimension: "dynamodb:table:ReadCapacityUnits",
-    })
-    .promise();
+  // Deregister the RCU targets for the table
+  command = new DeregisterScalableTargetCommand({
+    ServiceNamespace: "dynamodb",
+    ResourceId: `table/${tableName}`,
+    ScalableDimension: "dynamodb:table:ReadCapacityUnits",
+  });
+  response = await applicationAutoscaling.send(command);
 
-  // Register the RCU targets for the table
-  response = await applicationAutoscaling
-    .deregisterScalableTarget({
-      ServiceNamespace: "dynamodb",
-      ResourceId: `table/${tableName}`,
-      ScalableDimension: "dynamodb:table:WriteCapacityUnits",
-    })
-    .promise();
+  // Deregister the WCU targets for the table
+  command = new DeregisterScalableTargetCommand({
+    ServiceNamespace: "dynamodb",
+    ResourceId: `table/${tableName}`,
+    ScalableDimension: "dynamodb:table:WriteCapacityUnits",
+  });
+  response = await applicationAutoscaling.send(command);
 
   console.log("Autoscaling has been disabled");
 };

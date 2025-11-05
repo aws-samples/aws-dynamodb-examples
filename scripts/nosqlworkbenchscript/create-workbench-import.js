@@ -9,10 +9,12 @@
 //   node generateModel.js CustomerData >CustomerData.json
 //
  
-const AWS = require('aws-sdk');
-AWS.config.region = process.env.AWS_REGION || 'us-west-2';
- 
-// AWS.config.endpoint = 'http://localhost:8000';
+const { DynamoDBClient, DescribeTableCommand, ScanCommand } = require('@aws-sdk/client-dynamodb');
+
+const dynamodb = new DynamoDBClient({ 
+    region: process.env.AWS_REGION || 'us-west-2'
+    // endpoint: 'http://localhost:8000' // Uncomment for local DynamoDB
+});
  
 const DYNAMODB_TABLE = process.argv.length > 2 ? process.argv.slice(2)[0] : 'Customer360';
  
@@ -32,7 +34,7 @@ const ModelMetadata = {
     "Version": "2.0"
 };
  
-const dynamodb = new AWS.DynamoDB();
+
  
 const buildModel = (err, data) => {
  
@@ -173,9 +175,11 @@ const buildModel = (err, data) => {
  
     };
  
-    dynamodb.scan({TableName:DYNAMODB_TABLE}, buildItemData);
+    const scanCommand = new ScanCommand({TableName: DYNAMODB_TABLE});
+    dynamodb.send(scanCommand).then(buildItemData).catch(buildItemData);
  
 };
  
-dynamodb.describeTable({TableName:DYNAMODB_TABLE}, buildModel);
+const describeCommand = new DescribeTableCommand({TableName: DYNAMODB_TABLE});
+dynamodb.send(describeCommand).then(buildModel).catch(buildModel);
 

@@ -1,12 +1,7 @@
-const { applicationAutoscalingClient } = require("@aws-sdk/client-application-auto-scaling");
-const { IAMClient, IAM } = require("@aws-sdk/client-iam");
+const { ApplicationAutoScalingClient, RegisterScalableTargetCommand } = require("@aws-sdk/client-application-auto-scaling");
 
-const AWS = require("aws-sdk");
-
-const applicationAutoscaling = new AWS.ApplicationAutoScaling({
-  apiVersion: "2016-02-06",
+const applicationAutoscaling = new ApplicationAutoScalingClient({
   region: "us-west-2",
-  logger: console,
 });
 
 const minCapacity = 1; // The minimum capacity for the auto-scaling policy
@@ -18,28 +13,26 @@ const tableName = "Music";
 
 const updateAutoScaling = async () => {
   // Register the RCU targets for the table
-  response = await applicationAutoscaling
-    .registerScalableTarget({
-      ServiceNamespace: "dynamodb",
-      ResourceId: `table/${tableName}`,
-      ScalableDimension: "dynamodb:table:ReadCapacityUnits",
-      MinCapacity: minCapacity,
-      MaxCapacity: maxCapacity,
-      RoleARN: "arn:aws:iam::544500146257:role/MusicTableScalingRole",
-    })
-    .promise();
+  let command = new RegisterScalableTargetCommand({
+    ServiceNamespace: "dynamodb",
+    ResourceId: `table/${tableName}`,
+    ScalableDimension: "dynamodb:table:ReadCapacityUnits",
+    MinCapacity: minCapacity,
+    MaxCapacity: maxCapacity,
+    RoleARN: "arn:aws:iam::544500146257:role/MusicTableScalingRole",
+  });
+  let response = await applicationAutoscaling.send(command);
 
-  // Register the RCU targets for the table
-  response = await applicationAutoscaling
-    .registerScalableTarget({
-      ServiceNamespace: "dynamodb",
-      ResourceId: `table/${tableName}`,
-      ScalableDimension: "dynamodb:table:WriteCapacityUnits",
-      MinCapacity: minCapacity,
-      MaxCapacity: maxCapacity,
-      RoleARN: "arn:aws:iam::544500146257:role/MusicTableScalingRole",
-    })
-    .promise();
+  // Register the WCU targets for the table
+  command = new RegisterScalableTargetCommand({
+    ServiceNamespace: "dynamodb",
+    ResourceId: `table/${tableName}`,
+    ScalableDimension: "dynamodb:table:WriteCapacityUnits",
+    MinCapacity: minCapacity,
+    MaxCapacity: maxCapacity,
+    RoleARN: "arn:aws:iam::544500146257:role/MusicTableScalingRole",
+  });
+  response = await applicationAutoscaling.send(command);
 
   console.log("Autoscaling has been updated");
 };

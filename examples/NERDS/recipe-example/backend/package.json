@@ -10,7 +10,6 @@
     "nanoid": "^5.0.7"
   },
   "devDependencies": {
-    "aws-sdk-client-mock": "^2.0.0",
     "esbuild": "^0.14.54",
     "jest": "^29.2.1"
   },
