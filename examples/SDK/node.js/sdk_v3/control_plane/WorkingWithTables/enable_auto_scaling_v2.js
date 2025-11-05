@@ -1,10 +1,13 @@
-const AWS = require("aws-sdk");
+const { IAMClient, CreateRoleCommand, CreatePolicyCommand, AttachRolePolicyCommand } = require("@aws-sdk/client-iam");
+const { 
+  ApplicationAutoScalingClient, 
+  RegisterScalableTargetCommand, 
+  PutScalingPolicyCommand 
+} = require("@aws-sdk/client-application-auto-scaling");
 
-const iam = new AWS.IAM({ apiVersion: "2010-05-08", region: "us-west-2", logger: console });
-const applicationAutoscaling = new AWS.ApplicationAutoScaling({
-  apiVersion: "2016-02-06",
+const iam = new IAMClient({ region: "us-west-2" });
+const applicationAutoscaling = new ApplicationAutoScalingClient({
   region: "us-west-2",
-  logger: console,
 });
 
 const tableName = "Music";
@@ -50,96 +53,89 @@ const policyDocument = {
 
 const enableAutoScaling = async () => {
   // Create the role necessary for auto-scaling
+  const createRoleCommand = new CreateRoleCommand({
+    AssumeRolePolicyDocument: JSON.stringify(assumeRolePolicyDocument),
+    RoleName: roleName,
+    Description: `Table scaling role for ${tableName}`,
+    MaxSessionDuration: 3600,
+    Path: "/",
+  });
   const {
     Role: { Arn: roleArn },
-  } = await iam
-    .createRole({
-      AssumeRolePolicyDocument: JSON.stringify(assumeRolePolicyDocument),
-      RoleName: roleName,
-      Description: `Table scaling role for ${tableName}`,
-      MaxSessionDuration: 3600,
-      Path: "/",
-    })
-    .promise();
+  } = await iam.send(createRoleCommand);
 
   // Create the policy needed by the role
+  const createPolicyCommand = new CreatePolicyCommand({
+    PolicyDocument: JSON.stringify(policyDocument),
+    PolicyName: policyName,
+    Path: "/",
+  });
   const {
     Policy: { Arn: policyArn },
-  } = await iam
-    .createPolicy({
-      PolicyDocument: JSON.stringify(policyDocument),
-      PolicyName: policyName,
-      Path: "/",
-    })
-    .promise();
+  } = await iam.send(createPolicyCommand);
 
   // Attach the policy to the role so it can be used.
-  let response = await iam
-    .attachRolePolicy({
-      RoleName: roleName,
-      PolicyArn: policyArn,
-    })
-    .promise();
+  const attachPolicyCommand = new AttachRolePolicyCommand({
+    RoleName: roleName,
+    PolicyArn: policyArn,
+  });
+  let response = await iam.send(attachPolicyCommand);
 
   // Register the RCU targets for the table
-  response = await applicationAutoscaling
-    .registerScalableTarget({
-      ServiceNamespace: "dynamodb",
-      ResourceId: `table/${tableName}`,
-      ScalableDimension: "dynamodb:table:ReadCapacityUnits",
-      MinCapacity: minCapacity,
-      MaxCapacity: maxCapacity,
-      RoleARN: "arn:aws:iam::544500146257:role/MusicTableScalingRole",
-    })
-    .promise();
+  let registerCommand = new RegisterScalableTargetCommand({
+    ServiceNamespace: "dynamodb",
+    ResourceId: `table/${tableName}`,
+    ScalableDimension: "dynamodb:table:ReadCapacityUnits",
+    MinCapacity: minCapacity,
+    MaxCapacity: maxCapacity,
+    RoleARN: "arn:aws:iam::544500146257:role/MusicTableScalingRole",
+  });
+  response = await applicationAutoscaling.send(registerCommand);
 
-  // Register the RCU targets for the table
-  response = await applicationAutoscaling
-    .registerScalableTarget({
-      ServiceNamespace: "dynamodb",
-      ResourceId: `table/${tableName}`,
-      ScalableDimension: "dynamodb:table:WriteCapacityUnits",
-      MinCapacity: minCapacity,
-      MaxCapacity: maxCapacity,
-      RoleARN: "arn:aws:iam::544500146257:role/MusicTableScalingRole",
-    })
-    .promise();
+  // Register the WCU targets for the table
+  registerCommand = new RegisterScalableTargetCommand({
+    ServiceNamespace: "dynamodb",
+    ResourceId: `table/${tableName}`,
+    ScalableDimension: "dynamodb:table:WriteCapacityUnits",
+    MinCapacity: minCapacity,
+    MaxCapacity: maxCapacity,
+    RoleARN: "arn:aws:iam::544500146257:role/MusicTableScalingRole",
+  });
+  response = await applicationAutoscaling.send(registerCommand);
 
   // Attach the Read scaling policy to the table.
-  response = await applicationAutoscaling
-    .putScalingPolicy({
-      PolicyName: `${tableName}ScalingPolicy`,
-      ServiceNamespace: "dynamodb",
-      ResourceId: `table/${tableName}`,
-      ScalableDimension: "dynamodb:table:ReadCapacityUnits",
-      PolicyType: "TargetTrackingScaling",
-      TargetTrackingScalingPolicyConfiguration: {
-        TargetValue: readTarget,
-        PredefinedMetricSpecification: { PredefinedMetricType: "DynamoDBReadCapacityUtilization" },
-        ScaleOutCooldown: cooldownDurationSec,
-        ScaleInCooldown: cooldownDurationSec,
-        DisableScaleIn: true,
-      },
-    })
-    .promise();
+  let policyCommand = new PutScalingPolicyCommand({
+    PolicyName: `${tableName}ScalingPolicy`,
+    ServiceNamespace: "dynamodb",
+    ResourceId: `table/${tableName}`,
+    ScalableDimension: "dynamodb:table:ReadCapacityUnits",
+    PolicyType: "TargetTrackingScaling",
+    TargetTrackingScalingPolicyConfiguration: {
+      TargetValue: readTarget,
+      PredefinedMetricSpecification: { PredefinedMetricType: "DynamoDBReadCapacityUtilization" },
+      ScaleOutCooldown: cooldownDurationSec,
+      ScaleInCooldown: cooldownDurationSec,
+      DisableScaleIn: true,
+    },
+  });
+  response = await applicationAutoscaling.send(policyCommand);
 
   // Attach the Write scaling policy to the table.
-  response = await applicationAutoscaling
-    .putScalingPolicy({
-      PolicyName: `${tableName}ScalingPolicy`,
-      ServiceNamespace: "dynamodb",
-      ResourceId: `table/${tableName}`,
-      ScalableDimension: "dynamodb:table:WriteCapacityUnits",
-      PolicyType: "TargetTrackingScaling",
-      TargetTrackingScalingPolicyConfiguration: {
-        TargetValue: writeTarget,
-        PredefinedMetricSpecification: { PredefinedMetricType: "DynamoDBWriteCapacityUtilization" },
-        ScaleOutCooldown: cooldownDurationSec,
-        ScaleInCooldown: cooldownDurationSec,
-        DisableScaleIn: true,
-      },
-    })
-    .promise();
+  policyCommand = new PutScalingPolicyCommand({
+    PolicyName: `${tableName}ScalingPolicy`,
+    ServiceNamespace: "dynamodb",
+    ResourceId: `table/${tableName}`,
+    ScalableDimension: "dynamodb:table:WriteCapacityUnits",
+    PolicyType: "TargetTrackingScaling",
+    TargetTrackingScalingPolicyConfiguration: {
+      TargetValue: writeTarget,
+      PredefinedMetricSpecification: { PredefinedMetricType: "DynamoDBWriteCapacityUtilization" },
+      ScaleOutCooldown: cooldownDurationSec,
+      ScaleInCooldown: cooldownDurationSec,
+      DisableScaleIn: true,
+    },
+  });
+  response = await applicationAutoscaling.send(policyCommand);
 
   console.log("Autoscaling has been enabled");
 };
