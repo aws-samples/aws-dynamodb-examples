@@ -7,7 +7,6 @@
     "@aws-sdk/client-dynamodb": "^3.620.0",
     "@aws-sdk/lib-dynamodb": "^3.620.0",
     "@aws-sdk/util-dynamodb": "^3.620.0",
-    "aws-sdk": "^2.1664.0",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "express": "^4.19.2",
