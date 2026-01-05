@@ -3,9 +3,9 @@ const path = require('path');
 
 const isProduction = process.env.NODE_ENV === 'production';
 
-const developmentCSP = `default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: blob:; font-src 'self' data:; connect-src 'self' http://localhost:* ws://localhost:* wss://localhost:*; media-src 'self'; object-src 'none'; child-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self';`;
+const developmentCSP = `default-src 'self'; upgrade-insecure-requests; script-src 'strict-dynamic' 'nonce-rAnd0m123' 'unsafe-inline' http: https:;; style-src 'self'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https:; media-src 'self'; object-src 'none'; child-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self';`;
 
-const productionCSP = `default-src 'self'; upgrade-insecure-requests; script-src 'self'; style-src 'self'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https:; media-src 'self'; object-src 'none'; child-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self';`;
+const productionCSP  = `default-src 'self'; upgrade-insecure-requests; script-src 'strict-dynamic' 'nonce-rAnd0m123' 'unsafe-inline' http: https:;; style-src 'self'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https:; media-src 'self'; object-src 'none'; child-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self';`;
 
 const csp = isProduction ? productionCSP : developmentCSP;
 
