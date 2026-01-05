@@ -7,7 +7,7 @@
     
     <!-- Security Headers - Environment-based CSP -->
     <meta http-equiv="Content-Security-Policy" 
-          content="default-src 'self'; upgrade-insecure-requests; script-src 'self'; style-src 'self'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https:; media-src 'self'; object-src 'none'; child-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self';">
+          content="`default-src 'self'; upgrade-insecure-requests; script-src 'strict-dynamic' 'nonce-rAnd0m123' 'unsafe-inline' http: https:;; style-src 'self'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https:; media-src 'self'; object-src 'none'; child-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self';`">
     <meta http-equiv="X-Frame-Options" content="DENY">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta name="referrer" content="strict-origin-when-cross-origin">
