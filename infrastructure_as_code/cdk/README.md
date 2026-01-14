@@ -1,5 +1,18 @@
 # 📁 AWS CDK Projects
 
+## 📂 DDB Migration
+
+The [DDB Migration](./ddb-migration/README.md) project is a proof-of-concept CDK stack for table-to-table migration. It demonstrates:
+
+- **Cross-account table replication:** Migrate tables between AWS accounts
+- **Change Data Capture (CDC):** Use DynamoDB Streams to capture and replay changes
+- **AWS Glue integration:** Leverage Glue for large-scale data transfers
+- **Educational content:** Learn migration patterns and best practices
+
+**Note:** This is a tutorial/POC project. Not for production migrations.
+
+[Explore the DDB Migration project »](./ddb-migration/README.md)
+
 ## 📂 DynamoDBCustomMetrics
 
 This CDK project publishes to CloudWatch two important metrics - table size and item count - that are not automatically pushed to CloudWatch. The [DynamoDBCustomMetrics](./DynamoDBCustomMetrics/README.md) project solves this by using AWS Lambda and Amazon EventBridge to capture and report these missing metrics to CloudWatch. This enables you to:

@@ -18,3 +18,4 @@ Check out the DynamoDB workshops »
 
 - [Global serverless workshop](./global-serverless/README.md)
 - [Relational to DynamoDB migration workshop](./relational-migration/README.md)
+- [Cost modeling template](./cost-template/README.md) - Excel worksheet for estimating DynamoDB costs

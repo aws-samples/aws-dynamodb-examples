@@ -1,0 +1,37 @@
+{
+  "private": true,
+  "sideEffects": false,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@aws-sdk/client-cloudwatch": "^3.799.0",
+    "@aws-sdk/client-dynamodb": "^3.431.0",
+    "@aws-sdk/client-dynamodb-streams": "^3.777.0",
+    "@aws-sdk/client-lambda": "^3.816.0",
+    "@aws-sdk/client-s3": "^3.738.0",
+    "@aws-sdk/client-sts": "^3.449.0",
+    "@aws-sdk/lib-dynamodb": "^3.438.0",
+    "chart.js": "^4.4.7",
+    "csvtojson": "^2.0.10",
+    "next": "15.4.10",
+    "react": "^19.0.0",
+    "react-chartjs-2": "^5.3.0",
+    "react-dom": "^19.0.0",
+    "regression": "^2.0.1"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@types/node": "22.13.1",
+    "@types/react": "19.0.8",
+    "eslint": "^9",
+    "eslint-config-next": "15.1.6"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
