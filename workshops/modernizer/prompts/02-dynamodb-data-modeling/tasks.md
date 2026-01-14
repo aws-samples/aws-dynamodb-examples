@@ -129,7 +129,7 @@
   - [ ] 4.1 Generate migration contract from finalized data model using comprehensive join patterns
     - **CRITICAL**: Create `migrationContract.json` in the `artifacts/stage-02/` folder following the EXACT JSON structure specified in design document with comprehensive join pattern support
     - Use the finalized `dynamodb_data_model.md` from task 3.3 as the source for contract generation
-    - Apply the standardized generation process from contracts/migration_contract_generation_guide.md:
+    - Apply the standardized generation process from the contracts/ folder, including migration_contract_generation_guide.md, migration_contract_patterns.md and migrationContract.json:
       - Step 1: Analyze source schema and identify all relationship types
       - Step 2: Map access patterns to join requirements
       - Step 3: Select appropriate join patterns for each relationship
