@@ -31,13 +31,13 @@ aws sts get-caller-identity
 1. Clone this repository
 
  ```
- git clone https://github.com/awslabs/amazon-dynamodb-tools.git
+ git clone https://github.com/aws-samples/aws-dynamodb-examples.git
  ```
 
 1. Install Node.JS dependencies
    
    ```
-   cd amazon-dynamodb-tools/tester
+   cd aws-dynamodb-examples/examples/tester
    npm install
    ```
 
@@ -70,12 +70,12 @@ The server-side component of tester is now set. Let's switch gears and deploy th
 1. From your laptop, open a terminal (command) prompt, and clone the project repository again. 
 
  ```
- git clone https://github.com/awslabs/amazon-dynamodb-tools.git
+ git clone https://github.com/aws-samples/aws-dynamodb-examples.git
  ```
    
 1.  Next, install the required dependency modules (these listed in the *package.json* file).
 ```
-cd amazon-dynamodb-tools/tester
+cd aws-dynamodb-examples/examples/tester
 npm install
 ```
    

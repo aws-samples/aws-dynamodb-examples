@@ -39,4 +39,4 @@ for a full list of DynamoDB features, options and prices.
 
 ---
 
-**Note:** This template was migrated from the [amazon-dynamodb-tools](https://github.com/awslabs/amazon-dynamodb-tools) repository as part of [issue #207](https://github.com/aws-samples/aws-dynamodb-examples/issues/207).
+**Note:** This template was migrated from the [amazon-dynamodb-tools](https://github.com/awslabs/amazon-dynamodb-tools) repository (awslabs organization) as part of [issue #207](https://github.com/aws-samples/aws-dynamodb-examples/issues/207).

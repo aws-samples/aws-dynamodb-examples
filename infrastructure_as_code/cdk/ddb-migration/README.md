@@ -177,7 +177,7 @@ We welcome contributions from the community! Whether you're fixing bugs, improvi
 
 To get started:
 
-1. Please create an [issue first](https://github.com/awslabs/amazon-dynamodb-tools/issues/new) to discuss your contribution.
+1. Please create an [issue first](https://github.com/aws-samples/aws-dynamodb-examples/issues/new) to discuss your contribution.
 2. Fork the repository
 3. Create a new branch for your contribution
 4. Make your changes
