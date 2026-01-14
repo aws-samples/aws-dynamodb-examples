@@ -1,0 +1,19 @@
+{ "TableName": "everysize",
+  "BillingMode": "PAY_PER_REQUEST",
+  "AttributeDefinitions": [
+    {"AttributeName": "PK", "AttributeType": "S"},
+    {"AttributeName": "SK", "AttributeType": "S"}
+  ],
+  "KeySchema": [
+    {"KeyType": "HASH", "AttributeName": "PK"},
+    {"KeyType": "RANGE", "AttributeName": "SK"}
+  ],
+  "StreamSpecification": {
+    "StreamEnabled": true,
+    "StreamViewType": "NEW_AND_OLD_IMAGES" 
+  },
+  "WarmThroughput": { 
+    "ReadUnitsPerSecond": 12000,
+    "WriteUnitsPerSecond": 30000
+ }
+}

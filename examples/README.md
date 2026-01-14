@@ -8,6 +8,17 @@ The Bedrock folder contains comprehensive examples of how to integrate Amazon Be
 
 [Explore the DynamoDB and Bedrock examples »](./Bedrock/README.md)
 
+## 📂 Performance Tester
+
+The [Performance Tester](./tester/README.md) is an interactive Next.js application for benchmarking DynamoDB performance characteristics. It helps you understand:
+
+- Read/write latencies across different configurations
+- Global Tables performance patterns
+- Multi-region behavior and consistency models
+- Interactive visualizations and test scenarios
+
+[Explore the Performance Tester »](./tester/README.md)
+
 ## 📂 SDK
 
 The SDK folder is where you'll find a variety of code samples and integrations for using the AWS SDK with DynamoDB. These examples cover popular programming languages and showcase different use cases and best practices for working with the DynamoDB API.
