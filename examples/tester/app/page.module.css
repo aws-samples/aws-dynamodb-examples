@@ -1,0 +1,344 @@
+
+html, body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  background-color:white;
+  font-family:Arial, Helvetica, sans-serif;
+  color:dimgrey;
+
+}
+
+.canvas {
+    padding:5px; 
+    margin:2px;
+    background-color: gainsboro;
+    border-radius:5px;
+    display: inline-block;
+    vertical-align: top;
+
+}
+
+.leftNavCell {
+  vertical-align: top;
+}
+.leftNavDiv {
+  padding:5px;
+  background-color: silver;
+  border-radius:3px;
+}
+
+.leftNavLink {
+  background-color: silver;
+  padding:3px;
+}
+.leftNavLinkActive {
+  background-color: gainsboro;
+  font-weight:bold;
+  padding:3px;
+
+}
+
+.layoutTable {
+  padding:5px;
+  margin:5px;
+  background-color: gainsboro;
+  border:none;
+  border-radius:5px;
+  width:900px;
+
+}
+
+.layoutTable th {
+  font-size:larger;
+  padding:5px;
+  padding-left: 15px;
+  padding-right: 25px;
+  margin:5px;
+  background-color: silver;
+  text-align:left;
+
+}
+
+.layoutTable th span {
+  text-decoration:none;
+  font-size:small;
+  float:right;
+}
+
+.layoutTable th a {
+  text-decoration:none;
+  color: blue;
+}
+.layoutTable td a {
+  text-decoration:none;
+  color: dimgray;
+}
+
+.layoutTable td {
+
+  padding:5px;
+  margin:5px;
+  vertical-align: top;
+}
+.canvas{ 
+  margin:5px
+}
+
+.chartPanel {
+  background-color:silver;
+  padding:5px;
+  
+}
+
+.chartPanel textarea {
+  height:200px;
+  width:700px;
+  
+  background-color: bisque;
+  padding:5px;
+
+}
+
+
+.gridTable {
+  border-radius:5px;
+  background-color: gainsboro;
+  margin:3px;
+  border-collapse: collapse;
+}
+
+.gridTable th:nth-child(odd) {
+  background-color: lightgrey;
+}
+
+.gridTable td:nth-child(odd) {
+  background-color: lightgrey;
+}
+
+.gridTable th { 
+  padding:3px;
+  font-weight: bold;
+  background-color: gainsboro;
+  border-right:1px solid dimgray;
+  border-bottom:1px solid dimgray;
+  padding-bottom:6px;
+  position: sticky; 
+  top: 0;
+}
+.gridTable thead tr {
+  box-shadow: inset 0px -1px #ccc;
+}
+
+.gridTable td { 
+  padding:3px;
+  border: 1px solid silver;
+  border-right:1px solid dimgray;
+  margin: none;
+  white-space: nowrap;
+  text-align:center;
+}
+
+.gridTableDiv {
+  height:200px;
+  width:800px;
+  overflow-x:auto;
+  font-size: small;
+  resize: both;
+  border-radius:5px;
+
+}
+
+.gridTableSummary  {
+  font-size:small;
+  margin-left:12px; 
+
+}
+.gridTableSummary  a {  
+  color: slateblue;
+  font-weight:bold;
+  font-size:smaller;
+  margin-right:10px;  
+}
+
+.statsTable {
+  background-color:lightgray;
+  border-radius:5px;
+  margin: auto;
+  float: center;
+  /* border-collapse: collapse; */
+}
+
+.statsTableCharts {
+  background-color:silver;
+  border-radius:5px;
+  border: 2px solid gainsboro;
+  margin: auto;
+  float: center;
+  /* border-collapse: collapse; */
+}
+
+.statsTableCharts thead th {
+  background-color: silver;
+
+}
+
+.statsTable, .statsTableCharts thead th {
+  font-size:10pt;
+}
+
+
+.statsTable tbody td {
+  text-align: center;
+  border-bottom: 1px solid silver;
+  border-right: 1px solid silver;
+  padding:10px;
+ 
+}
+
+
+.hello {
+  background-color: Honeydew;
+  padding:20px;
+
+  border-radius: 10px;
+
+}
+.code {
+  font-family:'Courier New', Courier, monospace;
+  font-weight:bold;
+  background-color: white;
+  padding:5px;
+}
+
+.welcomeMsg {
+  font-size: 12pt;
+  font-weight: bold;
+}
+
+.csvGridDiv {
+  padding:2px;
+}
+
+.csvGridDiv button {
+  font-size:small;
+  margin:5px; 
+  background-color:lightgrey;
+  border-radius:5px;
+  border:none;
+  width:120px;
+
+}
+.expName {
+
+  color: dimgray;
+  padding:5px;
+  margin-left: 5px;
+  margin-right: 5px;
+
+  border-bottom:1px solid navy;
+
+}
+.experimentCommand {
+  color:midnightblue;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight:bold;
+}
+
+.error {
+  color: red;
+}
+
+.info {
+  color: blue;
+}
+
+.cwSummary {
+  margin:5px;
+  padding:5px;
+  text-align: center;
+  vertical-align: middle;
+}
+.cwSummary button {
+  font-size:small;
+  margin:5px; 
+  padding:5px;
+  background-color:lightgrey;
+  border-radius:5px;
+  border:1px solid gainsboro;
+  width:220px;
+  color:navy;
+
+}
+
+.clientVsCwDiv {
+  padding:5px;
+  margin:10px;
+  background-color: silver;
+  border-radius:5px;
+  /* overflow-x:auto;
+  font-size: small;
+  resize: both; */
+}
+
+.latencyHeader {
+  font-weight:bold;
+  text-align:center;
+
+}
+.latencyHeader2 {
+  font-weight:bold;
+  text-align:center;
+  font-size:larger;
+}
+.hChartCell {
+  background-color: lightcyan;
+  width:500px;
+}
+
+.statsTableCharts tbody td {
+  background-color: #ccc;
+  text-align: center;
+  border-bottom: 1px solid silver;
+  border-right: 1px solid silver;
+  padding:10px;
+  vertical-align: middle;
+}
+
+.statsTableCharts tbody tr:nth-child(even) td {
+  background-color: #ccc;
+}
+
+.statsTableCharts tbody tr td:nth-child(1) {
+
+  font-size:larger;
+}
+
+.prevNext {
+  font-size:larger;
+  margin: auto;
+  width: 90%;
+
+}
+
+.hideChartWidget span{
+  float:right;
+}
+
+.hideChartWidget button {
+  color:grey;
+  border:none;
+  padding:5px;
+  border-radius:3px;
+  background-color: gainsboro;
+  font-size:larger;
+}
+
+.hiddenChart {
+  display: none;
+}
+
+.displayedChart {
+  background-color:#ccc;
+  border-radius:3px;
+  display:block;
+}

@@ -1,0 +1,30 @@
+{
+  "name": "ddb-migration",
+  "version": "0.1.0",
+  "bin": {
+    "ddb-migration": "bin/ddb-migration.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "jest",
+    "cdk": "cdk"
+  },
+  "devDependencies": {
+    "@aws-sdk/client-dynamodb": "^3.682.0",
+    "@aws-sdk/client-glue": "^3.684.0",
+    "@aws-sdk/client-s3": "^3.685.0",
+    "@types/jest": "^29.5.12",
+    "@types/node": "22.5.4",
+    "aws-cdk": "2.158.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.2.5",
+    "ts-node": "^10.9.2",
+    "typescript": "~5.6.2"
+  },
+  "dependencies": {
+    "aws-cdk-lib": "^2.189.1",
+    "constructs": "^10.4.2",
+    "source-map-support": "^0.5.21"
+  }
+}
