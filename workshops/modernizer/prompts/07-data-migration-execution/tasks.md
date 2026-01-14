@@ -14,7 +14,8 @@
   - [ ] 1.1 Validate migration contract and infrastructure inputs
     - **INPUT**: Use migrationContract.json from the data modeling stage and deployed infrastructure from infrastructure deployment stage
     - Verify that the migration contract file exists and is properly formatted
-    - Confirm that DynamoDB tables have been successfully deployed and are accessible
+    **CRITICAL**: Create DynamoDB tables in on-demand billing mode based on migration contract specifications
+    - Use migration contract to create all tables with proper GSI configurations
     - Check AWS region consistency between infrastructure deployment and planned Glue jobs
     - _Requirements: 1.1, 3.3_
 
@@ -157,6 +158,99 @@ Before marking this stage complete, verify:
 - [ ] Data validation confirms successful migration with integrity checks
 - [ ] Migration completion reports are generated with detailed metrics and recommendations
 - [ ] Post-migration documentation and operational guidance are provided
+
+## DynamoDB Table Creation Instructions
+  
+**Step-by-Step Process for Creating DynamoDB Tables from Migration Contract**:
+  
+### 1. Read Migration Contract
+```bash
+# Locate and read the migration contract
+cat artifacts/stage-02/migrationContract.json
+```
+  
+### 2. Create Tables Using AWS CLI
+For each table in the migration contract, create DynamoDB tables in **on-demand billing mode**:
+  
+#### Users Table (Multi-entity with 3 GSIs)
+```bash
+aws dynamodb create-table \
+--table-name Users \
+--attribute-definitions \
+AttributeName=PK,AttributeType=S \
+AttributeName=SK,AttributeType=S \
+AttributeName=GSI1PK,AttributeType=S \
+AttributeName=GSI1SK,AttributeType=S \
+AttributeName=GSI2PK,AttributeType=S \
+AttributeName=GSI2SK,AttributeType=S \
+AttributeName=GSI3PK,AttributeType=S \
+AttributeName=GSI3SK,AttributeType=S \
+--key-schema \
+AttributeName=PK,KeyType=HASH \
+AttributeName=SK,KeyType=RANGE \
+--global-secondary-indexes \
+'IndexName=GSI1,KeySchema=[{AttributeName=GSI1PK,KeyType=HASH},{AttributeName=GSI1SK,KeyType=RANGE}],Projection={ProjectionType=ALL}' \
+'IndexName=GSI2,KeySchema=[{AttributeName=GSI2PK,KeyType=HASH},{AttributeName=GSI2SK,KeyType=RANGE}],Projection={ProjectionType=ALL}' \
+'IndexName=GSI3,KeySchema=[{AttributeName=GSI3PK,KeyType=HASH},{AttributeName=GSI3SK,KeyType=RANGE}],Projection={ProjectionType=ALL}' \
+--billing-mode PAY_PER_REQUEST \
+--region us-west-2
+```
+  
+#### Products Table (Single-entity with 2 GSIs)
+```bash
+aws dynamodb create-table \
+--table-name Products \
+--attribute-definitions \
+AttributeName=PK,AttributeType=S \
+AttributeName=SK,AttributeType=S \
+AttributeName=GSI1PK,AttributeType=S \
+AttributeName=GSI1SK,AttributeType=S \
+AttributeName=GSI2PK,AttributeType=S \
+AttributeName=GSI2SK,AttributeType=S \
+--key-schema \
+AttributeName=PK,KeyType=HASH \
+AttributeName=SK,KeyType=RANGE \
+--global-secondary-indexes \
+'IndexName=GSI1,KeySchema=[{AttributeName=GSI1PK,KeyType=HASH},{AttributeName=GSI1SK,KeyType=RANGE}],Projection={ProjectionType=ALL}' \
+'IndexName=GSI2,KeySchema=[{AttributeName=GSI2PK,KeyType=HASH},{AttributeName=GSI2SK,KeyType=RANGE}],Projection={ProjectionType=ALL}' \
+--billing-mode PAY_PER_REQUEST \
+--region us-west-2
+```
+  
+#### Categories Table (Single-entity with 1 GSI)
+```bash
+aws dynamodb create-table \
+--table-name Categories \
+--attribute-definitions \
+AttributeName=PK,AttributeType=S \
+AttributeName=SK,AttributeType=S \
+AttributeName=GSI1PK,AttributeType=S \
+AttributeName=GSI1SK,AttributeType=S \
+--key-schema \
+AttributeName=PK,KeyType=HASH \
+AttributeName=SK,KeyType=RANGE \
+--global-secondary-indexes \
+'IndexName=GSI1,KeySchema=[{AttributeName=GSI1PK,KeyType=HASH},{AttributeName=GSI1SK,KeyType=RANGE}],Projection={ProjectionType=ALL}' \
+--billing-mode PAY_PER_REQUEST \
+--region us-west-2
+```
+  
+### 3. Verify Table Creation
+```bash
+# List all tables to verify creation
+aws dynamodb list-tables --region us-west-2
+  
+# Check specific table status
+aws dynamodb describe-table --table-name Users --region us-west-2
+aws dynamodb describe-table --table-name Products --region us-west-2
+aws dynamodb describe-table --table-name Categories --region us-west-2
+```
+  
+**Important Notes**:
+- **ALWAYS use PAY_PER_REQUEST (on-demand) billing mode** as specified
+- **Ensure region consistency** - all tables must be in us-west-2 region
+- **Wait for ACTIVE status** before proceeding with migration
+- **Verify GSI creation** - each table must have all specified Global Secondary Indexes
 
 ## Critical Execution Guidelines
 

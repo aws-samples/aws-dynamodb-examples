@@ -981,6 +981,7 @@ Resources:
               runCommand:
                 - "#!/bin/bash"
                 # Workshop files are no longer downloaded
+                - !Sub "mkdir -p ${VSCodeHomeFolder}/{LHOL,LBED,LADV,LSQL,LMR,LEDA,LGME,LGAM,LDMS,LDC,LCDC}"
                 - echo "Workshop folder setup (no download required)"
                 - !Sub echo "${DDBReplicationRole.Arn}" > ${VSCodeHomeFolder}/ddb-replication-role-arn.txt
                 - !Sub chown -R ${VSCodeUser}:${VSCodeUser} ${VSCodeHomeFolder}
@@ -1203,9 +1204,6 @@ Resources:
                 - "set -euo pipefail"
                 - echo "Setting up Modernizer environment for participant user..."
                 - !Sub |
-                  # Create modernizer directory as participant user
-                  sudo -u ${VSCodeUser} mkdir -p /home/${VSCodeUser}/modernizer
-                - !Sub |
                   # Create AWS config directory as participant user
                   sudo -u ${VSCodeUser} mkdir -p /home/${VSCodeUser}/.aws
                   sudo -u ${VSCodeUser} chmod 755 /home/${VSCodeUser}/.aws
@@ -1295,7 +1293,7 @@ Resources:
                   sudo -u ${VSCodeUser} bash -c 'cd /home/${VSCodeUser} && git clone https://github.com/aws-samples/aws-dynamodb-examples.git'
                 - !Sub |
                   # Copy files as participant user
-                  sudo -u ${VSCodeUser} bash -c 'cd /home/${VSCodeUser}/aws-dynamodb-examples/workshops/modernizer && cp -R * /home/${VSCodeUser}/modernizer/'
+                  sudo -u ${VSCodeUser} bash -c 'cd /home/${VSCodeUser}/aws-dynamodb-examples/workshops/modernizer && cp -R * ${VSCodeHomeFolder}/LGAM/'
                 - echo "Workshop repository cloned successfully."
           - name: ConfigureBackendEnv
             action: aws:runShellScript
@@ -1307,14 +1305,14 @@ Resources:
                 - echo "Configuring backend .env file with database credentials..."
                 - !Sub |
                   # Update .env file with correct database credentials as participant user
-                  if [ -f "/home/${VSCodeUser}/modernizer/backend/.env" ]; then
-                    sudo -u ${VSCodeUser} sed -i "s/^DB_USER=.*/DB_USER=\"${DbMasterUsername}\"/" /home/${VSCodeUser}/modernizer/backend/.env
-                    sudo -u ${VSCodeUser} sed -i "s/^DB_PASSWORD=.*/DB_PASSWORD=\"${DbPasswordPlaintext.password}\"/" /home/${VSCodeUser}/modernizer/backend/.env
-                    sudo -u ${VSCodeUser} sed -i "s/^JWT_SECRET=.*/JWT_SECRET=63de917288d776db7e6761b183bc1fd8ffc5905565d30c635294c25cc574adc496062bc59cc4370479ecbf1e826fff3c12abe4a6ecbc5203a4d58ca24a86e6fa/" /home/${VSCodeUser}/modernizer/backend/.env
+                  if [ -f "${VSCodeHomeFolder}/LGAM/backend/.env" ]; then
+                    sudo -u ${VSCodeUser} sed -i "s/^DB_USER=.*/DB_USER=\"${DbMasterUsername}\"/" ${VSCodeHomeFolder}/LGAM/backend/.env
+                    sudo -u ${VSCodeUser} sed -i "s/^DB_PASSWORD=.*/DB_PASSWORD=\"${DbPasswordPlaintext.password}\"/" ${VSCodeHomeFolder}/LGAM/backend/.env
+                    sudo -u ${VSCodeUser} sed -i "s/^JWT_SECRET=.*/JWT_SECRET=63de917288d776db7e6761b183bc1fd8ffc5905565d30c635294c25cc574adc496062bc59cc4370479ecbf1e826fff3c12abe4a6ecbc5203a4d58ca24a86e6fa/" ${VSCodeHomeFolder}/LGAM/backend/.env
                     echo "Updated .env file with database credentials and JWT secret"
                   else
                     echo "Warning: .env file not found, creating new one with full configuration"
-                    sudo -u ${VSCodeUser} bash -c 'cat > /home/${VSCodeUser}/modernizer/backend/.env <<EOF
+                    sudo -u ${VSCodeUser} bash -c 'cat > ${VSCodeHomeFolder}/LGAM/backend/.env <<EOF
                     # Database Configuration
                     DB_HOST=localhost
                     DB_PORT=3306
@@ -1354,27 +1352,27 @@ Resources:
                 - echo "Updating test environment files with database credentials..."
                 - !Sub |
                   # Update .env.test.integration file
-                  if [ -f "/home/${VSCodeUser}/modernizer/backend/.env.test.integration" ]; then
-                    sudo -u ${VSCodeUser} sed -i "s/^DB_USER=.*/DB_USER=\"${DbMasterUsername}\"/" /home/${VSCodeUser}/modernizer/backend/.env.test.integration
-                    sudo -u ${VSCodeUser} sed -i "s/^DB_PASSWORD=.*/DB_PASSWORD=\"${DbPasswordPlaintext.password}\"/" /home/${VSCodeUser}/modernizer/backend/.env.test.integration
+                  if [ -f "${VSCodeHomeFolder}/LGAM/backend/.env.test.integration" ]; then
+                    sudo -u ${VSCodeUser} sed -i "s/^DB_USER=.*/DB_USER=\"${DbMasterUsername}\"/" ${VSCodeHomeFolder}/LGAM/backend/.env.test.integration
+                    sudo -u ${VSCodeUser} sed -i "s/^DB_PASSWORD=.*/DB_PASSWORD=\"${DbPasswordPlaintext.password}\"/" ${VSCodeHomeFolder}/LGAM/backend/.env.test.integration
                     echo "Updated .env.test.integration file"
                   else
                     echo "Warning: .env.test.integration file not found"
                   fi
                 - !Sub |
                   # Update .env.test.e2e file
-                  if [ -f "/home/${VSCodeUser}/modernizer/backend/.env.test.e2e" ]; then
-                    sudo -u ${VSCodeUser} sed -i "s/^DB_USER=.*/DB_USER=\"${DbMasterUsername}\"/" /home/${VSCodeUser}/modernizer/backend/.env.test.e2e
-                    sudo -u ${VSCodeUser} sed -i "s/^DB_PASSWORD=.*/DB_PASSWORD=\"${DbPasswordPlaintext.password}\"/" /home/${VSCodeUser}/modernizer/backend/.env.test.e2e
+                  if [ -f "${VSCodeHomeFolder}/LGAM/backend/.env.test.e2e" ]; then
+                    sudo -u ${VSCodeUser} sed -i "s/^DB_USER=.*/DB_USER=\"${DbMasterUsername}\"/" ${VSCodeHomeFolder}/LGAM/backend/.env.test.e2e
+                    sudo -u ${VSCodeUser} sed -i "s/^DB_PASSWORD=.*/DB_PASSWORD=\"${DbPasswordPlaintext.password}\"/" ${VSCodeHomeFolder}/LGAM/backend/.env.test.e2e
                     echo "Updated .env.test.e2e file"
                   else
                     echo "Warning: .env.test.e2e file not found"
                   fi
                 - !Sub |
                   # Update .env.test.unit file
-                  if [ -f "/home/${VSCodeUser}/modernizer/backend/.env.test.unit" ]; then
-                    sudo -u ${VSCodeUser} sed -i "s/^DB_USER=.*/DB_USER=\"${DbMasterUsername}\"/" /home/${VSCodeUser}/modernizer/backend/.env.test.unit
-                    sudo -u ${VSCodeUser} sed -i "s/^DB_PASSWORD=.*/DB_PASSWORD=\"${DbPasswordPlaintext.password}\"/" /home/${VSCodeUser}/modernizer/backend/.env.test.unit
+                  if [ -f "${VSCodeHomeFolder}/LGAM/backend/.env.test.unit" ]; then
+                    sudo -u ${VSCodeUser} sed -i "s/^DB_USER=.*/DB_USER=\"${DbMasterUsername}\"/" ${VSCodeHomeFolder}/LGAM/backend/.env.test.unit
+                    sudo -u ${VSCodeUser} sed -i "s/^DB_PASSWORD=.*/DB_PASSWORD=\"${DbPasswordPlaintext.password}\"/" ${VSCodeHomeFolder}/LGAM/backend/.env.test.unit
                     echo "Updated .env.test.unit file"
                   else
                     echo "Warning: .env.test.unit file not found"
@@ -1390,7 +1388,7 @@ Resources:
                 - echo "Installing backend npm dependencies..."
                 - !Sub |
                   # Install npm dependencies as participant user
-                  sudo -u ${VSCodeUser} bash -c 'cd /home/${VSCodeUser}/modernizer/backend && source ~/.bashrc && export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && npm install'
+                  sudo -u ${VSCodeUser} bash -c 'cd ${VSCodeHomeFolder}/LGAM/backend && source ~/.bashrc && export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && npm install'
                 - echo "Backend npm dependencies installed successfully."
           - name: SetupDatabase
             action: aws:runShellScript
@@ -1402,15 +1400,15 @@ Resources:
                 - echo "Setting up database for the backend application..."
                 - !Sub |
                   # Change to backend directory and run database setup as participant user
-                  sudo -u ${VSCodeUser} bash -c 'cd /home/${VSCodeUser}/modernizer/backend && source ~/.bashrc && export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && npm run db:test'
+                  sudo -u ${VSCodeUser} bash -c 'cd ${VSCodeHomeFolder}/LGAM/backend && source ~/.bashrc && export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && npm run db:test'
                 - echo "Database connection test completed successfully."
                 - !Sub |
                   # Initialize database schema
-                  sudo -u ${VSCodeUser} bash -c 'cd /home/${VSCodeUser}/modernizer/backend && source ~/.bashrc && export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && npm run db:init'
+                  sudo -u ${VSCodeUser} bash -c 'cd ${VSCodeHomeFolder}/LGAM/backend && source ~/.bashrc && export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && npm run db:init'
                 - echo "Database schema initialization completed successfully."
                 - !Sub |
                   # Seed database with sample data
-                  sudo -u ${VSCodeUser} bash -c 'cd /home/${VSCodeUser}/modernizer/backend && source ~/.bashrc && export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && npm run db:seed'
+                  sudo -u ${VSCodeUser} bash -c 'cd ${VSCodeHomeFolder}/LGAM/backend && source ~/.bashrc && export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && npm run db:seed'
                 - echo "Database seeding completed successfully."
                 - echo "Database setup completed successfully."
           - name: SetupFrontEnd
@@ -1422,7 +1420,7 @@ Resources:
                 - "set -euo pipefail"
                 - echo "Setting up frontend development environment..."
                 - !Sub |
-                  sudo -u ${VSCodeUser} bash -c 'cd /home/${VSCodeUser}/modernizer/frontend && source ~/.bashrc && export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && npm install'
+                  sudo -u ${VSCodeUser} bash -c 'cd ${VSCodeHomeFolder}/LGAM/frontend && source ~/.bashrc && export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && npm install'
                 - echo "Frontend npm dependencies installed successfully."
                 - echo "Frontend development environment setup completed successfully."
                 - echo "Note - Frontend will be served from development server on port 3000 for live updates during workshop."
@@ -1436,12 +1434,12 @@ Resources:
                 - echo "Updating frontend CSP configuration..."
                 - !Sub |
                   # Modify the build-csp.js file to comment out the production CSP and set it to empty string
-                  if [ -f "/home/${VSCodeUser}/modernizer/frontend/scripts/build-csp.js" ]; then
-                    sudo -u ${VSCodeUser} bash -c 'cd /home/${VSCodeUser}/modernizer/frontend/scripts && cp build-csp.js build-csp.js.backup'
+                  if [ -f "${VSCodeHomeFolder}/LGAM/frontend/scripts/build-csp.js" ]; then
+                    sudo -u ${VSCodeUser} bash -c 'cd ${VSCodeHomeFolder}/LGAM/frontend/scripts && cp build-csp.js build-csp.js.backup'
                     echo "Created backup of build-csp.js"
                     
                     # Comment out the existing productionCSP line and add the new empty one
-                    sudo -u ${VSCodeUser} bash -c 'cd /home/${VSCodeUser}/modernizer/frontend/scripts && sed -i "s/^const productionCSP = \`.*\`;$/\/\/ &\nconst productionCSP = \`\`;/" build-csp.js'
+                    sudo -u ${VSCodeUser} bash -c 'cd ${VSCodeHomeFolder}/LGAM/frontend/scripts && sed -i "s/^const productionCSP = \`.*\`;$/\/\/ &\nconst productionCSP = \`\`;/" build-csp.js'
                     echo "Updated build-csp.js - commented out original productionCSP and set to empty string"
                   else
                     echo "Warning: build-csp.js file not found"
@@ -1449,22 +1447,22 @@ Resources:
                 - echo "Updating frontend index.html security headers..."
                 - !Sub |
                   # Modify the index.html file to remove CSP and update security headers
-                  if [ -f "/home/${VSCodeUser}/modernizer/frontend/public/index.html" ]; then
-                    sudo -u ${VSCodeUser} bash -c 'cd /home/${VSCodeUser}/modernizer/frontend/public && cp index.html index.html.backup'
+                  if [ -f "${VSCodeHomeFolder}/LGAM/frontend/public/index.html" ]; then
+                    sudo -u ${VSCodeUser} bash -c 'cd ${VSCodeHomeFolder}/LGAM/frontend/public && cp index.html index.html.backup'
                     echo "Created backup of index.html"
                     
                     # Update the security headers section
                     # First, change the comment
-                    sudo -u ${VSCodeUser} bash -c 'cd /home/${VSCodeUser}/modernizer/frontend/public && sed -i "s/<!-- Security Headers - Environment-based CSP -->/<!-- Security Headers - Removed CSP for development -->/" index.html'
+                    sudo -u ${VSCodeUser} bash -c 'cd ${VSCodeHomeFolder}/LGAM/frontend/public && sed -i "s/<!-- Security Headers - Environment-based CSP -->/<!-- Security Headers - Removed CSP for development -->/" index.html'
                     
                     # Remove the CSP meta tag (multi-line)
-                    sudo -u ${VSCodeUser} bash -c 'cd /home/${VSCodeUser}/modernizer/frontend/public && sed -i "/meta http-equiv=\"Content-Security-Policy\"/,+1d" index.html'
+                    sudo -u ${VSCodeUser} bash -c 'cd ${VSCodeHomeFolder}/LGAM/frontend/public && sed -i "/meta http-equiv=\"Content-Security-Policy\"/,+1d" index.html'
                     
                     # Add the new comment after the first comment
-                    sudo -u ${VSCodeUser} bash -c 'cd /home/${VSCodeUser}/modernizer/frontend/public && sed -i "/<!-- Security Headers - Removed CSP for development -->/a\    <!-- CSP removed to eliminate development issues -->" index.html'
+                    sudo -u ${VSCodeUser} bash -c 'cd ${VSCodeHomeFolder}/LGAM/frontend/public && sed -i "/<!-- Security Headers - Removed CSP for development -->/a\    <!-- CSP removed to eliminate development issues -->" index.html'
                     
                     # Update X-Frame-Options content from DENY to empty
-                    sudo -u ${VSCodeUser} bash -c 'cd /home/${VSCodeUser}/modernizer/frontend/public && sed -i "s/content=\"DENY\"/content=\"\"/" index.html'
+                    sudo -u ${VSCodeUser} bash -c 'cd ${VSCodeHomeFolder}/LGAM/frontend/public && sed -i "s/content=\"DENY\"/content=\"\"/" index.html'
                     
                     echo "Updated index.html - removed CSP and updated X-Frame-Options"
                   else
@@ -1481,10 +1479,10 @@ Resources:
                 - echo "Setting up Git repository for modernizer project..."
                 - !Sub |
                   # Initialize git repository in modernizer directory as participant user
-                  sudo -u ${VSCodeUser} bash -c 'cd /home/${VSCodeUser}/modernizer && git init'
+                  sudo -u ${VSCodeUser} bash -c 'cd ${VSCodeHomeFolder}/LGAM && git init'
                 - !Sub |
                   # Create .gitignore file with comprehensive content
-                  sudo -u ${VSCodeUser} bash -c 'cat > /home/${VSCodeUser}/modernizer/.gitignore <<EOF
+                  sudo -u ${VSCodeUser} bash -c 'cat > ${VSCodeHomeFolder}/LGAM/.gitignore <<EOF
                   # Dependencies
                   node_modules/
                   npm-debug.log*
@@ -1537,10 +1535,10 @@ Resources:
                   EOF'
                 - !Sub |
                   # Add all files to staging area
-                  sudo -u ${VSCodeUser} bash -c 'cd /home/${VSCodeUser}/modernizer && git add .'
+                  sudo -u ${VSCodeUser} bash -c 'cd ${VSCodeHomeFolder}/LGAM && git add .'
                 - !Sub |
                   # Create initial commit
-                  sudo -u ${VSCodeUser} bash -c 'cd /home/${VSCodeUser}/modernizer && git commit -m "Initial commit - modernizer e-commerce application setup"'
+                  sudo -u ${VSCodeUser} bash -c 'cd ${VSCodeHomeFolder}/LGAM && git commit -m "Initial commit - modernizer e-commerce application setup"'
                 - echo "Git repository initialized successfully with .gitignore and initial commit."
           - name: SetupToolsConfigurationFile
             action: aws:runShellScript
@@ -1552,16 +1550,16 @@ Resources:
                 - echo "Setting up tools configuration file with CloudFormation values"
                 - !Sub |
                   # Update all CloudFormation placeholder values in config.json
-                  sudo -u ${VSCodeUser} sed -i 's/111122223333/${AWS::AccountId}/g' /home/${VSCodeUser}/modernizer/tools/config.json
-                  sudo -u ${VSCodeUser} sed -i 's/<CF S3 BUCKET>/${MigrationS3Bucket}/g' /home/${VSCodeUser}/modernizer/tools/config.json
-                  sudo -u ${VSCodeUser} sed -i 's|<CF GLUE ROLE>|${GlueServiceRole.Arn}|g' /home/${VSCodeUser}/modernizer/tools/config.json
-                  sudo -u ${VSCodeUser} sed -i 's/<CF VPC ID>/${VSCodeInstance.VpcId}/g' /home/${VSCodeUser}/modernizer/tools/config.json
-                  sudo -u ${VSCodeUser} sed -i 's/<CF SUBNET IDS>/${VSCodeInstance.SubnetId}/g' /home/${VSCodeUser}/modernizer/tools/config.json
-                  sudo -u ${VSCodeUser} sed -i 's/<CF SECURITY GROUP ID>/${SecurityGroup.GroupId}/g' /home/${VSCodeUser}/modernizer/tools/config.json
-                  sudo -u ${VSCodeUser} sed -i 's/<CF PUBLIC IP>/${VSCodeInstance.PublicIp}/g' /home/${VSCodeUser}/modernizer/tools/config.json
-                  sudo -u ${VSCodeUser} sed -i 's/<CF PRIVATE IP>/${VSCodeInstance.PrivateIp}/g' /home/${VSCodeUser}/modernizer/tools/config.json
-                  sudo -u ${VSCodeUser} sed -i 's/<CF DB USERNAME>/${DbMasterUsername}/g' /home/${VSCodeUser}/modernizer/tools/config.json
-                  sudo -u ${VSCodeUser} sed -i 's/<CF DB PASSWORD>/${DbPasswordPlaintext.password}/g' /home/${VSCodeUser}/modernizer/tools/config.json
+                  sudo -u ${VSCodeUser} sed -i 's/111122223333/${AWS::AccountId}/g' ${VSCodeHomeFolder}/LGAM/tools/config.json
+                  sudo -u ${VSCodeUser} sed -i 's/<CF S3 BUCKET>/${MigrationS3Bucket}/g' ${VSCodeHomeFolder}/LGAM/tools/config.json
+                  sudo -u ${VSCodeUser} sed -i 's|<CF GLUE ROLE>|${GlueServiceRole.Arn}|g' ${VSCodeHomeFolder}/LGAM/tools/config.json
+                  sudo -u ${VSCodeUser} sed -i 's/<CF VPC ID>/${VSCodeInstance.VpcId}/g' ${VSCodeHomeFolder}/LGAM/tools/config.json
+                  sudo -u ${VSCodeUser} sed -i 's/<CF SUBNET IDS>/${VSCodeInstance.SubnetId}/g' ${VSCodeHomeFolder}/LGAM/tools/config.json
+                  sudo -u ${VSCodeUser} sed -i 's/<CF SECURITY GROUP ID>/${SecurityGroup.GroupId}/g' ${VSCodeHomeFolder}/LGAM/tools/config.json
+                  sudo -u ${VSCodeUser} sed -i 's/<CF PUBLIC IP>/${VSCodeInstance.PublicIp}/g' ${VSCodeHomeFolder}/LGAM/tools/config.json
+                  sudo -u ${VSCodeUser} sed -i 's/<CF PRIVATE IP>/${VSCodeInstance.PrivateIp}/g' ${VSCodeHomeFolder}/LGAM/tools/config.json
+                  sudo -u ${VSCodeUser} sed -i 's/<CF DB USERNAME>/${DbMasterUsername}/g' ${VSCodeHomeFolder}/LGAM/tools/config.json
+                  sudo -u ${VSCodeUser} sed -i 's/<CF DB PASSWORD>/${DbPasswordPlaintext.password}/g' ${VSCodeHomeFolder}/LGAM/tools/config.json
                 - echo "Configuration file updated with CloudFormation values successfully."
 
   SSMDocLambdaRole:
@@ -2349,7 +2347,7 @@ Resources:
     Properties:
       CatalogId: !Ref AWS::AccountId
       ConnectionInput:
-        Name: mysql-modernizer-connection
+        Name: mysql-modernizer-connection-test
         Description: MySQL connection for DynamoDB modernization workshop
         ConnectionType: JDBC
         ConnectionProperties:
