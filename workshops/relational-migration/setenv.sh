@@ -22,13 +22,13 @@ if [[ "workshop" == $DEPLOYMENT ]]
     MIGRATION_BUCKET=$(aws s3api list-buckets --prefix 'ddb-migrations3bucket' --query 'Buckets[0].Name')
     export MIGRATION_BUCKET=$(echo $MIGRATION_BUCKET | xargs)
 
-    MYSQL_HOST=$(aws ec2 describe-instances  --query 'Reservations[0].Instances[0].PrivateIpAddress' --filters Name=tag:Name,Values=MySQL-Instance)
+    MYSQL_HOST=$(aws ec2 describe-instances  --query 'Reservations[0].Instances[0].PrivateIpAddress' --filters Name=tag:Name,Values=VSCodeInstance)
     export MYSQL_HOST=$(echo $MYSQL_HOST | xargs)
 
-    SUBNET_ID=$(aws ec2 describe-instances  --query 'Reservations[0].Instances[0].SubnetId' --filters Name=tag:Name,Values=MySQL-Instance)
+    SUBNET_ID=$(aws ec2 describe-instances  --query 'Reservations[0].Instances[0].SubnetId' --filters Name=tag:Name,Values=VSCodeInstance)
     export SUBNET_ID=$(echo $SUBNET_ID | xargs)
 
-    SECURITY_GROUP=$(aws ec2 describe-instances  --query 'Reservations[0].Instances[0].SecurityGroups[0].GroupId' --filters Name=tag:Name,Values=MySQL-Instance)
+    SECURITY_GROUP=$(aws ec2 describe-instances  --query 'Reservations[0].Instances[0].SecurityGroups[0].GroupId' --filters Name=tag:Name,Values=VSCodeInstance)
     export SECURITY_GROUP=$(echo $SECURITY_GROUP | xargs)
 
 #    jq_update='.stages.relational.subnet_ids=["'
