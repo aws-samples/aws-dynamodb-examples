@@ -1,6 +1,6 @@
-const AWS = require("aws-sdk");
+const { DynamoDBClient, UpdateGlobalTableCommand, UpdateGlobalTableSettingsCommand } = require("@aws-sdk/client-dynamodb");
 
-const dynamodb = new AWS.DynamoDB({ region: "us-west-2" });
+const dynamodb = new DynamoDBClient({ region: "us-west-2" });
 
 const tableName = "Music";
 
@@ -17,7 +17,8 @@ async function updateGlobalTable() {
     ],
   };
 
-  const response = await dynamodb.updateGlobalTable(params).promise();
+  const command = new UpdateGlobalTableCommand(params);
+  const response = await dynamodb.send(command);
   return response;
 }
 
@@ -27,7 +28,8 @@ async function updateGlobalTableSettings() {
     GlobalTableProvisionedWriteCapacityUnits: "10",
   };
 
-  const response = await dynamodb.updateGlobalTableSettings(params).promise();
+  const command = new UpdateGlobalTableSettingsCommand(params);
+  const response = await dynamodb.send(command);
   return response;
 }
 

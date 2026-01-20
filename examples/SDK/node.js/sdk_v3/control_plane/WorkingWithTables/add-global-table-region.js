@@ -1,10 +1,6 @@
-//const AWS = require("aws-sdk");
-
-//const dynamodb = new AWS.DynamoDB({ region: "us-west-2" });
-const { DynamoDBClient, UpdateTableCommand, UpdateGlobalTableCommand } = require('@aws-sdk/client-dynamodb');
+const { DynamoDBClient, UpdateTableCommand } = require('@aws-sdk/client-dynamodb');
 
 const REGION = "us-west-2";
-//const TABLENAME = "RetailDatabase";
 
 async function addGlobalTableRegion() {
   const params = {
