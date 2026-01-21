@@ -4,31 +4,45 @@ import software.amazon.awssdk.enhanced.dynamodb.*;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSortKey;
-import software.amazon.awssdk.enhanced.dynamodb.model.Key;
+import software.amazon.awssdk.enhanced.dynamodb.model.DeleteItemEnhancedRequest;
+import software.amazon.awssdk.enhanced.dynamodb.model.PutItemEnhancedRequest;
 import software.amazon.awssdk.services.dynamodb.model.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
-public class DeleteItem {
+public class DeleteItemConditional {
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
 
-        try{
+        try {
             // Create Client
             DynamoDbEnhancedClient enhancedClient = DynamoDbEnhancedClient.create();
             // Map Table Using Bean
-            DynamoDbTable<Customer> table = enhancedClient.table("RetailDatabase", TableSchema.fromBean(Customer.class));
+            DynamoDbTable<Customer> table = enhancedClient.table("RetailDatabase",
+                    TableSchema.fromBean(Customer.class));
 
-            // Create customer pk/sk to identify item to delete
-            Key key = Key.builder()
-                    .partitionValue("jim.bob@somewhere.com")
-                    .sortValue("metadata")
+            // Delete only if address.pcode = 98260
+            final Expression expression = Expression.builder()
+                    .expression("address.pcode = :val")
+                    .putExpressionValue(":val", AttributeValue.builder().s("98260").build())
+                    .build();
+
+            // Create customer pk/sk
+            Customer customer = new Customer.Builder("jim.bob@somewhere.com")
+                    .withSk("metadata")
+                    .build();
+
+            // Delete item request with condition
+            DeleteItemEnhancedRequest request = DeleteItemEnhancedRequest.builder()
+                    .key(k -> k.partitionValue(customer.getPk()).sortValue(customer.getSk()))
+                    .conditionExpression(expression)
                     .build();
 
             // Delete Item
-            table.deleteItem(key);
+            table.deleteItem(request);
 
-        }catch (Exception e){
+        } catch (Exception e) {
             handleCommonErrors(e);
         }
 
@@ -45,8 +59,8 @@ public class DeleteItem {
         private Map<String, String> address;
         private String username;
 
-
-        public Customer() { }
+        public Customer() {
+        }
 
         // Partition Keys
         @DynamoDbPartitionKey
@@ -92,9 +106,11 @@ public class DeleteItem {
             this.lastName = lastName;
         }
 
-        public Map<String,String> getAddress() { return address; }
+        public Map<String, String> getAddress() {
+            return address;
+        }
 
-        public void setAddress(Map<String,String> address) {
+        public void setAddress(Map<String, String> address) {
             this.address = address;
         }
 
@@ -106,7 +122,6 @@ public class DeleteItem {
             this.username = username;
         }
 
-
         // Static Builder Class
         public static class Builder {
             private String pk;
@@ -114,9 +129,8 @@ public class DeleteItem {
             private String name;
             private String firstName;
             private String lastName;
-            private Map<String,String> address;
+            private Map<String, String> address;
             private String username;
-
 
             public Builder(String pk) {
                 this.pk = pk;
@@ -142,7 +156,7 @@ public class DeleteItem {
                 return this;
             }
 
-            public Builder withAddress(Map<String,String> address){
+            public Builder withAddress(Map<String, String> address) {
                 this.address = address;
                 return this;
             }
@@ -151,7 +165,6 @@ public class DeleteItem {
                 this.username = username;
                 return this;
             }
-
 
             public Customer build() {
                 Customer cust = new Customer();
@@ -173,20 +186,28 @@ public class DeleteItem {
         try {
             throw exception;
         } catch (InternalServerErrorException isee) {
-            System.out.println("Internal Server Error, generally safe to retry with exponential back-off. Error: " + isee.getMessage());
+            System.out.println("Internal Server Error, generally safe to retry with exponential back-off. Error: "
+                    + isee.getMessage());
         } catch (RequestLimitExceededException rlee) {
-            System.out.println("Throughput exceeds the current throughput limit for your account, increase account level throughput before " +
-                    "retrying. Error: " + rlee.getMessage());
+            System.out.println(
+                    "Throughput exceeds the current throughput limit for your account, increase account level throughput before "
+                            +
+                            "retrying. Error: " + rlee.getMessage());
         } catch (ProvisionedThroughputExceededException ptee) {
-            System.out.println("Request rate is too high. If you're using a custom retry strategy make sure to retry with exponential back-off. " +
-                    "Otherwise consider reducing frequency of requests or increasing provisioned capacity for your table or secondary index. Error: " +
-                    ptee.getMessage());
+            System.out.println(
+                    "Request rate is too high. If you're using a custom retry strategy make sure to retry with exponential back-off. "
+                            +
+                            "Otherwise consider reducing frequency of requests or increasing provisioned capacity for your table or secondary index. Error: "
+                            +
+                            ptee.getMessage());
         } catch (ResourceNotFoundException rnfe) {
-            System.out.println("One of the tables was not found, verify table exists before retrying. Error: " + rnfe.getMessage());
-        } catch (ConditionalCheckFailedException ccfe){
+            System.out.println("One of the tables was not found, verify table exists before retrying. Error: "
+                    + rnfe.getMessage());
+        } catch (ConditionalCheckFailedException ccfe) {
             System.out.println("Condition evaluated to false: " + ccfe.getMessage());
         } catch (Exception e) {
-            System.out.println("An exception occurred, investigate and configure retry strategy. Error: " + e.getMessage());
+            System.out.println(
+                    "An exception occurred, investigate and configure retry strategy. Error: " + e.getMessage());
         }
     }
 
