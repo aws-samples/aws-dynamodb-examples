@@ -77,7 +77,7 @@ Used to find subscriptions that are due for payment processing (`getDuePaymentsB
 
 ## Schema Design
 
-A comprehensive schema design is included, demonstrating how different entities and access patterns map to the DynamoDB table structure. [ReocurringPaymentsSchema.json](https://github.com/aws-samples/aws-dynamodb-examples/blob/master/schema_design/SchemaExamples/ReocurringPayments/ReocurringPaymentsSchema.json)
+A comprehensive schema design is included, demonstrating how different entities and access patterns map to the DynamoDB table structure. [RecurringPaymentsSchema.json](https://github.com/aws-samples/aws-dynamodb-examples/blob/master/schema_design/SchemaExamples/RecurringPayments/RecurringPaymentsSchema.json)
 
 ## Additional Information
 
