@@ -142,6 +142,8 @@ uv run pytest --cov=src --cov-report=html
 
 ## Troubleshooting
 
+**Security Note:** This project uses boto3/aioboto3 which depend on urllib3. Ensure you're using urllib3 >= 2.6.3 to avoid CWE-409 (decompression bomb vulnerability). The project's dependencies will pull in the correct version automatically.
+
 **Throttling errors:**
 - Increase DynamoDB capacity
 - Reduce `--workers` to slow down writes

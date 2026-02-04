@@ -1,16 +1,3 @@
-#
-#  Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
-#
-#  This file is licensed under the Apache License, Version 2.0 (the "License").
-#  You may not use this file except in compliance with the License. A copy of
-#  the License is located at
-#
-#  http://aws.amazon.com/apache2.0/
-#
-#  This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-#  CONDITIONS OF ANY KIND, either express or implied. See the License for the
-#  specific language governing permissions and limitations under the License.
-#
 """Property-based tests for input validation across all loaders.
 
 Feature: dynamodb-csv-bulk-loader
@@ -19,12 +6,12 @@ Validates: Requirements 5.6, 8.5
 """
 
 import pytest
-from hypothesis import given, strategies as st
+from hypothesis import given
+from hypothesis import strategies as st
 
 from src.async_loader import AsyncDynamoDBLoader
 from src.models import LoaderConfig
 from src.threaded_loader import ThreadedDynamoDBLoader
-
 
 # Valid AWS regions for testing
 VALID_REGIONS = [
@@ -120,9 +107,7 @@ def test_property_empty_table_name_rejected(
     batch_size=st.integers(min_value=1, max_value=100),
     max_workers=st.integers(min_value=1, max_value=100),
 )
-def test_property_invalid_region_rejected(
-    region: str, batch_size: int, max_workers: int
-) -> None:
+def test_property_invalid_region_rejected(region: str, batch_size: int, max_workers: int) -> None:
     """Property: Invalid AWS region should be rejected with clear error.
 
     For any region that is not a valid AWS region, the system should
