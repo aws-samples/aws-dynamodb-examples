@@ -1,16 +1,3 @@
-#
-#  Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
-#
-#  This file is licensed under the Apache License, Version 2.0 (the "License").
-#  You may not use this file except in compliance with the License. A copy of
-#  the License is located at
-#
-#  http://aws.amazon.com/apache2.0/
-#
-#  This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-#  CONDITIONS OF ANY KIND, either express or implied. See the License for the
-#  specific language governing permissions and limitations under the License.
-#
 """End-to-end integration test for async loader.
 
 This test validates the complete workflow:
@@ -103,9 +90,7 @@ async def test_async_loader_end_to_end(dynamodb_table: str, temp_csv_file: Path)
     """
     with mock_aws():
         # Create the DynamoDB table within the mocked context
-        async with aioboto3.Session().resource(
-            "dynamodb", region_name="us-east-1"
-        ) as dynamodb:
+        async with aioboto3.Session().resource("dynamodb", region_name="us-east-1") as dynamodb:
             table = await dynamodb.create_table(
                 TableName=dynamodb_table,
                 KeySchema=[{"AttributeName": "id", "KeyType": "HASH"}],
@@ -153,9 +138,7 @@ async def test_async_loader_end_to_end(dynamodb_table: str, temp_csv_file: Path)
 
         # Step 4: Verify DynamoDB contents
         # Read all items from DynamoDB and verify they match the CSV
-        async with aioboto3.Session().resource(
-            "dynamodb", region_name="us-east-1"
-        ) as dynamodb:
+        async with aioboto3.Session().resource("dynamodb", region_name="us-east-1") as dynamodb:
             table = await dynamodb.Table(dynamodb_table)
 
             # Scan table to get all items
@@ -164,15 +147,13 @@ async def test_async_loader_end_to_end(dynamodb_table: str, temp_csv_file: Path)
 
             # Handle pagination if needed (shouldn't be necessary for 100 records)
             while "LastEvaluatedKey" in response:
-                response = await table.scan(
-                    ExclusiveStartKey=response["LastEvaluatedKey"]
-                )
+                response = await table.scan(ExclusiveStartKey=response["LastEvaluatedKey"])
                 actual_items.extend(response.get("Items", []))
 
         # Verify count matches
-        assert (
-            len(actual_items) == num_records
-        ), f"DynamoDB should contain {num_records} items, found {len(actual_items)}"
+        assert len(actual_items) == num_records, (
+            f"DynamoDB should contain {num_records} items, found {len(actual_items)}"
+        )
 
         # Create lookup dictionary by id for easy comparison
         actual_by_id = {item["id"]: item for item in actual_items}
@@ -180,9 +161,7 @@ async def test_async_loader_end_to_end(dynamodb_table: str, temp_csv_file: Path)
         # Verify each expected record exists in DynamoDB with correct values
         for expected in expected_records:
             record_id = expected["id"]
-            assert (
-                record_id in actual_by_id
-            ), f"Record {record_id} should exist in DynamoDB"
+            assert record_id in actual_by_id, f"Record {record_id} should exist in DynamoDB"
 
             actual = actual_by_id[record_id]
 
@@ -194,9 +173,7 @@ async def test_async_loader_end_to_end(dynamodb_table: str, temp_csv_file: Path)
             assert actual["email"] == expected["email"], "Email should match"
             assert actual["amount"] == expected["amount"], "Amount should match"
             assert actual["status"] == expected["status"], "Status should match"
-            assert (
-                actual["description"] == expected["description"]
-            ), "Description should match"
+            assert actual["description"] == expected["description"], "Description should match"
 
 
 @pytest.mark.integration
@@ -212,9 +189,7 @@ async def test_async_loader_empty_csv(dynamodb_table: str, temp_csv_file: Path) 
     """
     with mock_aws():
         # Create the DynamoDB table within the mocked context
-        async with aioboto3.Session().resource(
-            "dynamodb", region_name="us-east-1"
-        ) as dynamodb:
+        async with aioboto3.Session().resource("dynamodb", region_name="us-east-1") as dynamodb:
             table = await dynamodb.create_table(
                 TableName=dynamodb_table,
                 KeySchema=[{"AttributeName": "id", "KeyType": "HASH"}],
@@ -261,9 +236,7 @@ async def test_async_loader_empty_csv(dynamodb_table: str, temp_csv_file: Path) 
 
 @pytest.mark.integration
 @pytest.mark.asyncio
-async def test_async_loader_shuffle_verification(
-    dynamodb_table: str, temp_csv_file: Path
-) -> None:
+async def test_async_loader_shuffle_verification(dynamodb_table: str, temp_csv_file: Path) -> None:
     """Test that data shuffling prevents sequential writes.
 
     This test validates Requirement 1.2: Data shuffling to prevent hot partitions.
@@ -279,9 +252,7 @@ async def test_async_loader_shuffle_verification(
     """
     with mock_aws():
         # Create the DynamoDB table within the mocked context
-        async with aioboto3.Session().resource(
-            "dynamodb", region_name="us-east-1"
-        ) as dynamodb:
+        async with aioboto3.Session().resource("dynamodb", region_name="us-east-1") as dynamodb:
             table = await dynamodb.create_table(
                 TableName=dynamodb_table,
                 KeySchema=[{"AttributeName": "id", "KeyType": "HASH"}],
@@ -317,9 +288,7 @@ async def test_async_loader_shuffle_verification(
         assert result.successful_writes == num_records, "All records should be written"
 
         # Verify all IDs from CSV exist in DynamoDB
-        async with aioboto3.Session().resource(
-            "dynamodb", region_name="us-east-1"
-        ) as dynamodb:
+        async with aioboto3.Session().resource("dynamodb", region_name="us-east-1") as dynamodb:
             table = await dynamodb.Table(dynamodb_table)
             response = await table.scan()
             actual_items = response.get("Items", [])
@@ -333,9 +302,7 @@ async def test_async_loader_shuffle_verification(
 
 @pytest.mark.integration
 @pytest.mark.asyncio
-async def test_async_loader_batch_processing(
-    dynamodb_table: str, temp_csv_file: Path
-) -> None:
+async def test_async_loader_batch_processing(dynamodb_table: str, temp_csv_file: Path) -> None:
     """Test batch processing with different batch sizes.
 
     Validates that the loader correctly handles batching logic.
@@ -346,9 +313,7 @@ async def test_async_loader_batch_processing(
     """
     with mock_aws():
         # Create the DynamoDB table within the mocked context
-        async with aioboto3.Session().resource(
-            "dynamodb", region_name="us-east-1"
-        ) as dynamodb:
+        async with aioboto3.Session().resource("dynamodb", region_name="us-east-1") as dynamodb:
             table = await dynamodb.create_table(
                 TableName=dynamodb_table,
                 KeySchema=[{"AttributeName": "id", "KeyType": "HASH"}],
@@ -379,9 +344,7 @@ async def test_async_loader_batch_processing(
         assert result.failed_writes == 0, "No records should fail"
 
         # Verify DynamoDB contains all records
-        async with aioboto3.Session().resource(
-            "dynamodb", region_name="us-east-1"
-        ) as dynamodb:
+        async with aioboto3.Session().resource("dynamodb", region_name="us-east-1") as dynamodb:
             table = await dynamodb.Table(dynamodb_table)
             response = await table.scan()
             actual_items = response.get("Items", [])
