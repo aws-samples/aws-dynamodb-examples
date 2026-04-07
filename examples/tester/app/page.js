@@ -2,9 +2,8 @@ import Image from 'next/image';
 
 import css from './page.module.css';
 
-import config from '../config.json' with { type: 'json' };
-
-const bucketName = config['bucketName'];
+// import config from '../config.json' with { type: 'json' };
+// const bucketName = config['bucketName'];
 
 export default async function Home() {
 
@@ -19,9 +18,10 @@ export default async function Home() {
 
 
           <p>Project & instructions at :&nbsp; 
-            <b><i><a href="https://github.com/robm26/tester" target='_blank'>
-            github.com/robm26/tester
-            </a></i></b>
+            <i><a href="https://github.com/aws-samples/aws-dynamodb-examples.git" target='_blank'>
+            <br/>
+            github.com/aws-samples/aws-dynamodb-examples/examples/tester/README.md
+            </a></i>
           </p>
           
           <Image

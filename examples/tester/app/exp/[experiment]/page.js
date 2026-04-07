@@ -1,6 +1,6 @@
 
 import css from '@/app/page.module.css';
-import config from '@/config.json';
+// import config from '@/config.json';
 import { getDatafile } from "@/app/lib/aws.js";
 import { getBrushColor } from "@/app/lib/brushcolor.js";
 import { histogram, calculateLinearRegression, calculateTailLatency, makeStats, makeLinearStats, clientVsCwLatencySummary } from "@/app/lib/statistics.js";
@@ -10,6 +10,8 @@ import CsvGrid from '@/app/lib/csvgrid.js';
 import MyChart from '@/app/exp/[experiment]/chart.js';
 
 import {csv} from 'csvtojson';
+
+const bucketName = process.env.TESTER_BUCKET;
 
 
 const histogramConfig = {
@@ -26,8 +28,8 @@ export default async function Page({params}) {
 
   const experiment = (await params).experiment;
   const eStartTime = (new Date(parseInt(experiment.slice(1)) * 1000)).toISOString();
-  const data = await getDatafile(config['bucketName'], experiment, 'data.csv');
-  const summaryText = await getDatafile(config['bucketName'], experiment, 'summary.json');
+  const data = await getDatafile(bucketName, experiment, 'data.csv');
+  const summaryText = await getDatafile(bucketName, experiment, 'summary.json');
 
   if(!data) {
     return (<div>Unable to load data for experiment: {experiment}</div>);
@@ -40,7 +42,7 @@ export default async function Page({params}) {
   // console.log('in page.js Page(params) ');
   // console.log('data  ' + typeof data);
   // console.log('summ  ' + summary);
-  // console.log('config: bucket ' + config['bucketName']);
+  // console.log('config: bucket ' + bucketName);
 
   const dataObj = await csv().fromString(data);
   let compareValues = Array.from(new Set(dataObj.map((line) => line['test'])));
