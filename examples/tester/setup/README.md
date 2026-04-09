@@ -46,24 +46,27 @@ aws sts get-caller-identity
    npm install
    ```
 
-5. Locate and run the setup script which will create an S3 bucket and four DynamoDB tables. You may adjust the region name as needed.
+5. Navigate to the /setup folder and notice the tester_tables.yaml file which defines a Cloudformation stack, including four DynamoDB tables and an S3 bucket. 
    
 ```
-   export AWS_REGION=us-east-1
    cd setup
-   chmod +x ./setup.sh
-   ./setup.sh
+   chmod +x ./deploy_cf.sh
+   ./deploy_cf.sh
 ```
+   When the stack deployment is complete, check the outputs for the BucketName value, and copy it.
+
+   Navigate to the tester/ root folder and open the file called ```/.env```
    
-   The new S3 bucket's name is stored in the file: ```/config.json```
+   Update this file like this: TESTER_BUCKET=<your new bucket name>
    
-   Each DynamoDB table has a key schema of PK and SK, and is in On Demand capacity mode. The final two tables are Global Tables.
+ 
+  Each DynamoDB table has a key schema of PK and SK, and is in On Demand capacity mode. The final two tables are Global Tables.
 
    * mytable
    * everysize
    * MREC
    * MRSC
-
+  
 The server-side component of tester is now set. Let's switch gears and deploy the client App component on your laptop. This webapp will serve the charts dashboard showing the latency of the test executions.
 
 # App Setup
@@ -83,15 +86,19 @@ The server-side component of tester is now set. Let's switch gears and deploy th
 cd aws-dynamodb-examples/examples/tester
 npm install
 ```
+
+3. Navigate to the tester/ root folder and open the file called ```/.env```
    
-3. Launch the web app. This will run a custom [Next.js](https://nextjs.org/) app from your laptop. 
+   Update this file like this: TESTER_BUCKET=<your new bucket name>
+
+4. Launch the web app. This will run a custom [Next.js](https://nextjs.org/) app from your laptop. 
    
 ```
 cd app
 npm run dev
 ```
 
-4. Open a browser and navigate to http://localhost:3000
+5. Open a browser and navigate to http://localhost:3000
 
 You should see a web app in your browser called **tester** that is configured to point to the same Jobs S3 bucket.
 

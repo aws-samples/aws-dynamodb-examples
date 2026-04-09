@@ -1,0 +1,116 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'CloudFormation template for Tester tables'
+
+Parameters:
+  GTregion1:
+    Description: Enter the region for the second Global Tables regional replica
+    Type: String
+    Default: us-east-1
+  GTregion2:
+    Description: Enter the region for the second Global Tables regional replica
+    Type: String
+    Default: us-east-2
+  GTregion3:
+    Description: Enter the region for the second Global Tables regional replica
+    Type: String
+    Default: us-west-2
+
+Resources:
+  MyTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: mytable
+      BillingMode: PAY_PER_REQUEST
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+      WarmThroughput: 
+        ReadUnitsPerSecond: 12000
+        WriteUnitsPerSecond: 25000
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+
+  Everysize:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: everysize
+      BillingMode: PAY_PER_REQUEST
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+
+  MREC:
+    Type: AWS::DynamoDB::GlobalTable
+    Properties:
+      TableName: MREC
+      BillingMode: PAY_PER_REQUEST
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+      Replicas:
+        - Region: !Ref GTregion1
+        - Region: !Ref GTregion2
+        - Region: !Ref GTregion3
+
+  MRSC:
+    Type: AWS::DynamoDB::GlobalTable
+    Properties:
+      TableName: MRSC
+      BillingMode: PAY_PER_REQUEST
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+      MultiRegionConsistency: STRONG
+      Replicas:
+        - Region: !Ref GTregion1
+        - Region: !Ref GTregion2
+        - Region: !Ref GTregion3
+
+  TesterBucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: !Sub "tester-bucket-23429755${AWS::AccountId}134" 
+      Tags:
+        - Key: Project
+          Value: DynamoDB latency tester results
+
+Outputs:
+  BucketName:
+    Description: Name of the new Tester S3 Bucket
+    Value: !Ref TesterBucket
+
+#       BucketName: !Sub "tester-bucket-${AWS::AccountId}" 
