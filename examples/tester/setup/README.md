@@ -53,11 +53,11 @@ aws sts get-caller-identity
    chmod +x ./deploy_cf.sh
    ./deploy_cf.sh
 ```
-   When the stack deployment is complete, check the outputs for the BucketName value, and copy it.
+   Wait a few minutes for the stack to deploy. When the it finishes, navigate to the Cloudformation service in the us-east-1 console, and check the outputs for the BucketName value, and copy it.
 
    Navigate to the tester/ root folder and open the file called ```/.env```
    
-   Update this file like this: TESTER_BUCKET=<your new bucket name>
+   Update this file like this: TESTER_BUCKET=**your new bucket name**
    
  
   Each DynamoDB table has a key schema of PK and SK, and is in On Demand capacity mode. The final two tables are Global Tables.
@@ -89,9 +89,16 @@ npm install
 
 3. Navigate to the tester/ root folder and open the file called ```/.env```
    
-   Update this file like this: TESTER_BUCKET=<your new bucket name>
+   Update this file like this: TESTER_BUCKET=**your new bucket name**
 
-4. Launch the web app. This will run a custom [Next.js](https://nextjs.org/) app from your laptop. 
+4. Make sure you are running with the same credentials and account as in the server environment. Run:
+```
+aws sts get-caller-identity
+```
+
+*Note: If you launched your server components within an AWS workshop environment, you may copy the AWS CLI credentials into the app terminal. These are found on the far left of the initial event dashboard page for your workshop. *
+
+5. Launch the web app. This will run a custom [Next.js](https://nextjs.org/) app from your laptop. 
    
 ```
 cd app
