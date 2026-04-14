@@ -64,6 +64,7 @@ const getCwStats = async (params) => {
     const startTime = new Date(parseInt(startTimeEpoch)*1000);
     const endTime = new Date(parseInt(endTimeEpoch)*1000);
     const duration = (endTime - startTime) / 1000;
+    const period = 60;
 
     // console.log('startTime : ' + startTime);
     // console.log('endTime   : ' + endTime);
@@ -77,7 +78,7 @@ const getCwStats = async (params) => {
                     "MetricName": "SuccessfulRequestLatency",
                     "Dimensions": [{"Name": "TableName", "Value": params['TableName']}, {"Name": "Operation", "Value": params['operation']}]
                 },
-                "Period": duration, "Stat": ["Average"]
+                "Period": duration, "Stat": "Average"
             }, "ReturnData": true,
         },
         {
@@ -88,7 +89,7 @@ const getCwStats = async (params) => {
                     "MetricName": "SuccessfulRequestLatency",
                     "Dimensions": [{"Name": "TableName", "Value": params['TableName']}, {"Name": "Operation", "Value": params['operation']}]
                 },
-                "Period": duration, "Stat": ["Maximum"]
+                "Period": duration, "Stat": "Maximum"
             }, "ReturnData": true,
         },
         {
@@ -99,7 +100,7 @@ const getCwStats = async (params) => {
                     "MetricName": "SuccessfulRequestLatency",
                     "Dimensions": [{"Name": "TableName", "Value": params['TableName']}, {"Name": "Operation", "Value": params['operation']}]
                 },
-                "Period": duration, "Stat": ["Minimum"]
+                "Period": duration, "Stat": "Minimum"
             }, "ReturnData": true,
         }
 
