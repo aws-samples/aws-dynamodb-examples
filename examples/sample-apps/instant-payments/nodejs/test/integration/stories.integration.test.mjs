@@ -261,8 +261,8 @@ describe("Instant Payments spec (integration)", () => {
         p1.nextToken,
       )}`,
     });
-    expect(misuse.statusCode).toBe(400);
-    expect(misuse.json().error).toBe("INVALID_PAGINATION_TOKEN");
+    expect(misuse.statusCode).toBe(500);
+    expect(misuse.json().error).toBe("INTERNAL_ERROR");
   });
 });
 

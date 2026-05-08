@@ -74,13 +74,6 @@ Lists a merchant's payments filtered by lifecycle state, ordered by creation tim
 
 ---
 
-## Documentation
-
-- [DynamoDB data model review](docs/DynamoDB-data-model-review.md) — single-table layout, GSIs, strengths, and known gaps.
-- [Payment retries article ↔ Instant Payments](docs/alignment-system-design-classroom-payment-retries.md) — how common retry/status/DLQ guidance maps to this sample (team discussion note).
-
----
-
 ## Runbook
 
 For prerequisites, configuration, how to run against DynamoDB Local or AWS, scripts, and related tooling, see [Runbook.md](docs/Runbook.md).

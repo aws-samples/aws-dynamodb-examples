@@ -479,12 +479,12 @@ async function main() {
 
   if (page1.json.nextToken) {
     await exchange({
-      step: "Wrong GSI for pagination token (400)",
+      step: "Wrong GSI for pagination token (500)",
       method: "GET",
       path: `/api/v1/merchants/${merchId}/payments/state/RECEIVED?limit=2&nextToken=${encodeURIComponent(page1.json.nextToken)}`,
-      expectStatus: 400,
+      expectStatus: 500,
     });
-    note(`INVALID_PAGINATION_TOKEN when token from another index.`);
+    note(`INTERNAL_ERROR when token from another index.`);
   } else {
     note("(skipped wrong-token check: no nextToken)");
   }

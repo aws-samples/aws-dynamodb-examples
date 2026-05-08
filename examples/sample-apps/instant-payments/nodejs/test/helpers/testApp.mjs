@@ -2,7 +2,7 @@ import { DynamoDBClient, DeleteTableCommand, ResourceNotFoundException, waitUnti
 import { buildApp } from "../../src/app.mjs";
 
 export async function createTestApp() {
-  const endpoint = process.env.DYNAMODB_ENDPOINT ?? "http://localhost:8000";
+  const endpoint = process.env.DYNAMODB_ENDPOINT ?? "http://localhost:18000";
   const region = process.env.DYNAMODB_REGION ?? "eu-west-1";
   const tableName = `JS_InstantPayments_test_${Date.now()}_${Math.random().toString(16).slice(2)}`;
 
