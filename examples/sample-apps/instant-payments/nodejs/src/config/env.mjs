@@ -41,7 +41,7 @@ export function loadConfig(env) {
   }
   const tableName = requiredNonBlank(
     "dynamodb.table-name",
-    env.DYNAMODB_TABLE_NAME ?? env.DYNAMODB_TABLENAME,
+    env.DYNAMODB_TABLE_NAME,
   );
 
   const idempotencyTtlSeconds = parsePositiveInt(

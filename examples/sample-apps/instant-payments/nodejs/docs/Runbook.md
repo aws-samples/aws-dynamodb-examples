@@ -50,10 +50,11 @@ Run the API server:
 Override DynamoDB connection:
 
 ```bash
-./scripts/run-app-local.sh \
-  --dynamodb-endpoint http://localhost:18000 \
-  --dynamodb-region eu-west-1 \
-  --dynamodb-client-type high-level
+AWS_ENDPOINT_URL=http://localhost:18000 \
+AWS_REGION=eu-west-1 \
+DYNAMODB_CLIENT_TYPE=high-level \
+DYNAMODB_TABLE_NAME=JS_InstantPayments \
+./scripts/run-app-local.sh
 ```
 
 ### DynamoDB client type (`DYNAMODB_CLIENT_TYPE`)
@@ -94,9 +95,9 @@ Change DynamoDB access style label:
 Point to AWS:
 
 ```bash
-./scripts/run-app-local.sh \
-  --dynamodb-endpoint "https://dynamodb.eu-west-1.amazonaws.com" \
-  --dynamodb-region eu-west-1
+AWS_REGION=eu-west-1 \
+DYNAMODB_TABLE_NAME=JS_InstantPayments \
+./scripts/run-app-local.sh
 ```
 
 The AWS SDK credential chain is used (environment variables, config files, SSO, etc.).
