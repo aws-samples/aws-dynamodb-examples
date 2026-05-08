@@ -1,0 +1,14 @@
+node_modules/
+.DS_Store
+.env
+.env.local
+.env.*.local
+dist/
+coverage/
+.docker/
+*.log
+
+# Only allow Runbook.md in git under docs/
+docs/*
+!docs/Runbook.md
+

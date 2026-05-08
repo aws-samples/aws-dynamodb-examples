@@ -1,0 +1,28 @@
+services:
+  dynamodb-local:
+    image: amazon/dynamodb-local:latest
+    container_name: dynamodb-local
+    hostname: dynamodb-local
+    ports:
+      - "${DYNAMODB_LOCAL_HOST_PORT:-18000}:8000"
+    command: "-jar DynamoDBLocal.jar -sharedDb -inMemory"
+
+  instant-payments-js:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: instant-payments-js
+    ports:
+      - "8080:8080"
+    environment:
+      DYNAMODB_ENDPOINT: http://dynamodb-local:8000
+      DYNAMODB_REGION: eu-west-1
+      DYNAMODB_CLIENTTYPE: ${DYNAMODB_CLIENTTYPE:-high-level}
+      DYNAMODB_TABLENAME: JS_InstantPayments
+      DYNAMODB_IDEMPOTENCY_TTL_SECONDS: ${DYNAMODB_IDEMPOTENCY_TTL_SECONDS:-2592000}
+      DYNAMODB_STREAMS_ITERATOR_TYPE: ${DYNAMODB_STREAMS_ITERATOR_TYPE:-LATEST}
+    depends_on:
+      - dynamodb-local
+    profiles:
+      - app
+
