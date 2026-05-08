@@ -23,16 +23,25 @@ export function loadConfig(env) {
   const nodeEnv = optionalNonBlank(env.NODE_ENV) ?? "development";
   const port = Number.parseInt(optionalNonBlank(env.PORT) ?? "8080", 10);
 
-  const endpoint = requiredNonBlank("dynamodb.endpoint", env.DYNAMODB_ENDPOINT);
-  const region = requiredNonBlank("dynamodb.region", env.DYNAMODB_REGION);
-  const clientTypeRaw = requiredNonBlank("dynamodb.client-type", env.DYNAMODB_CLIENTTYPE);
+  const endpoint = requiredNonBlank(
+    "dynamodb.endpoint",
+    env.AWS_ENDPOINT_URL_DYNAMODB ?? env.AWS_ENDPOINT_URL,
+  );
+  const region = requiredNonBlank(
+    "dynamodb.region",
+    env.AWS_REGION ?? env.AWS_DEFAULT_REGION,
+  );
+  const clientTypeRaw = requiredNonBlank(
+    "dynamodb.client-type",
+    env.DYNAMODB_CLIENT_TYPE
+  );
   const clientType = String(clientTypeRaw).trim().toLowerCase();
   if (clientType !== "high-level" && clientType !== "low-level") {
     throw new Error('Invalid dynamodb.client-type: expected "high-level" or "low-level"');
   }
   const tableName = requiredNonBlank(
     "dynamodb.table-name",
-    env.DYNAMODB_TABLENAME ?? env.DYNAMODB_TABLE_NAME,
+    env.DYNAMODB_TABLE_NAME ?? env.DYNAMODB_TABLENAME,
   );
 
   const idempotencyTtlSeconds = parsePositiveInt(

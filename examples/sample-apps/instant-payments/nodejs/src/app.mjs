@@ -8,8 +8,10 @@ import { paymentsRoutes } from "./routes/payments.routes.mjs";
 import { accountsRoutes } from "./routes/accounts.routes.mjs";
 import { merchantsRoutes } from "./routes/merchants.routes.mjs";
 import { initializeDdb } from "./startup/initializeDdb.mjs";
-import { createDynamoPaymentRepository } from "./infrastructure/persistence/dynamoPaymentRepository.mjs";
-import { createDdbRuntime } from "./infrastructure/persistence/ddbDocumentBridge.mjs";
+import {
+  HighLevelDynamoPaymentRepository,
+  LowLevelDynamoPaymentRepository,
+} from "./infrastructure/persistence/dynamoPaymentRepository.mjs";
 
 export async function buildApp() {
   const config = loadConfig(process.env);
@@ -29,23 +31,23 @@ export async function buildApp() {
   app.decorate("config", config);
   const ddbClients = createDdbClients(config.dynamodb);
   app.decorate("ddb", ddbClients);
-  const ddbRuntime = createDdbRuntime({
-    doc: ddbClients.doc,
-    lowLevel: ddbClients.lowLevel,
-    clientType: config.dynamodb.clientType,
-  });
-  app.decorate("ddbRuntime", ddbRuntime);
   app.decorate(
     "paymentRepository",
-    createDynamoPaymentRepository({
-      ddbRuntime,
-      tableName: config.dynamodb.tableName,
-    }),
+    config.dynamodb.clientType === "low-level"
+      ? new LowLevelDynamoPaymentRepository({
+          lowLevel: ddbClients.lowLevel,
+          tableName: config.dynamodb.tableName,
+        })
+      : new HighLevelDynamoPaymentRepository({
+          doc: ddbClients.doc,
+          tableName: config.dynamodb.tableName,
+        }),
   );
 
   await initializeDdb({
     ddb: app.ddb.lowLevel,
-    ddbRuntime: app.ddbRuntime,
+    doc: app.ddb.doc,
+    clientType: app.config.dynamodb.clientType,
     tableName: app.config.dynamodb.tableName,
     log: app.log,
   });

@@ -4,12 +4,12 @@ set -euo pipefail
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 STOP=false
-DYNAMODB_CLIENTTYPE="high-level"
+DYNAMODB_CLIENT_TYPE="high-level"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --stop) STOP=true; shift ;;
-    --dynamodb-client-type) DYNAMODB_CLIENTTYPE="$2"; shift 2 ;;
+    --dynamodb-client-type) DYNAMODB_CLIENT_TYPE="$2"; shift 2 ;;
     *) echo "Unknown arg: $1" >&2; exit 2 ;;
   esac
 done
@@ -21,6 +21,6 @@ if [[ "$STOP" == "true" ]]; then
   exit 0
 fi
 
-export DYNAMODB_CLIENTTYPE
+export DYNAMODB_CLIENT_TYPE
 docker compose --profile app up --build
 

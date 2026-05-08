@@ -56,10 +56,19 @@ Override DynamoDB connection:
   --dynamodb-client-type high-level
 ```
 
-Integration tests (`npm test`) read `DYNAMODB_ENDPOINT` when set; otherwise they assume DynamoDB Local at `http://localhost:8000`. If you only expose DynamoDB on host port **18000** (Compose default below), run:
+### DynamoDB client type (`DYNAMODB_CLIENT_TYPE`)
+
+This repo supports two DynamoDB access modes, implemented as **two concrete repositories**:
+
+- `high-level`: `HighLevelDynamoPaymentRepository` uses `DynamoDBDocumentClient` (`@aws-sdk/lib-dynamodb`) so code reads/writes plain JS objects and the SDK handles marshalling/unmarshalling to DynamoDB `AttributeValue` types.
+- `low-level`: `LowLevelDynamoPaymentRepository` uses `DynamoDBClient` (`@aws-sdk/client-dynamodb`) with explicit `@aws-sdk/util-dynamodb` marshalling/unmarshalling so you can see/control the exact wire shapes.
+
+Choose `high-level` by default; use `low-level` for debugging/precision. The selection is done at runtime via `DYNAMODB_CLIENT_TYPE`, and the same choice is used for any direct DynamoDB access in routes/startup code.
+
+Integration tests (`npm test`) read `AWS_ENDPOINT_URL` when set (standard AWS endpoint override). If you only expose DynamoDB on host port **18000** (Compose default below), run:
 
 ```bash
-DYNAMODB_ENDPOINT=http://localhost:18000 npm test
+AWS_ENDPOINT_URL=http://localhost:18000 npm test
 ```
 
 ### Full stack Compose (API server + DynamoDB Local)

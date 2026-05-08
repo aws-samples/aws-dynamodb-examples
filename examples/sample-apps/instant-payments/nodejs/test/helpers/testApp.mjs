@@ -9,10 +9,10 @@ export async function createTestApp() {
   // Ensure app uses isolated table
   process.env.NODE_ENV = "test";
   process.env.PORT = "0";
-  process.env.DYNAMODB_ENDPOINT = endpoint;
-  process.env.DYNAMODB_REGION = region;
-  process.env.DYNAMODB_CLIENTTYPE = "high-level";
-  process.env.DYNAMODB_TABLENAME = tableName;
+  process.env.AWS_ENDPOINT_URL = endpoint;
+  process.env.AWS_REGION = region;
+  process.env.DYNAMODB_CLIENT_TYPE = "high-level";
+  process.env.DYNAMODB_TABLE_NAME = tableName;
   process.env.DYNAMODB_IDEMPOTENCY_TTL_SECONDS = "3600";
   process.env.DYNAMODB_STREAMS_ITERATOR_TYPE = "TRIM_HORIZON";
 

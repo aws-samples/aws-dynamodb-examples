@@ -15,10 +15,15 @@ services:
     ports:
       - "8080:8080"
     environment:
-      DYNAMODB_ENDPOINT: http://dynamodb-local:8000
-      DYNAMODB_REGION: eu-west-1
-      DYNAMODB_CLIENTTYPE: ${DYNAMODB_CLIENTTYPE:-high-level}
-      DYNAMODB_TABLENAME: JS_InstantPayments
+      # Default values for local development
+      NODE_ENV: ${NODE_ENV:-development}
+      PORT: ${PORT:-8080}
+      # AWS environment variables
+      AWS_ENDPOINT_URL: http://dynamodb-local:8000
+      AWS_REGION: eu-west-1
+      # DynamoDB environment variables
+      DYNAMODB_CLIENT_TYPE: ${DYNAMODB_CLIENT_TYPE:-high-level}
+      DYNAMODB_TABLE_NAME: ${DYNAMODB_TABLE_NAME:-JS_InstantPayments}
       DYNAMODB_IDEMPOTENCY_TTL_SECONDS: ${DYNAMODB_IDEMPOTENCY_TTL_SECONDS:-2592000}
       DYNAMODB_STREAMS_ITERATOR_TYPE: ${DYNAMODB_STREAMS_ITERATOR_TYPE:-LATEST}
     depends_on:

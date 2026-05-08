@@ -10,23 +10,26 @@ import {
 } from "@aws-sdk/client-dynamodb-streams";
 import { loadConfig } from "../config/env.mjs";
 import { createDdbClients } from "../data/ddbClient.mjs";
-import { createDdbRuntime } from "../infrastructure/persistence/ddbDocumentBridge.mjs";
-import { createDynamoPaymentRepository } from "../infrastructure/persistence/dynamoPaymentRepository.mjs";
+import {
+  HighLevelDynamoPaymentRepository,
+  LowLevelDynamoPaymentRepository,
+} from "../infrastructure/persistence/dynamoPaymentRepository.mjs";
 import { processOutboundPayment } from "../application/services/outboundPaymentProcessor.mjs";
 
 const config = loadConfig(process.env);
 
 const ddbClients = createDdbClients(config.dynamodb);
 const ddb = ddbClients.lowLevel;
-const ddbRuntime = createDdbRuntime({
-  doc: ddbClients.doc,
-  lowLevel: ddbClients.lowLevel,
-  clientType: config.dynamodb.clientType,
-});
-const paymentRepository = createDynamoPaymentRepository({
-  ddbRuntime,
-  tableName: config.dynamodb.tableName,
-});
+const paymentRepository =
+  config.dynamodb.clientType === "low-level"
+    ? new LowLevelDynamoPaymentRepository({
+        lowLevel: ddbClients.lowLevel,
+        tableName: config.dynamodb.tableName,
+      })
+    : new HighLevelDynamoPaymentRepository({
+        doc: ddbClients.doc,
+        tableName: config.dynamodb.tableName,
+      });
 const streams = new DynamoDBStreamsClient({
   region: config.dynamodb.region,
   endpoint: config.dynamodb.endpoint,
@@ -59,7 +62,6 @@ function requestShutdown() {
 process.on("SIGINT", requestShutdown);
 process.on("SIGTERM", requestShutdown);
 
-// eslint-disable-next-line no-constant-condition
 while (running) {
   try {
     const streamArn = await discoverStreamArn();

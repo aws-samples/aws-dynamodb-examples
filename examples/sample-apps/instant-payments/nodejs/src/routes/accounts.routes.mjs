@@ -1,8 +1,7 @@
-import {
-  sendBatchGetCommand,
-  sendGetCommand,
-  sendQueryCommand,
-} from "../infrastructure/persistence/ddbDocumentBridge.mjs";
+import { BatchGetItemCommand, GetItemCommand, QueryCommand } from "@aws-sdk/client-dynamodb";
+import { BatchGetCommand, GetCommand, QueryCommand as DocQueryCommand } from "@aws-sdk/lib-dynamodb";
+import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
+import { MARSHALL_OPTS } from "../infrastructure/persistence/ddbMarshalling.mjs";
 import {
   accountNotFound,
   invalidBatchGetReservationsRequest,
@@ -26,14 +25,14 @@ export async function accountsRoutes(app) {
     const accountId = req.params.accountId;
     const pk = accountPk(accountId);
 
-    const accountRes = await sendGetCommand(app.ddbRuntime, {
+    const accountRes = await sendGet(app, {
       TableName: tableName,
       Key: { PK: pk, SK: pk },
     });
     const account = accountRes?.Item;
     if (!account) throw accountNotFound();
 
-    const resRes = await sendQueryCommand(app.ddbRuntime, {
+    const resRes = await sendQuery(app, {
       TableName: tableName,
       KeyConditionExpression: "PK = :pk AND begins_with(SK, :prefix)",
       ExpressionAttributeValues: { ":pk": pk, ":prefix": "RESERVATION#" },
@@ -135,7 +134,7 @@ export async function accountsRoutes(app) {
       while (unprocessedKeys.length > 0 && attempts < 10) {
         attempts += 1;
         app.log.info({ attempts, keys: unprocessedKeys.length }, "batch-get-reservations:ddb");
-        const res = await sendBatchGetCommand(app.ddbRuntime, {
+        const res = await sendBatchGet(app, {
           RequestItems: {
             [tableName]: { Keys: unprocessedKeys },
           },
@@ -171,6 +170,91 @@ export async function accountsRoutes(app) {
       return { reservations, missingReservationIds };
     },
   );
+}
+
+async function sendGet(app, input) {
+  if (app.config.dynamodb.clientType === "low-level") {
+    const out = await app.ddb.lowLevel.send(
+      new GetItemCommand({
+        TableName: input.TableName,
+        Key: marshall(input.Key, MARSHALL_OPTS),
+        ConsistentRead: input.ConsistentRead,
+      }),
+    );
+    return { Item: out.Item ? unmarshall(out.Item) : undefined };
+  }
+
+  return app.ddb.doc.send(new GetCommand(input));
+}
+
+async function sendQuery(app, input) {
+  if (app.config.dynamodb.clientType === "low-level") {
+    const out = await app.ddb.lowLevel.send(
+      new QueryCommand({
+        TableName: input.TableName,
+        IndexName: input.IndexName,
+        KeyConditionExpression: input.KeyConditionExpression,
+        FilterExpression: input.FilterExpression,
+        ExpressionAttributeNames: input.ExpressionAttributeNames,
+        ExpressionAttributeValues: input.ExpressionAttributeValues
+          ? marshall(input.ExpressionAttributeValues, MARSHALL_OPTS)
+          : undefined,
+        Limit: input.Limit,
+        ScanIndexForward: input.ScanIndexForward,
+        ExclusiveStartKey: input.ExclusiveStartKey
+          ? marshall(input.ExclusiveStartKey, MARSHALL_OPTS)
+          : undefined,
+        Select: input.Select,
+      }),
+    );
+    return {
+      Items: (out.Items ?? []).map((it) => unmarshall(it)),
+      LastEvaluatedKey: out.LastEvaluatedKey ? unmarshall(out.LastEvaluatedKey) : undefined,
+    };
+  }
+
+  const out = await app.ddb.doc.send(new DocQueryCommand(input));
+  return { Items: out.Items, LastEvaluatedKey: out.LastEvaluatedKey };
+}
+
+async function sendBatchGet(app, input) {
+  if (app.config.dynamodb.clientType === "low-level") {
+    const requestItems = {};
+    for (const [tableName, spec] of Object.entries(input.RequestItems ?? {})) {
+      requestItems[tableName] = {
+        Keys: (spec.Keys ?? []).map((k) => marshall(k, MARSHALL_OPTS)),
+        ConsistentRead: spec.ConsistentRead,
+        ProjectionExpression: spec.ProjectionExpression,
+        ExpressionAttributeNames: spec.ExpressionAttributeNames,
+      };
+    }
+
+    const out = await app.ddb.lowLevel.send(
+      new BatchGetItemCommand({ RequestItems: requestItems }),
+    );
+
+    const Responses = {};
+    for (const [tableName, items] of Object.entries(out.Responses ?? {})) {
+      Responses[tableName] = items.map((it) => unmarshall(it));
+    }
+
+    let UnprocessedKeys;
+    if (out.UnprocessedKeys && Object.keys(out.UnprocessedKeys).length > 0) {
+      UnprocessedKeys = {};
+      for (const [tableName, spec] of Object.entries(out.UnprocessedKeys)) {
+        UnprocessedKeys[tableName] = {
+          Keys: (spec.Keys ?? []).map((k) => unmarshall(k)),
+          ConsistentRead: spec.ConsistentRead,
+          ProjectionExpression: spec.ProjectionExpression,
+          ExpressionAttributeNames: spec.ExpressionAttributeNames,
+        };
+      }
+    }
+
+    return { Responses, UnprocessedKeys };
+  }
+
+  return app.ddb.doc.send(new BatchGetCommand(input));
 }
 
 async function backoff(attempt) {

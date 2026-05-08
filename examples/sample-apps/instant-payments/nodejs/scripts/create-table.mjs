@@ -6,9 +6,9 @@ function required(name) {
   return String(v).trim();
 }
 
-const endpoint = required("DYNAMODB_ENDPOINT");
-const region = required("DYNAMODB_REGION");
-const tableName = required("DYNAMODB_TABLENAME");
+const endpoint = required("AWS_ENDPOINT_URL");
+const region = required("AWS_REGION");
+const tableName = process.env.DYNAMODB_TABLE_NAME ?? required("DYNAMODB_TABLE_NAME");
 
 const ddb = new DynamoDBClient({
   region,

@@ -2,20 +2,23 @@ import {
   CreateTableCommand,
   DescribeTimeToLiveCommand,
   ListTablesCommand,
+  PutItemCommand,
   ResourceInUseException,
   UpdateTimeToLiveCommand,
 } from "@aws-sdk/client-dynamodb";
 import { inspect } from "node:util";
-import { sendPutCommand } from "../infrastructure/persistence/ddbDocumentBridge.mjs";
+import { PutCommand } from "@aws-sdk/lib-dynamodb";
+import { marshall } from "@aws-sdk/util-dynamodb";
+import { MARSHALL_OPTS } from "../infrastructure/persistence/ddbMarshalling.mjs";
 
 const ATTR_MERCHANT_PAYMENTS_SK = "merchantPaymentsSk";
 const ATTR_MERCHANT_STATE_PK = "merchantStatePk";
 
-export async function initializeDdb({ ddb, ddbRuntime, tableName, log }) {
+export async function initializeDdb({ ddb, doc, clientType, tableName, log }) {
   await waitUntilDdbReachable({ ddb, log });
   await createTableIfMissing({ ddb, tableName, log });
   await enableTtlBestEffort({ ddb, tableName, log });
-  await seedAccounts({ ddbRuntime, tableName, log });
+  await seedAccounts({ ddb, doc, clientType, tableName, log });
 }
 
 function summarizeErr(err) {
@@ -127,7 +130,7 @@ async function enableTtlBestEffort({ ddb, tableName, log }) {
   }
 }
 
-async function seedAccounts({ ddbRuntime, tableName, log }) {
+async function seedAccounts({ ddb, doc, clientType, tableName, log }) {
   const rows = [
     ["acc_usd_1", 10000, 10000, "USD"],
     ["acc_usd_2", 5000, 5000, "USD"],
@@ -145,21 +148,35 @@ async function seedAccounts({ ddbRuntime, tableName, log }) {
   for (const [accountId, currentBalance, availableBalance, currency] of rows) {
     const key = `ACCOUNT#${accountId}`;
     try {
-      await sendPutCommand(ddbRuntime, {
-        TableName: tableName,
-        Item: {
-          PK: key,
-          SK: key,
-          entityType: "ACCOUNT",
-          accountId,
-          status: "ACTIVE",
-          currentBalance,
-          availableBalance,
-          currency,
-          version: 1,
-        },
-        ConditionExpression: "attribute_not_exists(PK)",
-      });
+      const item = {
+        PK: key,
+        SK: key,
+        entityType: "ACCOUNT",
+        accountId,
+        status: "ACTIVE",
+        currentBalance,
+        availableBalance,
+        currency,
+        version: 1,
+      };
+
+      if (clientType === "low-level") {
+        await ddb.send(
+          new PutItemCommand({
+            TableName: tableName,
+            Item: marshall(item, MARSHALL_OPTS),
+            ConditionExpression: "attribute_not_exists(PK)",
+          }),
+        );
+      } else {
+        await doc.send(
+          new PutCommand({
+            TableName: tableName,
+            Item: item,
+            ConditionExpression: "attribute_not_exists(PK)",
+          }),
+        );
+      }
       inserted += 1;
     } catch (err) {
       if (err?.name === "ConditionalCheckFailedException") continue;

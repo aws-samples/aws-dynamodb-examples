@@ -1,4 +1,7 @@
-import { sendQueryCommand } from "../infrastructure/persistence/ddbDocumentBridge.mjs";
+import { QueryCommand } from "@aws-sdk/client-dynamodb";
+import { QueryCommand as DocQueryCommand } from "@aws-sdk/lib-dynamodb";
+import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
+import { MARSHALL_OPTS } from "../infrastructure/persistence/ddbMarshalling.mjs";
 import {
   internalError,
   invalidPaginationToken,
@@ -24,7 +27,7 @@ export async function merchantsRoutes(app) {
     if (token?.error === "WRONG_INDEX") throw internalError("Internal error");
     if (token?.error) throw invalidPaginationToken("Invalid pagination token");
 
-    const res = await sendQueryCommand(app.ddbRuntime, {
+    const res = await sendQuery(app, {
       TableName: tableName,
       IndexName: "GSI_MERCHANT_PAYMENTS",
       KeyConditionExpression: "merchantId = :merchantId",
@@ -64,7 +67,7 @@ export async function merchantsRoutes(app) {
 
     const pk = merchantStatePk(merchantId, state);
 
-    const res = await sendQueryCommand(app.ddbRuntime, {
+    const res = await sendQuery(app, {
       TableName: tableName,
       IndexName: "GSI_MERCHANT_STATE_PAYMENTS",
       KeyConditionExpression: `${ATTR_MERCHANT_STATE_PK} = :pk`,
@@ -84,6 +87,36 @@ export async function merchantsRoutes(app) {
 
     return nextToken ? { items, nextToken } : { items };
   });
+}
+
+async function sendQuery(app, input) {
+  if (app.config.dynamodb.clientType === "low-level") {
+    const out = await app.ddb.lowLevel.send(
+      new QueryCommand({
+        TableName: input.TableName,
+        IndexName: input.IndexName,
+        KeyConditionExpression: input.KeyConditionExpression,
+        FilterExpression: input.FilterExpression,
+        ExpressionAttributeNames: input.ExpressionAttributeNames,
+        ExpressionAttributeValues: input.ExpressionAttributeValues
+          ? marshall(input.ExpressionAttributeValues, MARSHALL_OPTS)
+          : undefined,
+        Limit: input.Limit,
+        ScanIndexForward: input.ScanIndexForward,
+        ExclusiveStartKey: input.ExclusiveStartKey
+          ? marshall(input.ExclusiveStartKey, MARSHALL_OPTS)
+          : undefined,
+        Select: input.Select,
+      }),
+    );
+    return {
+      Items: (out.Items ?? []).map((it) => unmarshall(it)),
+      LastEvaluatedKey: out.LastEvaluatedKey ? unmarshall(out.LastEvaluatedKey) : undefined,
+    };
+  }
+
+  const out = await app.ddb.doc.send(new DocQueryCommand(input));
+  return { Items: out.Items, LastEvaluatedKey: out.LastEvaluatedKey };
 }
 
 function normalizeLimit(raw) {
