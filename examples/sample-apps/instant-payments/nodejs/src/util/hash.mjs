@@ -1,8 +1,6 @@
 import { createHash } from "node:crypto";
-import { canonicalJsonStringify } from "./canonicalJson.mjs";
 
-export function sha256HexOfCanonicalJson(obj) {
-  const canonical = canonicalJsonStringify(obj);
+export function sha256Hex(canonical) {
   return createHash("sha256").update(canonical).digest("hex");
 }
 

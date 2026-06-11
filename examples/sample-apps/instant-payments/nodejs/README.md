@@ -6,7 +6,7 @@
 
 The application demonstrates the same DynamoDB capabilities as the reference sample: multi-item atomicity with **TransactWriteItems**, **conditional writes** for idempotency and state transitions, and asynchronous processing driven by **DynamoDB Streams** (**NEW_IMAGE**). It uses **Global Secondary Indexes** for merchant query access patterns, **Time to Live (TTL)** on **`ttl`** for idempotency record expiry, and **optimistic locking** on accounts via **`version`**. The design is a **single-table** layout with **composite keys** (including derived attributes where DynamoDB allows only one HASH and one RANGE per index). Persistence uses **AWS SDK for JavaScript v3** (`@aws-sdk/client-dynamodb`, `@aws-sdk/lib-dynamodb`). The **`dynamodb.client-type`** key (`high-level` \| `low-level`) selects **Document Client** commands vs **`@aws-sdk/client-dynamodb`** (`TransactWriteItems`, `GetItem`, `Query`, …) with **`@aws-sdk/util-dynamodb`** marshall/unmarshall. All branching is confined to **`src/infrastructure/persistence/ddbDocumentBridge.mjs`** and **`dynamoPaymentRepository.mjs`**; application code keeps the same JS item shapes.
 
-**Structure:** the codebase follows a small **Clean Architecture** split: **domain entities** (e.g. `Payment` under `src/domain/payments/entities/`), **application** use cases (`src/application/useCases/`) and services (`src/application/services/`), **infrastructure** adapters for DynamoDB (`src/infrastructure/persistence/`), and **routes** as presentation. A single **`paymentRepository`** is registered on the Fastify app at startup and shared by create, read, and process payment flows.
+**Structure:** the codebase follows a small **Clean Architecture** split: **domain entities** (e.g. `Payment`, `OutboundPaymentCreation` under `src/domain/payments/entities/`), **application** use cases (`src/application/useCases/`), **infrastructure** adapters for DynamoDB (`ddbDocumentBridge.mjs`, `dynamoPaymentRepository.mjs`), and **routes** as presentation. A single **`paymentRepository`** is registered on the Fastify app at startup and shared by create, read, and process payment flows.
 
 ---
 
@@ -56,21 +56,27 @@ Lists a merchant's payments filtered by lifecycle state, ordered by creation tim
 
 | Feature | Where it's used? | Code pointers |
 |---|---|---|
-| TransactWriteItems | Payment creation, fund reservation, completion, rejection | `src/routes/payments.routes.mjs`, `src/application/services/outboundPaymentProcessor.mjs`, `src/infrastructure/persistence/dynamoPaymentRepository.mjs` |
-| Conditional writes | Idempotent creates, state-machine guards, write-once ledger entries | `src/routes/payments.routes.mjs`, `src/infrastructure/persistence/dynamoPaymentRepository.mjs` |
-| Optimistic locking | Account balance updates, stream-head transitions | `src/infrastructure/persistence/dynamoPaymentRepository.mjs` |
+| TransactWriteItems | Payment creation, fund reservation, completion, rejection | `src/routes/payments.routes.mjs`, `src/domain/payments/processor.mjs` |
+| Conditional writes | Idempotent creates, state-machine guards, write-once ledger entries | `src/routes/payments.routes.mjs`, `src/domain/payments/processor.mjs` |
+| Optimistic locking | Account balance updates, stream-head transitions | `src/domain/payments/processor.mjs` |
 | Global Secondary Indexes | Merchant payment lists (all payments, by state) | `scripts/create-table.mjs`, `src/routes/merchants.routes.mjs` |
 | GSI projection strategy | Index storage optimization | `scripts/create-table.mjs` |
 | TTL | Idempotency record expiry | `src/routes/payments.routes.mjs`, `src/startup/initializeDdb.mjs` |
 | DynamoDB Streams | Automatic payment processing on event insert | `src/workers/localStreamsWorker.mjs`, `scripts/create-table.mjs` |
 | Single-table design | All entities co-located by composite keys | `src/data/keys.mjs` |
-| Event sourcing | Payment lifecycle audit trail and state reconstruction | `src/routes/payments.routes.mjs`, `src/domain/payments/entities/Payment.mjs` |
-| Update expressions | Balance math, state transitions inside transactions | `src/infrastructure/persistence/dynamoPaymentRepository.mjs` |
+| Event sourcing | Payment lifecycle audit trail and state reconstruction | `src/routes/payments.routes.mjs`, `src/domain/payments/processor.mjs` |
+| Update expressions | Balance math, state transitions inside transactions | `src/domain/payments/processor.mjs` |
 | Query with key conditions | Partition reads, sort-key prefix scans | `src/routes/payments.routes.mjs`, `src/routes/accounts.routes.mjs` |
 | BatchGetItem | Batch reservation reads (`POST /api/v1/accounts/{accountId}/batch-get-reservations`) | `src/routes/accounts.routes.mjs` |
 | SDK retry strategy (bounded) | Streams poller iterator renewal and bounded retries | `src/workers/localStreamsWorker.mjs` |
 | UnprocessedKeys retry | Application-level retry loop for BatchGetItem | `src/routes/accounts.routes.mjs` |
 | Structured snapshots | Persisting response snapshot on idempotency items | `src/routes/payments.routes.mjs` |
+
+**Streams delivery contract (C3):** checkpoints are **in-memory only**. With the default `LATEST` iterator, payments created while the streams worker is down are **not** reprocessed after restart. Run `npm run worker:local` alongside the API, or set `DYNAMODB_STREAMS_ITERATOR_TYPE=TRIM_HORIZON` for dev replay within stream retention.
+
+**Streams read cost (M7):** the local streams worker subscribes to the whole table stream and filters in code to `PAYMENT_EVENT` / `OUTBOUND_PAYMENT_CREATED`. Account, ledger, and idempotency writes still produce stream records the poller reads (inherent to single-table design with raw DynamoDB Streams). For server-side filtering, use Kinesis Data Streams for DynamoDB.
+
+**Partition growth (L8):** each payment partition accumulates one stream-head row plus one item per lifecycle event. Event count per payment is small and bounded in this sample, but in general event-sourced single-table designs should plan for the ~10 GB per-partition item-collection limit.
 
 ---
 

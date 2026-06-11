@@ -50,26 +50,16 @@ Run the API server:
 Override DynamoDB connection:
 
 ```bash
-AWS_ENDPOINT_URL=http://localhost:18000 \
-AWS_REGION=eu-west-1 \
-DYNAMODB_CLIENT_TYPE=high-level \
-DYNAMODB_TABLE_NAME=JS_InstantPayments \
-./scripts/run-app-local.sh
+./scripts/run-app-local.sh \
+  --dynamodb-endpoint http://localhost:18000 \
+  --dynamodb-region eu-west-1 \
+  --dynamodb-client-type high-level
 ```
 
-### DynamoDB client type (`DYNAMODB_CLIENT_TYPE`)
-
-This repo supports two DynamoDB access modes, implemented as **two concrete repositories**:
-
-- `high-level`: `HighLevelDynamoPaymentRepository` uses `DynamoDBDocumentClient` (`@aws-sdk/lib-dynamodb`) so code reads/writes plain JS objects and the SDK handles marshalling/unmarshalling to DynamoDB `AttributeValue` types.
-- `low-level`: `LowLevelDynamoPaymentRepository` uses `DynamoDBClient` (`@aws-sdk/client-dynamodb`) with explicit `@aws-sdk/util-dynamodb` marshalling/unmarshalling so you can see/control the exact wire shapes.
-
-Choose `high-level` by default; use `low-level` for debugging/precision. The selection is done at runtime via `DYNAMODB_CLIENT_TYPE`, and the same choice is used for any direct DynamoDB access in routes/startup code.
-
-Integration tests (`npm test`) read `AWS_ENDPOINT_URL` when set (standard AWS endpoint override). If you only expose DynamoDB on host port **18000** (Compose default below), run:
+Integration tests (`npm test`) read `DYNAMODB_ENDPOINT` when set; otherwise they assume DynamoDB Local at `http://localhost:8000`. If you only expose DynamoDB on host port **18000** (Compose default below), run:
 
 ```bash
-AWS_ENDPOINT_URL=http://localhost:18000 npm test
+DYNAMODB_ENDPOINT=http://localhost:18000 npm test
 ```
 
 ### Full stack Compose (API server + DynamoDB Local)
@@ -95,9 +85,9 @@ Change DynamoDB access style label:
 Point to AWS:
 
 ```bash
-AWS_REGION=eu-west-1 \
-DYNAMODB_TABLE_NAME=JS_InstantPayments \
-./scripts/run-app-local.sh
+./scripts/run-app-local.sh \
+  --dynamodb-endpoint "https://dynamodb.eu-west-1.amazonaws.com" \
+  --dynamodb-region eu-west-1
 ```
 
 The AWS SDK credential chain is used (environment variables, config files, SSO, etc.).
@@ -109,6 +99,19 @@ On startup, the runnable:
 - creates the DynamoDB table if missing
 - enables TTL on attribute `ttl` (best-effort; “already enabled / in progress” is treated as success)
 - seeds demo `ACCOUNT` rows using conditional puts so repeated starts don’t overwrite
+
+### DynamoDB Streams worker (separate process)
+
+Unlike the Java Spring app (embedded listener), this port runs stream processing in a **second process**:
+
+```bash
+npm run worker:local
+# or: ./scripts/run-worker-local.sh
+```
+
+The API server alone does not advance payments from `RECEIVED` — start the worker after the API has created the table. Docker Compose (`run-app-docker.sh`) starts only the API + DynamoDB Local, not the worker.
+
+Checkpoints are in-memory only (`DYNAMODB_STREAMS_ITERATOR_TYPE` defaults to `LATEST`). **Events inserted while the worker is stopped are permanently skipped** on restart unless you use `TRIM_HORIZON` within stream retention.
 
 ## Demo script
 

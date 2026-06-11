@@ -19,29 +19,29 @@ function parsePositiveInt(name, value) {
   return n;
 }
 
+function parseBoolean(name, value, defaultValue) {
+  if (value == null || String(value).trim() === "") return defaultValue;
+  const v = String(value).trim().toLowerCase();
+  if (v === "true" || v === "1" || v === "yes") return true;
+  if (v === "false" || v === "0" || v === "no") return false;
+  throw new Error(`Invalid boolean for ${name}: ${value}`);
+}
+
 export function loadConfig(env) {
   const nodeEnv = optionalNonBlank(env.NODE_ENV) ?? "development";
   const port = Number.parseInt(optionalNonBlank(env.PORT) ?? "8080", 10);
+  const isProduction = nodeEnv === "production";
 
-  const endpoint = requiredNonBlank(
-    "dynamodb.endpoint",
-    env.AWS_ENDPOINT_URL_DYNAMODB ?? env.AWS_ENDPOINT_URL,
-  );
-  const region = requiredNonBlank(
-    "dynamodb.region",
-    env.AWS_REGION ?? env.AWS_DEFAULT_REGION,
-  );
-  const clientTypeRaw = requiredNonBlank(
-    "dynamodb.client-type",
-    env.DYNAMODB_CLIENT_TYPE
-  );
+  const endpoint = requiredNonBlank("dynamodb.endpoint", env.DYNAMODB_ENDPOINT);
+  const region = requiredNonBlank("dynamodb.region", env.DYNAMODB_REGION);
+  const clientTypeRaw = requiredNonBlank("dynamodb.client-type", env.DYNAMODB_CLIENTTYPE);
   const clientType = String(clientTypeRaw).trim().toLowerCase();
   if (clientType !== "high-level" && clientType !== "low-level") {
     throw new Error('Invalid dynamodb.client-type: expected "high-level" or "low-level"');
   }
   const tableName = requiredNonBlank(
     "dynamodb.table-name",
-    env.DYNAMODB_TABLE_NAME,
+    env.DYNAMODB_TABLENAME ?? env.DYNAMODB_TABLE_NAME,
   );
 
   const idempotencyTtlSeconds = parsePositiveInt(
@@ -55,20 +55,33 @@ export function loadConfig(env) {
   }
 
   const streamsIteratorType = optionalNonBlank(env.DYNAMODB_STREAMS_ITERATOR_TYPE) ?? "LATEST";
+  const initializeEnabled = parseBoolean(
+    "dynamodb.initialize-enabled",
+    env.DYNAMODB_INITIALIZE_ENABLED,
+    true,
+  );
+  const healthEnabled = parseBoolean("health.enabled", env.HEALTH_ENABLED, true);
+  const swaggerEnabled = parseBoolean(
+    "swagger.enabled",
+    env.SWAGGER_ENABLED,
+    !isProduction,
+  );
 
   return {
     nodeEnv,
     port,
+    healthEnabled,
+    swaggerEnabled,
     dynamodb: {
       endpoint,
       region,
       clientType,
       tableName,
       idempotencyTtlSeconds,
+      initializeEnabled,
       streams: {
         iteratorType: streamsIteratorType,
       },
     },
   };
 }
-

@@ -1,7 +1,6 @@
 import { DescribeTableCommand } from "@aws-sdk/client-dynamodb";
 import {
   DescribeStreamCommand,
-  DynamoDBStreamsClient,
   ExpiredIteratorException,
   GetRecordsCommand,
   GetShardIteratorCommand,
@@ -9,38 +8,43 @@ import {
   TrimmedDataAccessException,
 } from "@aws-sdk/client-dynamodb-streams";
 import { loadConfig } from "../config/env.mjs";
-import { createDdbClients } from "../data/ddbClient.mjs";
-import {
-  HighLevelDynamoPaymentRepository,
-  LowLevelDynamoPaymentRepository,
-} from "../infrastructure/persistence/dynamoPaymentRepository.mjs";
+import { createDdbClients, createStreamsClient } from "../data/ddbClient.mjs";
+import { createDdbRuntime } from "../infrastructure/persistence/ddbDocumentBridge.mjs";
+import { createDynamoPaymentRepository } from "../infrastructure/persistence/dynamoPaymentRepository.mjs";
 import { processOutboundPayment } from "../application/services/outboundPaymentProcessor.mjs";
+
+/**
+ * Local DynamoDB Streams poller (mirrors Java DynamoDbStreamsPaymentEventListener).
+ *
+ * Checkpoints (C3): shard iterators live in memory only. With LATEST, events during restart are skipped.
+ */
 
 const config = loadConfig(process.env);
 
 const ddbClients = createDdbClients(config.dynamodb);
 const ddb = ddbClients.lowLevel;
-const paymentRepository =
-  config.dynamodb.clientType === "low-level"
-    ? new LowLevelDynamoPaymentRepository({
-        lowLevel: ddbClients.lowLevel,
-        tableName: config.dynamodb.tableName,
-      })
-    : new HighLevelDynamoPaymentRepository({
-        doc: ddbClients.doc,
-        tableName: config.dynamodb.tableName,
-      });
-const streams = new DynamoDBStreamsClient({
-  region: config.dynamodb.region,
-  endpoint: config.dynamodb.endpoint,
-  credentials: { accessKeyId: "local", secretAccessKey: "local" },
+const ddbRuntime = createDdbRuntime({
+  doc: ddbClients.doc,
+  lowLevel: ddbClients.lowLevel,
+  clientType: config.dynamodb.clientType,
 });
+const paymentRepository = createDynamoPaymentRepository({
+  ddbRuntime,
+  tableName: config.dynamodb.tableName,
+});
+const streams = createStreamsClient(config.dynamodb);
 
 const tableName = config.dynamodb.tableName;
 
+/** Poll interval between full shard discovery rounds. */
 const POLL_INTERVAL_MS = 1000;
+/** GetRecords page size; DynamoDB allows up to 1000 — 100 keeps sample volume low. */
 const POLL_LIMIT = 100;
+/** Poison-pill cap before a payment id is dropped from the retry map. */
 const MAX_PROCESS_RETRIES = 3;
+/** Cap in-memory retry map size so poison-pill candidates do not grow without bound (M4). */
+const MAX_RETRY_COUNT_ENTRIES = 10_000;
+/** Safety cap on GetRecords rounds per shard per poll cycle (prevents infinite hot-shard loops). */
 const MAX_ROUNDS_PER_SHARD = 512;
 
 const checkpoints = new Map(); // shardId -> { nextIterator, lastSequenceNumber }
@@ -51,17 +55,14 @@ let loggedMissingTableHint = false;
 
 const iteratorType = parseIteratorType(config.dynamodb.streams.iteratorType);
 
-console.log(
-  `Starting local streams worker for table=${tableName} iteratorType=${iteratorType}`,
-);
-
 let running = true;
-function requestShutdown() {
+function requestStop() {
   running = false;
 }
-process.on("SIGINT", requestShutdown);
-process.on("SIGTERM", requestShutdown);
+process.on("SIGINT", requestStop);
+process.on("SIGTERM", requestStop);
 
+// eslint-disable-next-line no-constant-condition
 while (running) {
   try {
     const streamArn = await discoverStreamArn();
@@ -71,6 +72,8 @@ while (running) {
     }
 
     const shards = await discoverShards(streamArn);
+    pruneStaleCheckpoints(shards);
+    pruneStaleRetryCounts();
     for (const shard of shards) {
       if (!running) break;
       await pollShard(streamArn, shard.ShardId);
@@ -108,9 +111,44 @@ async function discoverStreamArn() {
   }
 }
 
+/**
+ * Paginate DescribeStream until LastEvaluatedShardId is absent (C2).
+ * A single page returns at most 100 shards; closed shards remain visible for ~24h.
+ */
 async function discoverShards(streamArn) {
-  const res = await streams.send(new DescribeStreamCommand({ StreamArn: streamArn }));
-  return res?.StreamDescription?.Shards ?? [];
+  const shards = [];
+  let exclusiveStartShardId;
+  do {
+    const res = await streams.send(
+      new DescribeStreamCommand({
+        StreamArn: streamArn,
+        ExclusiveStartShardId: exclusiveStartShardId,
+      }),
+    );
+    shards.push(...(res?.StreamDescription?.Shards ?? []));
+    exclusiveStartShardId = res?.StreamDescription?.LastEvaluatedShardId ?? undefined;
+  } while (exclusiveStartShardId);
+  return shards;
+}
+
+/** Drop in-memory iterators for shards no longer reported by DescribeStream (M4). */
+function pruneStaleCheckpoints(shards) {
+  const activeShardIds = new Set(shards.map((s) => s.ShardId));
+  for (const shardId of checkpoints.keys()) {
+    if (!activeShardIds.has(shardId)) checkpoints.delete(shardId);
+  }
+}
+
+/** Drop oldest retry-count entries when the map exceeds MAX_RETRY_COUNT_ENTRIES. */
+function pruneStaleRetryCounts() {
+  if (retryCounts.size <= MAX_RETRY_COUNT_ENTRIES) return;
+  const excess = retryCounts.size - MAX_RETRY_COUNT_ENTRIES;
+  let removed = 0;
+  for (const key of retryCounts.keys()) {
+    retryCounts.delete(key);
+    removed += 1;
+    if (removed >= excess) break;
+  }
 }
 
 async function pollShard(streamArn, shardId) {
@@ -222,4 +260,3 @@ function parseIteratorType(raw) {
 function sleep(ms) {
   return new Promise((r) => setTimeout(r, ms));
 }
-

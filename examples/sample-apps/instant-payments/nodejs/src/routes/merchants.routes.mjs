@@ -1,12 +1,6 @@
-import { QueryCommand } from "@aws-sdk/client-dynamodb";
-import { QueryCommand as DocQueryCommand } from "@aws-sdk/lib-dynamodb";
-import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
-import { MARSHALL_OPTS } from "../infrastructure/persistence/ddbMarshalling.mjs";
-import {
-  internalError,
-  invalidPaginationToken,
-  invalidPaymentState,
-} from "../util/errors.mjs";
+import { sendQueryCommand } from "../infrastructure/persistence/ddbDocumentBridge.mjs";
+import { invalidPaginationToken, invalidPaymentState } from "../util/errors.mjs";
+import { MERCHANT_ID_PARAMS, MERCHANT_STATE_PARAMS } from "./paramSchemas.mjs";
 import { decodeNextToken, encodeNextToken } from "../util/paginationToken.mjs";
 import { ATTR_MERCHANT_STATE_PK, merchantStatePk } from "../data/keys.mjs";
 
@@ -14,7 +8,7 @@ const DEFAULT_LIMIT = 50;
 const VALID_STATES = new Set(["RECEIVED", "FUNDS_RESERVED", "COMPLETED", "REJECTED"]);
 
 export async function merchantsRoutes(app) {
-  app.get("/:merchantId/payments", async (req) => {
+  app.get("/:merchantId/payments", { schema: { params: MERCHANT_ID_PARAMS } }, async (req) => {
     const tableName = app.config.dynamodb.tableName;
     const merchantId = String(req.params.merchantId ?? "").trim();
     const limit = normalizeLimit(req.query?.limit);
@@ -24,10 +18,9 @@ export async function merchantsRoutes(app) {
       token: req.query?.nextToken,
       expectedIndexName: "GSI_MERCHANT_PAYMENTS",
     });
-    if (token?.error === "WRONG_INDEX") throw internalError("Internal error");
     if (token?.error) throw invalidPaginationToken("Invalid pagination token");
 
-    const res = await sendQuery(app, {
+    const res = await sendQueryCommand(app.ddbRuntime, {
       TableName: tableName,
       IndexName: "GSI_MERCHANT_PAYMENTS",
       KeyConditionExpression: "merchantId = :merchantId",
@@ -37,9 +30,7 @@ export async function merchantsRoutes(app) {
       ExclusiveStartKey: token?.lastEvaluatedKey,
     });
 
-    const items = (res?.Items ?? []).map((it) =>
-      mapMerchantListItem(it, { merchantId }),
-    );
+    const items = (res?.Items ?? []).map(mapMerchantListItem);
     const nextToken = encodeNextToken({
       indexName: "GSI_MERCHANT_PAYMENTS",
       lastEvaluatedKey: res?.LastEvaluatedKey,
@@ -48,7 +39,10 @@ export async function merchantsRoutes(app) {
     return nextToken ? { items, nextToken } : { items };
   });
 
-  app.get("/:merchantId/payments/state/:state", async (req) => {
+  app.get(
+    "/:merchantId/payments/state/:state",
+    { schema: { params: MERCHANT_STATE_PARAMS } },
+    async (req) => {
     const tableName = app.config.dynamodb.tableName;
     const merchantId = String(req.params.merchantId ?? "").trim();
     const stateRaw = String(req.params.state ?? "").trim();
@@ -62,12 +56,11 @@ export async function merchantsRoutes(app) {
       token: req.query?.nextToken,
       expectedIndexName: "GSI_MERCHANT_STATE_PAYMENTS",
     });
-    if (token?.error === "WRONG_INDEX") throw internalError("Internal error");
     if (token?.error) throw invalidPaginationToken("Invalid pagination token");
 
     const pk = merchantStatePk(merchantId, state);
 
-    const res = await sendQuery(app, {
+    const res = await sendQueryCommand(app.ddbRuntime, {
       TableName: tableName,
       IndexName: "GSI_MERCHANT_STATE_PAYMENTS",
       KeyConditionExpression: `${ATTR_MERCHANT_STATE_PK} = :pk`,
@@ -77,46 +70,15 @@ export async function merchantsRoutes(app) {
       ExclusiveStartKey: token?.lastEvaluatedKey,
     });
 
-    const items = (res?.Items ?? []).map((it) =>
-      mapMerchantListItem(it, { merchantId, state }),
-    );
+    const items = (res?.Items ?? []).map(mapMerchantListItem);
     const nextToken = encodeNextToken({
       indexName: "GSI_MERCHANT_STATE_PAYMENTS",
       lastEvaluatedKey: res?.LastEvaluatedKey,
     });
 
     return nextToken ? { items, nextToken } : { items };
-  });
-}
-
-async function sendQuery(app, input) {
-  if (app.config.dynamodb.clientType === "low-level") {
-    const out = await app.ddb.lowLevel.send(
-      new QueryCommand({
-        TableName: input.TableName,
-        IndexName: input.IndexName,
-        KeyConditionExpression: input.KeyConditionExpression,
-        FilterExpression: input.FilterExpression,
-        ExpressionAttributeNames: input.ExpressionAttributeNames,
-        ExpressionAttributeValues: input.ExpressionAttributeValues
-          ? marshall(input.ExpressionAttributeValues, MARSHALL_OPTS)
-          : undefined,
-        Limit: input.Limit,
-        ScanIndexForward: input.ScanIndexForward,
-        ExclusiveStartKey: input.ExclusiveStartKey
-          ? marshall(input.ExclusiveStartKey, MARSHALL_OPTS)
-          : undefined,
-        Select: input.Select,
-      }),
-    );
-    return {
-      Items: (out.Items ?? []).map((it) => unmarshall(it)),
-      LastEvaluatedKey: out.LastEvaluatedKey ? unmarshall(out.LastEvaluatedKey) : undefined,
-    };
-  }
-
-  const out = await app.ddb.doc.send(new DocQueryCommand(input));
-  return { Items: out.Items, LastEvaluatedKey: out.LastEvaluatedKey };
+    },
+  );
 }
 
 function normalizeLimit(raw) {
@@ -132,18 +94,17 @@ function normalizeScanIndexForward(raw) {
   return s === "true" || s === "1" || s === "yes";
 }
 
-function mapMerchantListItem(item, ctx = {}) {
-  const createdAtUtc = item.createdAtUtc;
+function mapMerchantListItem(item) {
   return {
     paymentId: item.paymentId,
-    state: item.aggregateState ?? item.state ?? ctx.state,
+    state: item.aggregateState,
     version: item.lastSequence,
-    merchantId: item.merchantId ?? ctx.merchantId,
-    correlationId: item.correlationId ?? null,
+    merchantId: item.merchantId,
+    correlationId: item.correlationId,
     amount: item.amount,
     currency: item.currency,
-    createdAtUtc,
-    updatedAtUtc: item.updatedAtUtc ?? createdAtUtc,
+    createdAtUtc: item.createdAtUtc,
+    updatedAtUtc: item.updatedAtUtc,
     reasonCode: item.reasonCode ?? null,
   };
 }

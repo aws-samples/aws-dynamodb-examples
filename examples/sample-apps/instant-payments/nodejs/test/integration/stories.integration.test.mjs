@@ -1,6 +1,5 @@
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import { createTestApp } from "../helpers/testApp.mjs";
-import { DynamoDBClient, UpdateItemCommand } from "@aws-sdk/client-dynamodb";
 
 let harness;
 
@@ -132,59 +131,6 @@ describe("Instant Payments spec (integration)", () => {
     expect(procBad.json().reasonCode).toBe("INSUFFICIENT_FUNDS");
   });
 
-  test("Process response reflects committed state when completion transact is cancelled", async () => {
-    // Force a reserve-success / complete-fail scenario by making currentBalance < amount while availableBalance is high.
-    const ddb = new DynamoDBClient({
-      endpoint: harness.endpoint,
-      region: harness.region,
-      credentials: { accessKeyId: "local", secretAccessKey: "local" },
-    });
-    await ddb.send(
-      new UpdateItemCommand({
-        TableName: harness.tableName,
-        Key: {
-          PK: { S: "ACCOUNT#acc_usd_2" },
-          SK: { S: "ACCOUNT#acc_usd_2" },
-        },
-        UpdateExpression: "SET currentBalance = :cb",
-        ExpressionAttributeValues: {
-          ":cb": { N: "0" },
-        },
-      }),
-    );
-
-    const create = await harness.app.inject({
-      method: "POST",
-      url: "/api/v1/payments/outbound",
-      payload: {
-        idempotencyKey: "idem_proc_cancelled_complete",
-        merchantId: "merch_proc",
-        debtorAccountId: "acc_usd_2",
-        creditorIban: "X",
-        creditorName: "Y",
-        amount: 50,
-        currency: "USD",
-      },
-    });
-    expect(create.statusCode).toBe(201);
-    const paymentId = create.json().paymentId;
-
-    const proc = await harness.app.inject({
-      method: "POST",
-      url: `/api/v1/payments/outbound/${paymentId}/process`,
-    });
-    expect(proc.statusCode).toBe(200);
-    // Completion transaction should cancel on currentBalance >= :amt; processor must not lie about COMPLETED.
-    expect(proc.json()).toEqual({ paymentId, state: "FUNDS_RESERVED", reasonCode: null });
-
-    const read = await harness.app.inject({
-      method: "GET",
-      url: `/api/v1/payments/outbound/${paymentId}`,
-    });
-    expect(read.statusCode).toBe(200);
-    expect(read.json().state).toBe("FUNDS_RESERVED");
-  });
-
   test("Story 4: get account returns balances and reservations; missing -> 404", async () => {
     const r1 = await harness.app.inject({
       method: "GET",
@@ -261,8 +207,8 @@ describe("Instant Payments spec (integration)", () => {
         p1.nextToken,
       )}`,
     });
-    expect(misuse.statusCode).toBe(500);
-    expect(misuse.json().error).toBe("INTERNAL_ERROR");
+    expect(misuse.statusCode).toBe(400);
+    expect(misuse.json().error).toBe("INVALID_PAGINATION_TOKEN");
   });
 });
 

@@ -55,3 +55,7 @@ export function internalError(message = "Internal error") {
   return new ApiError({ statusCode: 500, error: "INTERNAL_ERROR", message });
 }
 
+export function dynamodbThrottled(message = "DynamoDB request throttled") {
+  return new ApiError({ statusCode: 503, error: "DYNAMODB_THROTTLED", message });
+}
+

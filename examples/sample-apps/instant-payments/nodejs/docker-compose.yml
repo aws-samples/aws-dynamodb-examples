@@ -7,6 +7,20 @@ services:
       - "${DYNAMODB_LOCAL_HOST_PORT:-18000}:8000"
     command: "-jar DynamoDBLocal.jar -sharedDb -inMemory"
 
+  dynamodb-admin:
+    image: aaronshaf/dynamodb-admin:latest
+    container_name: dynamodb-admin
+    hostname: dynamodb-admin
+    ports:
+      - "${DYNAMODB_ADMIN_HOST_PORT:-8001}:8001"
+    environment:
+      DYNAMO_ENDPOINT: http://dynamodb-local:8000
+      AWS_REGION: eu-west-1
+      AWS_ACCESS_KEY_ID: local
+      AWS_SECRET_ACCESS_KEY: local
+    depends_on:
+      - dynamodb-local
+
   instant-payments-js:
     build:
       context: .
@@ -15,8 +29,8 @@ services:
     ports:
       - "8080:8080"
     environment:
-      # Default values for local development
-      NODE_ENV: ${NODE_ENV:-development}
+      # Container image is a production build (devDeps like pino-pretty pruned), so default to production.
+      NODE_ENV: ${NODE_ENV:-production}
       PORT: ${PORT:-8080}
       # AWS environment variables
       AWS_ENDPOINT_URL: http://dynamodb-local:8000

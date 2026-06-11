@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Instant Payments demo — HTTP trace</title>
+  <style>
+    :root { font-family: ui-sans-serif, system-ui, sans-serif; background:#0f1419; color:#e6edf3; }
+    body { max-width: 960px; margin: 24px auto; padding: 0 16px 48px; }
+    h1 { font-size: 1.25rem; font-weight: 600; margin-bottom: 8px; }
+    .meta { color:#8b949e; font-size: 0.875rem; margin-bottom: 24px; }
+    details {
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      background: #161b22;
+      overflow: hidden;
+    }
+    summary {
+      cursor: pointer;
+      padding: 12px 14px;
+      font-weight: 600;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      user-select: none;
+    }
+    summary::-webkit-details-marker { display: none; }
+    summary::before { content: "▸"; color:#58a6ff; transition: transform .15s; }
+    details[open] summary::before { transform: rotate(90deg); }
+    .badge { font-size: 0.7rem; padding: 2px 8px; border-radius: 999px; font-weight: 600; }
+    .ok { background:#23863633; color:#3fb950; }
+    .warn { background:#bb800926; color:#d29922; }
+    .err { background:#da363326; color:#f85149; }
+    .step { color:#8b949e; font-weight: 400; font-size: 0.8rem; flex:1; text-align:right; }
+    .inner { padding: 0 14px 14px; border-top: 1px solid #21262d; }
+    h3 { font-size: 0.72rem; text-transform: uppercase; letter-spacing: .06em; color:#8b949e; margin: 14px 0 8px; }
+    pre {
+      margin: 0;
+      padding: 12px;
+      border-radius: 6px;
+      background:#0d1117;
+      border: 1px solid #30363d;
+      overflow-x: auto;
+      font-size: 0.8125rem;
+      line-height: 1.45;
+    }
+    code.method { color:#79c0ff; }
+    code.url { color:#a371f7; word-break: break-all; }
+  </style>
+</head>
+<body>
+  <h1>Instant Payments — demo HTTP trace</h1>
+  <p class="meta">BASE_URL = http://localhost:8080 · generated 2026-05-12T13:03:18.960Z</p>
+<details>
+<summary><code class="method">GET</code> <code class="url">http://localhost:8080/health</code> <span class="badge ok">200</span><span class="step">Health check</span></summary>
+<div class="inner"><h3>Request body</h3><pre><em>none</em></pre><h3>Response body</h3><pre>{
+  &quot;ok&quot;: true
+}</pre></div>
+</details>
+<details>
+<summary><code class="method">POST</code> <code class="url">http://localhost:8080/api/v1/payments/outbound</code> <span class="badge ok">201</span><span class="step">First create (201)</span></summary>
+<div class="inner"><h3>Request body</h3><pre>{
+  &quot;idempotencyKey&quot;: &quot;idem_demo_1778590912487&quot;,
+  &quot;merchantId&quot;: &quot;merch_demo&quot;,
+  &quot;debtorAccountId&quot;: &quot;acc_usd_1&quot;,
+  &quot;creditorIban&quot;: &quot;RO49AAAA1B31007593840000&quot;,
+  &quot;creditorName&quot;: &quot;Demo User&quot;,
+  &quot;amount&quot;: 42,
+  &quot;currency&quot;: &quot;USD&quot;
+}</pre><h3>Response body</h3><pre>{
+  &quot;paymentId&quot;: &quot;pay_765be501-2c29-48db-a7ec-ffbdf3928af2&quot;,
+  &quot;state&quot;: &quot;RECEIVED&quot;,
+  &quot;correlationId&quot;: &quot;corr_db18c8c5-4fdd-4c11-9659-fc8b60bb1cec&quot;,
+  &quot;createdAtUtc&quot;: &quot;2026-05-12T13:02:01Z&quot;
+}</pre></div>
+</details>
+<details>
+<summary><code class="method">POST</code> <code class="url">http://localhost:8080/api/v1/payments/outbound</code> <span class="badge ok">200</span><span class="step">Idempotent replay (200)</span></summary>
+<div class="inner"><h3>Request body</h3><pre>{
+  &quot;idempotencyKey&quot;: &quot;idem_demo_1778590912487&quot;,
+  &quot;merchantId&quot;: &quot;merch_demo&quot;,
+  &quot;debtorAccountId&quot;: &quot;acc_usd_1&quot;,
+  &quot;creditorIban&quot;: &quot;RO49AAAA1B31007593840000&quot;,
+  &quot;creditorName&quot;: &quot;Demo User&quot;,
+  &quot;amount&quot;: 42,
+  &quot;currency&quot;: &quot;USD&quot;
+}</pre><h3>Response body</h3><pre>{
+  &quot;paymentId&quot;: &quot;pay_765be501-2c29-48db-a7ec-ffbdf3928af2&quot;,
+  &quot;state&quot;: &quot;RECEIVED&quot;,
+  &quot;correlationId&quot;: &quot;corr_db18c8c5-4fdd-4c11-9659-fc8b60bb1cec&quot;,
+  &quot;createdAtUtc&quot;: &quot;2026-05-12T13:02:01Z&quot;
+}</pre></div>
+</details>
+<details>
+<summary><code class="method">POST</code> <code class="url">http://localhost:8080/api/v1/payments/outbound</code> <span class="badge warn">409</span><span class="step">Same key, different payload (409)</span></summary>
+<div class="inner"><h3>Request body</h3><pre>{
+  &quot;idempotencyKey&quot;: &quot;idem_demo_1778590912487&quot;,
+  &quot;merchantId&quot;: &quot;merch_demo&quot;,
+  &quot;debtorAccountId&quot;: &quot;acc_usd_1&quot;,
+  &quot;creditorIban&quot;: &quot;RO49AAAA1B31007593840000&quot;,
+  &quot;creditorName&quot;: &quot;Demo User&quot;,
+  &quot;amount&quot;: 99,
+  &quot;currency&quot;: &quot;USD&quot;
+}</pre><h3>Response body</h3><pre>{
+  &quot;error&quot;: &quot;IDEMPOTENCY_CONFLICT&quot;,
+  &quot;message&quot;: &quot;Idempotency key reused with different payload&quot;,
+  &quot;timestamp&quot;: &quot;2026-05-12T13:02:13Z&quot;
+}</pre></div>
+</details>
+<details>
+<summary><code class="method">GET</code> <code class="url">http://localhost:8080/api/v1/payments/outbound/pay_765be501-2c29-48db-a7ec-ffbdf3928af2</code> <span class="badge ok">200</span><span class="step">GET payment</span></summary>
+<div class="inner"><h3>Request body</h3><pre><em>none</em></pre><h3>Response body</h3><pre>{
+  &quot;paymentId&quot;: &quot;pay_765be501-2c29-48db-a7ec-ffbdf3928af2&quot;,
+  &quot;state&quot;: &quot;RECEIVED&quot;,
+  &quot;correlationId&quot;: &quot;corr_db18c8c5-4fdd-4c11-9659-fc8b60bb1cec&quot;,
+  &quot;createdAtUtc&quot;: &quot;2026-05-12T13:02:01Z&quot;,
+  &quot;updatedAtUtc&quot;: &quot;2026-05-12T13:02:01Z&quot;,
+  &quot;debtorAccountId&quot;: &quot;acc_usd_1&quot;,
+  &quot;creditorIban&quot;: &quot;RO49AAAA1B31007593840000&quot;,
+  &quot;creditorName&quot;: &quot;Demo User&quot;,
+  &quot;amount&quot;: 42,
+  &quot;currency&quot;: &quot;USD&quot;,
+  &quot;idempotencyKey&quot;: &quot;idem_demo_1778590912487&quot;,
+  &quot;reasonCode&quot;: null,
+  &quot;version&quot;: 1,
+  &quot;events&quot;: [
+    {
+      &quot;eventKey&quot;: &quot;EVENT#0000000000000000001&quot;,
+      &quot;eventType&quot;: &quot;OUTBOUND_PAYMENT_CREATED&quot;,
+      &quot;reasonCode&quot;: null,
+      &quot;correlationId&quot;: &quot;corr_db18c8c5-4fdd-4c11-9659-fc8b60bb1cec&quot;
+    }
+  ]
+}</pre></div>
+</details>
+<details>
+<summary><code class="method">POST</code> <code class="url">http://localhost:8080/api/v1/payments/outbound</code> <span class="badge ok">201</span><span class="step">Create payment to process</span></summary>
+<div class="inner"><h3>Request body</h3><pre>{
+  &quot;idempotencyKey&quot;: &quot;idem_proc_demo_1778590912487&quot;,
+  &quot;merchantId&quot;: &quot;merch_demo&quot;,
+  &quot;debtorAccountId&quot;: &quot;acc_usd_2&quot;,
+  &quot;creditorIban&quot;: &quot;X&quot;,
+  &quot;creditorName&quot;: &quot;Y&quot;,
+  &quot;amount&quot;: 50,
+  &quot;currency&quot;: &quot;USD&quot;
+}</pre><h3>Response body</h3><pre>{
+  &quot;paymentId&quot;: &quot;pay_c7bf424a-dfc4-4d45-991d-ed620b18b68b&quot;,
+  &quot;state&quot;: &quot;RECEIVED&quot;,
+  &quot;correlationId&quot;: &quot;corr_76ed8bea-058f-4993-b5e2-e5675fa52489&quot;,
+  &quot;createdAtUtc&quot;: &quot;2026-05-12T13:02:14Z&quot;
+}</pre></div>
+</details>
+<details>
+<summary><code class="method">POST</code> <code class="url">http://localhost:8080/api/v1/payments/outbound/pay_c7bf424a-dfc4-4d45-991d-ed620b18b68b/process</code> <span class="badge ok">200</span><span class="step">POST process</span></summary>
+<div class="inner"><h3>Request body</h3><pre><em>none</em></pre><h3>Response body</h3><pre>{
+  &quot;paymentId&quot;: &quot;pay_c7bf424a-dfc4-4d45-991d-ed620b18b68b&quot;,
+  &quot;state&quot;: &quot;COMPLETED&quot;,
+  &quot;reasonCode&quot;: null
+}</pre></div>
+</details>
+<details>
+<summary><code class="method">GET</code> <code class="url">http://localhost:8080/api/v1/payments/outbound/pay_c7bf424a-dfc4-4d45-991d-ed620b18b68b</code> <span class="badge ok">200</span><span class="step">GET payment after process</span></summary>
+<div class="inner"><h3>Request body</h3><pre><em>none</em></pre><h3>Response body</h3><pre>{
+  &quot;paymentId&quot;: &quot;pay_c7bf424a-dfc4-4d45-991d-ed620b18b68b&quot;,
+  &quot;state&quot;: &quot;COMPLETED&quot;,
+  &quot;correlationId&quot;: &quot;corr_76ed8bea-058f-4993-b5e2-e5675fa52489&quot;,
+  &quot;createdAtUtc&quot;: &quot;2026-05-12T13:02:14Z&quot;,
+  &quot;updatedAtUtc&quot;: &quot;2026-05-12T13:02:15Z&quot;,
+  &quot;debtorAccountId&quot;: &quot;acc_usd_2&quot;,
+  &quot;creditorIban&quot;: &quot;X&quot;,
+  &quot;creditorName&quot;: &quot;Y&quot;,
+  &quot;amount&quot;: 50,
+  &quot;currency&quot;: &quot;USD&quot;,
+  &quot;idempotencyKey&quot;: &quot;idem_proc_demo_1778590912487&quot;,
+  &quot;reasonCode&quot;: null,
+  &quot;version&quot;: 3,
+  &quot;events&quot;: [
+    {
+      &quot;eventKey&quot;: &quot;EVENT#0000000000000000001&quot;,
+      &quot;eventType&quot;: &quot;OUTBOUND_PAYMENT_CREATED&quot;,
+      &quot;reasonCode&quot;: null,
+      &quot;correlationId&quot;: &quot;corr_76ed8bea-058f-4993-b5e2-e5675fa52489&quot;
+    },
+    {
+      &quot;eventKey&quot;: &quot;EVENT#0000000000000000002&quot;,
+      &quot;eventType&quot;: &quot;FUNDS_RESERVED&quot;,
+      &quot;reasonCode&quot;: null,
+      &quot;correlationId&quot;: &quot;corr_76ed8bea-058f-4993-b5e2-e5675fa52489&quot;
+    },
+    {
+      &quot;eventKey&quot;: &quot;EVENT#0000000000000000003&quot;,
+      &quot;eventType&quot;: &quot;COMPLETED&quot;,
+      &quot;reasonCode&quot;: null,
+      &quot;correlationId&quot;: &quot;corr_76ed8bea-058f-4993-b5e2-e5675fa52489&quot;
+    }
+  ]
+}</pre></div>
+</details>
+<details>
+<summary><code class="method">POST</code> <code class="url">http://localhost:8080/api/v1/payments/outbound</code> <span class="badge ok">201</span><span class="step">Create on zero-balance account</span></summary>
+<div class="inner"><h3>Request body</h3><pre>{
+  &quot;idempotencyKey&quot;: &quot;idem_rej_demo_1778590912487&quot;,
+  &quot;merchantId&quot;: &quot;merch_demo&quot;,
+  &quot;debtorAccountId&quot;: &quot;acc_usd_5&quot;,
+  &quot;creditorIban&quot;: &quot;X&quot;,
+  &quot;creditorName&quot;: &quot;Y&quot;,
+  &quot;amount&quot;: 100,
+  &quot;currency&quot;: &quot;USD&quot;
+}</pre><h3>Response body</h3><pre>{
+  &quot;paymentId&quot;: &quot;pay_a015db10-2d30-4c63-a92f-571f9ffc8b49&quot;,
+  &quot;state&quot;: &quot;RECEIVED&quot;,
+  &quot;correlationId&quot;: &quot;corr_50129036-da46-4c22-a75e-d518f4b0892c&quot;,
+  &quot;createdAtUtc&quot;: &quot;2026-05-12T13:03:14Z&quot;
+}</pre></div>
+</details>
+<details>
+<summary><code class="method">POST</code> <code class="url">http://localhost:8080/api/v1/payments/outbound/pay_a015db10-2d30-4c63-a92f-571f9ffc8b49/process</code> <span class="badge ok">200</span><span class="step">POST process → reject</span></summary>
+<div class="inner"><h3>Request body</h3><pre><em>none</em></pre><h3>Response body</h3><pre>{
+  &quot;paymentId&quot;: &quot;pay_a015db10-2d30-4c63-a92f-571f9ffc8b49&quot;,
+  &quot;state&quot;: &quot;REJECTED&quot;,
+  &quot;reasonCode&quot;: &quot;INSUFFICIENT_FUNDS&quot;
+}</pre></div>
+</details>
+<details>
+<summary><code class="method">GET</code> <code class="url">http://localhost:8080/api/v1/accounts/acc_usd_1</code> <span class="badge ok">200</span><span class="step">GET account</span></summary>
+<div class="inner"><h3>Request body</h3><pre><em>none</em></pre><h3>Response body</h3><pre>{
+  &quot;accountId&quot;: &quot;acc_usd_1&quot;,
+  &quot;status&quot;: &quot;ACTIVE&quot;,
+  &quot;currency&quot;: &quot;USD&quot;,
+  &quot;currentBalance&quot;: 9895,
+  &quot;availableBalance&quot;: 9895,
+  &quot;reservations&quot;: [
+    {
+      &quot;reservationId&quot;: &quot;res_pay_5ab9fc09-7e43-4dbc-8c62-e0145b4af6c6&quot;,
+      &quot;paymentId&quot;: &quot;pay_5ab9fc09-7e43-4dbc-8c62-e0145b4af6c6&quot;,
+      &quot;amount&quot;: 1,
+      &quot;status&quot;: &quot;CONSUMED&quot;,
+      &quot;createdAtUtc&quot;: &quot;2026-05-12T13:01:03Z&quot;
+    },
+    {
+      &quot;reservationId&quot;: &quot;res_pay_600b7397-33a4-46ad-ab9e-de62b8507c3f&quot;,
+      &quot;paymentId&quot;: &quot;pay_600b7397-33a4-46ad-ab9e-de62b8507c3f&quot;,
+      &quot;amount&quot;: 1,
+      &quot;status&quot;: &quot;CONSUMED&quot;,
+      &quot;createdAtUtc&quot;: &quot;2026-05-12T13:01:02Z&quot;
+    },
+    {
+      &quot;reservationId&quot;: &quot;res_pay_7edfd11c-1be3-4211-b674-596729d2000e&quot;,
+      &quot;paymentId&quot;: &quot;pay_7edfd11c-1be3-4211-b674-596729d2000e&quot;,
+      &quot;amount&quot;: 100,
+      &quot;status&quot;: &quot;CONSUMED&quot;,
+      &quot;createdAtUtc&quot;: &quot;2026-05-12T13:00:50Z&quot;
+    },
+    {
+      &quot;reservationId&quot;: &quot;res_pay_82a0f02e-aa2a-45c3-b00c-5c8189302189&quot;,
+      &quot;paymentId&quot;: &quot;pay_82a0f02e-aa2a-45c3-b00c-5c8189302189&quot;,
+      &quot;amount&quot;: 1,
+      &quot;status&quot;: &quot;CONSUMED&quot;,
+      &quot;createdAtUtc&quot;: &quot;2026-05-12T13:01:05Z&quot;
+    },
+    {
+      &quot;reservationId&quot;: &quot;res_pay_95b20844-cbd8-433e-a819-f01ea8e67fe0&quot;,
+      &quot;paymentId&quot;: &quot;pay_95b20844-cbd8-433e-a819-f01ea8e67fe0&quot;,
+      &quot;amount&quot;: 1,
+      &quot;status&quot;: &quot;CONSUMED&quot;,
+      &quot;createdAtUtc&quot;: &quot;2026-05-12T13:01:01Z&quot;
+    },
+    {
+      &quot;reservationId&quot;: &quot;res_pay_cc65c656-fa14-488d-8994-fd4fd7b0c4f4&quot;,
+      &quot;paymentId&quot;: &quot;pay_cc65c656-fa14-488d-8994-fd4fd7b0c4f4&quot;,
+      &quot;amount&quot;: 1,
+      &quot;status&quot;: &quot;CONSUMED&quot;,
+      &quot;createdAtUtc&quot;: &quot;2026-05-12T13:00:59Z&quot;
+    }
+  ]
+}</pre></div>
+</details>
+<details>
+<summary><code class="method">GET</code> <code class="url">http://localhost:8080/api/v1/accounts/acc_no_such_account</code> <span class="badge warn">404</span><span class="step">GET missing account</span></summary>
+<div class="inner"><h3>Request body</h3><pre><em>none</em></pre><h3>Response body</h3><pre>{
+  &quot;error&quot;: &quot;ACCOUNT_NOT_FOUND&quot;,
+  &quot;message&quot;: &quot;Account not found&quot;,
+  &quot;timestamp&quot;: &quot;2026-05-12T13:03:16Z&quot;
+}</pre></div>
+</details>
+<details>
+<summary><code class="method">POST</code> <code class="url">http://localhost:8080/api/v1/accounts/acc_usd_1/batch-get-reservations</code> <span class="badge warn">400</span><span class="step">Empty reservationIds (400)</span></summary>
+<div class="inner"><h3>Request body</h3><pre>{
+  &quot;reservationIds&quot;: []
+}</pre><h3>Response body</h3><pre>{
+  &quot;error&quot;: &quot;VALIDATION_ERROR&quot;,
+  &quot;message&quot;: &quot;Validation error&quot;,
+  &quot;timestamp&quot;: &quot;2026-05-12T13:03:16Z&quot;
+}</pre></div>
+</details>
+<details>
+<summary><code class="method">POST</code> <code class="url">http://localhost:8080/api/v1/accounts/acc_usd_1/batch-get-reservations</code> <span class="badge ok">200</span><span class="step">Partial batch (200 + missing)</span></summary>
+<div class="inner"><h3>Request body</h3><pre>{
+  &quot;reservationIds&quot;: [
+    &quot;res_fake_demo_1778590912487&quot;
+  ]
+}</pre><h3>Response body</h3><pre>{
+  &quot;reservations&quot;: [],
+  &quot;missingReservationIds&quot;: [
+    &quot;res_fake_demo_1778590912487&quot;
+  ]
+}</pre></div>
+</details>
+<details>
+<summary><code class="method">POST</code> <code class="url">http://localhost:8080/api/v1/payments/outbound</code> <span class="badge ok">201</span><span class="step">Seed merchant payment 1/3</span></summary>
+<div class="inner"><h3>Request body</h3><pre>{
+  &quot;idempotencyKey&quot;: &quot;idem_demo_1778590912487_page_0&quot;,
+  &quot;merchantId&quot;: &quot;merch_page_demo_1778590912487&quot;,
+  &quot;debtorAccountId&quot;: &quot;acc_usd_1&quot;,
+  &quot;creditorIban&quot;: &quot;X&quot;,
+  &quot;creditorName&quot;: &quot;Y&quot;,
+  &quot;amount&quot;: 1,
+  &quot;currency&quot;: &quot;USD&quot;
+}</pre><h3>Response body</h3><pre>{
+  &quot;paymentId&quot;: &quot;pay_227f21c2-b7e6-42d1-a54f-8b3fc31a2202&quot;,
+  &quot;state&quot;: &quot;RECEIVED&quot;,
+  &quot;correlationId&quot;: &quot;corr_5a57ccd5-ad84-41b4-ad00-7f02557725f2&quot;,
+  &quot;createdAtUtc&quot;: &quot;2026-05-12T13:03:17Z&quot;
+}</pre></div>
+</details>
+<details>
+<summary><code class="method">POST</code> <code class="url">http://localhost:8080/api/v1/payments/outbound</code> <span class="badge ok">201</span><span class="step">Seed merchant payment 2/3</span></summary>
+<div class="inner"><h3>Request body</h3><pre>{
+  &quot;idempotencyKey&quot;: &quot;idem_demo_1778590912487_page_1&quot;,
+  &quot;merchantId&quot;: &quot;merch_page_demo_1778590912487&quot;,
+  &quot;debtorAccountId&quot;: &quot;acc_usd_1&quot;,
+  &quot;creditorIban&quot;: &quot;X&quot;,
+  &quot;creditorName&quot;: &quot;Y&quot;,
+  &quot;amount&quot;: 1,
+  &quot;currency&quot;: &quot;USD&quot;
+}</pre><h3>Response body</h3><pre>{
+  &quot;paymentId&quot;: &quot;pay_8f348130-b297-4c06-a294-e6cd1242b1ee&quot;,
+  &quot;state&quot;: &quot;RECEIVED&quot;,
+  &quot;correlationId&quot;: &quot;corr_e9b8221a-e035-4c93-8efe-65516ed649e9&quot;,
+  &quot;createdAtUtc&quot;: &quot;2026-05-12T13:03:17Z&quot;
+}</pre></div>
+</details>
+<details>
+<summary><code class="method">POST</code> <code class="url">http://localhost:8080/api/v1/payments/outbound</code> <span class="badge ok">201</span><span class="step">Seed merchant payment 3/3</span></summary>
+<div class="inner"><h3>Request body</h3><pre>{
+  &quot;idempotencyKey&quot;: &quot;idem_demo_1778590912487_page_2&quot;,
+  &quot;merchantId&quot;: &quot;merch_page_demo_1778590912487&quot;,
+  &quot;debtorAccountId&quot;: &quot;acc_usd_1&quot;,
+  &quot;creditorIban&quot;: &quot;X&quot;,
+  &quot;creditorName&quot;: &quot;Y&quot;,
+  &quot;amount&quot;: 1,
+  &quot;currency&quot;: &quot;USD&quot;
+}</pre><h3>Response body</h3><pre>{
+  &quot;paymentId&quot;: &quot;pay_6206db27-f854-4f0b-9cc8-7983ef287644&quot;,
+  &quot;state&quot;: &quot;RECEIVED&quot;,
+  &quot;correlationId&quot;: &quot;corr_8780e3c9-c858-4f8d-bf23-153266b8bdb3&quot;,
+  &quot;createdAtUtc&quot;: &quot;2026-05-12T13:03:17Z&quot;
+}</pre></div>
+</details>
+<details>
+<summary><code class="method">GET</code> <code class="url">http://localhost:8080/api/v1/merchants/merch_page_demo_1778590912487/payments?limit=2</code> <span class="badge ok">200</span><span class="step">Query GSI_MERCHANT_PAYMENTS (page 1)</span></summary>
+<div class="inner"><h3>Request body</h3><pre><em>none</em></pre><h3>Response body</h3><pre>{
+  &quot;items&quot;: [
+    {
+      &quot;paymentId&quot;: &quot;pay_8f348130-b297-4c06-a294-e6cd1242b1ee&quot;,
+      &quot;state&quot;: &quot;RECEIVED&quot;,
+      &quot;version&quot;: 1,
+      &quot;merchantId&quot;: &quot;merch_page_demo_1778590912487&quot;,
+      &quot;correlationId&quot;: &quot;corr_e9b8221a-e035-4c93-8efe-65516ed649e9&quot;,
+      &quot;amount&quot;: 1,
+      &quot;currency&quot;: &quot;USD&quot;,
+      &quot;createdAtUtc&quot;: &quot;2026-05-12T13:03:17Z&quot;,
+      &quot;updatedAtUtc&quot;: &quot;2026-05-12T13:03:17Z&quot;,
+      &quot;reasonCode&quot;: null
+    },
+    {
+      &quot;paymentId&quot;: &quot;pay_6206db27-f854-4f0b-9cc8-7983ef287644&quot;,
+      &quot;state&quot;: &quot;RECEIVED&quot;,
+      &quot;version&quot;: 1,
+      &quot;merchantId&quot;: &quot;merch_page_demo_1778590912487&quot;,
+      &quot;correlationId&quot;: &quot;corr_8780e3c9-c858-4f8d-bf23-153266b8bdb3&quot;,
+      &quot;amount&quot;: 1,
+      &quot;currency&quot;: &quot;USD&quot;,
+      &quot;createdAtUtc&quot;: &quot;2026-05-12T13:03:17Z&quot;,
+      &quot;updatedAtUtc&quot;: &quot;2026-05-12T13:03:17Z&quot;,
+      &quot;reasonCode&quot;: null
+    }
+  ],
+  &quot;nextToken&quot;: &quot;eyJ2IjoxLCJpbmRleE5hbWUiOiJHU0lfTUVSQ0hBTlRfUEFZTUVOVFMiLCJsYXN0RXZhbHVhdGVkS2V5Ijp7IlNLIjoiI0hFQUQiLCJQSyI6IlBBWU1FTlQjcGF5XzYyMDZkYjI3LWY4NTQtNGYwYi05Y2M4LTc5ODNlZjI4NzY0NCIsIm1lcmNoYW50SWQiOiJtZXJjaF9wYWdlX2RlbW9fMTc3ODU5MDkxMjQ4NyIsIm1lcmNoYW50UGF5bWVudHNTayI6IjIwMjYtMDUtMTJUMTM6MDM6MTdaI3BheV82MjA2ZGIyNy1mODU0LTRmMGItOWNjOC03OTgzZWYyODc2NDQifX0&quot;
+}</pre></div>
+</details>
+<details>
+<summary><code class="method">GET</code> <code class="url">http://localhost:8080/api/v1/merchants/merch_page_demo_1778590912487/payments?limit=2&amp;nextToken=eyJ2IjoxLCJpbmRleE5hbWUiOiJHU0lfTUVSQ0hBTlRfUEFZTUVOVFMiLCJsYXN0RXZhbHVhdGVkS2V5Ijp7IlNLIjoiI0hFQUQiLCJQSyI6IlBBWU1FTlQjcGF5XzYyMDZkYjI3LWY4NTQtNGYwYi05Y2M4LTc5ODNlZjI4NzY0NCIsIm1lcmNoYW50SWQiOiJtZXJjaF9wYWdlX2RlbW9fMTc3ODU5MDkxMjQ4NyIsIm1lcmNoYW50UGF5bWVudHNTayI6IjIwMjYtMDUtMTJUMTM6MDM6MTdaI3BheV82MjA2ZGIyNy1mODU0LTRmMGItOWNjOC03OTgzZWYyODc2NDQifX0</code> <span class="badge ok">200</span><span class="step">Query GSI_MERCHANT_PAYMENTS (page 2)</span></summary>
+<div class="inner"><h3>Request body</h3><pre><em>none</em></pre><h3>Response body</h3><pre>{
+  &quot;items&quot;: [
+    {
+      &quot;paymentId&quot;: &quot;pay_227f21c2-b7e6-42d1-a54f-8b3fc31a2202&quot;,
+      &quot;state&quot;: &quot;RECEIVED&quot;,
+      &quot;version&quot;: 1,
+      &quot;merchantId&quot;: &quot;merch_page_demo_1778590912487&quot;,
+      &quot;correlationId&quot;: &quot;corr_5a57ccd5-ad84-41b4-ad00-7f02557725f2&quot;,
+      &quot;amount&quot;: 1,
+      &quot;currency&quot;: &quot;USD&quot;,
+      &quot;createdAtUtc&quot;: &quot;2026-05-12T13:03:17Z&quot;,
+      &quot;updatedAtUtc&quot;: &quot;2026-05-12T13:03:17Z&quot;,
+      &quot;reasonCode&quot;: null
+    }
+  ]
+}</pre></div>
+</details>
+<details>
+<summary><code class="method">GET</code> <code class="url">http://localhost:8080/api/v1/merchants/merch_page_demo_1778590912487/payments/state/RECEIVED?limit=5</code> <span class="badge ok">200</span><span class="step">Query GSI_MERCHANT_STATE_PAYMENTS</span></summary>
+<div class="inner"><h3>Request body</h3><pre><em>none</em></pre><h3>Response body</h3><pre>{
+  &quot;items&quot;: [
+    {
+      &quot;paymentId&quot;: &quot;pay_227f21c2-b7e6-42d1-a54f-8b3fc31a2202&quot;,
+      &quot;state&quot;: &quot;RECEIVED&quot;,
+      &quot;version&quot;: 1,
+      &quot;merchantId&quot;: &quot;merch_page_demo_1778590912487&quot;,
+      &quot;correlationId&quot;: &quot;corr_5a57ccd5-ad84-41b4-ad00-7f02557725f2&quot;,
+      &quot;amount&quot;: 1,
+      &quot;currency&quot;: &quot;USD&quot;,
+      &quot;createdAtUtc&quot;: &quot;2026-05-12T13:03:17Z&quot;,
+      &quot;updatedAtUtc&quot;: &quot;2026-05-12T13:03:17Z&quot;,
+      &quot;reasonCode&quot;: null
+    },
+    {
+      &quot;paymentId&quot;: &quot;pay_8f348130-b297-4c06-a294-e6cd1242b1ee&quot;,
+      &quot;state&quot;: &quot;RECEIVED&quot;,
+      &quot;version&quot;: 1,
+      &quot;merchantId&quot;: &quot;merch_page_demo_1778590912487&quot;,
+      &quot;correlationId&quot;: &quot;corr_e9b8221a-e035-4c93-8efe-65516ed649e9&quot;,
+      &quot;amount&quot;: 1,
+      &quot;currency&quot;: &quot;USD&quot;,
+      &quot;createdAtUtc&quot;: &quot;2026-05-12T13:03:17Z&quot;,
+      &quot;updatedAtUtc&quot;: &quot;2026-05-12T13:03:17Z&quot;,
+      &quot;reasonCode&quot;: null
+    },
+    {
+      &quot;paymentId&quot;: &quot;pay_6206db27-f854-4f0b-9cc8-7983ef287644&quot;,
+      &quot;state&quot;: &quot;RECEIVED&quot;,
+      &quot;version&quot;: 1,
+      &quot;merchantId&quot;: &quot;merch_page_demo_1778590912487&quot;,
+      &quot;correlationId&quot;: &quot;corr_8780e3c9-c858-4f8d-bf23-153266b8bdb3&quot;,
+      &quot;amount&quot;: 1,
+      &quot;currency&quot;: &quot;USD&quot;,
+      &quot;createdAtUtc&quot;: &quot;2026-05-12T13:03:17Z&quot;,
+      &quot;updatedAtUtc&quot;: &quot;2026-05-12T13:03:17Z&quot;,
+      &quot;reasonCode&quot;: null
+    }
+  ]
+}</pre></div>
+</details>
+<details>
+<summary><code class="method">GET</code> <code class="url">http://localhost:8080/api/v1/merchants/merch_page_demo_1778590912487/payments/state/RECEIVED?limit=2&amp;nextToken=eyJ2IjoxLCJpbmRleE5hbWUiOiJHU0lfTUVSQ0hBTlRfUEFZTUVOVFMiLCJsYXN0RXZhbHVhdGVkS2V5Ijp7IlNLIjoiI0hFQUQiLCJQSyI6IlBBWU1FTlQjcGF5XzYyMDZkYjI3LWY4NTQtNGYwYi05Y2M4LTc5ODNlZjI4NzY0NCIsIm1lcmNoYW50SWQiOiJtZXJjaF9wYWdlX2RlbW9fMTc3ODU5MDkxMjQ4NyIsIm1lcmNoYW50UGF5bWVudHNTayI6IjIwMjYtMDUtMTJUMTM6MDM6MTdaI3BheV82MjA2ZGIyNy1mODU0LTRmMGItOWNjOC03OTgzZWYyODc2NDQifX0</code> <span class="badge err">500</span><span class="step">Wrong GSI for pagination token (500)</span></summary>
+<div class="inner"><h3>Request body</h3><pre><em>none</em></pre><h3>Response body</h3><pre>{
+  &quot;error&quot;: &quot;INTERNAL_ERROR&quot;,
+  &quot;message&quot;: &quot;Internal error&quot;,
+  &quot;timestamp&quot;: &quot;2026-05-12T13:03:18Z&quot;
+}</pre></div>
+</details>
+</body>
+</html>

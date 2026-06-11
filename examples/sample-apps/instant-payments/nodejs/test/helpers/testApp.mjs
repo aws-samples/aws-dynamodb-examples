@@ -6,13 +6,12 @@ export async function createTestApp() {
   const region = process.env.DYNAMODB_REGION ?? "eu-west-1";
   const tableName = `JS_InstantPayments_test_${Date.now()}_${Math.random().toString(16).slice(2)}`;
 
-  // Ensure app uses isolated table
+  // Isolated table + env for this harness (tests use app.inject(), not listen — PORT unused).
   process.env.NODE_ENV = "test";
-  process.env.PORT = "0";
-  process.env.AWS_ENDPOINT_URL = endpoint;
-  process.env.AWS_REGION = region;
-  process.env.DYNAMODB_CLIENT_TYPE = "high-level";
-  process.env.DYNAMODB_TABLE_NAME = tableName;
+  process.env.DYNAMODB_ENDPOINT = endpoint;
+  process.env.DYNAMODB_REGION = region;
+  process.env.DYNAMODB_CLIENTTYPE = "high-level";
+  process.env.DYNAMODB_TABLENAME = tableName;
   process.env.DYNAMODB_IDEMPOTENCY_TTL_SECONDS = "3600";
   process.env.DYNAMODB_STREAMS_ITERATOR_TYPE = "TRIM_HORIZON";
 
@@ -41,17 +40,12 @@ async function deleteTableBestEffort({ endpoint, region, tableName }) {
     await ddb.send(new DeleteTableCommand({ TableName: tableName }));
   } catch (err) {
     if (err instanceof ResourceNotFoundException || err?.name === "ResourceNotFoundException") return;
-    // DynamoDB Local may throw odd shapes; ignore in tests.
     return;
   }
 
   try {
-    await waitUntilTableNotExists(
-      { client: ddb, maxWaitTime: 10 },
-      { TableName: tableName },
-    );
+    await waitUntilTableNotExists({ client: ddb, maxWaitTime: 10 }, { TableName: tableName });
   } catch {
     // ignore
   }
 }
-

@@ -1,6 +1,7 @@
 import { createOutboundPayment } from "../application/useCases/createOutboundPayment.mjs";
 import { getOutboundPayment } from "../application/useCases/getOutboundPayment.mjs";
 import { runOutboundPaymentProcessing } from "../application/useCases/runOutboundPaymentProcessing.mjs";
+import { PAYMENT_ID_PARAMS } from "./paramSchemas.mjs";
 
 const CREATE_OUTBOUND_SCHEMA = {
   body: {
@@ -20,8 +21,12 @@ const CREATE_OUTBOUND_SCHEMA = {
       merchantId: { type: "string", minLength: 1 },
       debtorAccountId: { type: "string", minLength: 1 },
       creditorIban: { type: "string", minLength: 1 },
-      creditorName: { type: "string", minLength: 1 },
-      amount: { type: "number", exclusiveMinimum: 0 },
+      creditorName: {
+        type: "string",
+        minLength: 1,
+        pattern: "^[^\\u0000-\\u001f\\u007f]+$",
+      },
+      amount: { type: "number" },
       currency: { type: "string", minLength: 1 },
     },
   },
@@ -60,7 +65,7 @@ export async function paymentsRoutes(app) {
     reply.code(result.statusCode).send(result.body);
   });
 
-  app.get("/outbound/:paymentId", async (req) => {
+  app.get("/outbound/:paymentId", { schema: { params: PAYMENT_ID_PARAMS } }, async (req) => {
     const paymentId = req.params.paymentId;
     return getOutboundPayment({
       paymentId,
@@ -68,11 +73,15 @@ export async function paymentsRoutes(app) {
     });
   });
 
-  app.post("/outbound/:paymentId/process", async (req) => {
+  app.post(
+    "/outbound/:paymentId/process",
+    { schema: { params: PAYMENT_ID_PARAMS } },
+    async (req) => {
     const paymentId = req.params.paymentId;
     return runOutboundPaymentProcessing({
       paymentId,
       repository: app.paymentRepository,
     });
-  });
+    },
+  );
 }

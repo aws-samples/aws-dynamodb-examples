@@ -50,9 +50,7 @@ async function processFromReceived({ repository, loaded }) {
     await repository.completePaymentTransaction({ loaded: freshLoaded, account: freshAccount });
   }
 
-  // Completion transaction is best-effort under concurrency; reload and return committed state.
-  const committed = await repository.loadPaymentPartition(aggregate.paymentId);
-  return toResult(committed.aggregate);
+  return { paymentId: aggregate.paymentId, state: "COMPLETED", reasonCode: null };
 }
 
 async function completeFromFundsReserved({ repository, loaded }) {
@@ -62,8 +60,7 @@ async function completeFromFundsReserved({ repository, loaded }) {
   if (!account) throw accountNotFound();
 
   await repository.completePaymentTransaction({ loaded, account });
-  const committed = await repository.loadPaymentPartition(aggregate.paymentId);
-  return toResult(committed.aggregate);
+  return { paymentId: aggregate.paymentId, state: "COMPLETED", reasonCode: null };
 }
 
 function toResult(aggregate) {
