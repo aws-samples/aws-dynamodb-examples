@@ -1,4 +1,4 @@
-import { ApiError, dynamodbThrottled, internalError } from "../util/errors.mjs";
+import { ApiError, dynamodbThrottled, internalError, validationError } from "../util/errors.mjs";
 
 function mapDependencyError(err) {
   const name = err?.name ?? "";
@@ -8,6 +8,13 @@ function mapDependencyError(err) {
     name === "RequestLimitExceeded"
   ) {
     return dynamodbThrottled("DynamoDB request throttled");
+  }
+  return null;
+}
+
+function mapInvalidJsonBody(err) {
+  if (err?.code === "FST_ERR_CTP_INVALID_JSON_BODY") {
+    return validationError("Request body is not valid JSON");
   }
   return null;
 }
@@ -33,6 +40,12 @@ export async function errorsPlugin(app) {
       return;
     }
 
+    const invalidJson = mapInvalidJsonBody(err);
+    if (invalidJson) {
+      reply.code(invalidJson.statusCode).type("application/json").send(invalidJson.toEnvelope());
+      return;
+    }
+
     const mapped = mapDependencyError(err);
     if (mapped) {
       app.log.warn({ err: err?.name }, "dynamodb throttled");
@@ -40,7 +53,7 @@ export async function errorsPlugin(app) {
       return;
     }
 
-    app.log.error(err);
+    app.log.error({ err, code: err?.code }, "unhandled error");
     const apiErr = internalError("Internal error");
     reply.code(apiErr.statusCode).type("application/json").send(apiErr.toEnvelope());
   });

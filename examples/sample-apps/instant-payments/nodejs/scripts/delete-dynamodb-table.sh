@@ -4,9 +4,9 @@ set -euo pipefail
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$PROJECT_DIR"
 
+HOST_PORT="${DYNAMODB_LOCAL_HOST_PORT:-18000}"
 AWS_ENDPOINT_URL="http://localhost:${HOST_PORT}"
 AWS_REGION="eu-west-1"
-HOST_PORT="${DYNAMODB_LOCAL_HOST_PORT:-18000}"
 TABLE_NAME="${DYNAMODB_TABLE_NAME:-JS_InstantPayments}"
 
 while [[ $# -gt 0 ]]; do

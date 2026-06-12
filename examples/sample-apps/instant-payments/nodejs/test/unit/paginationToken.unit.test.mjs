@@ -23,5 +23,30 @@ describe("paginationToken", () => {
     });
     expect(decodeNextToken({ token: tok, expectedIndexName: "IDX_B" }).error).toBeTruthy();
   });
+
+  test("rejects cross-merchant token replay", () => {
+    const tok = encodeNextToken({
+      indexName: "GSI_MERCHANT_PAYMENTS",
+      lastEvaluatedKey: {
+        PK: "PAYMENT#pay_a",
+        SK: "#HEAD",
+        merchantId: "merch_a",
+        merchantPaymentsSk: "2026-01-01T00:00:00Z#pay_a",
+      },
+    });
+    const ok = decodeNextToken({
+      token: tok,
+      expectedIndexName: "GSI_MERCHANT_PAYMENTS",
+      expectedMerchantId: "merch_a",
+    });
+    expect(ok.error).toBeUndefined();
+
+    const bad = decodeNextToken({
+      token: tok,
+      expectedIndexName: "GSI_MERCHANT_PAYMENTS",
+      expectedMerchantId: "merch_b",
+    });
+    expect(bad.error).toBe("WRONG_MERCHANT");
+  });
 });
 

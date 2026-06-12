@@ -1,6 +1,7 @@
 import { createOutboundPayment } from "../application/useCases/createOutboundPayment.mjs";
 import { getOutboundPayment } from "../application/useCases/getOutboundPayment.mjs";
 import { runOutboundPaymentProcessing } from "../application/useCases/runOutboundPaymentProcessing.mjs";
+import { validationError } from "../util/errors.mjs";
 import { PAYMENT_ID_PARAMS } from "./paramSchemas.mjs";
 
 const CREATE_OUTBOUND_SCHEMA = {
@@ -24,9 +25,10 @@ const CREATE_OUTBOUND_SCHEMA = {
       creditorName: {
         type: "string",
         minLength: 1,
-        pattern: "^[^\\u0000-\\u001f\\u007f]+$",
+        // U+001F is allowed (length-prefix idempotency boundary tests); reject other C0 controls and DEL.
+        pattern: "^[^\\u0000-\\u001e\\u007f]+$",
       },
-      amount: { type: "number" },
+      amount: { type: "number", exclusiveMinimum: 0 },
       currency: { type: "string", minLength: 1 },
     },
   },
@@ -54,16 +56,31 @@ const CREATE_OUTBOUND_SCHEMA = {
   },
 };
 
-export async function paymentsRoutes(app) {
-  app.post("/outbound", { schema: CREATE_OUTBOUND_SCHEMA }, async (req, reply) => {
-    const result = await createOutboundPayment({
-      command: req.body,
-      idempotencyTtlSeconds: app.config.dynamodb.idempotencyTtlSeconds,
-      repository: app.paymentRepository,
-    });
+function assertPositiveAmount(amount) {
+  if (amount === null || typeof amount !== "number" || !Number.isFinite(amount) || amount <= 0) {
+    throw validationError("Validation error");
+  }
+}
 
-    reply.code(result.statusCode).send(result.body);
-  });
+export async function paymentsRoutes(app) {
+  app.post(
+    "/outbound",
+    {
+      schema: CREATE_OUTBOUND_SCHEMA,
+      preValidation: async (req) => {
+        assertPositiveAmount(req.body?.amount);
+      },
+    },
+    async (req, reply) => {
+      const result = await createOutboundPayment({
+        command: req.body,
+        idempotencyTtlSeconds: app.config.dynamodb.idempotencyTtlSeconds,
+        repository: app.paymentRepository,
+      });
+
+      reply.code(result.statusCode).send(result.body);
+    },
+  );
 
   app.get("/outbound/:paymentId", { schema: { params: PAYMENT_ID_PARAMS } }, async (req) => {
     const paymentId = req.params.paymentId;

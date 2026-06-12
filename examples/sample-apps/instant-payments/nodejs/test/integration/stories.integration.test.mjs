@@ -51,6 +51,64 @@ describe("Instant Payments spec (integration)", () => {
     expect(r3.json().error).toBe("IDEMPOTENCY_CONFLICT");
   });
 
+  test("Story 1: amount null, zero, and negative return 400 VALIDATION_ERROR", async () => {
+    const base = {
+      merchantId: "merch_1",
+      debtorAccountId: "acc_usd_1",
+      creditorIban: "RO49AAAA1B31007593840000",
+      creditorName: "X",
+      currency: "USD",
+    };
+
+    for (const [key, amount] of [
+      ["null", null],
+      ["zero", 0],
+      ["negative", -1],
+    ]) {
+      const res = await harness.app.inject({
+        method: "POST",
+        url: "/api/v1/payments/outbound",
+        payload: { ...base, idempotencyKey: `idem_amount_${key}`, amount },
+      });
+      expect(res.statusCode, `amount=${String(amount)}`).toBe(400);
+      expect(res.json().error).toBe("VALIDATION_ERROR");
+    }
+  });
+
+  test("Story 1: length-prefix idempotency boundary (U+001F) creates then conflicts", async () => {
+    const idempotencyKey = "idem_u001f_boundary";
+    const first = await harness.app.inject({
+      method: "POST",
+      url: "/api/v1/payments/outbound",
+      payload: {
+        idempotencyKey,
+        merchantId: "merch_1",
+        debtorAccountId: "acc_eur_5",
+        creditorIban: "i",
+        creditorName: "x\u001fy",
+        amount: 1,
+        currency: "USD",
+      },
+    });
+    expect(first.statusCode).toBe(201);
+
+    const second = await harness.app.inject({
+      method: "POST",
+      url: "/api/v1/payments/outbound",
+      payload: {
+        idempotencyKey,
+        merchantId: "merch_1",
+        debtorAccountId: "acc_eur_5",
+        creditorIban: "i\u001fx",
+        creditorName: "y",
+        amount: 1,
+        currency: "USD",
+      },
+    });
+    expect(second.statusCode).toBe(409);
+    expect(second.json().error).toBe("IDEMPOTENCY_CONFLICT");
+  });
+
   test("Story 3: get payment returns head+events; missing returns 404", async () => {
     const create = await harness.app.inject({
       method: "POST",
@@ -209,6 +267,15 @@ describe("Instant Payments spec (integration)", () => {
     });
     expect(misuse.statusCode).toBe(400);
     expect(misuse.json().error).toBe("INVALID_PAGINATION_TOKEN");
+
+    const crossMerchant = await harness.app.inject({
+      method: "GET",
+      url: `/api/v1/merchants/merch_other/payments?limit=2&nextToken=${encodeURIComponent(
+        p1.nextToken,
+      )}`,
+    });
+    expect(crossMerchant.statusCode).toBe(400);
+    expect(crossMerchant.json().error).toBe("INVALID_PAGINATION_TOKEN");
   });
 });
 

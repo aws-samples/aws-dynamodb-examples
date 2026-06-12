@@ -55,6 +55,7 @@ export async function buildApp() {
     app.log.info("Skipping DynamoDB initialize (DYNAMODB_INITIALIZE_ENABLED=false)");
   }
 
+  // Must be registered before routes: encapsulated plugins snapshot the parent error handler at register time.
   await errorsPlugin(app);
 
   if (config.swaggerEnabled) {

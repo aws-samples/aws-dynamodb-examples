@@ -1,5 +1,5 @@
 import { sendQueryCommand } from "../infrastructure/persistence/ddbDocumentBridge.mjs";
-import { invalidPaginationToken, invalidPaymentState } from "../util/errors.mjs";
+import { invalidPaginationToken, invalidPaymentState, validationError } from "../util/errors.mjs";
 import { MERCHANT_ID_PARAMS, MERCHANT_STATE_PARAMS } from "./paramSchemas.mjs";
 import { decodeNextToken, encodeNextToken } from "../util/paginationToken.mjs";
 import { ATTR_MERCHANT_STATE_PK, merchantStatePk } from "../data/keys.mjs";
@@ -17,6 +17,7 @@ export async function merchantsRoutes(app) {
     const token = decodeNextToken({
       token: req.query?.nextToken,
       expectedIndexName: "GSI_MERCHANT_PAYMENTS",
+      expectedMerchantId: merchantId,
     });
     if (token?.error) throw invalidPaginationToken("Invalid pagination token");
 
@@ -55,6 +56,7 @@ export async function merchantsRoutes(app) {
     const token = decodeNextToken({
       token: req.query?.nextToken,
       expectedIndexName: "GSI_MERCHANT_STATE_PAYMENTS",
+      expectedMerchantId: merchantId,
     });
     if (token?.error) throw invalidPaginationToken("Invalid pagination token");
 
@@ -70,7 +72,9 @@ export async function merchantsRoutes(app) {
       ExclusiveStartKey: token?.lastEvaluatedKey,
     });
 
-    const items = (res?.Items ?? []).map(mapMerchantListItem);
+    const items = (res?.Items ?? []).map((item) =>
+      mapMerchantListItem(item, { merchantId, state }),
+    );
     const nextToken = encodeNextToken({
       indexName: "GSI_MERCHANT_STATE_PAYMENTS",
       lastEvaluatedKey: res?.LastEvaluatedKey,
@@ -83,8 +87,10 @@ export async function merchantsRoutes(app) {
 
 function normalizeLimit(raw) {
   if (raw == null) return DEFAULT_LIMIT;
-  const n = Number.parseInt(String(raw), 10);
-  if (!Number.isFinite(n) || n <= 0) return DEFAULT_LIMIT;
+  const s = String(raw).trim();
+  if (!/^-?\d+$/.test(s)) throw validationError("Validation error");
+  const n = Number.parseInt(s, 10);
+  if (n <= 0) return DEFAULT_LIMIT;
   return n;
 }
 
@@ -94,17 +100,17 @@ function normalizeScanIndexForward(raw) {
   return s === "true" || s === "1" || s === "yes";
 }
 
-function mapMerchantListItem(item) {
+function mapMerchantListItem(item, context = {}) {
   return {
     paymentId: item.paymentId,
-    state: item.aggregateState,
+    state: item.aggregateState ?? context.state,
     version: item.lastSequence,
-    merchantId: item.merchantId,
-    correlationId: item.correlationId,
+    merchantId: item.merchantId ?? context.merchantId,
+    correlationId: item.correlationId ?? null,
     amount: item.amount,
     currency: item.currency,
     createdAtUtc: item.createdAtUtc,
-    updatedAtUtc: item.updatedAtUtc,
+    updatedAtUtc: item.updatedAtUtc ?? item.createdAtUtc,
     reasonCode: item.reasonCode ?? null,
   };
 }
