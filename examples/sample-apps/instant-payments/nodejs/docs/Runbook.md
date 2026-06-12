@@ -17,7 +17,7 @@
 - HTTP: Fastify
 - DynamoDB clients: AWS SDK for JavaScript v3 (`@aws-sdk/client-dynamodb`, `@aws-sdk/lib-dynamodb`, `@aws-sdk/client-dynamodb-streams`)
 - Local datastore: DynamoDB Local (Docker)
-- Tests: Vitest
+- Tests: Vitest (unit + integration); Newman + Postman collection (cross-SDK contract verification)
 
 ## Quick start
 
@@ -112,6 +112,101 @@ npm run worker:local
 The API server alone does not advance payments from `RECEIVED` — start the worker after the API has created the table. Docker Compose (`run-app-docker.sh`) starts only the API + DynamoDB Local, not the worker.
 
 Checkpoints are in-memory only (`DYNAMODB_STREAMS_ITERATOR_TYPE` defaults to `LATEST`). **Events inserted while the worker is stopped are permanently skipped** on restart unless you use `TRIM_HORIZON` within stream retention.
+
+## Cross-SDK verification (Postman collection)
+
+`scripts/collection.json` is the shared **Instant Payments** contract suite used to verify this Node implementation against the same HTTP assertions as other SDK ports. Newman runs it via `npm run test:collection`.
+
+This is **not** the same as `npm test`:
+
+| | `npm test` (Vitest) | `npm run test:collection` (Newman) |
+| -- | -- | -- |
+| Server | In-process (`app.inject`) | Live HTTP against a running API |
+| Database | Isolated table per test run | Shared `JS_InstantPayments` table |
+| Ordering | Independent tests | **Stateful, top-to-bottom** (Stories 0–9) |
+| Purpose | Fast Node regression | Full cross-SDK parity / acceptance |
+
+### Prerequisites
+
+1. DynamoDB Local running (host port **18000** by default).
+2. API server running (`npm run start` or `./scripts/run-app-local.sh`).
+3. **Streams worker** running (`npm run worker:local`) — payments are auto-processed from `RECEIVED`; many stories assume terminal states and GSI projections.
+4. A **fresh table** — the collection must run **once** on a newly seeded database. Re-running against the same data will fail (pinned balances, idempotency replays, merchant GSI counts).
+
+Match `--base-url` to the API listen port (`PORT` in `.env`, often **8081** when Docker binds **8080**):
+
+```bash
+npm run test:collection -- --base-url http://localhost:8081 --delay 0
+```
+
+### Full run (recommended)
+
+Terminal 1 — DynamoDB Local:
+
+```bash
+./scripts/start-dynamodb-local.sh
+```
+
+Terminal 2 — reset table, then start API (recreates table + seeds accounts on startup):
+
+```bash
+npm run scripts:delete-table
+npm run start
+```
+
+Confirm startup logs show `inserted: 10` (not `inserted: 0`) after a delete.
+
+Terminal 3 — streams worker:
+
+```bash
+npm run worker:local
+```
+
+Terminal 4 — collection:
+
+```bash
+npm run test:collection -- --base-url http://localhost:8081 --delay 0
+```
+
+### Reset table
+
+Prefer the Node script (reads `.env`, uses local dummy credentials — no AWS SSO):
+
+```bash
+npm run scripts:delete-table
+```
+
+Shell alternative (also forces local credentials, not your AWS profile):
+
+```bash
+bash scripts/delete-dynamodb-table.sh
+```
+
+Then **restart the API** so startup recreates the table and re-seeds accounts.
+
+### Partial runs
+
+```bash
+# One step (e.g. malformed JSON → 400)
+npm run test:collection -- --step 1.18 --base-url http://localhost:8081
+
+# One story folder
+npm run test:collection -- -f "Story 1 - Outbound payment creation with idempotency" --base-url http://localhost:8081
+```
+
+Some steps depend on variables set earlier in the same collection run (pagination tokens, GSI seed counts). Running `--step` alone may fail unless you already ran the prerequisite steps.
+
+### Troubleshooting
+
+| Symptom | Likely cause |
+| -- | -- |
+| `aws: … SSO: Token has expired` on delete | Use `npm run scripts:delete-table` instead of bare `aws` against a profile |
+| `EADDRINUSE :8081` on `npm run start` | Another API instance is already running; stop it or reuse it after code changes |
+| Collection passes Stories 0–1 then drifts | Stale table — delete table and restart API before re-running |
+| `process` steps return `RECEIVED` forever | Streams worker not running |
+| Wrong port / connection refused | `--base-url` must match `PORT` (check `.env`) |
+
+Collection artifact: `scripts/collection.json` (committed; safe to share — localhost URLs and demo IDs only).
 
 ## Demo script
 
