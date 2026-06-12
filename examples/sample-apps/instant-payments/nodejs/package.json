@@ -11,6 +11,7 @@
     "start": "node src/server.mjs",
     "worker:local": "bash scripts/run-worker-local.sh",
     "scripts:create-table": "node scripts/create-table.mjs",
+    "scripts:delete-table": "node scripts/delete-dynamodb-table.mjs",
     "scripts:enable-ttl": "node scripts/enable-ttl.mjs",
     "scripts:seed-accounts": "node scripts/seed-accounts.mjs",
     "scripts:smoke": "node scripts/smoke.mjs",

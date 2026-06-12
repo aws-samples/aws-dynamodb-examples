@@ -18,6 +18,11 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
+# Avoid picking up real AWS SSO/profile credentials when talking to DynamoDB Local.
+unset AWS_PROFILE AWS_DEFAULT_PROFILE AWS_SESSION_TOKEN
+export AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID:-local}"
+export AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY:-local}"
+
 aws dynamodb delete-table \
   --endpoint-url "$AWS_ENDPOINT_URL" \
   --region "$AWS_REGION" \
