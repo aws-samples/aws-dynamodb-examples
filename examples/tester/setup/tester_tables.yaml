@@ -105,7 +105,10 @@ Resources:
     Properties:
       BucketName: !Sub "tester-bucket-23429755${AWS::AccountId}134" 
       PublicAccessBlockConfiguration: # Recommended security best practice
-
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
       Tags:
         - Key: Project
           Value: DynamoDB latency tester results
