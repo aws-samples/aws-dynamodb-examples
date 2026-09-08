@@ -1,0 +1,6 @@
+node_modules/
+cdk.out/
+*.js
+*.d.ts
+.cdk.staging/
+__pycache__/
