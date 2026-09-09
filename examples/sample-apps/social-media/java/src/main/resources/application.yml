@@ -1,0 +1,145 @@
+server:
+  # TCP port the embedded web server listens on.
+  port: 8080
+  # On SIGTERM, stop accepting new requests and let in-flight ones finish before the context closes.
+  shutdown: graceful
+
+spring:
+  application:
+    # Cosmetic logical service name. Any value allowed.
+    name: social-media
+  mvc:
+    async:
+      # Max time (ms) Spring MVC waits for an async controller result before timing out the request.
+      # Above DynamoDbConfig.API_CALL_TIMEOUT (5s): let the SDK finish or fail with a mapped error first.
+      request-timeout: 10000
+  lifecycle:
+    # Upper bound for each shutdown phase to drain in-flight work.
+    timeout-per-shutdown-phase: 30s
+
+# Actuator is locked down so only /actuator/health is web-exposed and status is shown without
+# per-component or disk detail.
+management:
+  endpoints:
+    web:
+      exposure:
+        # Comma-separated list of actuator endpoints exposed over HTTP. Only health is published.
+        include: health
+  endpoint:
+    health:
+      # Detail level of the health endpoint response. never shows status only.
+      show-details: never
+
+dynamodb:
+  # Required. DynamoDB endpoint URL, either local or https://dynamodb.{region}.amazonaws.com
+  endpoint: http://localhost:8000
+  # Required. AWS region for the DynamoDB client.
+  region: eu-west-1
+  # Required. SDK mapping style, either high-level (enhanced client) or low-level.
+  client-type: high-level
+  # The six domain tables. Language-qualified defaults of the form Java<Table>.
+  table-name:
+    user-graph: JavaUserGraph
+    content: JavaContent
+    timelines: JavaTimelines
+    conversations: JavaConversations
+    messages: JavaMessages
+    notifications: JavaNotifications
+  # Table class for the Messages table. Standard-IA on every profile because the message log is
+  # append-only and rarely re-read. Omitted for local endpoints, applied only against real AWS.
+  messages-table-class: STANDARD_INFREQUENT_ACCESS
+  # Local dev only. When true, create the six tables, enable TTL and Streams, ensure the S3 bucket,
+  # and seed demo data. In production set false or omit so the app only verifies tables exist.
+  create-resources: true
+  # Max timeline writes per BatchWriteItem on publish (chunk size, not a recipient cap). 1..25.
+  timeline-fanout-max: 25
+  # Where timeline fan-out runs. SYNC writes rows during publish. ASYNC defers to the stream consumer.
+  # ASYNC requires dynamodb.streams.enabled=true. Startup fails when ASYNC is set and streams are disabled.
+  timeline-fanout-mode: SYNC
+  # Max follower edges read for PUBLIC timeline fan-out and post notifications. 1..10000.
+  # This is a recipient cap, not the BatchWriteItem chunk size (timeline-fanout-max).
+  # At the cap every resolved follower receives the post. One past the cap, extra followers
+  # are skipped, the query stops, and a WARN is logged.
+  follower-fanout-cap: 1000
+  # Max concurrent conditional PutItem calls when projecting notifications. 1..100.
+  # Recipients are written in sequential chunks of this size. A failed chunk does not start later chunks.
+  notification-write-concurrency: 25
+  # Max inbox writes per BatchWriteItem on message send (chunk size, not a participant cap). 1..25.
+  inbox-fanout-max: 25
+  # Minimum participants for a GROUP create (fixed, validation only).
+  conversation-participant-min: 3
+  # Maximum participants per GROUP conversation. Independent of any 25-item batch limit. 3..1000.
+  conversation-participant-max: 256
+  # Max distinct ids in allowedViewerUserIds when RESTRICTED. 1..1000.
+  post-restricted-viewers-max: 256
+  # Seconds added to a story createdAt to populate expiresAt (TTL). 3600..604800.
+  story-ttl-seconds: 86400
+  streams:
+    # Enables the in-process sample poller. Absent means enabled. When false, the poller is not
+    # instantiated (HTTP-only mode) and both stream sources are disabled. Must stay true when
+    # timeline-fanout-mode is ASYNC. Checkpoints are process-local. See docs/Runbook.md.
+    enabled: true
+    # Initial shard iterator when no in-memory checkpoint exists. LATEST or TRIM_HORIZON.
+    # LATEST skips records produced while the process is down. Tests use TRIM_HORIZON.
+    iterator-type: LATEST
+
+s3:
+  # Required. Bucket holding uploaded post/story media objects. Media is always enabled.
+  bucket-name: java-social-media-media
+  # Object key prefix. Objects live under <prefix><userId>/<mediaId>.
+  key-prefix: media/
+  # S3 API base URL. Regional Amazon S3 HTTPS in the cloud, an S3-compatible store locally.
+  # Omit for regional Amazon S3. Set for local, for example http://localhost:9000.
+  endpoint: http://localhost:9000
+  # Force path-style addressing. On for local endpoints, off for Amazon S3.
+  path-style: true
+
+media:
+  # Validity of a presigned upload/download URL in seconds. 60..3600.
+  presign-ttl-seconds: 900
+  # Max media attachments on a single POST. Stories are fixed at most one. 1..20.
+  max-per-post: 10
+  # Allowed image MIME types.
+  allowed-image-content-types: image/jpeg,image/png,image/webp,image/gif
+  # Allowed video MIME types.
+  allowed-video-content-types: video/mp4,video/webm
+  # Max image object size in bytes (10 MiB).
+  max-image-bytes: 10485760
+  # Max video object size in bytes (100 MiB).
+  max-video-bytes: 104857600
+
+social-media:
+  mvc:
+    async:
+      # Core number of threads kept alive in the MVC async (mvc-async-*) executor pool.
+      core-pool-size: 10
+      # Maximum number of threads the MVC async executor pool can grow to under load.
+      max-pool-size: 50
+      # Number of queued async dispatches allowed before the pool rejects new ones.
+      queue-capacity: 100
+
+springdoc:
+  api-docs:
+    # URL path where the generated OpenAPI JSON document is served.
+    path: /api-docs
+  # springdoc-openapi defaults to */*. Set application/json so /api-docs matches this JSON API.
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
+  swagger-ui:
+    # URL path where the interactive Swagger UI is served.
+    path: /swagger-ui.html
+    # Order operations are listed in Swagger UI, sorted by HTTP method.
+    operations-sorter: method
+
+---
+# Production profile (spring.profiles.active=prod) turns off the interactive API docs.
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false

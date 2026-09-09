@@ -1,0 +1,99 @@
+# Local orchestration for the Social Media sample app.
+#
+# Services and profiles:
+#   dynamodb-local  always available (started explicitly or as an app dependency)
+#   social-media-app  profile: app        the Spring Boot application
+#   minio             profile: s3-minio   S3-compatible object store (MinIO)
+#   floci             profile: s3-floci   S3-compatible object store (Floci)
+#
+# The two S3 backends are interchangeable. Only the selected profile starts, so
+# pick one with the scripts: start-s3-local.sh --s3-backend minio|floci or
+# run-app-docker.sh --s3-backend minio|floci (default: minio).
+#
+# S3 non-endorsement statement:
+#   The sample can run fully offline against any S3-compatible object store (for
+#   example MinIO, Floci, or similar). Such tools are used only to make the
+#   sample runnable without AWS. They are not part of AWS, and Amazon does not
+#   provide, endorse, or recommend them for production use. For production, use
+#   Amazon S3. Any other S3-compatible store is supported by pointing S3_ENDPOINT
+#   at it directly.
+
+services:
+  dynamodb-local:
+    image: amazon/dynamodb-local:latest
+    container_name: dynamodb-local
+    # Prevent the container processes from gaining new privileges
+    security_opt:
+      - no-new-privileges:true
+    ports:
+      - "8000:8000"
+    command: "-jar DynamoDBLocal.jar -sharedDb -inMemory"
+
+  social-media-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: social-media-app
+    # Prevent the container processes from gaining new privileges
+    security_opt:
+      - no-new-privileges:true
+    ports:
+      - "8080:8080"
+    environment:
+      # Canonical DYNAMODB_* and S3_* env vars for the Docker run.
+      DYNAMODB_ENDPOINT: http://dynamodb-local:8000
+      DYNAMODB_REGION: eu-west-1
+      DYNAMODB_CLIENTTYPE: ${DYNAMODB_CLIENTTYPE:-high-level}
+      DYNAMODB_TIMELINEFANOUTMODE: ${DYNAMODB_TIMELINEFANOUTMODE:-SYNC}
+      DYNAMODB_TABLENAME_USERGRAPH: JavaUserGraph
+      DYNAMODB_TABLENAME_CONTENT: JavaContent
+      DYNAMODB_TABLENAME_TIMELINES: JavaTimelines
+      DYNAMODB_TABLENAME_CONVERSATIONS: JavaConversations
+      DYNAMODB_TABLENAME_MESSAGES: JavaMessages
+      DYNAMODB_TABLENAME_NOTIFICATIONS: JavaNotifications
+      # S3 endpoint points at the selected in-network backend. run-app-docker.sh
+      # sets S3_ENDPOINT to http://minio:9000 or http://floci:4566.
+      S3_ENDPOINT: ${S3_ENDPOINT:-http://minio:9000}
+      S3_BUCKETNAME: ${S3_BUCKETNAME:-java-social-media-media}
+      S3_PATHSTYLE: ${S3_PATHSTYLE:-true}
+    depends_on:
+      - dynamodb-local
+    profiles:
+      - app
+
+  minio:
+    # S3-compatible object store. Demo-only, not part of AWS, not endorsed. Use
+    # Amazon S3 for production.
+    image: minio/minio:latest
+    container_name: social-media-minio
+    security_opt:
+      - no-new-privileges:true
+    # Root credentials match the fake static credentials the app uses for local
+    # endpoints (see S3Config), so app-signed presigned URLs validate.
+    environment:
+      MINIO_ROOT_USER: fakeAccessKey
+      MINIO_ROOT_PASSWORD: fakeSecretKey
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    profiles:
+      - s3-minio
+
+  floci:
+    # Floci local AWS emulator (github.com/floci-io), S3-compatible. Demo-only,
+    # not part of AWS, not endorsed. Use Amazon S3 for production. Image and port
+    # pinned from github.com/floci-io: floci/floci exposes all services on 4566.
+    image: floci/floci:1.5.33
+    container_name: social-media-floci
+    security_opt:
+      - no-new-privileges:true
+    ports:
+      - "4566:4566"
+    profiles:
+      - s3-floci
