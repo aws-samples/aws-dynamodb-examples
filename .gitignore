@@ -11,6 +11,7 @@ package-lock.json
 *.swp
 **/.vs/
 **/bin/
+!infrastructure_as_code/cdk/**/bin/
 **/obj/
 **/launchSettings.json
 **/.idea/*
