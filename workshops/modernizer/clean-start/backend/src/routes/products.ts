@@ -142,7 +142,7 @@ router.get('/search', async (req: Request, res: Response): Promise<void> => {
  * Get products by category
  * Public endpoint - no authentication required
  */
-router.get('/category/:categoryId', async (req: Request, res: Response): Promise<void> => {
+router.get('/category/:categoryId', async (req: Request<{ categoryId: string }>, res: Response): Promise<void> => {
   try {
     const categoryId = parseInt(req.params.categoryId, 10);
     const { page = 1, limit = 20 } = req.query;
@@ -206,7 +206,7 @@ router.get('/category/:categoryId', async (req: Request, res: Response): Promise
  * Get specific product by ID
  * Public endpoint - no authentication required
  */
-router.get('/:id', async (req: Request, res: Response): Promise<void> => {
+router.get('/:id', async (req: Request<{ id: string }>, res: Response): Promise<void> => {
   try {
     const productId = parseInt(req.params.id, 10);
 
@@ -316,7 +316,7 @@ router.post('/',
 router.put('/:id',
   authMiddleware.authenticate.bind(authMiddleware),
   sellerMiddleware.requireSeller.bind(sellerMiddleware),
-  async (req: Request, res: Response): Promise<void> => {
+  async (req: Request<{ id: string }>, res: Response): Promise<void> => {
     try {
       const productId = parseInt(req.params.id, 10);
       const sellerId = req.user!.userId;
@@ -394,7 +394,7 @@ router.put('/:id',
 router.delete('/:id',
   authMiddleware.authenticate.bind(authMiddleware),
   sellerMiddleware.requireSeller.bind(sellerMiddleware),
-  async (req: Request, res: Response): Promise<void> => {
+  async (req: Request<{ id: string }>, res: Response): Promise<void> => {
     try {
       const productId = parseInt(req.params.id, 10);
       const sellerId = req.user!.userId;
@@ -514,7 +514,7 @@ router.get('/seller/my-products',
 router.put('/:id/inventory',
   authMiddleware.authenticate.bind(authMiddleware),
   sellerMiddleware.requireSeller.bind(sellerMiddleware),
-  async (req: Request, res: Response): Promise<void> => {
+  async (req: Request<{ id: string }>, res: Response): Promise<void> => {
     try {
       const productId = parseInt(req.params.id, 10);
       const sellerId = req.user!.userId;
