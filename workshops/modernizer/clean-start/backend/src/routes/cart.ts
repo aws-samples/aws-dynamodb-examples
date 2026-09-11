@@ -69,7 +69,7 @@ router.post('/items', authenticate, ValidationSets.addToCart, asyncHandler(async
 }));
 
 // Update cart item quantity
-router.put('/items/:productId', authenticate, ValidationSets.updateCartItem, asyncHandler(async (req: Request, res: Response) => {
+router.put('/items/:productId', authenticate, ValidationSets.updateCartItem, asyncHandler(async (req: Request<{ productId: string }>, res: Response) => {
   try {
     const userId = (req as any).user.userId;
     const productId = parseInt(req.params.productId);
@@ -115,7 +115,7 @@ router.put('/items/:productId', authenticate, ValidationSets.updateCartItem, asy
 }));
 
 // Remove item from cart
-router.delete('/items/:productId', authenticate, ValidationSets.removeFromCart, asyncHandler(async (req: Request, res: Response) => {
+router.delete('/items/:productId', authenticate, ValidationSets.removeFromCart, asyncHandler(async (req: Request<{ productId: string }>, res: Response) => {
   try {
     const userId = (req as any).user.userId;
     const productId = parseInt(req.params.productId);

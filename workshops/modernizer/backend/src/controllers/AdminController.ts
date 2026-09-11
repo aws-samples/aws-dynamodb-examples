@@ -316,7 +316,7 @@ export class AdminController {
   }
 
   // POST /admin/users/:id/promote - Promote user to super admin
-  async promoteToSuperAdmin(req: Request, res: Response): Promise<void> {
+  async promoteToSuperAdmin(req: Request<{ id: string }>, res: Response): Promise<void> {
     try {
       const userId = parseInt(req.params.id);
       
@@ -384,7 +384,7 @@ export class AdminController {
   }
 
   // POST /admin/users/:id/demote - Remove super admin privileges
-  async demoteFromSuperAdmin(req: Request, res: Response): Promise<void> {
+  async demoteFromSuperAdmin(req: Request<{ id: string }>, res: Response): Promise<void> {
     try {
       const userId = parseInt(req.params.id);
       
