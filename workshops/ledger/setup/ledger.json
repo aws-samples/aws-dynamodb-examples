@@ -1,0 +1,54 @@
+{
+  "TableName": "ledger",
+  "AttributeDefinitions": [
+    {"AttributeName": "AccountID", "AttributeType": "S"},
+    {"AttributeName": "Event", "AttributeType": "S"},
+
+    {"AttributeName": "AllBucket", "AttributeType": "S"},
+    {"AttributeName": "Day", "AttributeType": "S"},
+    {"AttributeName": "Cardholder", "AttributeType": "S"},
+    {"AttributeName": "DailyTotal", "AttributeType": "S"}
+
+  ],
+
+  "KeySchema": [
+    {"KeyType": "HASH", "AttributeName": "AccountID"},
+    {"KeyType": "RANGE", "AttributeName": "Event"}
+  ],
+
+  "GlobalSecondaryIndexes": [
+    {
+        "IndexName": "GSI_AccountList",
+        "KeySchema": [
+            { "AttributeName": "AllBucket", "KeyType": "HASH" },
+            { "AttributeName": "AccountID", "KeyType": "RANGE" }],
+        "Projection": {"ProjectionType": "ALL"}
+    },
+    {
+        "IndexName": "GSI_AccountDay",
+        "KeySchema": [
+            { "AttributeName": "AccountID", "KeyType": "HASH" },
+            { "AttributeName": "Day", "KeyType": "RANGE" }],
+        "Projection": {"ProjectionType": "ALL"}
+    },
+    {
+        "IndexName": "GSI_Cardholder",
+        "KeySchema": [
+            { "AttributeName": "Cardholder", "KeyType": "HASH" },
+            { "AttributeName": "AccountID", "KeyType": "RANGE" }],
+        "Projection": {"ProjectionType": "ALL"}
+    },
+    {
+        "IndexName": "GSI_DailyTotal",
+        "KeySchema": [
+            { "AttributeName": "AccountID", "KeyType": "HASH" },
+            { "AttributeName": "DailyTotal", "KeyType": "RANGE" }],
+        "Projection": {"ProjectionType": "ALL"}
+    }
+   ],
+  "StreamSpecification": {
+    "StreamEnabled": true, 
+    "StreamViewType": "NEW_AND_OLD_IMAGES" 
+  },
+  "BillingMode": "PAY_PER_REQUEST"
+}

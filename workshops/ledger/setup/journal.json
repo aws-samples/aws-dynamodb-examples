@@ -1,0 +1,19 @@
+{
+  "TableName": "journal",
+  "AttributeDefinitions": [
+    {"AttributeName": "AccountID", "AttributeType": "S"},
+    {"AttributeName": "Event", "AttributeType": "S"}
+
+  ],
+
+  "KeySchema": [
+    {"KeyType": "HASH", "AttributeName": "AccountID"},
+    {"KeyType": "RANGE", "AttributeName": "Event"}
+  ],
+
+  "StreamSpecification": {
+    "StreamEnabled": true, 
+    "StreamViewType": "NEW_AND_OLD_IMAGES" 
+  },
+  "BillingMode": "PAY_PER_REQUEST"
+}
