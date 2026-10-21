@@ -79,6 +79,7 @@ describe('SellerMiddleware', () => {
         first_name: 'Regular',
         last_name: 'User',
         is_seller: false,
+        super_admin: false,
         created_at: new Date(),
         updated_at: new Date(),
       };
@@ -179,6 +180,7 @@ describe('SellerMiddleware', () => {
         first_name: undefined,
         last_name: undefined,
         is_seller: true,
+        super_admin: false,
         created_at: new Date(),
         updated_at: new Date(),
       };
@@ -309,6 +311,25 @@ describe('SellerMiddleware', () => {
         },
         timestamp: expect.any(String),
       });
+      expect(mockNext).not.toHaveBeenCalled();
+    });
+
+    it.each([
+      { id: ['123'] },
+      { id: ['123', '456'] },
+    ])('should reject an array resource ID %j', async (params) => {
+      mockRequest.params = params;
+
+      const middleware = sellerMiddleware.requireResourceOwnership();
+
+      await middleware(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext
+      );
+
+      expect(mockResponse.status).toHaveBeenCalledWith(400);
+      expect(mockRequest.resourceOwnership).toBeUndefined();
       expect(mockNext).not.toHaveBeenCalled();
     });
 

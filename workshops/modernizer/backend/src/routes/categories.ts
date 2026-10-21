@@ -130,7 +130,7 @@ router.get('/roots', asyncHandler(async (req: Request, res: Response) => {
  * Get child categories for a specific parent category
  * Public endpoint - no authentication required
  */
-router.get('/:id/children', asyncHandler(async (req: Request, res: Response) => {
+router.get('/:id/children', asyncHandler(async (req: Request<{ id: string }>, res: Response) => {
   try {
     const parentId = parseInt(req.params.id, 10);
 
@@ -183,7 +183,7 @@ router.get('/:id/children', asyncHandler(async (req: Request, res: Response) => 
  * Get category path (breadcrumb) from root to category
  * Public endpoint - no authentication required
  */
-router.get('/:id/path', asyncHandler(async (req: Request, res: Response) => {
+router.get('/:id/path', asyncHandler(async (req: Request<{ id: string }>, res: Response) => {
   try {
     const categoryId = parseInt(req.params.id, 10);
 
@@ -235,7 +235,7 @@ router.get('/:id/path', asyncHandler(async (req: Request, res: Response) => {
  * Get a specific category by ID
  * Public endpoint - no authentication required
  */
-router.get('/:id', asyncHandler(async (req: Request, res: Response) => {
+router.get('/:id', asyncHandler(async (req: Request<{ id: string }>, res: Response) => {
   try {
     const categoryId = parseInt(req.params.id, 10);
 
@@ -380,7 +380,7 @@ router.post('/',
 router.put('/:id',
   authMiddleware.authenticate.bind(authMiddleware),
   sellerMiddleware.requireSeller.bind(sellerMiddleware),
-  async (req: Request, res: Response): Promise<void> => {
+  async (req: Request<{ id: string }>, res: Response): Promise<void> => {
     try {
       const categoryId = parseInt(req.params.id, 10);
 
@@ -460,7 +460,7 @@ router.put('/:id',
 router.delete('/:id',
   authMiddleware.authenticate.bind(authMiddleware),
   sellerMiddleware.requireSeller.bind(sellerMiddleware),
-  async (req: Request, res: Response): Promise<void> => {
+  async (req: Request<{ id: string }>, res: Response): Promise<void> => {
     try {
       const categoryId = parseInt(req.params.id, 10);
 

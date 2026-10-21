@@ -78,7 +78,7 @@ router.get('/', authenticate, ValidationSets.getOrders, asyncHandler(async (req:
 }));
 
 // Get specific order by ID
-router.get('/:orderId', authenticate, ValidationSets.getOrder, asyncHandler(async (req: Request, res: Response) => {
+router.get('/:orderId', authenticate, ValidationSets.getOrder, asyncHandler(async (req: Request<{ orderId: string }>, res: Response) => {
   try {
     const userId = (req as any).user.userId;
     const orderId = parseInt(req.params.orderId);
@@ -133,7 +133,7 @@ router.get('/:orderId', authenticate, ValidationSets.getOrder, asyncHandler(asyn
 }));
 
 // Cancel order
-router.put('/:orderId/cancel', authenticate, ValidationSets.getOrder, asyncHandler(async (req: Request, res: Response) => {
+router.put('/:orderId/cancel', authenticate, ValidationSets.getOrder, asyncHandler(async (req: Request<{ orderId: string }>, res: Response) => {
   try {
     const userId = (req as any).user.userId;
     const orderId = parseInt(req.params.orderId);
@@ -216,7 +216,7 @@ router.get('/user/summary', authenticate, asyncHandler(async (req: Request, res:
 }));
 
 // Update order status (for sellers)
-router.put('/:orderId/status', authenticate, ValidationSets.getOrder, asyncHandler(async (req: Request, res: Response) => {
+router.put('/:orderId/status', authenticate, ValidationSets.getOrder, asyncHandler(async (req: Request<{ orderId: string }>, res: Response) => {
   try {
     const userId = (req as any).user.userId;
     const orderId = parseInt(req.params.orderId);
