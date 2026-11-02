@@ -18,9 +18,9 @@ export default async function Home() {
 
 
           <p>Project & instructions at :&nbsp; 
-            <i><a href="https://github.com/aws-samples/aws-dynamodb-examples.git" target='_blank'>
+            <i><a href="https://github.com/aws-samples/aws-dynamodb-examples/tree/master/examples/tester" target='_blank'>
             <br/>
-            github.com/aws-samples/aws-dynamodb-examples/examples/tester/README.md
+            github.com/aws-samples/aws-dynamodb-examples/examples/tester
             </a></i>
           </p>
           

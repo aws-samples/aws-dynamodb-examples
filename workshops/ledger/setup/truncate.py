@@ -16,12 +16,14 @@ dynamodb = boto3.client('dynamodb', config=my_config)
 TABLE_NAME = 'journal'  #  or pass in as arg1
 
 if len(sys.argv) > 1:
-    TABLE_NAME = sys.argv[1:]
+    TABLE_NAME = sys.argv[1]
 
 print('TABLE_NAME : ', TABLE_NAME)
 
 PARTITION_KEY = 'AccountID'  
-SORT_KEY = 'Event'          
+SORT_KEY = 'Event'      
+if TABLE_NAME == 'counter':
+    SORT_KEY = 'SK'  
 
 
 if len(sys.argv) > 1:
@@ -34,7 +36,7 @@ def delete_all_items():
     response = dynamodb.scan(TableName=TABLE_NAME)
 
     items = response.get('Items', [])
-    
+
     # Loop through and delete each item
     for item in items:
         pk_value = item[PARTITION_KEY]

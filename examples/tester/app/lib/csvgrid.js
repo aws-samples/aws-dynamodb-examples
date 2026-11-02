@@ -24,10 +24,10 @@ const CsvGrid = (data) => {
             </span>
             &nbsp; 
 
-            &nbsp;&nbsp;
-            <a href={dataForDownloadRef} download={experiment + '-data.csv'}>download CSV</a>
+            {/* &nbsp;&nbsp; */}
+            {/* <a href={dataForDownloadRef} download={experiment + '-data.csv'}>download CSV</a>
              &nbsp;
-             &nbsp; 
+             &nbsp;  */}
 
             {/* <a href={'ms-excel:ofe|u|http://localhost:3000/experiments/' + experiment + '/data.csv'}
             download={experiment + '-data.csv'}>Excel</a>

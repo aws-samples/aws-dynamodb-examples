@@ -5,24 +5,25 @@ import boto3
 from boto3.dynamodb.conditions import Key, Attr
 from botocore.config import Config 
 from botocore.exceptions import ClientError 
+from payload import payload_text_fixed, payload_text_anysize
 
 target_table = 'journal'
 desc = 'Sort Key: Query for latest and add 1'
 records_to_load = 100
 
-percent_chance_synthetic_collide = 10
+percent_chance_synthetic_collide = 0
 
 sortkey_zero_padding = 6
 
 def test_summary():
     tdesc = desc
     if percent_chance_synthetic_collide > 0:
-        tdesc = desc + ', synthetic collisions: ' + str(percent_chance_synthetic_collide) + ' %'
+        tdesc = desc + '. Synthetic collision chance: ' + str(percent_chance_synthetic_collide) + ' %'
 
     return {'test_desc': tdesc, 'target_table': target_table, 'records_to_load': records_to_load}
 
 
-def query_last_sortkey(pkval, dynamodb, target_table):
+def query_last_sortkey(pkval, dynamodb, target_table): # query for last sortkey in collection
 
     rcus = 0
     query_response = dynamodb.query(
@@ -44,7 +45,8 @@ def query_last_sortkey(pkval, dynamodb, target_table):
 
     return {
             'last_sortkey':last_sortkey,
-            'rcus': rcus
+            'rcus': rcus,
+            'wcus': 0
     }
 
 def generate_item(request, second, dynamodb):
@@ -70,7 +72,17 @@ def generate_item(request, second, dynamodb):
     last_sortkey = last_in_collection['last_sortkey']
     rcus = last_in_collection['rcus']
 
-    skval = str(int(last_sortkey) + 1).zfill(sortkey_zero_padding)
+    # if not isinstance(last_sortkey.lstrip('0') or '0', int):
+    #     last_sortkey = 0 # allow sequence to begin following non-integer items
+    new_sortkey_int = None
+
+    try:
+        new_sortkey_int = int(last_sortkey) + 1
+    except ValueError:
+        new_sortkey_int = 0
+
+    skval = str(new_sortkey_int).zfill(sortkey_zero_padding)
+
 
     if percent_chance_synthetic_collide > 0:
         nsnow = time.time_ns()
@@ -101,7 +113,8 @@ def generate_item(request, second, dynamodb):
             'Event': {'S': skval},
             'City': {'S': rand_static.choice(entity_values['cities'])},
             'Merchant': {'S': rand_static.choice(entity_values['merchants'])},
-            'Charged': {'S': str(charge_amount)}
+            'Charged': {'S': str(charge_amount)},
+            'Payload': {'S': payload_text_fixed()}
         }
 
         request_body =  {

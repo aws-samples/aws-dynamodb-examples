@@ -1,5 +1,6 @@
 import math, random
 from datetime import datetime
+from payload import payload_text_fixed, payload_text_anysize
 
 target_table = 'journal'
 desc = 'Sort Key: Current Datetime'
@@ -43,7 +44,8 @@ def generate_item(request, second, dynamodb):
             'Event': {'S': skval},
             'City': {'S': random.choice(entity_values['cities'])},
             'Merchant': {'S': random.choice(entity_values['merchants'])},
-            'Charged': {'S': str(amount)}
+            'Charged': {'S': str(amount)},
+            'Payload': {'S': payload_text_fixed()}
         }
         request_body =  {
             'TableName': target_table,

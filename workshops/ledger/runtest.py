@@ -6,13 +6,19 @@ from botocore.exceptions import ClientError
 import time
 import sys
 import math
+import os
 
+
+test_file = None
+result_summary_file = None
 
 if len(sys.argv) > 1:
     test_file = sys.argv[1]
-    # my_settings['target_table'] = sys.argv[1]
+    if len(sys.argv) > 2:
+        result_summary_file = sys.argv[2]
+
 else:
-    print('usage: python3 runtest.py <test>.py')
+    print('usage: python3 runtest.py <test> results.csv')
     exit(0)
 
 # Dynamically import the module
@@ -115,14 +121,15 @@ def runtest(dynamodb):
             # print('request bool: ' + str(bool(request)))
 
             request = test.generate_item(record_count, second, dynamodb)
+
             wcu = 0
             rcu = 0
             if bool(request):
                 rcu = float(request['rcus'])
                 wcu = int(request['wcus'])
             
-                wcu_total += wcu
-                wcu_this_second += wcu
+                # wcu_total += wcu
+                # wcu_this_second += wcu
 
                 rcu_total += rcu
                 rcu_this_second += rcu
@@ -136,7 +143,7 @@ def runtest(dynamodb):
                         write_requests += 1
                         statusline = '    record: ' + str(record_count) + ', write: ' + str(write_requests) \
                             + ', occ attempt: ' + str(occ_attempt) \
-                            + ', attempting: ' + concise_item(request['request_body']['Item'])
+                            + ', attempting: ' + concise_item(request['request_body']['Item'], 2)
                         # statusline += ' occ_success: ' + str(occ_success)
                         
                         # print(statusline)
@@ -212,9 +219,11 @@ def runtest(dynamodb):
     wcu_cost = my_settings['wcu_price'] * wcu_total
     rcu_cost = my_settings['rcu_price'] * rcu_total
 
+    
+
     print()
-    print('length of item durations array ' + str(len(item_durations)))
-    print(item_durations)
+    # print('length of item durations array ' + str(len(item_durations)))
+    # print(item_durations)
 
     print()
     print('---------------------------------------------------')
@@ -224,7 +233,12 @@ def runtest(dynamodb):
     if record_count -1 < write_requests:
         print('Write requests      : ' + str(write_requests))
 
-    if not my_settings['dryrun']:    
+    if not my_settings['dryrun']:  
+
+        avg_latency = (round(sum(item_durations)/len(item_durations)))
+        rcu_cost_m = rcu_cost*1000000 # _m per million
+        wcu_cost_m = wcu_cost*1000000
+
         print('WCU total           : ' + str(wcu_total))
         if rcu_total > 0:
             print('RCU total           : ' + str(rcu_total))
@@ -248,6 +262,22 @@ def runtest(dynamodb):
             total_cost = rcu_cost + wcu_cost
             print('Total               $ ' + f'{(total_cost*1000000):8.2f}')
         print()
+
+        if result_summary_file:
+            srstf = save_result_summary_to_file(result_summary_file, test_desc, avg_latency, rcu_cost_m, wcu_cost_m)
+            if srstf == 'ok':
+                print('Saved Test, Avg Latency, Read Cost, Write cost to file : ' + result_summary_file)
+
+def save_result_summary_to_file(filename, test, avg_latency, read_cost, write_cost):
+    result_string = '"' + test + '","' + str(avg_latency) + '","' + str(read_cost) + '","' + str(write_cost) + '"'
+    
+    if not os.path.isfile(filename):
+        result_string = '"Test","Avg Latency","Read Cost","Write Cost"\n' + result_string
+
+    with open(filename, "a", encoding="utf-8") as file:
+        file.write(result_string + '\n')
+
+    return 'ok'
 
 def concise_item(item, type=1):
     conciser = ''

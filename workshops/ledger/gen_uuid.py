@@ -1,5 +1,6 @@
 import math, random, uuid
 from datetime import datetime
+from payload import payload_text_fixed, payload_text_anysize
 
 target_table = 'journal'
 desc = 'Sort Key: New UUID'
@@ -46,7 +47,8 @@ def generate_item(request, second, dynamodb):
                 'City': {'S': random.choice(entity_values['cities'])},
                 'Merchant': {'S': random.choice(entity_values['merchants'])},
                 'DateTime': {'S': now_iso},
-                'Charged': {'S': str(amount)}
+                'Charged': {'S': str(amount)},
+                'Payload': {'S': payload_text_fixed()}
         }
         request_body =  {
             'TableName': target_table,
