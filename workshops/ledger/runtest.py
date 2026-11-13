@@ -141,11 +141,12 @@ def runtest(dynamodb):
                 else:
                     try:
                         write_requests += 1
-                        statusline = '    record: ' + str(record_count) + ', write: ' + str(write_requests) \
-                            + ', occ attempt: ' + str(occ_attempt) \
+                        statusline = '    record: ' + str(record_count) \
                             + ', attempting: ' + concise_item(request['request_body']['Item'], 2)
+
+                        # + ', write: ' + str(write_requests) \
                         # statusline += ' occ_success: ' + str(occ_success)
-                        
+                        # + ', occ attempt: ' + str(occ_attempt) \
                         # print(statusline)
 
                         response = dynamodb.put_item(**request['request_body'])
