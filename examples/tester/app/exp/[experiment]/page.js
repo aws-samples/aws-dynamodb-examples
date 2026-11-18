@@ -264,7 +264,7 @@ export default async function Page({params}) {
 
       <div>
 
-        {myClientVsCwLatencySummary}
+        {myClientVsCwLatencySummary} 
         {myLRstats}
       </div>
 

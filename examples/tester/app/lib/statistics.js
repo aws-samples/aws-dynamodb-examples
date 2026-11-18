@@ -119,56 +119,56 @@ const clientVsCwLatencySummary = async (stats, summary) => {
         st = roundDateToMinute(st, 'down');
         et = roundDateToMinute(et, 'up');
 
-        const params = {
-            TableName: statline['table'],
-            operation: operation,
-            StartTime: st,
-            EndTime:   et,
-            region:    statline['region']
-        };
+        // const params = {
+        //     TableName: statline['table'],
+        //     operation: operation,
+        //     StartTime: st,
+        //     EndTime:   et,
+        //     region:    statline['region']
+        // };
 
-        const result = await getCwStats(params);
-        const cwAvgLatency = result['MetricDataResults'].filter((mdr)=> mdr['Id'] === 'avg')[0]['Values'][0];
-        const cwMinLatency = result['MetricDataResults'].filter((mdr)=> mdr['Id'] === 'min')[0]['Values'][0];
-        const cwMaxLatency = result['MetricDataResults'].filter((mdr)=> mdr['Id'] === 'max')[0]['Values'][0];
+        // const result = await getCwStats(params);
+        // const cwAvgLatency = result['MetricDataResults'].filter((mdr)=> mdr['Id'] === 'avg')[0]['Values'][0];
+        // const cwMinLatency = result['MetricDataResults'].filter((mdr)=> mdr['Id'] === 'min')[0]['Values'][0];
+        // const cwMaxLatency = result['MetricDataResults'].filter((mdr)=> mdr['Id'] === 'max')[0]['Values'][0];
 
-        const roundNum = (num, places) => {
-            let multiplier = Math.pow(10, places);
-            return Math.round(num * multiplier) / multiplier;
-        }
+        // const roundNum = (num, places) => {
+        //     let multiplier = Math.pow(10, places);
+        //     return Math.round(num * multiplier) / multiplier;
+        // }
 
-        let combinedStatline = {
-            test: statline['test'],
-            action: statline['action'],
-            items: statline['items'],
-            account: statline['account'],
-            table: statline['table'],
-            region: statline['region'],
-            setStartTime:  statline['setStartTime'],
-            setEndTime:    statline['setEndTime'],
+        // let combinedStatline = {
+        //     test: statline['test'],
+        //     action: statline['action'],
+        //     items: statline['items'],
+        //     account: statline['account'],
+        //     table: statline['table'],
+        //     region: statline['region'],
+        //     setStartTime:  statline['setStartTime'],
+        //     setEndTime:    statline['setEndTime'],
 
-            avg: {
-                client: statline['avg'], 
-                server: roundNum(cwAvgLatency, 1),
-                network: roundNum(statline['avg'] - cwAvgLatency, 1)
-            },  
-            min: {
-                client: statline['min'], 
-                server: roundNum(cwMinLatency, 1),
-                network: roundNum(statline['min'] - cwMinLatency, 1)
-            },  
-            max: {
-                client: statline['max'], 
-                server: roundNum(cwMaxLatency, 1),
-                network: roundNum(statline['max'] - cwMaxLatency, 1)
-            }
+        //     avg: {
+        //         client: statline['avg'], 
+        //         server: roundNum(cwAvgLatency, 1),
+        //         network: roundNum(statline['avg'] - cwAvgLatency, 1)
+        //     },  
+        //     min: {
+        //         client: statline['min'], 
+        //         server: roundNum(cwMinLatency, 1),
+        //         network: roundNum(statline['min'] - cwMinLatency, 1)
+        //     },  
+        //     max: {
+        //         client: statline['max'], 
+        //         server: roundNum(cwMaxLatency, 1),
+        //         network: roundNum(statline['max'] - cwMaxLatency, 1)
+        //     }
 
-        };
-        if (statline['max'] > maxLatencyForXaxis) {
-            maxLatencyForXaxis = statline['max'];
-        }
+        // };
+        // if (statline['max'] > maxLatencyForXaxis) {
+        //     maxLatencyForXaxis = statline['max'];
+        // }
 
-        fullStats.push(combinedStatline); 
+        // fullStats.push(combinedStatline); 
 
     }
 
@@ -202,87 +202,87 @@ const clientVsCwLatencySummary = async (stats, summary) => {
 
     const aggTypes = ['avg', 'min', 'max'];
 
-    const cwStatsTable = (
-        <table className={css.statsTableCharts}><thead>
-                <tr>
-                    <th ><div className={css.latencyHeader}>Latency<br/>Aggregation</div></th>
-                    <th > <div className={css.latencyHeader2}>Client vs Server-measured latency</div></th>
-                </tr>
-            </thead>
-            <tbody>
-                {aggTypes.map((aggType, ix) => {
+    // const cwStatsTable = (
+    //     <table className={css.statsTableCharts}><thead>
+    //             <tr>
+    //                 <th ><div className={css.latencyHeader}>Latency<br/>Aggregation</div></th>
+    //                 <th > <div className={css.latencyHeader2}>Client vs Server-measured latency</div></th>
+    //             </tr>
+    //         </thead>
+    //         <tbody>
+    //             {aggTypes.map((aggType, ix) => {
                     
-                    // let labels = ['service', 'network', 'client latency'];
-                    let labels = [];
-                    let dataSets = [];
-                    let dataService = [];
-                    let dataNetwork = [];
-                    let dataClient = [];
+    //                 // let labels = ['service', 'network', 'client latency'];
+    //                 let labels = [];
+    //                 let dataSets = [];
+    //                 let dataService = [];
+    //                 let dataNetwork = [];
+    //                 let dataClient = [];
 
-                    fullStats.map((set, ix2) => {
-                        labels.push(set['test']);
+    //                 fullStats.map((set, ix2) => {
+    //                     labels.push(set['test']);
 
-                        dataService.push(set[aggType]['server']);
-                        dataNetwork.push(set[aggType]['network']);
-                        dataClient.push(set[aggType]['client']);
+    //                     dataService.push(set[aggType]['server']);
+    //                     dataNetwork.push(set[aggType]['network']);
+    //                     dataClient.push(set[aggType]['client']);
 
-                    });
+    //                 });
 
-                    let color = getBrushColor(7);
-                    let color2 = getBrushColor(8);
+    //                 let color = getBrushColor(7);
+    //                 let color2 = getBrushColor(8);
 
-                    dataSets.push({     
-                        "label": 'service',
-                        "datalabels": {
-                            "labels": {
-                                "title": {
-                                    "color": 'yellow'
-                                }
-                            }
-                        },
-                        "data": dataService,
-                        "borderColor": color,
-                        "backgroundColor": color
-                    });
+    //                 dataSets.push({     
+    //                     "label": 'service',
+    //                     "datalabels": {
+    //                         "labels": {
+    //                             "title": {
+    //                                 "color": 'yellow'
+    //                             }
+    //                         }
+    //                     },
+    //                     "data": dataService,
+    //                     "borderColor": color,
+    //                     "backgroundColor": color
+    //                 });
 
-                    dataSets.push({     
-                        "label": 'network',
-                        "data": dataNetwork,
-                        "borderColor": color2,
-                        "backgroundColor": color2
-                    });
+    //                 dataSets.push({     
+    //                     "label": 'network',
+    //                     "data": dataNetwork,
+    //                     "borderColor": color2,
+    //                     "backgroundColor": color2
+    //                 });
 
 
-                    let bundleCW = {
-                        labels: labels,
-                        datasets: dataSets,
-                        summary: 'Client vs Server Latency'
-                    };  
+    //                 let bundleCW = {
+    //                     labels: labels,
+    //                     datasets: dataSets,
+    //                     summary: 'Client vs Server Latency'
+    //                 };  
                     
 
-                    return(<tr key={ix}><td>
-                            {aggType}
+    //                 return(<tr key={ix}><td>
+    //                         {aggType}
 
-                            {/* </td><td> */}
-                            {/* {JSON.stringify(fullStats)} */}
+    //                         {/* </td><td> */}
+    //                         {/* {JSON.stringify(fullStats)} */}
 
-                            </td><td>
-                                <div className={css.chartDiv}>
-                                <MyChart data={bundleCW} chartType='CS' maxLatencyForXaxis={maxLatencyForXaxis + 2} />
-                                </div>
-                        </td></tr>)
-                    })
-                }
+    //                         </td><td>
+    //                             <div className={css.chartDiv}>
+    //                             <MyChart data={bundleCW} chartType='CS' maxLatencyForXaxis={maxLatencyForXaxis + 2} />
+    //                             </div>
+    //                     </td></tr>)
+    //                 })
+    //             }
             
-            </tbody>
-        </table>
-    );
+    //         </tbody>
+    //     </table>
+    // );
 
     return (
         <div className={css.clientVsCwDiv}>
             {statsTable}
             <br/>
-            {cwStatsTable}
+            {/* {cwStatsTable} */}
             <pre>
                 {/* {fullStats[0]['max']['client']}
                 {JSON.stringify(fullStats, null, 2)} */}

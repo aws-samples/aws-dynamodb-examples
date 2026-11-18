@@ -130,7 +130,7 @@ const MyChart = (req)  => {
       },
       plugins: {
         legend: {
-          position: 'right',
+          position: 'bottom',
         },
 
         title: {

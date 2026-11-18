@@ -30,6 +30,9 @@ workshops/relational-migration/setenv.sh
 workshops/relational-migration/setenvd.sh
 workshops/relational-migration/source-tables/app_db.*
 workshops/ledger/exp
+.env
+__pycache__/
+
 **/.aws-sam/
 **.db
 

@@ -16,7 +16,7 @@ const expName = expArgs.length > 0 ? expArgs[0] : 'Reads.js';
 const itemCount = expArgs.length > 1 ? expArgs[1] : 200;
 
 const showEachRequest = expArgs.length > 2 ? expArgs[2] : false;
-const waitForMinute = expArgs.length > 3 ? expArgs[3] : true;
+const waitForMinute = expArgs.length > 3 ? expArgs[3] : false;
 
 // const bucketName = config['bucketName'];
 const bucketName = process.env.TESTER_BUCKET;
