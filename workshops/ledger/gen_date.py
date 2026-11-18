@@ -4,7 +4,7 @@ from payload import payload_text_fixed, payload_text_anysize
 
 target_table = 'journal'
 desc = 'Sort Key: Current Datetime'
-records_to_load = 10
+records_to_load = 300
 
 def test_summary():
     return {'test_desc': desc, 'target_table': target_table, 'records_to_load': records_to_load}

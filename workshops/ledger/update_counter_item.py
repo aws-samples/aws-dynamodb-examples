@@ -11,8 +11,8 @@ from payload import payload_text_fixed, payload_text_anysize
 target_table = 'journal'
 counter_table = 'counter'
 
-desc = 'Sort Key: Update separate counter record +1'
-records_to_load = 100
+desc = 'Sort Key: Update counter item +1'
+records_to_load = 300
 
 
 sortkey_zero_padding = 6

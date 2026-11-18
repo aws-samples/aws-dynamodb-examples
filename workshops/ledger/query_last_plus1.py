@@ -9,7 +9,7 @@ from payload import payload_text_fixed, payload_text_anysize
 
 target_table = 'journal'
 desc = 'Sort Key: Query for latest and add 1'
-records_to_load = 100
+records_to_load = 300
 
 percent_chance_synthetic_collide = 0
 

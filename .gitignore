@@ -29,7 +29,7 @@ workshops/relational-migration/.chalice/config.json
 workshops/relational-migration/setenv.sh
 workshops/relational-migration/setenvd.sh
 workshops/relational-migration/source-tables/app_db.*
-
+workshops/ledger/exp
 **/.aws-sam/
 **.db
 

@@ -4,26 +4,38 @@ import boto3
 from botocore.config import Config 
 from botocore.exceptions import ClientError 
 import time
+import json
 import sys
 import math
 import os
 
-
 test_file = None
 result_summary_file = None
+experiment = None
+env_file = '.env'
+bucket = None
+experiment_data = []
 
 if len(sys.argv) > 1:
     test_file = sys.argv[1]
     if len(sys.argv) > 2:
         result_summary_file = sys.argv[2]
+    if len(sys.argv) > 3:
+        experiment = sys.argv[3]
+    # print(test_file, result_summary_file, experiment)
 
 else:
-    print('usage: python3 runtest.py <test> results.csv')
+    print('usage: ')
+    print('       python3 runtest.py <test>')
+    print('       python3 runtest.py <test> results.csv')
+    print('       python3 runtest.py <test> results.csv E1794977535')
+
     exit(0)
 
-# Dynamically import the module
+# Dynamically import the test module
 
 test = __import__(test_file)
+
 
 my_settings = {
     'logging': 'verbose', # summary
@@ -53,6 +65,7 @@ class bcolors:
 
 
 def runtest(dynamodb):
+
     latencylist = []
     record_count = 1
     wcu_this_second = 0
@@ -220,11 +233,8 @@ def runtest(dynamodb):
     wcu_cost = my_settings['wcu_price'] * wcu_total
     rcu_cost = my_settings['rcu_price'] * rcu_total
 
-    
-
-    print()
-    # print('length of item durations array ' + str(len(item_durations)))
-    # print(item_durations)
+    if experiment:
+        save_experiment_data(experiment, item_durations, test_desc, my_settings['target_table'])
 
     print()
     print('---------------------------------------------------')
@@ -280,6 +290,60 @@ def save_result_summary_to_file(filename, test, avg_latency, read_cost, write_co
 
     return 'ok'
 
+def save_experiment_data(exp, item_durations, exp_desc, exp_job):
+
+    with open(env_file, "r", encoding="utf-8") as file:
+        for line in file:
+            bucket = line.strip().replace('TESTER_BUCKET=','')
+            break
+
+    exp_path = 'exp/' + experiment
+
+    os.makedirs('exp/'+str(experiment), exist_ok=True)
+
+    summary_json = {
+            "desc": exp_desc,
+            "type": "Line",
+            "xAxisLabel": "request",
+            "xAxisUnits": "#",
+            "xAttribute": "requestNum",
+            "yAxisLabel": "latency",
+            "yAxisUnits": "ms",
+            "yAttribute": "latency",
+            "operation": "write",
+            "expName": exp_job,
+            "charts": ["LA","HI"],
+            "itemCount": len(item_durations)
+    }
+
+    if not os.path.isfile(exp_path + '/summary.json'): 
+        with open(exp_path + '/summary.json', "a", encoding="utf-8") as file:
+            file.write(json.dumps(summary_json, indent=4))
+
+    data_csv = []
+
+    header_line = "requestNum,experiment,test,jobFile,operation,targetTable,region,PK,jobTimestamp,jobSecond,jobTimestampMs,jobElapsed,latency,unitVelocity,httpStatusCode,attempts,ConsumedCapacity"
+    for req in range(1, len(item_durations)+1):
+        new_row = str(req) + "," + exp + "," + exp_desc + ",,,,us-east-1,PK,,,,," +str(item_durations[req-1]) + ",1,200,1,1" 
+        data_csv.append(new_row)
+
+    exp_path = 'exp/' + experiment
+
+
+    if not os.path.isfile(exp_path + '/data.csv'): 
+        with open(exp_path + '/data.csv', "a", encoding="utf-8") as file:
+            file.write(header_line + '\n')
+
+    with open(exp_path + '/data.csv', "a", encoding="utf-8") as file:
+        for line in data_csv:
+            file.write(line + '\n')
+
+    print()
+    upload_file_to_bucket(exp_path + '/summary.json', bucket, exp_path + '/summary.json')
+    upload_file_to_bucket(exp_path + '/data.csv', bucket, exp_path + '/data.csv')
+
+    return 'ok'
+
 def concise_item(item, type=1):
     conciser = ''
 
@@ -289,6 +353,21 @@ def concise_item(item, type=1):
         conciser = item['AccountID']['S'] + ':' + item['Event']['S'] 
 
     return conciser
+
+def upload_file_to_bucket(file_name, bucket, object_name=None):
+
+    if object_name is None:
+        object_name = os.path.basename(file_name)
+
+    s3_client = boto3.client('s3')
+    try:
+        response = s3_client.upload_file(file_name, bucket, object_name)
+    except ClientError as e:
+        print(e)
+        return False
+    
+    print('uploaded s3://' + bucket + '/' + object_name)
+    return True
 
 def main(dynamodb=None):
 
