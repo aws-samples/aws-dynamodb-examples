@@ -21,8 +21,8 @@ export const mainClient = async () => {
         ConsistentRead: false,
         TableName: "mytable",
         Key: {
-            PK: { S: "C-64" },
-            SK: { S: "0" }
+            AccountID: { S: "C-64" },
+            Event: { S: "0" }
         }
     });
 

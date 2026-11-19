@@ -19,7 +19,7 @@ const jobInformation = () => {
     return {
         jobType: 'insert',
         targetTable: 'everysize',
-        PK: 'PK',
+        PK: 'AccountID',
         description: 'Load table with items ranging from 1 KB to 400 KB'
     };
 }

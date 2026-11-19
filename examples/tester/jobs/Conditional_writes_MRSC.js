@@ -64,7 +64,9 @@ const run = async (req) => {
         test: 'MREC conditional writes',
         operation: 'put', 
         targetTable: tableNames[0], items: summary.itemCount, 
-        PK: 'PK', SK: 'SK', jobFile: 'load-smallitems.js',
+        PK: 'AccountID', 
+        SK: 'Event', 
+        jobFile: 'load-smallitems.js',
         conditionalWrite: 'true'
         
     };
@@ -81,7 +83,9 @@ const run = async (req) => {
         test: 'MRSC writes',  
         operation: 'put',   
         targetTable: tableNames[1], items: summary.itemCount, 
-        PK: 'PK', SK: 'SK', jobFile: 'load-smallitems.js'
+        PK: 'AccountID', 
+        SK: 'Event', 
+        jobFile: 'load-smallitems.js'
     };
 
     results = await runJob(params);
@@ -95,7 +99,9 @@ const run = async (req) => {
         test: 'MRSC conditional writes',  
         operation: 'put',   
         targetTable: tableNames[1], items: summary.itemCount, 
-        PK: 'PK', SK: 'SK', jobFile: 'load-smallitems.js',
+        PK: 'AccountID', 
+        SK: 'Event', 
+        jobFile: 'load-smallitems.js',
         conditionalWrite: 'true'
     };
 

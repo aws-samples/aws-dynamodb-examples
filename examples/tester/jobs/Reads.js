@@ -60,8 +60,8 @@ const run = async (req) => {
         test: 'mytable small reads',
         operation: 'get', 
         targetTable: tableName, items: itemCount, 
-        PK: 'PK', 
-        SK: 'SK', 
+        PK: 'AccountID', 
+        SK: 'Event', 
         jobFile: 'load-smallitems.js',
 
         maxUnitVelocity: 100,

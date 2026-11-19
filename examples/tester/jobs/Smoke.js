@@ -14,8 +14,8 @@ console.log('Smoke test operation:', operation, 'targetTable', targetTable);
 let readStrength = 'eventual';
 
 const primaryKey = {
-    PK: 'C-0000',
-    SK: '0'
+    AccountID: 'C-0000',
+    Event: '0'
 };
 
 

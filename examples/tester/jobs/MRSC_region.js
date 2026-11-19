@@ -64,7 +64,9 @@ const run = async (req) => {
         operation: 'put',   
         targetTable: tableNames[1], 
         items: summary.itemCount, 
-        PK: 'PK', SK: 'SK', jobFile: 'load-smallitems.js',
+        PK: 'AccountID', 
+        SK: 'Event', 
+        jobFile: 'load-smallitems.js',
     };
 
     results = await runJob(params);

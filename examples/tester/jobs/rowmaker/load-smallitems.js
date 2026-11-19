@@ -19,7 +19,8 @@ const jobInformation = () => {
     return {
         jobType: 'insert',
         targetTable: 'MREC',
-        PK: 'PK',
+        PK: 'AccountID', 
+        SK: 'Event', 
         conditionalWrite: 'true',
         description: 'Load table with many small items'
     };

@@ -1,12 +1,12 @@
 { "TableName": "MREC",
   "BillingMode": "PAY_PER_REQUEST",
   "AttributeDefinitions": [
-      {"AttributeName": "PK", "AttributeType": "S"},
-      {"AttributeName": "SK", "AttributeType": "S"}
+      {"AttributeName": "AccountID", "AttributeType": "S"},
+      {"AttributeName": "Event", "AttributeType": "S"}
     ],
    "KeySchema": [
-     {"KeyType": "HASH", "AttributeName": "PK"},
-     {"KeyType": "RANGE", "AttributeName": "SK"}
+     {"KeyType": "HASH", "AttributeName": "AccountID"},
+     {"KeyType": "RANGE", "AttributeName": "Event"}
     ],
     "StreamSpecification": {
       "StreamEnabled": true,

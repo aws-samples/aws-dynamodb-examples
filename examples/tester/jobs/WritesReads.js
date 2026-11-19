@@ -71,8 +71,8 @@ const run = async (req) => {
         operation: 'put', 
         targetTable: tableName, 
         items: itemCount, 
-        PK: 'PK', 
-        SK: 'SK', 
+        PK: 'AccountID', 
+        SK: 'Event', 
         jobFile: 'load-smallitems.js',
 
         maxUnitVelocity: 100,
@@ -93,8 +93,8 @@ const run = async (req) => {
         operation: 'get', 
         targetTable: tableName, 
         items: itemCount, 
-        PK: 'PK', 
-        SK: 'SK', 
+        PK: 'AccountID', 
+        SK: 'Event', 
         jobFile: 'load-smallitems.js',
 
         maxUnitVelocity: 100,

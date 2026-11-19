@@ -66,7 +66,9 @@ const run = async (req) => {
         test: 'Writes',  
         operation: 'put',   
         targetTable: tableNames[2], items: summary.itemCount, 
-        PK: 'PK', SK: 'SK', jobFile: 'load-smallitems.js'
+        PK: 'AccountID', 
+        SK: 'Event', 
+        jobFile: 'load-smallitems.js'
     };
 
     results = await runJob(params);
@@ -80,7 +82,9 @@ const run = async (req) => {
         test: 'Conditional writes',  
         operation: 'put',   
         targetTable: tableNames[2], items: summary.itemCount, 
-        PK: 'PK', SK: 'SK', jobFile: 'load-smallitems.js',
+        PK: 'AccountID', 
+        SK: 'Event', 
+        jobFile: 'load-smallitems.js',
         conditionalWrite: 'true'
     };
 
