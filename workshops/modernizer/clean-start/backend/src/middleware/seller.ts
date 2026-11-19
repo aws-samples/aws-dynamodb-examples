@@ -91,7 +91,7 @@ export class SellerMiddleware {
           return;
         }
 
-        if (!resourceId) {
+        if (typeof resourceId !== 'string' || !resourceId) {
           res.status(400).json({
             success: false,
             error: {

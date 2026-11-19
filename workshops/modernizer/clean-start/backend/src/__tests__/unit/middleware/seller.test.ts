@@ -311,6 +311,25 @@ describe('SellerMiddleware', () => {
       expect(mockNext).not.toHaveBeenCalled();
     });
 
+    it.each([
+      { id: ['123'] },
+      { id: ['123', '456'] },
+    ])('should reject an array resource ID %j', async (params) => {
+      mockRequest.params = params;
+
+      const middleware = sellerMiddleware.requireResourceOwnership();
+
+      await middleware(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext
+      );
+
+      expect(mockResponse.status).toHaveBeenCalledWith(400);
+      expect(mockRequest.resourceOwnership).toBeUndefined();
+      expect(mockNext).not.toHaveBeenCalled();
+    });
+
     it('should handle non-numeric resource ID', async () => {
       mockRequest.params = { id: 'abc' };
 
