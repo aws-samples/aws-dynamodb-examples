@@ -56,7 +56,7 @@ export default async function RootLayout({ children }) {
         <table className={css.layoutTable}>
           <thead><tr>
             <th colSpan='2'> 
-              <Link href="/">tester</Link> &nbsp;&nbsp;&nbsp;
+              <Link href="https://github.com/aws-samples/aws-dynamodb-examples/tree/master/examples/tester">tester</Link> &nbsp;&nbsp;&nbsp;
               <span>{'s3://' + bucketName + '/exp/'}</span>
               <br/>
               <span>{awsAccountId + ':' + awsUser }</span>
