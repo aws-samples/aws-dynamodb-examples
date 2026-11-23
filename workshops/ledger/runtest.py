@@ -29,6 +29,8 @@ else:
     print('       python3 runtest.py <test>')
     print('       python3 runtest.py <test> results.csv')
     print('       python3 runtest.py <test> results.csv E1794977535')
+    print('       python3 runtest.py <test> results.csv E1800000000')
+
 
     exit(0)
 
@@ -129,17 +131,20 @@ def runtest(dynamodb):
 
         statusline = ''
 
+        wcu = 0
+        rcu = 0
+
         # the Optimistic Concurrency Control (conditional check item exists) retry loop
         while not occ_success and occ_attempt < int(my_settings['occ_retries']) and bool(request):
             # print('request bool: ' + str(bool(request)))
 
             request = test.generate_item(record_count, second, dynamodb)
 
-            wcu = 0
-            rcu = 0
+            # wcu = 0
+            # rcu = 0
             if bool(request):
-                rcu = float(request['rcus'])
-                wcu = int(request['wcus'])
+                rcu += float(request['rcus'])
+                wcu += int(request['wcus'])
             
                 # wcu_total += wcu
                 # wcu_this_second += wcu

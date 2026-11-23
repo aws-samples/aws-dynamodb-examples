@@ -1,4 +1,4 @@
-import math, random, uuid
+import math, random, uuid, os
 from datetime import datetime
 import time
 import boto3 
@@ -7,8 +7,10 @@ from botocore.config import Config
 from botocore.exceptions import ClientError 
 from payload import payload_text_fixed, payload_text_anysize
 
-target_table = 'journal'
-desc = 'Sort Key: Query for latest and add 1'
+target_table = os.getenv("TARGET_TABLE", "journal")
+
+desc = os.getenv("TEST_DESC", 'Sort Key: Query last plus 1')
+
 records_to_load = 300
 
 percent_chance_synthetic_collide = 0
@@ -50,7 +52,7 @@ def query_last_sortkey(pkval, dynamodb, target_table): # query for last sortkey 
     }
 
 def generate_item(request, second, dynamodb):
-    target_table = 'journal'
+
     epoch_time = time.time()
     
     # nsnow = time.time_ns()

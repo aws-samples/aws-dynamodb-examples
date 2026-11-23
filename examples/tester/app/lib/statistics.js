@@ -41,11 +41,11 @@ function histogram(arr, buckets, range) {
 
     for (let i = 1; i < hCounts.length; i++) {
 
-        if(hCounts[buckets - i] === 0 ) {
-            lastFilledBucket = buckets - i;
-        } else {
-            break;
-        }
+        // if(hCounts[buckets - i] === 0 ) {
+        //     lastFilledBucket = buckets - i;
+        // } else {
+        //     break;
+        // }
     }
 
     let myHist = {

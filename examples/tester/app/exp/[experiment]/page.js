@@ -15,8 +15,8 @@ const bucketName = process.env.TESTER_BUCKET;
 
 
 const histogramConfig = {
-  "buckets": 40,
-  "range": 80
+  "buckets": 50,
+  "range": 25
 };
 
 export default async function Page({params}) {

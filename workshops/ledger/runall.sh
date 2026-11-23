@@ -1,14 +1,65 @@
 
-exp_timestamp=$(date +%s)
+
 results_summary=res.csv
+rm -f $results_summary
 
-rm $results_summary
+# --------------------------------------------------
 
-python3 setup/truncate.py journal
-python3 runtest.py gen_uuid $results_summary E$exp_timestamp
+TEST_NAME=update_counter_item
+exp_timestamp=$(date +%s)
 
-python3 setup/truncate.py journal
-python3 runtest.py update_counter_item $results_summary E$exp_timestamp
+export TARGET_TABLE="journal"
+export TARGET_TABLE2="counter"
 
-python3 setup/truncate.py journal
-python3 runtest.py query_last_plus1 $results_summary E$exp_timestamp
+python3 setup/truncate.py $TARGET_TABLE
+python3 runtest.py $TEST_NAME $results_summary E$exp_timestamp
+
+export TARGET_TABLE="MRSC"
+export TEST_DESC="Target: MRSC"
+
+python3 setup/truncate.py $TARGET_TABLE
+python3 runtest.py $TEST_NAME $results_summary E$exp_timestamp
+
+unset TARGET_TABLE
+unset TARGET_TABLE2
+unset TEST_DESC
+
+# -------------------------------------------------
+
+TEST_NAME=query_last_plus1
+exp_timestamp=$(date +%s)
+
+export TARGET_TABLE="journal"
+
+python3 setup/truncate.py $TARGET_TABLE
+python3 runtest.py $TEST_NAME $results_summary E$exp_timestamp
+
+export TARGET_TABLE="MRSC"
+export TEST_DESC="Target: MRSC"
+
+python3 setup/truncate.py $TARGET_TABLE
+python3 runtest.py $TEST_NAME $results_summary E$exp_timestamp
+
+unset TARGET_TABLE
+unset TEST_DESC
+
+# -------------------------------------------------
+TEST_NAME=gen_uuid
+exp_timestamp=$(date +%s)
+
+export TARGET_TABLE="journal"
+
+python3 setup/truncate.py $TARGET_TABLE
+python3 runtest.py $TEST_NAME $results_summary E$exp_timestamp
+
+export TARGET_TABLE="MRSC"
+export TEST_DESC="Target: MRSC"
+
+python3 setup/truncate.py $TARGET_TABLE
+python3 runtest.py $TEST_NAME $results_summary E$exp_timestamp
+
+unset TARGET_TABLE
+unset TEST_DESC
+
+# -------------------------------------------------
+

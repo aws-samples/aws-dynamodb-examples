@@ -1,4 +1,4 @@
-import math, random, uuid
+import math, random, uuid, os
 from datetime import datetime
 import time
 import boto3 
@@ -8,10 +8,11 @@ from botocore.config import Config
 from botocore.exceptions import ClientError 
 from payload import payload_text_fixed, payload_text_anysize
 
-target_table = 'journal'
-counter_table = 'counter'
+target_table = os.getenv("TARGET_TABLE", "journal")
+target_table2 = os.getenv("TARGET_TABLE2", "counter")
 
-desc = 'Sort Key: Update counter item +1'
+desc = os.getenv("TEST_DESC", 'Sort Key: Update counter item +1')
+
 records_to_load = 300
 
 
@@ -34,7 +35,7 @@ def generate_new_sortkey_value(pkval, dynamodb):
     }
 
     update_response = dynamodb.update_item(
-        TableName=counter_table,
+        TableName=target_table2,
         Key=key,
         UpdateExpression="ADD #attr :val",
         ExpressionAttributeNames={'#attr': 'counter'},

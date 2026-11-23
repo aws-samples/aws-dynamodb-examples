@@ -1,9 +1,11 @@
-import math, random
+import math, random, os
 from datetime import datetime
 from payload import payload_text_fixed, payload_text_anysize
 
-target_table = 'journal'
-desc = 'Sort Key: Current Datetime'
+target_table = os.getenv("TARGET_TABLE", "journal")
+
+desc = os.getenv("TEST_DESC", 'Sort Key: Current Datetime')
+
 records_to_load = 300
 
 def test_summary():
