@@ -19,6 +19,8 @@ const client = new DynamoDBClient(ddbClientConfig);
 const docClient = DynamoDBDocumentClient.from(client);
 
 const runPut = async (targetTable, item, conditionalWrite) => {
+    console.log(targetTable);
+    console.log(JSON.stringify(item, null, 2));
 
     let latency = 0;
     let response;
@@ -164,9 +166,9 @@ const runWarm = async (targetTable, PK, SK) => {
     const endpointRegion = myDecResult['Endpoints'][0]['Address'].split('.')[1];
 
     let key = {}
-    key['PK'] = 'warm';
+    key['AccountID'] = 'warm';
     if(SK) {
-        key['SK'] = 'warm';
+        key['Event'] = 'warm';
     }
     const command = new GetCommand({
         TableName: targetTable,
