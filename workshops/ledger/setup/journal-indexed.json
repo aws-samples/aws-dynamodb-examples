@@ -1,0 +1,53 @@
+{
+  "TableName": "journal-indexed",
+  "AttributeDefinitions": [
+    {"AttributeName": "AccountID", "AttributeType": "S"},
+    {"AttributeName": "Event", "AttributeType": "S"},
+    {"AttributeName": "AccountPrimary", "AttributeType": "S"},
+    {"AttributeName": "EOD_Day", "AttributeType": "S"},
+    {"AttributeName": "2026-11-01", "AttributeType": "S"},
+    {"AttributeName": "New York", "AttributeType": "S"},
+    {"AttributeName": "Van Hailing", "AttributeType": "S"}
+  ],
+
+  "KeySchema": [
+    {"KeyType": "HASH", "AttributeName": "AccountID"},
+    {"KeyType": "RANGE", "AttributeName": "Event"}
+  ],
+  "GlobalSecondaryIndexes": [
+    {
+        "IndexName": "GSI_AccountPrimary",
+        "KeySchema": [
+            { "AttributeName": "AccountPrimary", "KeyType": "HASH" },
+            { "AttributeName": "AccountID", "KeyType": "RANGE" }
+          ],
+        "Projection": {"ProjectionType": "ALL"}
+    },
+    {
+        "IndexName": "GSI_Balance_EOD",
+        "KeySchema": [
+            { "AttributeName": "AccountID", "KeyType": "HASH" },
+            { "AttributeName": "EOD_Day", "KeyType": "RANGE" }],
+        "Projection": {"ProjectionType": "ALL"}
+    },
+    {
+        "IndexName": "GSI_SuperSparse_2026-11-01",
+        "KeySchema": [
+            { "AttributeName": "2026-11-01", "KeyType": "HASH" },
+            { "AttributeName": "AccountID", "KeyType": "RANGE" }],
+        "Projection": {"ProjectionType": "ALL"}
+    },
+    {
+        "IndexName": "GSI_SuperSparse_NewYork_VanHailing",
+        "KeySchema": [
+            { "AttributeName": "New York", "KeyType": "HASH" },
+            { "AttributeName": "Van Hailing", "KeyType": "RANGE" }],
+        "Projection": {"ProjectionType": "ALL"}
+    }
+  ],
+  "StreamSpecification": {
+    "StreamEnabled": true, 
+    "StreamViewType": "NEW_AND_OLD_IMAGES" 
+  },
+  "BillingMode": "PAY_PER_REQUEST"
+}

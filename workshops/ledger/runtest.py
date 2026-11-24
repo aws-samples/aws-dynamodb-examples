@@ -136,63 +136,55 @@ def runtest(dynamodb):
 
         # the Optimistic Concurrency Control (conditional check item exists) retry loop
         while not occ_success and occ_attempt < int(my_settings['occ_retries']) and bool(request):
-            # print('request bool: ' + str(bool(request)))
 
             request = test.generate_item(record_count, second, dynamodb)
-
-            # wcu = 0
-            # rcu = 0
+            
             if bool(request):
+
                 rcu += float(request['rcus'])
                 wcu += int(request['wcus'])
-            
-                # wcu_total += wcu
-                # wcu_this_second += wcu
 
                 rcu_total += rcu
                 rcu_this_second += rcu
 
-                if my_settings['dryrun']:
-                    print(str(record_count) + '  ' + str(request['request_body']['Item']))
-                    # record_count += 1
-
+                denyreason = request.get('denyreason')
+                if denyreason:
+                    print(f'{bcolors.FAIL}{denyreason}{bcolors.ENDC}')
+                    occ_success = True
                 else:
-                    try:
-                        write_requests += 1
-                        statusline = '    record: ' + str(record_count) \
-                            + ', attempting: ' + concise_item(request['request_body']['Item'], 2)
 
-                        # + ', write: ' + str(write_requests) \
-                        # statusline += ' occ_success: ' + str(occ_success)
-                        # + ', occ attempt: ' + str(occ_attempt) \
-                        # print(statusline)
+                    if my_settings['dryrun']:
+                        print(str(record_count) + '  ' + str(request['request_body']['Item']))
 
-                        response = dynamodb.put_item(**request['request_body'])
-                        # Success happened! 
-                        
-                        # record_count += 1
-                        occ_success = True
-                        wcu += response['ConsumedCapacity']['Table']['CapacityUnits']
+                    else:
+                        try:
+                            write_requests += 1
+                            statusline = '    record: ' + str(record_count) \
+                                + ', item: ' + concise_item(request['request_body']['Item'], 2)
 
-                    except ClientError as ce:
-                        
-                        error_code = ce.response['Error']['Code']
-                        if error_code == 'ConditionalCheckFailedException':
-                            occ_success = False
-                            occ_attempt += 1
+                            response = dynamodb.put_item(**request['request_body'])
+
+                            occ_success = True
+                            wcu += response['ConsumedCapacity']['Table']['CapacityUnits']
+
+                        except ClientError as ce:
                             
-                            print()
-                            print(f'{bcolors.FAIL}*** {error_code}, record: {str(record_count)} ({concise_item(request['request_body']['Item'],2)}) already exists {bcolors.ENDC}')
-                            # print('***   ' + error_code + ',     record: ' + str(record_count) + ' (' + concise_item(request['request_body']['Item']) + ') already exists ' )
-                            # record_count -= 1
-                            wcu += 1
+                            error_code = ce.response['Error']['Code']
+                            if error_code == 'ConditionalCheckFailedException':
+                                occ_success = False
+                                occ_attempt += 1
+                                
+                                print()
+                                print(f'{bcolors.FAIL}*** {error_code}, record: {str(record_count)} ({concise_item(request['request_body']['Item'],2)}) already exists {bcolors.ENDC}')
 
-                        else:
-                            print(error_code)
+                                wcu += 1
 
-                    finally:
-                        myfinal = 0
-        # ######
+                            else:
+                                print(error_code)
+
+                        finally:
+                            myfinal = 0
+
         item_end_time = time.time()
         item_end_second = math.floor(item_end_time)
 
@@ -206,26 +198,11 @@ def runtest(dynamodb):
 
         item_durations.append(item_duration)
 
-        # latencylist.append({'second': str(item_start_second), 'latency': item_duration})
-
         rcu_info = ''
         if rcu > 0:
             rcu_info = ', rcu: ' + str(rcu)
 
-        # outputstring = '   req:' +  f'{(record_count):4.0f}' + \
-        #     ', wcu: ' + str(wcu).replace('.0','') + \
-        #     rcu_info + ', latency:' + f'{(item_duration):3.0f}'
-        
-        # outputstring += '   ' + concise_item(request['request_body']['Item'])
-        # outputstring += '  ' + str(request['request_body']['Item'])
-        # outputstring += ', iss: ' + str(item_start_second % 100) + ', ies: ' + str(item_end_second % 100)
-
-        # if my_settings['logging'] == 'verbose':
-            # print(outputstring)
-            # print(statusline)
-
         record_count += 1
-        # ######
 
     item_durations.pop()
     record_count -= 1

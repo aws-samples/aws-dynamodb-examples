@@ -64,6 +64,8 @@ def generate_item(request, second, dynamodb):
 
     pk_count = 1
     collection_size = records_to_load
+    if(request > (pk_count * collection_size)):
+        return {}
 
     pknum = (math.floor((request - 1) / collection_size)) + 1
 

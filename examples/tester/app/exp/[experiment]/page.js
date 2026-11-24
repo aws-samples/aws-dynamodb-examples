@@ -13,10 +13,9 @@ import {csv} from 'csvtojson';
 
 const bucketName = process.env.TESTER_BUCKET;
 
-
 const histogramConfig = {
-  "buckets": 50,
-  "range": 25
+  "buckets": 25,
+  "range": 50
 };
 
 export default async function Page({params}) {
