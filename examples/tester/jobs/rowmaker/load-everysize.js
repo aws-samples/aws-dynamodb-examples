@@ -4,8 +4,8 @@ import { payloadData, randomString, randomElement } from '../lib/util.js';
 const rowMaker = (tick, second) => {
     const tickOffset = tick + 20;
     const newRow = {
-        PK: tick.toString(),
-        SK: '0',
+        AccountID: tick.toString(),
+        Event: '0',
         size: tick.toString(),
         category: 'cat-' + randomElement(['A', 'B', 'C', 'D', 'E']),
         product: randomString(5),

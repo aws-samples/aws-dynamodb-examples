@@ -95,7 +95,7 @@ const run = async (req) => {
             operation: 'put', 
             targetTable: tableNames[1], 
             items: summary.itemCount, 
-            PK: 'PK', SK: 'SK', jobFile: 'load-everysize.js',
+            PK: 'AccountID', SK: 'Event', jobFile: 'load-everysize.js',
             maxUnitVelocity: maxUnitVelocity,
             showEachRequest: showEachRequest,
             waitForMinute: waitForMinute
@@ -115,7 +115,7 @@ const run = async (req) => {
             operation: 'get',
             strength: 'default', 
             targetTable: tableNames[0], items: summary.itemCount, 
-            PK: 'PK', SK: 'SK', jobFile: 'load-everysize.js',
+            PK: 'AccountID', SK: 'Event', jobFile: 'load-everysize.js',
             maxUnitVelocity: maxUnitVelocity,
             showEachRequest: showEachRequest,
             waitForMinute: waitForMinute
@@ -133,7 +133,7 @@ const run = async (req) => {
             operation: 'get',
             strength: 'strong', 
             targetTable: tableNames[1], items: summary.itemCount, 
-            PK: 'PK', SK: 'SK', jobFile: 'load-everysize.js',
+            PK: 'AccountID', SK: 'Event', jobFile: 'load-everysize.js',
             maxUnitVelocity: maxUnitVelocity,
             showEachRequest: showEachRequest,
             waitForMinute: waitForMinute
