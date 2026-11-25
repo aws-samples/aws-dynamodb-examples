@@ -135,7 +135,8 @@ def runtest(dynamodb):
         rcu = 0
 
         # the Optimistic Concurrency Control (conditional check item exists) retry loop
-        while not occ_success and occ_attempt < int(my_settings['occ_retries']) and bool(request):
+
+        while not occ_success and bool(request):  # and occ_attempt < int(my_settings['occ_retries'])
 
             request = test.generate_item(record_count, second, dynamodb)
             

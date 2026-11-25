@@ -19,8 +19,8 @@ sortkey_zero_padding = 6
 
 def test_summary():
     tdesc = desc
-    if percent_chance_synthetic_collide > 0:
-        tdesc = desc + '. Synthetic collision chance: ' + str(percent_chance_synthetic_collide) + ' %'
+
+    tdesc = desc + '. Collision chance: ' + str(percent_chance_synthetic_collide) + ' %'
 
     return {'test_desc': tdesc, 'target_table': target_table, 'records_to_load': records_to_load}
 
@@ -35,7 +35,7 @@ def query_last_sortkey(pkval, dynamodb, target_table): # query for last sortkey 
         ScanIndexForward=False,  # Sort descending by sort key
         Limit=1,  # Return just the first item found
         ReturnConsumedCapacity='TOTAL',
-        ConsistentRead=False
+        ConsistentRead=True
     )
 
     if len(query_response['Items']) == 0:
@@ -52,7 +52,7 @@ def query_last_sortkey(pkval, dynamodb, target_table): # query for last sortkey 
     }
 
 def generate_item(request, second, dynamodb):
-    target_table = target_table
+
     epoch_time = time.time()
     
     # nsnow = time.time_ns()

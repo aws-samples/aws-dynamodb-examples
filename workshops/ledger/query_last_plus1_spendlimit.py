@@ -19,10 +19,6 @@ sortkey_zero_padding = 6
 
 startdate = datetime(2026, 11, 1, 2)
 
-# itemdate = startdate + timedelta(hours=5)
-# print(startdate)
-# print(itemdate)
-# exit(0)
 
 def test_summary():
     tdesc = desc
@@ -45,7 +41,7 @@ def query_last_sortkey(pkval, dynamodb, target_table): # query for last sortkey 
         ScanIndexForward=False,  # Sort descending by sort key
         Limit=2,  # Return the first two: AccountPrimary plus latest journal
         ReturnConsumedCapacity='TOTAL',
-        ConsistentRead=False
+        ConsistentRead=True
     )
 
     if len(query_response['Items']) == 0:
