@@ -13,10 +13,16 @@ import {csv} from 'csvtojson';
 
 const bucketName = process.env.TESTER_BUCKET;
 
+const maxlatency = 100
+
+const bucketwidth = 2
+
 const histogramConfig = {
-  "buckets": 25,
-  "range": 50
+  "buckets": maxlatency/bucketwidth,
+  "range": maxlatency
 };
+
+
 
 export default async function Page({params}) {
 

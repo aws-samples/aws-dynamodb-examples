@@ -31,12 +31,11 @@ const MyChart = (req)  => {
   let showYgrid = true;
   let stacked = false;
 
-  
 
   if(chartType === 'LA') {
     xLabel = summary['xAxisLabel'] + ' (' + summary['xAxisUnits'] + ')';
     yLabel = summary['yAxisLabel'] + ' (' + summary['yAxisUnits'] + ')';
-    titlePre = 'Requests';
+    titlePre = 'Latency by request';
 
     if(hideLatency) {
       showY = false;
@@ -46,9 +45,9 @@ const MyChart = (req)  => {
   }
 
   if(chartType === 'HI') {
-    xLabel = 'latency bucket';
+    xLabel = 'latency bucket (ms)';
     yLabel = 'count';
-    titlePre = 'Histogram';
+    titlePre = 'Histogram: latency buckets';
 
     if(hideLatency) {
       showX = false;
@@ -135,11 +134,11 @@ const MyChart = (req)  => {
 
         title: {
           display: true,
-          text: [titlePre + ':   ',  data['summary']['desc']],
+          text: [titlePre],
           color: 'black',
           font: {
             family: 'Arial',
-            size: 16,
+            size: 12,
             weight: 'bold',
           }
         },

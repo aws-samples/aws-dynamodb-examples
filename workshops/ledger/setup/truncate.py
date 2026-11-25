@@ -61,7 +61,7 @@ def delete_all_items():
             pk_value = item[PARTITION_KEY]
             sk_value = item[SORT_KEY]
             
-            print(f"Deleting item with {PARTITION_KEY}: {pk_value}, {SORT_KEY}: {sk_value}")
+            print(f"Deleting item with {PARTITION_KEY}: {pk_value['S']}, {SORT_KEY}: {sk_value['S']}")
             
             dynamodb.delete_item(
                 TableName=TABLE_NAME,

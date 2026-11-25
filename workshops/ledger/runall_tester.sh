@@ -49,17 +49,29 @@ exp_timestamp=$(date +%s)
 
 export TARGET_TABLE="journal"
 
-python3 setup/truncate.py $TARGET_TABLE
 python3 runtest.py $TEST_NAME $results_summary E$exp_timestamp
 
 export TARGET_TABLE="MRSC"
 export TEST_DESC="Target: MRSC"
 
-python3 setup/truncate.py $TARGET_TABLE
 python3 runtest.py $TEST_NAME $results_summary E$exp_timestamp
-
-unset TARGET_TABLE
-unset TEST_DESC
 
 # -------------------------------------------------
 
+TEST_NAME=gen_date
+exp_timestamp=$(date +%s)
+
+export TARGET_TABLE="journal"
+
+python3 runtest.py $TEST_NAME $results_summary E$exp_timestamp
+
+export TARGET_TABLE="MRSC"
+export TEST_DESC="Target: MRSC"
+
+python3 runtest.py $TEST_NAME $results_summary E$exp_timestamp
+
+
+# -------------------------------------------------
+
+unset TARGET_TABLE
+unset TEST_DESC

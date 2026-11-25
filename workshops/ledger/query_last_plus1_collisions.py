@@ -13,7 +13,7 @@ desc = os.getenv("TEST_DESC", 'Sort Key: Query last plus 1')
 
 records_to_load = 300
 
-percent_chance_synthetic_collide = 0
+percent_chance_synthetic_collide = 20
 
 sortkey_zero_padding = 6
 
