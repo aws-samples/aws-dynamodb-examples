@@ -15,7 +15,7 @@ const bucketName = process.env.TESTER_BUCKET;
 
 const maxlatency = 100
 
-const bucketwidth = 2
+const bucketwidth = 1
 
 const histogramConfig = {
   "buckets": maxlatency/bucketwidth,
