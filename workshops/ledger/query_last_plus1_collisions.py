@@ -17,10 +17,12 @@ percent_chance_synthetic_collide = 0
 
 sortkey_zero_padding = 6
 
+pcsc = os.getenv("PCSC", percent_chance_synthetic_collide)
+
 def test_summary():
     tdesc = desc
 
-    tdesc = desc + '. Collision chance: ' + str(percent_chance_synthetic_collide) + ' %'
+    tdesc = desc + '. Collision chance: ' + str(pcsc) + ' %'
 
     return {'test_desc': tdesc, 'target_table': target_table, 'records_to_load': records_to_load}
 
@@ -35,7 +37,7 @@ def query_last_sortkey(pkval, dynamodb, target_table): # query for last sortkey 
         ScanIndexForward=False,  # Sort descending by sort key
         Limit=1,  # Return just the first item found
         ReturnConsumedCapacity='TOTAL',
-        ConsistentRead=True
+        ConsistentRead=False
     )
 
     if len(query_response['Items']) == 0:
@@ -88,10 +90,10 @@ def generate_item(request, second, dynamodb):
     skval = str(new_sortkey_int).zfill(sortkey_zero_padding)
 
 
-    if percent_chance_synthetic_collide > 0:
+    if pcsc > 0:
         nsnow = time.time_ns()
         # random.seed(nsnow)
-        random_collider = rand_dynamic.randint(1, 100) % round(100/percent_chance_synthetic_collide)
+        random_collider = rand_dynamic.randint(1, 100) % round(100/pcsc)
         if random_collider == 0:
             # inject chaos, add same item in advance so the put will fail conditional check
             sneak_item_in(pkval, skval, dynamodb)

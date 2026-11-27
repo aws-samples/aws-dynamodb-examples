@@ -41,7 +41,7 @@ def query_last_sortkey(pkval, dynamodb, target_table): # query for last sortkey 
         ScanIndexForward=False,  # Sort descending by sort key
         Limit=2,  # Return the first two: AccountPrimary plus latest journal
         ReturnConsumedCapacity='TOTAL',
-        ConsistentRead=True
+        ConsistentRead=False
     )
 
     if len(query_response['Items']) == 0:
@@ -148,8 +148,8 @@ def generate_item(request, second, dynamodb):
         'Payload': {'S': payload_text_anysize(0.012)}
     }
 
-    item[city] = {'S': city}
-    item[merchant] ={'S': merchant}
+    # item[city] = {'S': city}
+    # item[merchant] ={'S': merchant}
     item[dateday] = {'S': dateday}
 
     request_body =  {

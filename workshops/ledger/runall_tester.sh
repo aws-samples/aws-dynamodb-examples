@@ -1,6 +1,6 @@
 
 
-results_summary=res.csv
+results_summary=results.csv
 rm -f $results_summary
 
 # --------------------------------------------------
