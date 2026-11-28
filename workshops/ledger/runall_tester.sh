@@ -56,6 +56,8 @@ export TEST_DESC="Target: MRSC"
 
 python3 runtest.py $TEST_NAME $results_summary E$exp_timestamp
 
+unset TARGET_TABLE
+unset TEST_DESC
 # -------------------------------------------------
 
 TEST_NAME=gen_date
