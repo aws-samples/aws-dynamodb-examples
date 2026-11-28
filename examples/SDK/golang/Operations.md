@@ -1,6 +1,4 @@
-Sure, here's the `operations.md` file for the Golang SDK examples:
-
-# Supported Operations - Table needs to be updated
+# Supported Operations
 
 | Operation                                           | Go SDK v1 | Go SDK v2 |
 | --------------------------------------------------- | :-------: | :-------: |
@@ -19,7 +17,6 @@ Sure, here's the `operations.md` file for the Golang SDK examples:
 | FilterExpression                                    |    ❌     |    ❌     |
 | ProjectionExpression                                |    ❌     |    ❌     |
 | ConsistentRead                                      |    ❌     |    ❌     |
-| Enhanced Async Query                                |    ❌     |    ❌     |
 | Enhanced Async Query                                |    ❌     |    ❌     |
 | Enhanced Async Scan FilterCondition                 |    ❌     |    ❌     |
 | Add Global Table Region                             |    ✅     |    ❌     |
